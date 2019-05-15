@@ -1,4 +1,6 @@
-﻿namespace Core.Models
+﻿using Core.Infrastructure;
+
+namespace Core.Models
 {
     public class Customer : EntityBase
     {

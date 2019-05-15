@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Core.Models
+namespace Core.Infrastructure
 {
     public abstract class EntityBase
     {
