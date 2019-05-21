@@ -11,3 +11,5 @@
 /Web/ResellTicketSolution/ViewModel/obj
 /Web/ResellTicketSolution/WebAPI/bin/Debug/netcoreapp2.2
 /Web/ResellTicketSolution/WebAPI/obj
+/Web/ResellTicketSolution/WebAPI.Admin/bin/Debug/netcoreapp2.2
+/Web/ResellTicketSolution/WebAPI.Admin/obj

@@ -13,6 +13,8 @@ namespace Core.Infrastructure
 
     public class DatabaseFactory : Disposable, IDatabaseFactory
     {
+        public const string CONNECTION_NAME = "ResellTicketDB";
+
         private ResellTicketDbContext _dataContext;
         private IConfiguration _configuration;
 
@@ -26,7 +28,7 @@ namespace Core.Infrastructure
             if(_dataContext == null)
             {
                 var dbOptionsBuilder = new DbContextOptionsBuilder<ResellTicketDbContext>();
-                dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString("ResellTicketDB"));
+                dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString(CONNECTION_NAME));
 
                 _dataContext = new ResellTicketDbContext(dbOptionsBuilder.Options);
             }
@@ -39,7 +41,7 @@ namespace Core.Infrastructure
             _dataContext?.Dispose();
 
             var dbOptionsBuilder = new DbContextOptionsBuilder<ResellTicketDbContext>();
-            dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString("ResellTicketDB"));
+            dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString(CONNECTION_NAME));
 
             _dataContext = new ResellTicketDbContext(dbOptionsBuilder.Options);
             return _dataContext;
