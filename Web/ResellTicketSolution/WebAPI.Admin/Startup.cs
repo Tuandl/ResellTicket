@@ -1,10 +1,7 @@
-﻿using Core.Data;
-using Core.Infrastructure;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ViewModel.AppSetting;
@@ -30,12 +27,6 @@ namespace WebAPI.Admin
             //Configuration for inject configuration into controller
             services.Configure<AuthSetting>(Configuration.GetSection(CONFIG_AUTH_SETTING));
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
-
-            //services.AddDbContext<ResellTicketDbContext>(options => 
-            //{
-            //    options.UseSqlServer(Configuration.GetConnectionString(DatabaseFactory.CONNECTION_NAME),
-            //        x => x.MigrationsAssembly("WebAPI"));
-            //});
 
             //Add EntityFramework Configuration
             services.AddEntityFrameworkConfiguration(Configuration);
