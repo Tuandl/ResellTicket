@@ -14,6 +14,7 @@ namespace Core.Data
 
         //Register Models
         public virtual DbSet<Customer> Customers { get; set; }
+        public virtual DbSet<Ticket> Tickets { get; set; }
 
         /// <summary>
         /// Config Models using Fluent API
@@ -23,6 +24,7 @@ namespace Core.Data
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CustomerMap());
+            modelBuilder.ApplyConfiguration(new TicketMap());
         }
     }
 }

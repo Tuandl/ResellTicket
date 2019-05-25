@@ -15,7 +15,7 @@ namespace Service.Services
 
     public class UserService : IUserService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<User> _userManager; //thư viện Identity của microsoft
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 

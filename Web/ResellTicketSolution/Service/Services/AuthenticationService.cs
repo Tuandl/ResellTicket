@@ -9,14 +9,13 @@ namespace Service.Services
     {
         Task<User> CheckLoginAsync(LoginViewModel model);
     }
+     
 
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<User> _userManager; //Thư viên Identity của microsoft
 
-        public AuthenticationService(
-            UserManager<User> userManager
-            )
+        public AuthenticationService(UserManager<User> userManager) 
         {
             _userManager = userManager;
         }

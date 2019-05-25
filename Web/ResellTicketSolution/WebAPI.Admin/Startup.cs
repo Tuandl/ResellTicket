@@ -14,18 +14,23 @@ namespace WebAPI.Admin
     {
         private const string CONFIG_AUTH_SETTING = "AuthSetting";
 
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
 
+        public Startup(IConfiguration configuration) 
+        {
+            Configuration = configuration; //Khởi tạo 1 configuration để lấy các config trong 
+                                           //appsetting.Development.json
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services) //chạy đầu tiên sao khi khởi tạo contructor
         {
             //Configuration for inject configuration into controller
+            //Lấy AuthSetting trong appsetting.Development.json map vs class AuthSetting 
+            //rồi set global cho Application
             services.Configure<AuthSetting>(Configuration.GetSection(CONFIG_AUTH_SETTING));
+
+            //set local 
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
 
             //Add EntityFramework Configuration
@@ -37,6 +42,7 @@ namespace WebAPI.Admin
             //Add Injection Configuration
             services.AddInjectionConfiguration();
 
+            //Cho phép trình duyệt chập nhận với mọi domain khác gọi api ở domain của mình
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowAnyOrigins", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().AllowCredentials());

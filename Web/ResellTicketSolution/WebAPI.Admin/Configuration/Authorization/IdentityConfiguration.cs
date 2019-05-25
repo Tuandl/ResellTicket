@@ -16,14 +16,14 @@ namespace WebAPI.Admin.Configuration.Authorization
         {
             services.AddIdentity<User, IdentityRole>(options =>
             {
-                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireNonAlphanumeric = false; //ký tự đặt biệt 
                 options.Password.RequireUppercase = false;
                 options.Password.RequireDigit = true;
                 options.Password.RequiredLength = 6;
                 options.Password.RequireLowercase = true;
             })
-            .AddEntityFrameworkStores<ResellTicketDbContext>()
-            .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<ResellTicketDbContext>() // public virtual DbSet<Ticket> Name { get; set; }
+            .AddDefaultTokenProviders(); //
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -36,8 +36,8 @@ namespace WebAPI.Admin.Configuration.Authorization
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
+                options.SaveToken = true; 
+                options.TokenValidationParameters = new TokenValidationParameters 
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,

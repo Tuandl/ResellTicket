@@ -32,6 +32,7 @@ namespace WebAPI.Admin.Configuration
                     }
                 });
 
+
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
                     {"Bearer",new string[] {} }
@@ -43,8 +44,9 @@ namespace WebAPI.Admin.Configuration
                     Name = "Authorization",
                     In = "header",
                     Type = "apiKey",
-                });
+                }); //để test, cho phép thêm header để thêm token string vào
 
+                //Để chỉ ra đường dẫn swagger lấy ra file document ở đâu rồi render ra swaggerUI
                 var xmlDocPath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 

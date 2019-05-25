@@ -17,7 +17,7 @@ namespace WebAPI.Admin.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IOptions<AuthSetting> AUTH_SETTING;
+        private readonly IOptions<AuthSetting> AUTH_SETTING; //?
         private readonly IAuthenticationService _authenticationService;
         private readonly IUserService _userService;
 
@@ -41,8 +41,8 @@ namespace WebAPI.Admin.Controllers
         /// <response code="400">Invalid Request</response>
         /// <response code="406">Invaild Username Or Password</response>
         [HttpPost]
-        [Route("")]
-        public async Task<IActionResult> CheckLogin(LoginViewModel model)
+        [Route("checkLogin")]
+        public async Task<IActionResult> CheckLogin(LoginViewModel model) //object truyền từ client tự động map với object tham số 
         {
             if(!ModelState.IsValid)
             {
@@ -53,10 +53,11 @@ namespace WebAPI.Admin.Controllers
 
             if(user == null)
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Usernamr or password");
+                return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
             }
 
-            var token = user.BuildToken(AUTH_SETTING.Value);
+            //AUTH_SETTING.Value: tự sinh value?
+            var token = user.BuildToken(AUTH_SETTING.Value); 
             return Ok(token);
         }
 
@@ -68,16 +69,17 @@ namespace WebAPI.Admin.Controllers
         /// <response code="200">Success</response>
         /// <response code="400">Invalid Request</response>
         /// <response code="406">Create Error</response>
-        [HttpPut]
-        [Route("")]
-        public async Task<IActionResult> Register(UserViewModel model)
+        [HttpPost]
+        [Route("register")]
+        public async Task<IActionResult> Register(UserViewModel model)  //object truyền từ client tự động map với object tham số 
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) 
             {
                 return BadRequest("Invalid Request");
             }
 
-            var errors = await _userService.CreateUserAsync(model);
+            //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp dòng 82
+            var errors = await _userService.CreateUserAsync(model); 
             if(errors.Any())
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, errors);

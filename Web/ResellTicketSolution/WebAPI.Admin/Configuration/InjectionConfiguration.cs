@@ -14,8 +14,8 @@ namespace WebAPI.Admin.Configuration
     public static class InjectionConfiguration
     {
         public static void AddInjectionConfiguration(this IServiceCollection services)
-        {
-            var serviceClasses = Assembly.GetAssembly(typeof(IAuthenticationService))
+        { 
+            var serviceClasses = Assembly.GetAssembly(typeof(IAuthenticationService)) 
                 .GetExportedTypes()
                 .Where(x => x.Name.EndsWith("Service"))
                 .Where(x => !x.IsInterface)
