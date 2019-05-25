@@ -15,9 +15,7 @@ namespace Core.Infrastructure
         protected IDatabaseFactory DataBaseFactory { get; private set; }
         protected ResellTicketDbContext DbContext { get => _dbContext ?? (_dbContext = DataBaseFactory.Get()); }
 
-        public RepositoryBase(
-                IDatabaseFactory databaseFactory
-            )
+        public RepositoryBase(IDatabaseFactory databaseFactory)
         {
             DataBaseFactory = databaseFactory;
             _dbSet = DbContext.Set<T>();
