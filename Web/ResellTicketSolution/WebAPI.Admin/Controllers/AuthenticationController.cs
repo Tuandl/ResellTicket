@@ -71,7 +71,7 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Create Error</response>
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserViewModel model)  //object truyền từ client tự động map với object tham số 
+        public async Task<IActionResult> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
         {
             if (!ModelState.IsValid) 
             {
