@@ -10,6 +10,9 @@ import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import appReducers from "./reducer/index";
+import ReduxToastr from 'react-redux-toastr';
+import Axios from 'axios';
+import { API_URL } from './constants/Config';
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -23,12 +26,17 @@ const store = createStore(
 ReactDOM.render(
     <Provider store={store}>
         <App />
+        <ReduxToastr/>
     </Provider>, 
     document.getElementById('root')
 );  
 
-//Axios.defaults.headers.common['Authorization'] = 'bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ0dWFuZGFwY2hhaSIsImp0aSI6IjIxYmFlODJlLWU4YzYtNDgwOC04YmM5LThlZDhlMWZkYzJjZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoiNzRjODhlNmYtYzVlYy00M2FmLWJiNjktNWFmMTkyMDc4MjFkIiwiZXhwIjoxNTU5MDI4Nzg5LCJpc3MiOiJSZXNlbGxUaWNrZXRBZG1pbkFQSSIsImF1ZCI6ImF1ZGllbmNlQWRtaW4ifQ.VhPhd6yiGIGIWhkyT8NkWupl2QXeFWnIW38EqlLV4pA';
-// Axios.defaults.baseURL = 'http://api.admin.resellticket.local/api/';
+var token = localStorage.getItem('userToken');
+if(token != null) {
+    token.replace(/"/g, '');
+    Axios.defaults.headers.common['Authorization'] = `bearer ${token}`;
+}
+Axios.defaults.baseURL = API_URL;
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

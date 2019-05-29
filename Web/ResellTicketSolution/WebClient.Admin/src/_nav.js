@@ -1,6 +1,11 @@
 export default {
   items: [
     {
+      name: 'User Management',
+      url: '/users',
+      icon: 'icon-user'
+    },
+    {
       name: 'Dashboard',
       url: '/dashboard',
       icon: 'icon-speedometer',
