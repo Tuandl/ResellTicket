@@ -10,7 +10,7 @@ using ViewModel.ViewModel.User;
 
 namespace WebAPI.Admin.Controllers
 {
-    [Route("api/users")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -24,7 +24,15 @@ namespace WebAPI.Admin.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
             var userRowViewModels = _userService.GetUsers(orderBy, param); 
-            return userRowViewModels;
+            return userRowViewModels; 
+        }
+
+        [Authorize()] //Roles = "Manager"
+        [HttpGet("id")]
+        public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
+        { //Lấy all admin users
+            var userRowViewModel = await _userService.FindUserById(id);
+            return userRowViewModel;
         }
 
         //[Authorize()] //Roles = "Manager"

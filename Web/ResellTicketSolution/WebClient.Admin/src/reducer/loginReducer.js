@@ -1,10 +1,8 @@
-import * as ActionType from "./../constants/ActionTypes";
-import { isFulfilled } from "q";
-import { statement } from "@babel/template";
+import * as ActionType from "../constants/ActionTypes";
 
 var initialState = '';
 
-const loginReducer = (state = initialState, action) => {
+const myReducer = (state = initialState, action) => {
     switch (action.type) {
         case ActionType.LOGIN:
         	state = action.token;
@@ -19,4 +17,4 @@ const loginReducer = (state = initialState, action) => {
     }
 }
 
-export default loginReducer;
+export default myReducer;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { connect } from 'react-redux';
-import { doLoginRequest } from "./../../../action/Actions";
+import { doLoginRequest } from "./../../../action/LoginActions";
 
 
 class Login extends Component {
@@ -50,12 +50,6 @@ class Login extends Component {
                 />
             }
         }
-
-        
-        // 
-        //     
-        // }
-
 
         return (
             <div className="app flex-row align-items-center">

@@ -13,6 +13,9 @@ namespace Service.Services
     {
         Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model);
         List<UserRowViewModel> GetUsers(string orderBy, string param);
+        Task<UserRowViewModel> getUserByUserName(string userName);
+
+        Task<UserRowViewModel> FindUserById(string userId);
 
         //List<UserRowViewModel> GetUsersByFullNameOrUserName(string param);
     }
@@ -39,8 +42,22 @@ namespace Service.Services
         {
             var user = _mapper.Map<UserRegisterViewModel, User>(model); //map từ ViewModel qua Model
             var result = await _userManager.CreateAsync(user, model.Password);
-
+            
             return result.Errors;
+        }
+
+        public async Task<UserRowViewModel> getUserByUserName(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            var userRowViewModel = _mapper.Map<User, UserRowViewModel>(user);
+            return userRowViewModel;
+        }
+
+        public async Task<UserRowViewModel> FindUserById(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            var userRowViewModel = _mapper.Map<User, UserRowViewModel>(user);
+            return userRowViewModel;
         }
 
         public List<UserRowViewModel> GetUsers(string orderBy, string param)

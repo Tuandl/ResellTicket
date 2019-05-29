@@ -8,7 +8,7 @@ namespace ViewModel.AutoMapper
     {
         public ViewModelToDomainConfiguration()
         {
-            //CreateMap<UserRegisterViewModel, User>().
+            CreateMap<UserRegisterViewModel, User>();
             //    //Map fullname của userviewmodal vào Id của user
             //    ForMember(dest => dest.Id, option => option.MapFrom(source => source.FullName));
         }

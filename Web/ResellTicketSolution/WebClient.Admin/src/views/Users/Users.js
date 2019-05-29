@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button } from 'reactstrap';
+import { Card, CardBody, CardHeader, Col, Row, Table, Button } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getUsersRequest } from "./../../action/UserAdminAction";
 
-import usersData from './UsersData'
+// import usersData from './UsersData'
 
 function UserRow(props) {
     const user = props.user
-    const userLink = `/users/${user.id}`
+    const userLink = `/user/${user.id}`
 
-    const getBadge = (status) => {
-        return status === 'Active' ? 'success' :
-            status === 'Inactive' ? 'secondary' :
-                status === 'Pending' ? 'warning' :
-                    status === 'Banned' ? 'danger' :
-                        'primary'
-    }
+    // const getBadge = (status) => {
+    //     return status === 'Active' ? 'success' :
+    //         status === 'Inactive' ? 'secondary' :
+    //             status === 'Pending' ? 'warning' :
+    //                 status === 'Banned' ? 'danger' :
+    //                     'primary'
+    // }
 
     return (
         <tr key={user.id.toString()}>
@@ -26,12 +26,15 @@ function UserRow(props) {
             <td>{user.phoneNumber}</td>
             <td>{user.role}</td>
             <td>
-              <Button color="danger">Danger</Button>
-              {/*<Link to={userLink}>
-                <Badge color={getBadge(user.status)}>{user.status}</Badge>
-              </Link>*/}
+                <Link to={userLink}>
+                    <Button color="danger">
+                        <i className="fa fa-edit fa-lg mr-1"></i>Edit
+                    </Button>
+                </Link>
             </td>
         </tr>
+
+
     )
 }
 
@@ -43,7 +46,7 @@ class Users extends Component {
     }
 
     componentWillReceiveProps(props) {
-        
+
     }
 
     onCreateUser = () => {
@@ -52,7 +55,6 @@ class Users extends Component {
 
     render() {
         //var {users} = this.props;
-        console.log(this.props.users);
         const userList = this.props.users;
 
         return (
@@ -63,7 +65,7 @@ class Users extends Component {
                             <CardHeader>
                                 <i className="fa fa-align-justify"></i> Users
                                 <Link to='/register'>
-                                  <Button className="text-right" color="primary">Create User</Button>
+                                    <Button className="text-right" color="primary">Create User</Button>
                                 </Link>
                             </CardHeader>
                             <CardBody>
@@ -80,7 +82,7 @@ class Users extends Component {
                                     </thead>
                                     <tbody>
                                         {userList.map((user, index) =>
-                                            <UserRow key={index} user={user} index={index}/>
+                                            <UserRow key={index} user={user} index={index} />
                                         )}
                                     </tbody>
                                 </Table>
@@ -95,7 +97,7 @@ class Users extends Component {
 
 const mapStateToProps = state => {
     return {
-      users : state.users
+        users: state.users
     }
 }
 

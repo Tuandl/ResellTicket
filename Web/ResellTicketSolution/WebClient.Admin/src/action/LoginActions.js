@@ -1,20 +1,5 @@
-import { callApiWithNoneToken, callApiLogin } from '../helper/ApiCaller';
+import { callApiLogin } from '../helper/ApiCaller';
 import * as ActionType from '../constants/ActionTypes';
-
-export const doRegisterRequest = (user) => {
-    return dispatch => {
-        return callApiWithNoneToken('api/token/register', 'POST', user).then(res => {
-            dispatch(doRegister());
-            console.log("loi" , res);
-        })
-    }
-}
-
-export const doRegister = () => {
-    return {
-        type: ActionType.REGISTER
-    }
-}
 
 export const doLoginRequest = (username, password) => {
     return dispatch => {

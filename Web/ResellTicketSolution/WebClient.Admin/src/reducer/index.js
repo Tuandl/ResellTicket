@@ -1,11 +1,14 @@
 import { combineReducers } from 'redux';
-import loginToken from './../reducer/loginReducer';
-import users from './../reducer/usersReducer';
+import loginToken from './loginReducer';
+import users from './../reducer/user/usersReducer';
+import userEdit from './../reducer/user/userEditReducer';
+// import isCreated from './../reducer/createUserReducer';
 
 
 const appReducers = combineReducers({
     loginToken,
-    users
+    users,
+    userEdit
 });
 
 export default appReducers;

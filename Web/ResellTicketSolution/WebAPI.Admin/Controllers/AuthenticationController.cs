@@ -71,7 +71,8 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Create Error</response>
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
+        [Authorize()]
+        public async Task<ActionResult<UserRowViewModel>> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
         {
             if (!ModelState.IsValid) 
             {
@@ -80,12 +81,14 @@ namespace WebAPI.Admin.Controllers
 
             //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp dòng 82
             var errors = await _userService.CreateUserAsync(model); 
+           
             if(errors.Any())
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, errors);
             }
+            var userRowViewModel = await _userService.getUserByUserName(model.UserName);
 
-            return Ok();
+            return userRowViewModel;
         }
     }
 }
