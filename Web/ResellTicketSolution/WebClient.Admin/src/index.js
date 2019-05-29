@@ -1,18 +1,17 @@
-import 'react-app-polyfill/ie9'; // For IE 9-11 support
-import 'react-app-polyfill/ie11'; // For IE 11 support
-import './polyfill'
 import React from 'react';
+import 'react-app-polyfill/ie11'; // For IE 11 support
+import 'react-app-polyfill/ie9'; // For IE 9-11 support
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import appReducers from "./reducer/index";
 import ReduxToastr from 'react-redux-toastr';
-import Axios from 'axios';
-import { API_URL } from './constants/Config';
+import { applyMiddleware, compose, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import App from './App';
+import AxiosConfigurate from './helper/AxiosConfigurate';
+import './index.css';
+import './polyfill';
+import appReducers from "./reducer/index";
+import * as serviceWorker from './serviceWorker';
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -31,12 +30,7 @@ ReactDOM.render(
     document.getElementById('root')
 );  
 
-var token = localStorage.getItem('userToken');
-if(token != null) {
-    token.replace(/"/g, '');
-    Axios.defaults.headers.common['Authorization'] = `bearer ${token}`;
-}
-Axios.defaults.baseURL = API_URL;
+AxiosConfigurate();
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
