@@ -10,7 +10,7 @@ using ViewModel.ViewModel.User;
 
 namespace WebAPI.Admin.Controllers
 {
-    [Route("api/user")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {

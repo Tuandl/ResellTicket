@@ -1,70 +1,110 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Badge, Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
+import { Badge, Card, CardBody, CardHeader, Col, Row, Table, Button } from 'reactstrap';
+import { connect } from 'react-redux';
+import { getUsersRequest } from "./../../action/UserAdminAction";
 
 import usersData from './UsersData'
 
 function UserRow(props) {
-  const user = props.user
-  const userLink = `/users/${user.id}`
+    const user = props.user
+    const userLink = `/users/${user.id}`
 
-  const getBadge = (status) => {
-    return status === 'Active' ? 'success' :
-      status === 'Inactive' ? 'secondary' :
-        status === 'Pending' ? 'warning' :
-          status === 'Banned' ? 'danger' :
-            'primary'
-  }
+    const getBadge = (status) => {
+        return status === 'Active' ? 'success' :
+            status === 'Inactive' ? 'secondary' :
+                status === 'Pending' ? 'warning' :
+                    status === 'Banned' ? 'danger' :
+                        'primary'
+    }
 
-  return (
-    <tr key={user.id.toString()}>
-      <th scope="row"><Link to={userLink}>{user.id}</Link></th>
-      <td><Link to={userLink}>{user.name}</Link></td>
-      <td>{user.registered}</td>
-      <td>{user.role}</td>
-      <td><Link to={userLink}><Badge color={getBadge(user.status)}>{user.status}</Badge></Link></td>
-    </tr>
-  )
+    return (
+        <tr key={user.id.toString()}>
+            <th>{props.index + 1}</th>
+            <td>{user.userName}</td>
+            <td>{user.email}</td>
+            <td>{user.phoneNumber}</td>
+            <td>{user.role}</td>
+            <td>
+              <Button color="danger">Danger</Button>
+              {/*<Link to={userLink}>
+                <Badge color={getBadge(user.status)}>{user.status}</Badge>
+              </Link>*/}
+            </td>
+        </tr>
+    )
 }
 
 class Users extends Component {
 
-  render() {
+    componentWillMount() {
+        var token = localStorage.getItem('userToken');
+        this.props.getUsers(token);
+    }
 
-    const userList = usersData.filter((user) => user.id < 10)
+    componentWillReceiveProps(props) {
+        
+    }
 
-    return (
-      <div className="animated fadeIn">
-        <Row>
-          <Col xl={6}>
-            <Card>
-              <CardHeader>
-                <i className="fa fa-align-justify"></i> Users <small className="text-muted">example</small>
-              </CardHeader>
-              <CardBody>
-                <Table responsive hover>
-                  <thead>
-                    <tr>
-                      <th scope="col">id</th>
-                      <th scope="col">name</th>
-                      <th scope="col">registered</th>
-                      <th scope="col">role</th>
-                      <th scope="col">status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {userList.map((user, index) =>
-                      <UserRow key={index} user={user}/>
-                    )}
-                  </tbody>
-                </Table>
-              </CardBody>
-            </Card>
-          </Col>
-        </Row>
-      </div>
-    )
-  }
+    onCreateUser = () => {
+
+    }
+
+    render() {
+        //var {users} = this.props;
+        console.log(this.props.users);
+        const userList = this.props.users;
+
+        return (
+            <div className="animated fadeIn">
+                <Row>
+                    <Col xl={12}>
+                        <Card>
+                            <CardHeader>
+                                <i className="fa fa-align-justify"></i> Users
+                                <Link to='/register'>
+                                  <Button className="text-right" color="primary">Create User</Button>
+                                </Link>
+                            </CardHeader>
+                            <CardBody>
+                                <Table responsive hover>
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Role</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {userList.map((user, index) =>
+                                            <UserRow key={index} user={user} index={index}/>
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </CardBody>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
 }
 
-export default Users;
+const mapStateToProps = state => {
+    return {
+      users : state.users
+    }
+}
+
+const mapDispatchToProps = (dispatch, props) => {
+    return {
+        getUsers: (token) => {
+            dispatch(getUsersRequest(token));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Users);

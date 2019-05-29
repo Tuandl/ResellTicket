@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, Card, CardBody, CardFooter, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { doRegisterRequest } from "./../Action/UserAction";
+//import { Link } from 'react-router-dom';
+import { doRegisterRequest } from "./../../../action/Actions";
 
 class Register extends Component {
   constructor(props) {

@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
-import userReducer from './../views/Pages/Reducer/UserReducer';
+import loginToken from './../reducer/loginReducer';
+import users from './../reducer/usersReducer';
 
 
 const appReducers = combineReducers({
-    userReducer
+    loginToken,
+    users
 });
 
 export default appReducers;

@@ -1,7 +1,5 @@
-
-
-import { callApiWithNoneToken, callApiLogin } from '../../../helper/ApiCaller';
-import * as ActionType from '../../../constants/ActionTypes';
+import { callApiWithNoneToken, callApiLogin } from '../helper/ApiCaller';
+import * as ActionType from '../constants/ActionTypes';
 
 export const doRegisterRequest = (user) => {
     return dispatch => {
@@ -21,15 +19,18 @@ export const doRegister = () => {
 export const doLoginRequest = (username, password) => {
     return dispatch => {
         return callApiLogin('api/token/checkLogin', 'POST', username, password).then(res => {
-            dispatch(doLogin());
-            console.log("Token: ", res);
-            localStorage.setItem('userToken', JSON.stringify(res.data));
-        })
+            if(res.data) {
+                dispatch(doLogin(res.data));
+            }        
+        }).catch(err => {
+            dispatch(doLogin(err.request.status));
+        });
     }
 }
 
-export const doLogin = () => {
+export const doLogin = (token) => {
     return {
-        type: ActionType.LOGIN
+        type: ActionType.LOGIN,
+        token
     }
 }
