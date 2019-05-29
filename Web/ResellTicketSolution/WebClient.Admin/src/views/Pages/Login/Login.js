@@ -1,9 +1,8 @@
+import Axios from 'axios';
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardGroup, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
-import { connect } from 'react-redux';
-import { doLoginRequest } from "./../../../action/LoginActions";
-
+import { Redirect } from 'react-router-dom';
 
 class Login extends Component {
     constructor(props) {
@@ -11,16 +10,8 @@ class Login extends Component {
         this.state = {
             txtUsername: '',
             txtPassword: '',
-            //token: '',
+            isRedirect: false,
         };
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleSubmit = this.handleSubmit.bind(this);
-    }
-
-    componentWillReceiveProps(props) {
-        // this.setState({
-        //     token : props.token
-        // })
     }
 
     handleChange = (e) => {
@@ -30,31 +21,37 @@ class Login extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        const { txtUsername, txtPassword } = this.state;
-        if (txtUsername && txtPassword) {
-            this.props.onLogin(txtUsername, txtPassword);
+        this.login();
+    }
+
+    login = async () => {
+        let data = {
+            username: this.state.txtUsername,
+            password: this.state.txtPassword,
+        };
+        try {
+            let loginResponse = await Axios.post('api/token/checklogin', data);
+            localStorage.setItem('userToken', loginResponse.data);
+            Axios.defaults.headers.common['Authorization'] = `bearer ${loginResponse.data}`;
+            this.setState({
+                isRedirect: true,
+            });
+        } catch(ex) {
+            toastr.error('Login Failed', 'Incorrect Username or Password!');
         }
     }
 
     render() {
-        //submitted
-        const { txtUsername, txtPassword } = this.state;
-        var token = this.props.token;
-        if(token !== null && token !== '') {
-            if (parseInt(token) === 406) {
-            
-            } else {
-                return <Redirect to={{
-                    pathname: '/dashboard'
-                }}
-                />
-            }
+        if(this.state.isRedirect) {
+            return <Redirect to="/users"/>
         }
+
+        const { txtUsername, txtPassword } = this.state;
 
         return (
             <div className="app flex-row align-items-center">
-                <Container> {/*div: class="container"*/}
-                    <Row className="justify-content-center"> {/*div: class="justify-content-center row"*/}
+                <Container> 
+                    <Row className="justify-content-center">
                         <Col md="6">
                             <CardGroup>
                                 <Card className="p-4">
@@ -68,8 +65,7 @@ class Login extends Component {
                                                         <i className="icon-user"></i>
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input type="text" placeholder="Username" name="txtUsername" value={txtUsername}
-                                                    onChange={this.handleChange} />
+                                                <Input type="text" placeholder="Username" name="txtUsername" value={txtUsername} onChange={this.handleChange}/>
                                             </InputGroup>
                                             <InputGroup className="mb-4">
                                                 <InputGroupAddon addonType="prepend">
@@ -77,15 +73,13 @@ class Login extends Component {
                                                         <i className="icon-lock"></i>
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input type="password" placeholder="Password" name="txtPassword"
-                                                    value={txtPassword} onChange={this.handleChange}
+                                                <Input type="password" placeholder="Password" name="txtPassword" value={txtPassword}
+                                                    onChange={this.handleChange}
                                                 />
                                             </InputGroup>
                                             <Row>
                                                 <Col xs="6">
-                                                    {/*<Link to="/">*/}
                                                     <Button color="primary" className="px-4" type="submit">Login</Button>
-                                                    {/*</Link>*/}
                                                 </Col>
                                                 <Col xs="6" className="text-right">
                                                     <Button color="link" className="px-0">Forgot password?</Button>
@@ -94,18 +88,6 @@ class Login extends Component {
                                         </Form>
                                     </CardBody>
                                 </Card>
-                                {/* <Card className="text-white bg-primary py-5 d-md-down-none" style={{ width: '44%' }}>
-                                    <CardBody className="text-center">
-                                        <div>
-                                            <h2>Sign up</h2>
-                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
-                                                labore et dolore magna aliqua.</p>
-                                            <Link to="/register">
-                                                <Button color="primary" className="mt-3" active tabIndex={-1}>Register Now!</Button>
-                                            </Link>
-                                        </div>
-                                    </CardBody>
-                                </Card> */}
                             </CardGroup>
                         </Col>
                     </Row>
@@ -114,18 +96,5 @@ class Login extends Component {
         );
     }
 }
-const mapStateToProps = state => {
-    return {
-        token: state.loginToken
-    }
-}
 
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        onLogin: (username, password) => {
-            dispatch(doLoginRequest(username, password));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
