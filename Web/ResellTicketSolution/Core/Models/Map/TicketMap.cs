@@ -12,8 +12,8 @@ namespace Core.Models.Map
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.CreatedAt)
-                .HasColumnType("date");
+            //builder.Property(x => x.CreatedAt)
+            //    .HasColumnType("date");
         }
     }
 }
