@@ -2,12 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Services;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;
-using ViewModel.ViewModel.User;
 using WebAPI.Admin.Configuration.Authorization;
 
 namespace WebAPI.Admin.Controllers
@@ -17,19 +15,17 @@ namespace WebAPI.Admin.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IOptions<AuthSetting> AUTH_SETTING; //?
+        //AuthSetting from appSettings.json
+        private readonly IOptions<AuthSetting> AUTH_SETTING;
         private readonly IAuthenticationService _authenticationService;
-        private readonly IUserService _userService;
 
         public AuthenticationController(
             IOptions<AuthSetting> options,
-            IAuthenticationService authenticationService,
-            IUserService userService
+            IAuthenticationService authenticationService
             )
         {
             AUTH_SETTING = options;
             _authenticationService = authenticationService;
-            _userService = userService;
         }
 
         /// <summary>
@@ -49,6 +45,7 @@ namespace WebAPI.Admin.Controllers
                 return BadRequest("Invalid Request");
             }
             
+            //Call Service asynchronous to check login
             var user = await _authenticationService.CheckLoginAsync(model);
 
             if(user == null)
@@ -56,39 +53,9 @@ namespace WebAPI.Admin.Controllers
                 return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
             }
 
-            //AUTH_SETTING.Value: tự sinh value?
+            //Get Value from appSetting.json
             var token = user.BuildToken(AUTH_SETTING.Value); 
             return Ok(token);
-        }
-
-        /// <summary>
-        /// Register API for User Admin
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns>Return nothing if create success</returns>
-        /// <response code="200">Success</response>
-        /// <response code="400">Invalid Request</response>
-        /// <response code="406">Create Error</response>
-        [HttpPost]
-        [Route("register")]
-        [Authorize()]
-        public async Task<ActionResult<UserRowViewModel>> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
-        {
-            if (!ModelState.IsValid) 
-            {
-                return BadRequest("Invalid Request");
-            }
-
-            //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp dòng 82
-            var errors = await _userService.CreateUserAsync(model); 
-           
-            if(errors.Any())
-            {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, errors);
-            }
-            var userRowViewModel = await _userService.getUserByUserName(model.UserName);
-
-            return userRowViewModel;
         }
     }
 }

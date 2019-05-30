@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using ViewModel.ViewModel.User;
 
 namespace WebAPI.Admin.Controllers
@@ -15,11 +14,19 @@ namespace WebAPI.Admin.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+
         public UserController(IUserService userService) //inject userService 
         {
             _userService = userService;
         }
 
+        /// <summary>
+        /// Get All Users
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <param name="param"></param>
+        /// <returns>Return List admins</returns>
+        /// <response code="200">Return List users</response>
         [Authorize()] //Roles = "Manager"
         [HttpGet]
         public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
@@ -27,11 +34,29 @@ namespace WebAPI.Admin.Controllers
             return userRowViewModels; 
         }
 
+        /// <summary>
+        /// Return User Detail
+        /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns>User Detail</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Missing Parameter</response>
+        /// <response code="404">Not found User</response>
         [Authorize()] //Roles = "Manager"
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
         { //Lấy all admin users
+            if(string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Invalid Request.");
+            }
+
             var userRowViewModel = await _userService.FindUserById(id);
+
+            if(userRowViewModel == null)
+            {
+                return NotFound();
+            }
             return userRowViewModel;
         }
 
@@ -42,5 +67,34 @@ namespace WebAPI.Admin.Controllers
         //    var userRowViewModels = _userService.GetUsersByFullNameOrUserName(param);
         //    return userRowViewModels;
         //}
+
+        /// <summary>
+        /// Register API for User Admin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Return nothing if create success</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="406">Create Error</response>
+        [HttpPost]
+        [Route("")]
+        [Authorize()]
+        public async Task<ActionResult> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp
+            var errors = await _userService.CreateUserAsync(model);
+
+            if (errors.Any())
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, errors);
+            }
+
+            return Ok();
+        }
     }
 }
