@@ -77,8 +77,19 @@ class User extends Component {
         });
     }
 
-    onBtnSaveChangesClicked() {
-        
+    async onBtnSaveChangesClicked() {
+        let data = this.state.user;
+
+        toastr.info('Infomation', 'Please wait while we processing your request.');
+        try {
+            var updateResponse = await Axios.put('api/user', data);
+            console.log('Update Response', updateResponse);
+            toastr.success('Update Success', 'User has been updated successfully.');
+            this.props.history.push('/users');
+        } catch(err) {
+            console.log('Update User Error', err);
+            toastr.error('Error', 'Error when update User');
+        }
     }
 
     onBtnCancleClicked() {

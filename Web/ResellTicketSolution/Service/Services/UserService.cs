@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,6 +20,13 @@ namespace Service.Services
         Task<UserRowViewModel> FindUserById(string userId);
 
         //List<UserRowViewModel> GetUsersByFullNameOrUserName(string param);
+
+        /// <summary>
+        /// Update User for Manager 
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Empty string if success</returns>
+        string UpdateUser(UserUpdateViewModel model);
     }
 
     public class UserService : IUserService
@@ -26,17 +35,20 @@ namespace Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserRoleRepository _userRoleRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserService(
                 UserManager<User> userManager, //inject userManager, thư viện của Microsoft
                 IUserRepository userRepository, //inject userRepository
                 IUserRoleRepository userRoleRepository,
+                IUnitOfWork unitOfWork,
                 IMapper mapper                  // inject mapper để map giữa ViewModel và Model
             )
         {
             _userManager = userManager;
             _userRepository = userRepository;
             _userRoleRepository = userRoleRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -65,7 +77,7 @@ namespace Service.Services
             var userRole = _userRoleRepository.Get(x => x.UserId == userId);
             if(userRole != null)
             {
-                userRowViewModel.RoleName = userRole.RoleId;
+                userRowViewModel.RoleId = userRole.RoleId;
             }
 
             return userRowViewModel;
@@ -95,12 +107,56 @@ namespace Service.Services
             return userRowViewModels;
         }
 
+        public string UpdateUser(UserUpdateViewModel model)
+        {
+            var existedUser = _userRepository.Get(x => x.Id == model.Id);
+            if(existedUser == null)
+            {
+                return "Not found User.";
+            }
+
+            //Update IsActive
+            existedUser.IsActive = model.IsActive;
+            _userRepository.Update(existedUser);
+            
+            //Update Role
+            var userRole = _userRoleRepository.Get(x => x.UserId == model.Id);
+            if(userRole == null)
+            {
+                //create role for user
+                userRole = new IdentityUserRole<string>
+                {
+                    UserId = model.Id,
+                    RoleId = model.RoleId,
+                };
+                _userRoleRepository.Add(userRole);
+            }
+            else
+            {
+                //Update Role for user
+                userRole.RoleId = model.RoleId;
+                _userRoleRepository.Update(userRole);
+            }
+
+            try
+            {
+                //push into database
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
+
         //public List<UserRowViewModel> GetUsersByFullNameOrUserName(string param) //get users by 
         //{
         //    var users = _userRepository.GetAllQueryable() 
         //                .Where(u => u.FullName.Contains(param) || u.UserName.Contains(param)).ToList();
         //    var userRowViewModels = _mapper.Map<List<User>, List<UserRowViewModel>>(users);
-            
+
         //    return userRowViewModels;
         //}
     }

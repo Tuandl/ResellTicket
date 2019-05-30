@@ -42,6 +42,7 @@ export const findUserByIdRequest = (id) => {
     return dispatch => {
         return callApiWithToken(`api/user/${id}`, 'GET', null).then(res => {
             //console.log(res.data);
+            res.data.isActive += '';    //Convert isActive into string -> map with select box
             dispatch(findUserById(res.data));           
         });
     }

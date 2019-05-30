@@ -11,6 +11,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/user")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -27,7 +28,6 @@ namespace WebAPI.Admin.Controllers
         /// <param name="param"></param>
         /// <returns>Return List admins</returns>
         /// <response code="200">Return List users</response>
-        [Authorize()] //Roles = "Manager"
         [HttpGet]
         public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
             var userRowViewModels = _userService.GetUsers(orderBy, param); 
@@ -43,7 +43,6 @@ namespace WebAPI.Admin.Controllers
         /// <response code="200">Success</response>
         /// <response code="400">Missing Parameter</response>
         /// <response code="404">Not found User</response>
-        [Authorize()] //Roles = "Manager"
         [HttpGet("{id}")]
         public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
         { //Lấy all admin users
@@ -79,7 +78,6 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Create Error</response>
         [HttpPost]
         [Route("")]
-        [Authorize()]
         public async Task<ActionResult> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
         {
             if (!ModelState.IsValid)
@@ -97,5 +95,34 @@ namespace WebAPI.Admin.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Update UserAdmin
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Return nothing if update success</returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Invalid Request</response>
+        /// <response code="406">Update Error</response>
+        [HttpPut]
+        [Route("")]
+        public ActionResult UpdateUser(UserUpdateViewModel model)  
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var updateResult = _userService.UpdateUser(model);
+
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+
+            return Ok();
+        }
+
+
     }
 }
