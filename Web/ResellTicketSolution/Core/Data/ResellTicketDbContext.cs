@@ -15,6 +15,13 @@ namespace Core.Data
         //Register Models
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
+        public virtual DbSet<City> Cities { get; set; }
+        public virtual DbSet<RouteTicket> RouteTickets { get; set; }
+        public virtual DbSet<Station> Stations { get; set; }
+
+        public virtual DbSet<TransportationCategory> TransportationCategories { get; set; }
+
+        public virtual DbSet<Transportation> Transportations { get; set; }
 
         /// <summary>
         /// Config Models using Fluent API
@@ -25,6 +32,11 @@ namespace Core.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CustomerMap());
             modelBuilder.ApplyConfiguration(new TicketMap());
+            modelBuilder.ApplyConfiguration(new CityMap());
+            modelBuilder.ApplyConfiguration(new RouteTicketMap());
+            modelBuilder.ApplyConfiguration(new StationMap());
+            modelBuilder.ApplyConfiguration(new TransportationCategoryMap());
+            modelBuilder.ApplyConfiguration(new TransportationMap());
         }
     }
 }
