@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as Config from './../constants/Config';
 
-export function callApiWithNoneToken(endpoint, method, body){
+export function callApiWithNoneToken(endpoint, method, body) {
     return axios({
         method: method,
         url: `${Config.API_URL}/${endpoint}`,
@@ -11,7 +11,7 @@ export function callApiWithNoneToken(endpoint, method, body){
     });
 };
 
-export function callApiLogin(endpoint, method, username, password){
+export function callApiLogin(endpoint, method, username, password) {
     return axios({
         method: method,
         url: `${Config.API_URL}/${endpoint}`,
@@ -22,7 +22,7 @@ export function callApiLogin(endpoint, method, username, password){
     })
 };
 
-export function callApiWithToken(endpoint, method, body){
+export function callApiWithToken(endpoint, method, body) {
     //axios.defaults.headers.common['Authorization'] = 'Bearer ' + token;
     return axios({
         method: method,
@@ -32,7 +32,5 @@ export function callApiWithToken(endpoint, method, body){
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + localStorage.getItem('userToken')
         }
-    }).catch(err => {
-        console.log(err);
-    });
+    })
 };

@@ -68,7 +68,7 @@ class User extends Component {
                                         </tr>
                                         <tr>
                                             <td>Fullname</td>
-                                            <td><strong>{user.fullName}</strong></td>
+                                        <td><strong>{user.fullName}</strong></td>
                                         </tr>
                                         <tr>
                                             <td>Email</td>

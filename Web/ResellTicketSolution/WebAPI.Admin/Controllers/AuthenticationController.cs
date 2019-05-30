@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Service.Services;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;
@@ -17,7 +18,7 @@ namespace WebAPI.Admin.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IOptions<AuthSetting> AUTH_SETTING; //?
+        private readonly IOptions<AuthSetting> AUTH_SETTING;  //?
         private readonly IAuthenticationService _authenticationService;
         private readonly IUserService _userService;
 
@@ -44,20 +45,20 @@ namespace WebAPI.Admin.Controllers
         [Route("checkLogin")]
         public async Task<IActionResult> CheckLogin(LoginViewModel model) //object truyền từ client tự động map với object tham số 
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
-            
+
             var user = await _authenticationService.CheckLoginAsync(model);
 
-            if(user == null)
+            if (user == null)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
             }
 
             //AUTH_SETTING.Value: tự sinh value?
-            var token = user.BuildToken(AUTH_SETTING.Value); 
+            var token = user.BuildToken(AUTH_SETTING.Value);
             return Ok(token);
         }
 
@@ -74,15 +75,24 @@ namespace WebAPI.Admin.Controllers
         [Authorize()]
         public async Task<ActionResult<UserRowViewModel>> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
         {
-            if (!ModelState.IsValid) 
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
+            //var userName = model.UserName;
+            //var email = model.Email;
+            //var phone = model.PhoneNumber;
+            //var password = model.Password;
+            //if (!Regex.IsMatch(phone, "[0][0-9]{9}"))
+            //{
+            //    return StatusCode((int)HttpStatusCode.NotAcceptable, "Phone number is not correct");
+            //}
+
             //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp dòng 82
-            var errors = await _userService.CreateUserAsync(model); 
-           
-            if(errors.Any())
+            var errors = await _userService.CreateUserAsync(model);
+
+            if (errors.Any())
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, errors);
             }

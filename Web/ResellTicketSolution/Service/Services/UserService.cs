@@ -70,13 +70,13 @@ namespace Service.Services
                 //Lấy user có FullName like param hoặc UserName like param và sắp xếp decs theo UserName
                 users = _userRepository
                     .GetAllQueryable()
-                    .Where(u => u.FullName.Contains(param) || u.UserName.Contains(param))
+                    .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
                     .OrderByDescending(u => u.UserName).ToList();
             }
             else //Lấy user có FullName like param hoặc UserName like param và sắp xếp asc theo UserName
             {
                 users = _userRepository.GetAllQueryable()
-                    .Where(u => u.FullName.Contains(param) || u.UserName.Contains(param))
+                    .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
                     .OrderBy(u => u.UserName).ToList();
             }
             //Map từ Model qua ViewModel
