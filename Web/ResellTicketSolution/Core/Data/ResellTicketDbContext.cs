@@ -1,5 +1,6 @@
 ﻿using Core.Models;
 using Core.Models.Map;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,12 @@ namespace Core.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CustomerMap());
             modelBuilder.ApplyConfiguration(new TicketMap());
+
+            modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogin");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim");
+            modelBuilder.Entity<IdentityRole>().ToTable("Role");
         }
     }
 }
