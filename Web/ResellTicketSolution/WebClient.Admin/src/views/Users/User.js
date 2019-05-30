@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Card, CardBody, CardHeader, Col, Row, Table } from 'reactstrap';
 import { connect } from 'react-redux';
+import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { findUserByIdRequest } from "./../../action/UserAdminAction";
-
-// import usersData from './UsersData'
 
 class User extends Component {
 
@@ -16,8 +14,11 @@ class User extends Component {
                 fullName: '',
                 email: '',
                 phoneNumber: '',
+                isActive: 'true',
             }
         }
+
+        this.handleOnChanged = this.handleOnChanged.bind(this);
     }
 
     componentWillMount() {
@@ -35,55 +36,127 @@ class User extends Component {
         })
     }
 
+    getRoleOptions() {
+        if (this.state.roles) {
+            this.state.roles.map((role, index) => {
+                return (
+                    <option key={index} value={role.id}>{role.name}</option>
+                );
+            });
+        } else {
+            return null;
+        }
+    }
+
+    handleOnChanged(e) {
+        const { id, value } = e.target;
+        this.setState({
+            user: {
+                ...this.state.user,
+                [id]: value
+            },
+        });
+    }
+
+    onBtnSaveChangesClicked() {
+
+    }
+
+    onBtnCancleClicked() {
+
+    }
+
     render() {
+        var { user } = this.state;
 
-        // const user = usersData.find( user => user.id.toString() === this.props.match.params.id)
+        var roleOptions = this.getRoleOptions();
 
-        // const userDetails = user ? Object.entries(user) : [['id', (<span><i className="text-muted icon-ban"></i> Not found</span>)]]
-        var {user} = this.state;
+        console.log(this.state);
+
         return (
             <div className="animated fadeIn">
-                <Row>
-                    <Col lg={6}>
-                        <Card>
-                            <CardHeader>
-                                <strong><i className="icon-info pr-1"></i>User Details</strong>
-                            </CardHeader>
-                            <CardBody>
-                                <Table responsive striped hover>
-                                    <tbody>
-                                        {/* {
-                                            userDetails.map(([key, value]) => {
-                                                return (
-                                                    <tr key={key}>
-                                                        <td>{`${key}:`}</td>
-                                                        <td><strong>{value}</strong></td>
-                                                    </tr>
-                                                )
-                                            })
-                                        } */}
-                                        <tr>
-                                            <td>Username</td>
-                                            <td><strong>{user.userName}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Fullname</td>
-                                            <td><strong>{user.fullName}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Email</td>
-                                            <td><strong>{user.email}</strong></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Phone</td>
-                                            <td><strong>{user.phoneNumber}</strong></td>
-                                        </tr>
-                                    </tbody>
-                                </Table>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
+                <Card>
+                    <CardHeader>
+                        <strong><i className="icon-info pr-1"></i>User Detail</strong>
+                    </CardHeader>
+                    <CardBody>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="userName">Username</Label>
+                                    <Input type="text" id="userName" 
+                                        placeholder="Enter Username..." disabled 
+                                        value={user.userName} 
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="fullName">Full Name</Label>
+                                    <Input type="text" id="fullName" 
+                                        placeholder="Enter Full Name..." disabled 
+                                        value={user.fullName} 
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input type="email" id="email" 
+                                        placeholder="Enter email..." disabled 
+                                        value={user.email} 
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                                    <Input type="text" id="phoneNumber" 
+                                        placeholder="Enter Phone number..." disabled 
+                                        value={user.phoneNumber} 
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="isActive">Status</Label>
+                                    <Input type="select" id="isActive" 
+                                        value={user.isActive} 
+                                        onChange={this.handleOnChanged}
+                                    >
+                                        <option value={true}>Active</option>
+                                        <option value={false}>Inactive</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="roleId">Role</Label>
+                                    <Input type="select" id="roleId" 
+                                        value={user.roleId}  
+                                        onChange={this.handleOnChanged}
+                                    >
+                                        {roleOptions}
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row className="float-right">
+                            <Col xs="12">
+                                <Button type="button" color="primary" onClick={this.onBtnSaveChangesClicked}>Save changes</Button>
+                                <Button color="secondary" className="ml-1" onClick={this.onBtnCancleClicked}>Cancel</Button>
+                            </Col>
+                        </Row>
+                    </CardBody>
+                </Card>
             </div>
         )
     }
