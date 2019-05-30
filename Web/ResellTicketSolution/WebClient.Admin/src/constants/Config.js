@@ -1,1 +1,1 @@
-export const API_URL = 'http://api.admin.resellticket.local';
+export const API_URL = 'http://localhost:58102';
