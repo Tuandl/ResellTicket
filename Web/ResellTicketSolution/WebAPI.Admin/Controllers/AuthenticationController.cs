@@ -58,44 +58,5 @@ namespace WebAPI.Admin.Controllers
             var token = user.BuildToken(AUTH_SETTING.Value); 
             return Ok(token);
         }
-
-        /// <summary>
-        /// Register API for User Admin
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns>Return nothing if create success</returns>
-        /// <response code="200">Success</response>
-        /// <response code="400">Invalid Request</response>
-        /// <response code="406">Create Error</response>
-        [HttpPost]
-        [Route("register")]
-        [Authorize()]
-        public async Task<ActionResult<UserRowViewModel>> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest("Invalid Request");
-            }
-
-            //var userName = model.UserName;
-            //var email = model.Email;
-            //var phone = model.PhoneNumber;
-            //var password = model.Password;
-            //if (!Regex.IsMatch(phone, "[0][0-9]{9}"))
-            //{
-            //    return StatusCode((int)HttpStatusCode.NotAcceptable, "Phone number is not correct");
-            //}
-
-            //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp dòng 82
-            var errors = await _userService.CreateUserAsync(model);
-
-            if (errors.Any())
-            {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, errors);
-            }
-            var userRowViewModel = await _userService.getUserByUserName(model.UserName);
-
-            return userRowViewModel;
-        }
     }
 }

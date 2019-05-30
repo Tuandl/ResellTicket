@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { findUserByIdRequest } from "./../../action/UserAdminAction";
+import Axios from 'axios';
+import { toastr } from 'react-redux-toastr'
 
 class User extends Component {
 
@@ -19,6 +21,8 @@ class User extends Component {
         }
 
         this.handleOnChanged = this.handleOnChanged.bind(this);
+        this.onBtnSaveChangesClicked = this.onBtnSaveChangesClicked.bind(this);
+        this.onBtnCancleClicked = this.onBtnCancleClicked.bind(this);
     }
 
     componentWillMount() {
@@ -36,15 +40,30 @@ class User extends Component {
         })
     }
 
+    componentDidMount() {
+        this.getRoles();
+    }
+
+    async getRoles() {
+        try {
+            var roleResponse = await Axios.get('api/role');
+            this.setState({
+                roles: roleResponse.data.data,
+            });
+        } catch(error) {
+            toastr.error('Error', 'Error on Load Roles Data');
+        }
+    }
+
     getRoleOptions() {
         if (this.state.roles) {
-            this.state.roles.map((role, index) => {
+            return this.state.roles.map((role, index) => {
                 return (
                     <option key={index} value={role.id}>{role.name}</option>
                 );
             });
         } else {
-            return null;
+            return [];
         }
     }
 
@@ -59,11 +78,11 @@ class User extends Component {
     }
 
     onBtnSaveChangesClicked() {
-
+        
     }
 
     onBtnCancleClicked() {
-
+        this.props.history.push('/users');
     }
 
     render() {

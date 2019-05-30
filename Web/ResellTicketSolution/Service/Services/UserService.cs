@@ -63,7 +63,10 @@ namespace Service.Services
 
             //Get role of user
             var userRole = _userRoleRepository.Get(x => x.UserId == userId);
-            userRowViewModel.RoleName = userRole.RoleId;
+            if(userRole != null)
+            {
+                userRowViewModel.RoleName = userRole.RoleId;
+            }
 
             return userRowViewModel;
         }
