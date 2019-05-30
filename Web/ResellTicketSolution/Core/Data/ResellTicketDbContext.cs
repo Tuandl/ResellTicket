@@ -17,6 +17,11 @@ namespace Core.Data
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Payout> Payouts { get; set; }
+        public virtual DbSet<OTP> OTPs { get; set; }
+        public virtual DbSet<CreditCard> CreditCards { get; set; }
+        public virtual DbSet<Refund> Refunds { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<Route> Routes { get; set; }
 
         /// <summary>
         /// Config Models using Fluent API
