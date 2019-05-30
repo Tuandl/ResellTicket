@@ -44,7 +44,7 @@ class Register extends Component {
         });
     }
 
-    handleSubmit = (event) => {
+    handleSubmit = async (event) => {
         event.preventDefault();
         const { user, confirmPassword } = this.state;
         if (user.userName && user.password && user.email && confirmPassword) {
@@ -145,7 +145,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch, props) => {
     return {
-        onRegister: (user) => {
+        onRegister: async (user) => {
             dispatch(doRegisterRequest(user));
         }
     }

@@ -17,9 +17,15 @@ export const doRegister = (newUser) => {
     }
 }
 
-export const getUsersRequest = () => {
+export const getUsersRequest = (param) => {
     return dispatch => {
-        return callApiWithToken('api/user', 'GET', null).then(res => {
+        var url = null;
+        if(param) {
+            url = 'api/user?param=' + param;
+        } else {
+            url = 'api/user'
+        }
+        return callApiWithToken(url, 'GET', null).then(res => {
             dispatch(getUsers(res.data));           
         });
     }

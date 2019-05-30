@@ -66,7 +66,7 @@ namespace WebAPI.Admin
         {
             //if (env.IsDevelopment())
             //{
-            app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage(); 
             //}
 
             app.UseCors("AllowAnyOrigins");

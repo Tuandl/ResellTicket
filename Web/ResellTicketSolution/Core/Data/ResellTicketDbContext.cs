@@ -16,6 +16,13 @@ namespace Core.Data
         //Register Models
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
+        public virtual DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<Payout> Payouts { get; set; }
+        public virtual DbSet<OTP> OTPs { get; set; }
+        public virtual DbSet<CreditCard> CreditCards { get; set; }
+        public virtual DbSet<Refund> Refunds { get; set; }
+        public virtual DbSet<Payment> Payments { get; set; }
+        public virtual DbSet<Route> Routes { get; set; }
 
         /// <summary>
         /// Config Models using Fluent API
@@ -26,6 +33,8 @@ namespace Core.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CustomerMap());
             modelBuilder.ApplyConfiguration(new TicketMap());
+            modelBuilder.ApplyConfiguration(new NotificationMap());
+            modelBuilder.ApplyConfiguration(new PayoutMap());
 
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");

@@ -32,6 +32,7 @@ namespace WebAPI.Admin.Controllers
         public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
             var userRowViewModels = _userService.GetUsers(orderBy, param); 
             return userRowViewModels; 
+            
         }
 
         /// <summary>
