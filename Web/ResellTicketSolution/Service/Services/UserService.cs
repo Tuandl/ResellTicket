@@ -24,16 +24,19 @@ namespace Service.Services
     {
         private readonly UserManager<User> _userManager; //thư viện Identity của microsoft
         private readonly IUserRepository _userRepository;
+        private readonly IUserRoleRepository _userRoleRepository;
         private readonly IMapper _mapper;
 
         public UserService(
                 UserManager<User> userManager, //inject userManager, thư viện của Microsoft
                 IUserRepository userRepository, //inject userRepository
+                IUserRoleRepository userRoleRepository,
                 IMapper mapper                  // inject mapper để map giữa ViewModel và Model
             )
         {
             _userManager = userManager;
             _userRepository = userRepository;
+            _userRoleRepository = userRoleRepository;
             _mapper = mapper;
         }
 
@@ -57,6 +60,11 @@ namespace Service.Services
         {
             var user = await _userManager.FindByIdAsync(userId);
             var userRowViewModel = _mapper.Map<User, UserRowViewModel>(user);
+
+            //Get role of user
+            var userRole = _userRoleRepository.Get(x => x.UserId == userId);
+            userRowViewModel.RoleName = userRole.RoleId;
+
             return userRowViewModel;
         }
 
