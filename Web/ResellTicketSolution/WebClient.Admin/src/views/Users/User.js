@@ -1,9 +1,9 @@
+import Axios from 'axios';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { findUserByIdRequest } from "./../../action/UserAdminAction";
-import Axios from 'axios';
-import { toastr } from 'react-redux-toastr'
 
 class User extends Component {
 
@@ -28,13 +28,11 @@ class User extends Component {
     componentWillMount() {
         var { match } = this.props;
         var userId = match.params.id;
-        console.log(userId);
         this.props.findUserById(userId);
     }
 
     componentWillReceiveProps(props) {
         var { user } = props;
-        console.log(user);
         this.setState({
             user: user
         })
@@ -81,13 +79,11 @@ class User extends Component {
         let data = this.state.user;
 
         toastr.info('Infomation', 'Please wait while we processing your request.');
-        try {
-            var updateResponse = await Axios.put('api/user', data);
-            console.log('Update Response', updateResponse);
+        var updateResponse = await Axios.put('api/user', data);
+        if(updateResponse.status === 200) {
             toastr.success('Update Success', 'User has been updated successfully.');
             this.props.history.push('/users');
-        } catch(err) {
-            console.log('Update User Error', err);
+        } else {
             toastr.error('Error', 'Error when update User');
         }
     }
@@ -100,8 +96,6 @@ class User extends Component {
         var { user } = this.state;
 
         var roleOptions = this.getRoleOptions();
-
-        console.log(this.state);
 
         return (
             <div className="animated fadeIn">

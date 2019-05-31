@@ -1,9 +1,7 @@
+import Axios from 'axios';
 import React, { Component } from 'react';
-import { Button, Card, CardBody, Col, Container, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from 'reactstrap';
-import { connect } from 'react-redux';
-import { history} from './../../../helper/history';
-//import { Link } from 'react-router-dom';
-import { doRegisterRequest } from "./../../../action/UserAdminAction";
+import { toastr } from 'react-redux-toastr';
+import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 class Register extends Component {
     constructor(props) {
@@ -12,143 +10,171 @@ class Register extends Component {
         this.state = {
             user: {
                 userName: '',
-                password: '',               
+                password: '',
                 email: '',
                 phoneNumber: '',
-                fullName: ''
+                fullName: '',
+                isActive: 'true',
             },
-            confirmPassword: '',
-            isCreated: false
+            roles: [],
         };
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleSubmit = this.handleSubmit.bind(this);
+
+        this.handleOnChanged = this.handleOnChanged.bind(this);
+        this.onBtnCreateClicked = this.onBtnCreateClicked.bind(this);
+        this.onBtnCancleClicked = this.onBtnCancleClicked.bind(this);
     }
 
-    componentWillMount() {
-        //console.log(this.props.match);
+    componentDidMount() {
+        this.getRoles();
     }
 
-    componentWillReceiveProps(props) {
-        history.goBack();
+    async getRoles() {
+        try {
+            var roleResponse = await Axios.get('api/role');
+            this.setState({
+                roles: roleResponse.data.data,
+                user: {
+                    ...this.state.user,
+                    roleId: roleResponse.data.data[0].id,
+                },
+            });
+        } catch(error) {
+            toastr.error('Error', 'Error on Load Roles Data');
+        }
     }
 
-    handleChange = (event) => {
-        const { name, value } = event.target;
-        const { user } = this.state;
+    getRoleOptions() {
+        if (this.state.roles) {
+            return this.state.roles.map((role, index) => {
+                return (
+                    <option key={index} value={role.id}>{role.name}</option>
+                );
+            });
+        } else {
+            return [];
+        }
+    }
+
+    handleOnChanged = (event) => {
+        const { id, value } = event.target;
         this.setState({
             user: {
-                ...user,      
-                [name]: value   
+                ...this.state.user,
+                [id]: value
             },
-            [name] : value
         });
     }
 
-    handleSubmit = async (event) => {
-        event.preventDefault();
-        const { user, confirmPassword } = this.state;
-        if (user.userName && user.password && user.email && confirmPassword) {
-            if(user.password === confirmPassword) {
-                this.props.onRegister(user);
-            }
+    onBtnCancleClicked() {
+        this.props.history.push('/users');
+    }
+
+    async onBtnCreateClicked() {
+        let data = this.state.user;
+
+        toastr.info('Infomation', 'Please wait while we processing your request.');
+        var updateResponse = await Axios.post('api/user', data);
+        if(updateResponse.status === 200) {
+            toastr.success('Create Success', 'User has been created successfully.');
+            this.props.history.push('/users');
+        } else {
+            toastr.error('Error', 'Error when create User');
         }
-        // 
-        // history.push('/users');
     }
 
     render() {
 
-        const { user, confirmPassword } = this.state;
+        const { user } = this.state;
+
+        const roleOptions = this.getRoleOptions();
 
         return (
-            // <div className="app flex-row align-items-center">
-            <Container>
-                <Row className="justify-content-center">
-                    <Col md="9" lg="7" xl="6">
-                        <Card className="mx-4">
-                            <CardBody className="p-4">
-                                <Form name="form" onSubmit={this.handleSubmit}>
-                                    <h1>Create New User</h1>
-                                    <InputGroup className="mb-3">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="icon-user"></i>
-                                            </InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="text" placeholder="Username" value={user.userName} name="userName" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <InputGroup className="mb-3">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="icon-user"></i>
-                                            </InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="text" placeholder="Fullname" value={user.fullName} name="fullName" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <InputGroup className="mb-3">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>@</InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="text" placeholder="Email" value={user.email} name="email" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <InputGroup className="mb-3">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="icon-phone"></i>
-                                            </InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="text" placeholder="Phone Number" value={user.phoneNumber} name="phoneNumber" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <InputGroup className="mb-3">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="icon-lock"></i>
-                                            </InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="password" placeholder="Password" value={user.password} name="password" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <InputGroup className="mb-4">
-                                        <InputGroupAddon addonType="prepend">
-                                            <InputGroupText>
-                                                <i className="icon-lock"></i>
-                                            </InputGroupText>
-                                        </InputGroupAddon>
-                                        <Input type="password" placeholder="Repeat password" value={confirmPassword} name="confirmPassword" onChange={this.handleChange} />
-                                    </InputGroup>
-                                    <Button color="success" type="submit" block>Create User</Button>
-                                </Form>
-                            </CardBody>
-                            {/* <CardFooter className="p-4">
-                  <Row>
-                    <Col xs="12" sm="6">
-                      <Button className="btn-facebook mb-1" block><span>facebook</span></Button>
-                    </Col>
-                    <Col xs="12" sm="6">
-                      <Button className="btn-twitter mb-1" block><span>twitter</span></Button>
-                    </Col>
-                  </Row>
-                </CardFooter> */}
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
-            // </div>
+            <div className="animated fadeIn">
+                <Card>
+                    <CardHeader>
+                        <strong><i className="icon-info pr-1"></i>User Detail</strong>
+                    </CardHeader>
+                    <CardBody>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="userName">Username</Label>
+                                    <Input type="text" id="userName"
+                                        placeholder="Enter Username..." 
+                                        value={user.userName}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="fullName">Full Name</Label>
+                                    <Input type="text" id="fullName"
+                                        placeholder="Enter Full Name..." 
+                                        value={user.fullName}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input type="email" id="email"
+                                        placeholder="Enter email..." 
+                                        value={user.email}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                                    <Input type="text" id="phoneNumber"
+                                        placeholder="Enter Phone number..." 
+                                        value={user.phoneNumber}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="isActive">Status</Label>
+                                    <Input type="select" id="isActive"
+                                        value={user.isActive}
+                                        onChange={this.handleOnChanged}
+                                    >
+                                        <option value={true}>Active</option>
+                                        <option value={false}>Inactive</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="roleId">Role</Label>
+                                    <Input type="select" id="roleId"
+                                        value={user.roleId}
+                                        onChange={this.handleOnChanged}
+                                    >
+                                        {roleOptions}
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row className="float-right">
+                            <Col xs="12">
+                                <Button type="button" color="primary" onClick={this.onBtnCreateClicked}>Save changes</Button>
+                                <Button color="secondary" className="ml-1" onClick={this.onBtnCancleClicked}>Cancel</Button>
+                            </Col>
+                        </Row>
+                    </CardBody>
+                </Card>
+            </div>
         );
     }
 }
 
-const mapStateToProps = state => {
-    return {    
-        users : state.users,
-    }
-}
-
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        onRegister: async (user) => {
-            dispatch(doRegisterRequest(user));
-        }
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default Register;

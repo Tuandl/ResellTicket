@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardBody, CardHeader, Col, Row, Table, Button, Container, Form, Input, InputGroup } from 'reactstrap';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import { getUsersRequest } from "./../../action/UserAdminAction";
 
 // import usersData from './UsersData'
@@ -10,13 +10,17 @@ function UserRow(props) {
     const user = props.user
     const userLink = `/user/${user.id}`
 
-    // const getBadge = (status) => {
-    //     return status === 'Active' ? 'success' :
-    //         status === 'Inactive' ? 'secondary' :
-    //             status === 'Pending' ? 'warning' :
-    //                 status === 'Banned' ? 'danger' :
-    //                     'primary'
-    // }
+    const getBadge = (isActive) => {
+        if (isActive === true) {
+            return (
+                <Badge color="success">Active</Badge>
+            )
+        } else {
+            return (
+                <Badge color="danger">Inactive</Badge>
+            )
+        }
+    }
 
     return (
         <tr key={user.id.toString()}>
@@ -25,7 +29,8 @@ function UserRow(props) {
             <td>{user.fullName}</td>
             <td>{user.email}</td>
             <td>{user.phoneNumber}</td>
-            <td>Manager</td>
+            <td>{user.roleId}</td>
+            <td>{getBadge(user.isActive)}</td>
             <td>
                 <Link to={userLink}>
                     <Button color="danger">
@@ -43,7 +48,7 @@ class Users extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchValue : ''
+            searchValue: ''
         }
     }
 
@@ -57,9 +62,9 @@ class Users extends Component {
     }
 
     onChange = (event) => {
-        var {name, value} = event.target;
+        var { name, value } = event.target;
         this.setState({
-            [name] : value
+            [name]: value
         })
     }
 
@@ -71,55 +76,54 @@ class Users extends Component {
     render() {
         //var {users} = this.props;
         const userList = this.props.users;
-        var {searchValue} = this.state;
+        var { searchValue } = this.state;
         return (
-            <Container>
-                <div className="animated fadeIn">
-                    <Row>
-                        <Col xl={12}>
-                            <Card>
-                                <CardHeader>
-                                    <Link to='/register'>
-                                        <Button className="text-right" color="primary">
-                                            <i className="fa fa-plus fa-lg mr-1"></i>Create User
+            <div className="animated fadeIn">
+                <Row>
+                    <Col xl={12}>
+                        <Card>
+                            <CardHeader>
+                                <Link to='/register'>
+                                    <Button className="text-right" color="primary">
+                                        <i className="fa fa-plus fa-lg mr-1"></i>Create User
                                         </Button>
-                                    </Link>
-                                    <Form className="text-right mr-2" onSubmit={this.onSubmit}>
-                                        <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Username or Fullname" 
-                                                    name="searchValue" value={searchValue} onChange={this.onChange}/>
-                                            <Button color="primary">
-                                                <i className="fa fa-search fa-lg mr-1"></i>Search User
+                                </Link>
+                                <Form className="text-right mr-2" onSubmit={this.onSubmit}>
+                                    <InputGroup>
+                                        <Input type="text" className="mr-2" placeholder="Username or Fullname"
+                                            name="searchValue" value={searchValue} onChange={this.onChange} />
+                                        <Button color="primary">
+                                            <i className="fa fa-search fa-lg mr-1"></i>Search User
                                                 </Button>
-                                        </InputGroup>
-                                    </Form>
+                                    </InputGroup>
+                                </Form>
 
-                                </CardHeader>
-                                <CardBody>
-                                    <Table responsive hover>
-                                        <thead>
-                                            <tr>
-                                                <th>No.</th>
-                                                <th>Username</th>
-                                                <th>Fullname</th>
-                                                <th>Email</th>
-                                                <th>Phone</th>
-                                                <th>Role</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {userList.map((user, index) =>
-                                                <UserRow key={index} user={user} index={index} />
-                                            )}
-                                        </tbody>
-                                    </Table>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
-                </div>
-            </Container>
+                            </CardHeader>
+                            <CardBody>
+                                <Table responsive hover>
+                                    <thead>
+                                        <tr>
+                                            <th>No.</th>
+                                            <th>Username</th>
+                                            <th>Fullname</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {userList.map((user, index) =>
+                                            <UserRow key={index} user={user} index={index} />
+                                        )}
+                                    </tbody>
+                                </Table>
+                            </CardBody>
+                        </Card>
+                    </Col>
+                </Row>
+            </div>
         )
     }
 }

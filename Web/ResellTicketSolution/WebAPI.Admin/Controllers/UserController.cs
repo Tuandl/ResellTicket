@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Service.Services;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ViewModel.AppSetting;
 using ViewModel.ViewModel.User;
 
 namespace WebAPI.Admin.Controllers
@@ -14,10 +16,13 @@ namespace WebAPI.Admin.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
+        private readonly IOptions<AuthSetting> AUTH_SETTING;
         private readonly IUserService _userService;
 
-        public UserController(IUserService userService) //inject userService 
+        public UserController(IUserService userService,
+            IOptions<AuthSetting> authSetting) //inject userService 
         {
+            AUTH_SETTING = authSetting;
             _userService = userService;
         }
 
@@ -60,14 +65,6 @@ namespace WebAPI.Admin.Controllers
             return userRowViewModel;
         }
 
-        //[Authorize()] //Roles = "Manager"
-        //[HttpGet("search")]
-        //public ActionResult<IEnumerable<UserRowViewModel>> GetUsersByFullName(string param)
-        //{ //Lấy all admin users
-        //    var userRowViewModels = _userService.GetUsersByFullNameOrUserName(param);
-        //    return userRowViewModels;
-        //}
-
         /// <summary>
         /// Register API for User Admin
         /// </summary>
@@ -85,8 +82,14 @@ namespace WebAPI.Admin.Controllers
                 return BadRequest("Invalid Request");
             }
 
+            string defaultPassword = "123123";
+            if(!string.IsNullOrEmpty(AUTH_SETTING.Value.DefaultPassword))
+            {
+                defaultPassword = AUTH_SETTING.Value.DefaultPassword;
+            }
+
             //await: đợi xử lý xong CreateUserAsync(model) function mới chạy tiếp
-            var errors = await _userService.CreateUserAsync(model);
+            var errors = await _userService.CreateUserAsync(model, defaultPassword);
 
             if (errors.Any())
             {
@@ -106,14 +109,14 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Update Error</response>
         [HttpPut]
         [Route("")]
-        public ActionResult UpdateUser(UserUpdateViewModel model)  
+        public async Task<ActionResult> UpdateUser(UserUpdateViewModel model)  
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var updateResult = _userService.UpdateUser(model);
+            var updateResult = await _userService.UpdateUser(model);
 
             if (!string.IsNullOrEmpty(updateResult))
             {

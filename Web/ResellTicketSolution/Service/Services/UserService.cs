@@ -13,7 +13,7 @@ namespace Service.Services
 {
     public interface IUserService
     {
-        Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model);
+        Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model, string defaultPassword);
         List<UserRowViewModel> GetUsers(string orderBy, string param);
         Task<UserRowViewModel> getUserByUserName(string userName);
 
@@ -26,7 +26,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="model"></param>
         /// <returns>Empty string if success</returns>
-        string UpdateUser(UserUpdateViewModel model);
+        Task<string> UpdateUser(UserUpdateViewModel model);
     }
 
     public class UserService : IUserService
@@ -53,10 +53,15 @@ namespace Service.Services
         }
 
         //Hàm tạo user dùng thư viện userManager
-        public async Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model)
+        public async Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model, string defaultPassword)
         {
             var user = _mapper.Map<UserRegisterViewModel, User>(model); //map từ ViewModel qua Model
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, defaultPassword);
+
+            if(result.Succeeded)
+            {
+                result = await _userManager.AddToRoleAsync(user, model.RoleId);
+            }
             
             return result.Errors;
         }
@@ -104,10 +109,21 @@ namespace Service.Services
             }
             //Map từ Model qua ViewModel
             var userRowViewModels = _mapper.Map<List<User>, List<UserRowViewModel>>(users);
+
+            //Get Role for users
+            foreach (var userRow in userRowViewModels)
+            {
+                var userRole = _userRoleRepository.Get(x => x.UserId == userRow.Id);
+                if(userRole != null)
+                {
+                    userRow.RoleId = userRole.RoleId;
+                }
+            }
+
             return userRowViewModels;
         }
 
-        public string UpdateUser(UserUpdateViewModel model)
+        public async Task<string> UpdateUser(UserUpdateViewModel model)
         {
             var existedUser = _userRepository.Get(x => x.Id == model.Id);
             if(existedUser == null)
@@ -118,26 +134,6 @@ namespace Service.Services
             //Update IsActive
             existedUser.IsActive = model.IsActive;
             _userRepository.Update(existedUser);
-            
-            //Update Role
-            var userRole = _userRoleRepository.Get(x => x.UserId == model.Id);
-            if(userRole == null)
-            {
-                //create role for user
-                userRole = new IdentityUserRole<string>
-                {
-                    UserId = model.Id,
-                    RoleId = model.RoleId,
-                };
-                _userRoleRepository.Add(userRole);
-            }
-            else
-            {
-                //Update Role for user
-                userRole.RoleId = model.RoleId;
-                _userRoleRepository.Update(userRole);
-            }
-
             try
             {
                 //push into database
@@ -148,16 +144,22 @@ namespace Service.Services
                 return ex.Message;
             }
 
+            //If user is not assigned to this role yet
+            existedUser = await _userManager.FindByIdAsync(model.Id);
+            if (await _userManager.IsInRoleAsync(existedUser, model.RoleId) == false)
+            {
+                //remove existed role
+                var roles = await _userManager.GetRolesAsync(existedUser);
+                if(roles != null)
+                {
+                    await _userManager.RemoveFromRolesAsync(existedUser, roles);
+                }
+
+                //Update Role
+                await _userManager.AddToRoleAsync(existedUser, model.RoleId);
+            }
+
             return string.Empty;
         }
-
-        //public List<UserRowViewModel> GetUsersByFullNameOrUserName(string param) //get users by 
-        //{
-        //    var users = _userRepository.GetAllQueryable() 
-        //                .Where(u => u.FullName.Contains(param) || u.UserName.Contains(param)).ToList();
-        //    var userRowViewModels = _mapper.Map<List<User>, List<UserRowViewModel>>(users);
-
-        //    return userRowViewModels;
-        //}
     }
 }
