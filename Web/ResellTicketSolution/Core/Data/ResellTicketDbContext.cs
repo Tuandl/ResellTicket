@@ -34,11 +34,6 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new TicketMap());
             modelBuilder.ApplyConfiguration(new NotificationMap());
             modelBuilder.ApplyConfiguration(new PayoutMap());
-            modelBuilder.ApplyConfiguration(new OTPMap());
-            modelBuilder.ApplyConfiguration(new CreditCardMap());
-            modelBuilder.ApplyConfiguration(new RefundMap());
-            modelBuilder.ApplyConfiguration(new PaymentMap());
-            modelBuilder.ApplyConfiguration(new RouteMap());
         }
     }
 }

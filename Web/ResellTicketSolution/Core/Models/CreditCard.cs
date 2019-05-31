@@ -13,6 +13,9 @@ namespace Core.Models
         public string Last4DigitsHash { get; set; }
         public string ExpiredYearHash { get; set; }
         public string ExpiredMonthHash { get; set; }
-        
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpadtedAt { get; set; }
+        public bool Deleted { get; set; }
+
     }
 }
