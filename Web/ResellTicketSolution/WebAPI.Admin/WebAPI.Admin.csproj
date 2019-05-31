@@ -14,6 +14,11 @@
     <AspNetCoreModuleName>AspNetCoreModule</AspNetCoreModuleName>
     <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <DeployOnBuild>true</DeployOnBuild>
+    <PublishProfile>DeployAPIAdmin</PublishProfile>
+  </PropertyGroup>
  
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.0" />
@@ -30,5 +35,10 @@
     <ProjectReference Include="..\Service\Service.csproj" />
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
+
+  <Target Name="AfterBuild">
+    <MSBuild Condition="'$(DeployOnBuild)'=='true' AND '$(PublishProfile)'!=''" Projects="$(MSBuildProjectFullPath)"
+             Properties="DeployOnBuild=true;PublishProfile=$(PublishProfile);BuildingInsideVisualStudio=False"/>
+  </Target>
 
 </Project>

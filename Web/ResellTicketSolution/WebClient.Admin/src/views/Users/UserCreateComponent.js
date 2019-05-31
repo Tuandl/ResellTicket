@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
-class Register extends Component {
+class UserCreateComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -177,4 +177,4 @@ class Register extends Component {
     }
 }
 
-export default Register;
+export default UserCreateComponent;

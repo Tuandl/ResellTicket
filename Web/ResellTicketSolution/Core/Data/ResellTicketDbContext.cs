@@ -1,5 +1,6 @@
 ﻿using Core.Models;
 using Core.Models.Map;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +51,12 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new PaymentMap());
             modelBuilder.ApplyConfiguration(new RouteMap());
 
+
+            modelBuilder.Entity<User>().ToTable("User");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogin");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim");
+            modelBuilder.Entity<IdentityRole>().ToTable("Role");
         }
     }
 }

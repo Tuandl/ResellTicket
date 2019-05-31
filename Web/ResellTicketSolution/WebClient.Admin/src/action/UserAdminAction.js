@@ -3,7 +3,7 @@ import * as ActionType from '../constants/ActionTypes';
 
 export const doRegisterRequest = (user) => {
     return dispatch => {
-        return callApiWithToken('api/token/register', 'POST', user, null).then(res => {
+        return callApiWithToken('api/user', 'POST', user, null).then(res => {
             console.log(res.data);
             dispatch(doRegister(res.data));
         })
@@ -40,8 +40,9 @@ export const getUsers = (users) => {
 
 export const findUserByIdRequest = (id) => {
     return dispatch => {
-        return callApiWithToken(`api/user/id?id=${id}`, 'GET', null).then(res => {
+        return callApiWithToken(`api/user/${id}`, 'GET', null).then(res => {
             //console.log(res.data);
+            res.data.isActive += '';    //Convert isActive into string -> map with select box
             dispatch(findUserById(res.data));           
         });
     }
