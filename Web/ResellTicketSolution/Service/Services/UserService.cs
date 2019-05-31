@@ -9,7 +9,7 @@ using ViewModel.ViewModel.User;
 namespace Service.Services
 {
     public interface IUserService
-    {
+    { 
         Task<IEnumerable<IdentityError>> CreateUserAsync(UserViewModel model);
     }
 
