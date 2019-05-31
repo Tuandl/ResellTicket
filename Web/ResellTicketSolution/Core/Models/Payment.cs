@@ -10,7 +10,6 @@ namespace Core.Models
         public int CreditCartId { get; set; }
         public int RouteId { get; set; }
         public int TourId { get; set; }
-        public DateTime CreatedAt { get; set; }
         public decimal Amount { get; set; }
         public decimal FeeAmount { get; set; }
         public int Status { get; set; }
