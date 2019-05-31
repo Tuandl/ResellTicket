@@ -1,5 +1,4 @@
-﻿using System;
-using Core.Infrastructure;
+﻿using Core.Infrastructure;
 
 namespace Core.Models
 {

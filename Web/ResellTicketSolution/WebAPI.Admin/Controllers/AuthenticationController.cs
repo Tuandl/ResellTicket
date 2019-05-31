@@ -4,7 +4,6 @@ using Microsoft.Extensions.Options;
 using Service.Services;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;

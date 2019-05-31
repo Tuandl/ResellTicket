@@ -4,8 +4,6 @@ namespace Core.Models
 {
     public class RouteTicket : EntityBase
     {
-        public int Id { get; set; }
-
         public int RouteId { get; set; }
 
         public int TicketId { get; set; }

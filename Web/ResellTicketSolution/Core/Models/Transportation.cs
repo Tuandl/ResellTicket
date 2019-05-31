@@ -4,8 +4,6 @@ namespace Core.Models
 {
     public class Transportation : EntityBase
     {
-        public int Id { get; set; }
-
         public int TransportationCategoryId { get; set; }
 
         public string Name { get; set; }

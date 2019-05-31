@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Core.Infrastructure;
+﻿using Core.Infrastructure;
 
 namespace Core.Models
 {

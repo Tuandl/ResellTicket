@@ -7,10 +7,6 @@ namespace Core.Models
     {
         public string TicketCode { get; set; }
         
-        public int Id { get; set; }
-
-        //public DateTime CreatedAt { get; set; }
-
         public int TransportationId { get; set; }
 
         public int DepartureId { get; set; }
