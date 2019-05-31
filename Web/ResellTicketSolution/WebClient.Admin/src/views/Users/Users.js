@@ -83,7 +83,7 @@ class Users extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                <Link to='/register'>
+                                <Link to='/user/add'>
                                     <Button className="text-right" color="primary">
                                         <i className="fa fa-plus fa-lg mr-1"></i>Create User
                                         </Button>

@@ -66,7 +66,7 @@ class Register extends Component {
     }
 
     onBtnCancleClicked() {
-        this.props.history.push('/users');
+        this.props.history.push('/user');
     }
 
     async onBtnCreateClicked() {
@@ -76,7 +76,7 @@ class Register extends Component {
         var updateResponse = await Axios.post('api/user', data);
         if(updateResponse.status === 200) {
             toastr.success('Create Success', 'User has been created successfully.');
-            this.props.history.push('/users');
+            this.props.history.push('/user');
         } else {
             toastr.error('Error', 'Error when create User');
         }

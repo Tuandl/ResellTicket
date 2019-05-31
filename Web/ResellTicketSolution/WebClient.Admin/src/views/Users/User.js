@@ -82,14 +82,14 @@ class User extends Component {
         var updateResponse = await Axios.put('api/user', data);
         if(updateResponse.status === 200) {
             toastr.success('Update Success', 'User has been updated successfully.');
-            this.props.history.push('/users');
+            this.props.history.push('/user');
         } else {
             toastr.error('Error', 'Error when update User');
         }
     }
 
     onBtnCancleClicked() {
-        this.props.history.push('/users');
+        this.props.history.push('/user');
     }
 
     render() {

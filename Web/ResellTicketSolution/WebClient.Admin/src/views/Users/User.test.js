@@ -7,7 +7,7 @@ import User from './User';
 it('renders without crashing', () => {
   const wrapper = mount(
     <MemoryRouter>
-      <User match={{params: {id: "1"}, isExact: true, path: "/users/:id", name: "User details"}}/>
+      <User match={{params: {id: "1"}, isExact: true, path: "/user/:id", name: "User details"}}/>
     </MemoryRouter>
   );
   expect(wrapper.containsMatchingElement(<strong>Samppa Nori</strong>)).toEqual(true)

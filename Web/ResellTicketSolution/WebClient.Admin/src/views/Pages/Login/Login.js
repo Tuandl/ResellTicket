@@ -43,7 +43,7 @@ class Login extends Component {
 
     render() {
         if(this.state.isRedirect) {
-            return <Redirect to="/users"/>
+            return <Redirect to="/user"/>
         }
 
         const { txtUsername, txtPassword } = this.state;
