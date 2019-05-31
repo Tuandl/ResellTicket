@@ -146,6 +146,7 @@ namespace Service.Services
 
             //If user is not assigned to this role yet
             existedUser = await _userManager.FindByIdAsync(model.Id);
+            //so sánh existedUser normal name có bằng model.RoleId ko
             if (await _userManager.IsInRoleAsync(existedUser, model.RoleId) == false)
             {
                 //remove existed role
