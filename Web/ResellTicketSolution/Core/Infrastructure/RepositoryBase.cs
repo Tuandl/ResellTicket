@@ -9,12 +9,15 @@ namespace Core.Infrastructure
 {
     public class RepositoryBase<T> : IRepository<T> where T : class
     {
-        private ResellTicketDbContext _dbContext;
+        private ResellTicketDbContext _dbContext; 
         private readonly DbSet<T> _dbSet;
         
         protected IDatabaseFactory DataBaseFactory { get; private set; }
-        protected ResellTicketDbContext DbContext { get => _dbContext ?? (_dbContext = DataBaseFactory.Get()); }
+        protected ResellTicketDbContext DbContext {
+            get => _dbContext ?? (_dbContext = DataBaseFactory.Get());
+        }
 
+        //Sao không inject dbContext vào?
         public RepositoryBase(IDatabaseFactory databaseFactory)
         {
             DataBaseFactory = databaseFactory;

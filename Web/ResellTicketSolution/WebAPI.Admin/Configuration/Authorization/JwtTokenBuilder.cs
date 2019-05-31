@@ -16,9 +16,12 @@ namespace WebAPI.Admin.Configuration.Authorization
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                //Jti: JTW token id là 1 unique id, đảm bảo cái token ko bị ăn cắp 
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
             }; //payload
+
 
             //Chuyển chuỗi authSetting.Secret thành 1 mảng bytes rồi encoding(mã hóa) nó theo chuẩn UTF8
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSetting.Secret)); //where header?

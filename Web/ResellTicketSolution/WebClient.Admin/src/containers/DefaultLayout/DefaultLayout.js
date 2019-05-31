@@ -37,7 +37,7 @@ class DefaultLayout extends Component {
     return (
       <div className="app">
         <AppHeader fixed>
-          <Suspense  fallback={this.loading()}>
+          <Suspense fallback={this.loading()}>
             <DefaultHeader onLogout={e=>this.signOut(e)}/>
           </Suspense>
         </AppHeader>
@@ -64,11 +64,12 @@ class DefaultLayout extends Component {
                         exact={route.exact}
                         name={route.name}
                         render={props => (
-                          <route.component {...props} />
-                        )} />
+                          <route.component {...props} 
+                          />)} 
+                        />
                     ) : (null);
                   })}
-                  <Redirect from="/" to="/dashboard" />
+                  <Redirect from="/" to="/login"/>
                 </Switch>
               </Suspense>
             </Container>

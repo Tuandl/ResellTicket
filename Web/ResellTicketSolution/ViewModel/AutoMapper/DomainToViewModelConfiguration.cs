@@ -8,7 +8,7 @@ namespace ViewModel.AutoMapper
     {
         public DomainToViewModelConfiguration()
         {
-            CreateMap<UserViewModel, User>();
+            CreateMap<User, UserRowViewModel>();
         }
     }
 }
