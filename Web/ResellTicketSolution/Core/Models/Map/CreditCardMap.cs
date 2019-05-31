@@ -8,6 +8,8 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<CreditCard> builder)
         {
             builder.HasKey(x=>x.Id);
+            
+            builder.ToTable("CreditCard");
         }
     }
 }

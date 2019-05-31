@@ -8,6 +8,8 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<Station> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder.ToTable("Station");
         }
     }
 }

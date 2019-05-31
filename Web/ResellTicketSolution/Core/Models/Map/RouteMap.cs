@@ -8,6 +8,8 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<Route> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder.ToTable("Route");
         }
     }
 }

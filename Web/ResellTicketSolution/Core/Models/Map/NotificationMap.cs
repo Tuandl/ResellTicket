@@ -8,6 +8,9 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder.ToTable("Notification");
+
         }
     }
 }
