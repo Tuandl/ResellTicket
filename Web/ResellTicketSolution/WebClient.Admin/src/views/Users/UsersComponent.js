@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
-import { getUsersRequest } from "./../../action/UserAdminAction";
+import { getUsersRequest } from "../../action/UserAdminAction";
 
 // import usersData from './UsersData'
 
@@ -44,7 +44,7 @@ function UserRow(props) {
     )
 }
 
-class Users extends Component {
+class UsersComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -145,4 +145,4 @@ const mapDispatchToProps = (dispatch, props) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users);
+export default connect(mapStateToProps, mapDispatchToProps)(UsersComponent);
