@@ -18,9 +18,9 @@ namespace WebAPI.Admin.Configuration.Authorization
             {
                 options.Password.RequireNonAlphanumeric = false; //ký tự đặt biệt 
                 options.Password.RequireUppercase = false;
-                options.Password.RequireDigit = true;
+                options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 6;
-                options.Password.RequireLowercase = true;
+                options.Password.RequireLowercase = false;
             })
             .AddEntityFrameworkStores<ResellTicketDbContext>() // public virtual DbSet<Ticket> Name { get; set; }
             .AddDefaultTokenProviders(); //

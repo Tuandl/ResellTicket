@@ -11,5 +11,7 @@
         public int AccessExpiration { get; set; }
 
         public int RefreshExpiration { get; set; }
+
+        public string DefaultPassword { get; set; }
     }
 }

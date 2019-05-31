@@ -12,6 +12,9 @@ namespace Core.Repository
     {
         public UserRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
         {
+
         }
+
+
     }
 }
