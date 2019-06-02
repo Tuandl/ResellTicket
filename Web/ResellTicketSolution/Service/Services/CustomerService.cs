@@ -40,6 +40,9 @@ namespace Service.Services
             || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
             {
                 customer.PasswordHash = HashPassword(customer.PasswordHash);
+                customer.CreatedAt = DateTime.UtcNow;
+                customer.UpdatedAt = DateTime.UtcNow;
+                customer.IsActive = true;
                 _customerRepository.Add(customer);
                 _unitOfWork.CommitChanges();
                 

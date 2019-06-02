@@ -29,9 +29,10 @@ namespace Service.Services
 
         public Customer CheckCustomerLogin(LoginViewModel loginViewModel)
         {
-            var customer =  _customerRepository.Get(x => (x.Username.EndsWith(loginViewModel.Username) ||
-                                                x.PhoneNumber.EndsWith(loginViewModel.Username)) && 
-                                                x.PasswordHash.EndsWith(loginViewModel.Password));
+            var customer =  _customerRepository.Get(x => (x.Username.Equals(loginViewModel.Username) ||
+                                                x.PhoneNumber.Equals(loginViewModel.Username)) &&
+                                                x.PasswordHash.Equals(loginViewModel.Password) && 
+                                                x.IsActive == true && x.Deleted == false );
             if (customer == null)
             {
                 return null;
