@@ -25,7 +25,9 @@ const store = createStore(
 ReactDOM.render(
     <Provider store={store}>
         <App />
-        <ReduxToastr/>
+        <ReduxToastr
+            timeOut={3000}
+        />
     </Provider>, 
     document.getElementById('root')
 );  
