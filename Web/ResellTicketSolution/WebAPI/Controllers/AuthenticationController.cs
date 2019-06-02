@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
+using System.Net;
 using ViewModel.ViewModel.Authentication;
 
 namespace WebAPI.Controllers
@@ -10,12 +11,15 @@ namespace WebAPI.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
+        private readonly ICustomerService _customerService;
 
         public AuthenticationController(
-            IAuthenticationService authenticationService
+            IAuthenticationService authenticationService,
+            ICustomerService customerService
             )
         {
             _authenticationService = authenticationService;
+            _customerService = customerService;
         }
 
         [AllowAnonymous]
@@ -34,6 +38,30 @@ namespace WebAPI.Controllers
             //}
 
             return BadRequest("Invalid Request");
+        }
+
+        [HttpPost]
+        [Route("customer")]
+        public IActionResult CheckCustomerLogin(LoginViewModel loginViewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            //Call Service asynchronous to check login
+            loginViewModel.Password = _customerService.HashPassword(loginViewModel.Password);
+            var customer = _authenticationService.CheckCustomerLogin(loginViewModel);
+
+            if (customer == null)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
+            }
+
+            customer.PasswordHash = null;
+
+            //Get Value from appSetting.json
+            return Ok(customer);
         }
     }
 }

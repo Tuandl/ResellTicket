@@ -57,5 +57,7 @@ namespace WebAPI.Admin.Controllers
             var token = user.BuildToken(AUTH_SETTING.Value); 
             return Ok(token);
         }
+
+        
     }
 }

@@ -7,8 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ViewModel.AppSetting;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ViewModel.ViewModel.User;
 
 namespace WebAPI.Admin.Controllers
