@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DeployOnBuild>true</DeployOnBuild>
+    <DeployOnBuild>false</DeployOnBuild>
     <PublishProfile>DeployAPIAdmin</PublishProfile>
   </PropertyGroup>
  
