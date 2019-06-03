@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Service.Services;
 using System.Net;
+using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;
+using WebAPI.Configuration.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -12,14 +15,17 @@ namespace WebAPI.Controllers
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly ICustomerService _customerService;
+        private readonly IOptions<AuthSetting> AUTH_SETTING;
 
         public AuthenticationController(
             IAuthenticationService authenticationService,
-            ICustomerService customerService
+            ICustomerService customerService,
+            IOptions<AuthSetting> options
             )
         {
             _authenticationService = authenticationService;
             _customerService = customerService;
+            AUTH_SETTING = options;
         }
 
         [AllowAnonymous]
@@ -50,7 +56,6 @@ namespace WebAPI.Controllers
             }
 
             //Call Service asynchronous to check login
-            loginViewModel.Password = _customerService.HashPassword(loginViewModel.Password);
             var customer = _authenticationService.CheckCustomerLogin(loginViewModel);
 
             if (customer == null)
@@ -61,7 +66,8 @@ namespace WebAPI.Controllers
             customer.PasswordHash = null;
 
             //Get Value from appSetting.json
-            return Ok(customer);
+            var token = customer.BuildToken(AUTH_SETTING.Value);
+            return Ok(token);
         }
     }
 }

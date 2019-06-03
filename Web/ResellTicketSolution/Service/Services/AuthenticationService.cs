@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using ViewModel.ViewModel.Authentication;
 using Core.Repository;
+using System.Text;
 using AutoMapper;
 using ViewModel.ViewModel.Customer;
+using System;
 
 namespace Service.Services
 {
@@ -19,11 +21,16 @@ namespace Service.Services
     {
         private readonly UserManager<User> _userManager; //Thư viên Identity của microsoft
         private readonly ICustomerRepository _customerRepository;
-        
-        public AuthenticationService(UserManager<User> userManager, ICustomerRepository customerRepository)
+        private readonly ICustomerService _customerService;
+
+
+        public AuthenticationService(UserManager<User> userManager,
+                                    ICustomerRepository customerRepository,
+                                    ICustomerService customerService)
         {
             _userManager = userManager;
             _customerRepository = customerRepository;
+            _customerService = customerService;
             
         }
 
@@ -31,7 +38,7 @@ namespace Service.Services
         {
             var customer =  _customerRepository.Get(x => (x.Username.Equals(loginViewModel.Username) ||
                                                 x.PhoneNumber.Equals(loginViewModel.Username)) &&
-                                                x.PasswordHash.Equals(loginViewModel.Password) && 
+                                                x.PasswordHash.Equals( _customerService.HashPassword(loginViewModel.Password, Convert.FromBase64String(x.SaltPasswordHash))) && 
                                                 x.IsActive == true && x.Deleted == false );
             if (customer == null)
             {
