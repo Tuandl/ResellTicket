@@ -50,7 +50,6 @@ namespace WebAPI.Controllers
             }
 
             //Call Service asynchronous to check login
-            loginViewModel.Password = _customerService.HashPassword(loginViewModel.Password);
             var customer = _authenticationService.CheckCustomerLogin(loginViewModel);
 
             if (customer == null)
