@@ -11,6 +11,7 @@ class Login extends Component {
             txtUsername: '',
             txtPassword: '',
             isRedirect: false,
+            userRole: '',
         };
     }
 
@@ -33,17 +34,34 @@ class Login extends Component {
             let loginResponse = await Axios.post('api/token/checklogin', data);
             localStorage.setItem('userToken', loginResponse.data);
             Axios.defaults.headers.common['Authorization'] = `bearer ${loginResponse.data}`;
+            var jwt = require('jwt-decode');
+            var decode = jwt(loginResponse.data);
             this.setState({
                 isRedirect: true,
+                userRole : decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
             });
         } catch(ex) {
             toastr.error('Login Failed', 'Incorrect Username or Password!');
         }
     }
 
+    componentWillMount() {
+        var token = localStorage.getItem('userToken');
+        if(token !== null && token !== '') {
+            var jwt = require('jwt-decode');
+            var decode = jwt(token);
+            this.setState({
+                isRedirect: true,
+                userRole : decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+            });
+        }
+    }
+
     render() {
-        if(this.state.isRedirect) {
+        if(this.state.isRedirect && this.state.userRole === 'Manager') {
             return <Redirect to="/user"/>
+        } else if(this.state.isRedirect && this.state.userRole === 'Staff') {
+            return <Redirect to="/newPostedTicket"/>
         }
 
         const { txtUsername, txtPassword } = this.state;

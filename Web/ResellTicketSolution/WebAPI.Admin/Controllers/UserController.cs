@@ -13,7 +13,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Manager")]
     public class UserController : ControllerBase
     {
         private readonly IOptions<AuthSetting> AUTH_SETTING;
