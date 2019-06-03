@@ -10,10 +10,48 @@ export default {
       },
     },
     {
-      name: 'User Management',
+      title: true,
+      name: 'MANAGER',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
+      name: 'User',
       url: '/user',
       icon: 'icon-user'
     },
+    {
+      name: 'Customer',
+      url: '/user',
+      icon: 'icon-user'
+    },
+    {
+      name: 'City',
+      url: '/user',
+      icon: 'icon-user'
+    },
+    {
+      name: 'Transportation',
+      url: '/user',
+      icon: 'icon-user'
+    },
+    {
+      title: true,
+      name: 'STAFF',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
+      name: 'New Posted Ticket',
+      url: '/newPostedTicket',
+      icon: 'icon-ticket'
+    }
     // {
     //   title: true,
     //   name: 'Theme',

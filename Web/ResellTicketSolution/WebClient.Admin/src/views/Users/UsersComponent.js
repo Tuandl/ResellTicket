@@ -48,17 +48,24 @@ class UsersComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchValue: ''
+            searchValue: '', 
+            userRole: ''
         }
     }
 
     componentWillMount() {
         var token = localStorage.getItem('userToken');
-        this.props.getUsers(token);
-    }
-
-    componentWillReceiveProps(props) {
-
+        var jwt = require('jwt-decode');
+        var decode = jwt(token);
+        var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        if(userRole === 'Manager') {
+            this.props.getUsers(token);
+        } else {
+            console.log(userRole);
+        }
+        this.setState({
+            userRole : userRole
+        })
     }
 
     onChange = (event) => {
@@ -76,9 +83,9 @@ class UsersComponent extends Component {
     render() {
         //var {users} = this.props;
         const userList = this.props.users;
-        var { searchValue } = this.state;
+        var { searchValue,userRole } = this.state;
         return (
-            <div className="animated fadeIn">
+            userRole === 'Manager' ? <div className="animated fadeIn">
                 <Row>
                     <Col xl={12}>
                         <Card>
@@ -123,7 +130,7 @@ class UsersComponent extends Component {
                         </Card>
                     </Col>
                 </Row>
-            </div>
+            </div> : ''
         )
     }
 }
