@@ -28,6 +28,7 @@ namespace Core.Infrastructure
             if(_dataContext == null)
             {
                 var dbOptionsBuilder = new DbContextOptionsBuilder<ResellTicketDbContext>();
+                dbOptionsBuilder.UseLazyLoadingProxies();
                 dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString(CONNECTION_NAME));
 
                 _dataContext = new ResellTicketDbContext(dbOptionsBuilder.Options);
@@ -41,6 +42,7 @@ namespace Core.Infrastructure
             _dataContext?.Dispose();
 
             var dbOptionsBuilder = new DbContextOptionsBuilder<ResellTicketDbContext>();
+            dbOptionsBuilder.UseLazyLoadingProxies();
             dbOptionsBuilder.UseSqlServer(_configuration.GetConnectionString(CONNECTION_NAME));
 
             _dataContext = new ResellTicketDbContext(dbOptionsBuilder.Options);
