@@ -24,5 +24,9 @@ namespace Core.Models
         public DateTime DepartureDate { get; set; }
 
         public DateTime ArrivalDate { get; set; }
+
+        public int CustomerId { get; set; }
+
+        public virtual Customer Customer { get; set; }
     }
 }

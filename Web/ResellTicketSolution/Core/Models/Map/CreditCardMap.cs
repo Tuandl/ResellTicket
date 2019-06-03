@@ -8,6 +8,10 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<CreditCard> builder)
         {
             builder.HasKey(x=>x.Id);
+
+            builder.HasOne(x => x.Customer) 
+                .WithMany(x => x.CreditCards)
+                .HasForeignKey(x => x.CustomerId);
             
             builder.ToTable("CreditCard");
         }

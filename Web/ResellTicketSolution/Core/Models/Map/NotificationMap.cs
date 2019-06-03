@@ -9,6 +9,10 @@ namespace Core.Models.Map
         {
             builder.HasKey(x => x.Id);
 
+            builder.HasOne(x => x.Customer)
+                .WithMany(x => x.Notifications)
+                .HasForeignKey(x => x.CustomerId);
+
             builder.ToTable("Notification");
 
         }
