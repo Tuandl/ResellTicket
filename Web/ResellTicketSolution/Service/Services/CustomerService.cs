@@ -14,7 +14,7 @@ namespace Service.Services
     public interface ICustomerService
     {
         bool CreateCustomer(CustomerRegisterViewModel model);
-        string HashPassword(string password);
+        string HashPassword(string password, byte[] salt);
 
 
     }
@@ -39,7 +39,14 @@ namespace Service.Services
             if(_customerRepository.Get(x => x.Username.EndsWith(model.Username)
             || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
             {
-                customer.PasswordHash = HashPassword(customer.PasswordHash);
+                byte[] salt = new byte[128 / 8];
+                using (var rng = RandomNumberGenerator.Create())
+                {
+                    rng.GetBytes(salt);
+                }
+                //Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+                customer.PasswordHash = HashPassword(customer.PasswordHash, salt);
+                customer.SaltPasswordHash = Convert.ToBase64String(salt);
                 customer.CreatedAt = DateTime.UtcNow;
                 customer.UpdatedAt = DateTime.UtcNow;
                 customer.IsActive = true;
@@ -51,16 +58,9 @@ namespace Service.Services
             return false;
         }
 
-        public string HashPassword(string password)
+        public string HashPassword(string password, byte[] salt)
         {
-            byte[] salt = new byte[128 / 8];
-            //int a = 123;
-            //using (var rng = RandomNumberGenerator.Create())
-            //{
-            //    rng.GetBytes(salt);
-            //}
-            //Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-
+            
             // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
