@@ -133,7 +133,16 @@ namespace Service.Services
 
             //Update IsActive
             existedUser.IsActive = model.IsActive;
-
+            _userRepository.Update(existedUser);
+            try
+            {
+                //push into database
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
             //If user is not assigned to this role yet
             existedUser = await _userManager.FindByIdAsync(model.Id);
             if (await _userManager.IsInRoleAsync(existedUser, model.RoleId) == false)
@@ -147,16 +156,6 @@ namespace Service.Services
 
                 //Update Role
                 await _userManager.AddToRoleAsync(existedUser, model.RoleId);
-            }
-            _userRepository.Update(existedUser);
-            try
-            {
-                //push into database
-                _unitOfWork.CommitChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
             }
 
             return string.Empty;
