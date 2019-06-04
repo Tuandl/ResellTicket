@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models;
+using ViewModel.ViewModel.Ticket;
 using ViewModel.ViewModel.User;
 
 namespace ViewModel.AutoMapper
@@ -9,6 +10,7 @@ namespace ViewModel.AutoMapper
         public DomainToViewModelConfiguration()
         {
             CreateMap<User, UserRowViewModel>();
+            CreateMap<Ticket, TicketRowViewModel>();
         }
     }
 }

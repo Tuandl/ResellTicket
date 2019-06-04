@@ -1,5 +1,6 @@
 ﻿using Core.Infrastructure;
 using System;
+using Core.Enum;
 
 namespace Core.Models
 {
@@ -13,7 +14,7 @@ namespace Core.Models
 
         public int DestinationId { get; set; }
 
-        public string Code { get; set; }
+        public TicketStatus Status { get; set; }
 
         public decimal Price { get; set; }
 
@@ -24,5 +25,7 @@ namespace Core.Models
         public DateTime DepartureDate { get; set; }
 
         public DateTime ArrivalDate { get; set; }
+
+        public int CustomerId { get; set; }
     }
 }

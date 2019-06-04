@@ -37,6 +37,8 @@ const Users = React.lazy(() => import('./views/Users/UsersComponent'));
 const UserView = React.lazy(() => import('./views/Users/UserViewComponent'));
 const UserCreate = React.lazy(() => import('./views/Users/UserCreateComponent'));
 const NewPostedTickets = React.lazy(() => import('./views/Tickets/NewPostedTickets'));
+const Customers = React.lazy(() => import('./views/Customers/CustomersComponent'));
+const CustomerView = React.lazy(() => import('./views/Customers/CustomerViewComponent'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -82,7 +84,10 @@ const routes = [
   { path: '/user', exact: true,  name: 'Users', component: Users },
   { path: '/user/add', exact: true, name: 'Register', component: UserCreate},
   { path: '/user/:id', name: 'User Details', component: UserView},
-  {path: '/newPostedTicket', name: 'New Posted Tickets', component: NewPostedTickets}
+  {path: '/newPostedTicket', name: 'New Posted Tickets', component: NewPostedTickets},
+  {path: '/customer', exact: true, name: 'Customers', component: Customers},
+  {path: '/customer/:id', name: 'Customer Details', component: CustomerView}
+
 ];
 
 export default routes;
