@@ -7,6 +7,8 @@ import {
     Dimensions,
 } from 'react-native';
 import { Input, Button, Icon } from 'react-native-elements';
+import Api from './../service/Api';
+import { RNToasty } from 'react-native-toasty';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -33,7 +35,7 @@ export default class RegisterScreen extends Component {
 
         this.validateUsername = this.validateUsername.bind(this);
         this.validateFullName = this.validateFullName.bind(this);
-        this.validatePhoneNo = this.validatePhoneNo.bind(this);
+        this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
         this.submitRegisterCredentials = this.submitRegisterCredentials.bind(this);
     }
 
@@ -61,23 +63,26 @@ export default class RegisterScreen extends Component {
         return isValid;
     }
 
-    validatePhoneNo(phoneNo) {
+    validatePhoneNumber(phoneNo) {
+        let isValid = true;
+
         if(!phoneNo) {
-            return false;
+            isValid = false;
         }
+        // else {
+        //     var regex = new RegExp(/\d[0-9]{9,12}/gm);
+        //     isValid = regex.test(phoneNo);
+        // }
 
-        var regex = new RegExp(/\d[0-9]{9,12}/gm);
-        const result = regex.test(phoneNo);
-        if(result) {
-            this.setState({
-                phoneNumber: phoneNo,
-            });
-        }
+        this.setState({
+            phoneNumber_valid: isValid,
+            phoneNumber: phoneNo,
+        });
 
-        return result;
+        return isValid;
     }
 
-    submitRegisterCredentials() {
+    async submitRegisterCredentials() {
         const { username, password, fullName, phoneNumber, email } = this.state;
 
         this.setState({
@@ -209,13 +214,45 @@ export default class RegisterScreen extends Component {
                                 ref={input => (this.fullNameInput = input)}
                                 onSubmitEditing={() => {
                                     this.validateFullName(fullName);
-                                    this.emailInput.focus();
+                                    this.phoneNumberInput.focus();
                                 }}
                                 blurOnSubmit={false}
                                 placeholderTextColor="white"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     fullName_valid ? null : 'Please enter a valid full name'
+                                }
+                            />
+                            <Input
+                                leftIcon={
+                                    <Icon
+                                        name="user-o"
+                                        type="font-awesome"
+                                        color="rgba(171, 189, 219, 1)"
+                                        size={25}
+                                    />
+                                }
+                                containerStyle={{ marginVertical: 10 }}
+                                onChangeText={phoneNumber => {this.setState({ phoneNumber: phoneNumber })}}
+                                value={phoneNumber}
+                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                keyboardAppearance="light"
+                                placeholder="Phone Number"
+                                autoFocus={false}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                keyboardType="number-pad"
+                                returnKeyType="next"
+                                ref={input => (this.phoneNumberInput = input)}
+                                onSubmitEditing={() => {
+                                    this.validatePhoneNumber(phoneNumber);
+                                    this.emailInput.focus();
+                                }}
+                                blurOnSubmit={false}
+                                placeholderTextColor="white"
+                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
+                                errorMessage={
+                                    phoneNumber_valid ? null : 'Please enter a valid phone number'
                                 }
                             />
                             <Input
@@ -303,7 +340,7 @@ const styles = StyleSheet.create({
         height: 600,
     },
     registerTitle: {
-        flex: 1,
+        flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -318,7 +355,7 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
     },
     registerInput: {
-        flex: 1,
+        flex: 0.7,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -70,
@@ -326,7 +363,7 @@ const styles = StyleSheet.create({
     },
     footerView: {
         marginTop: 0,
-        flex: 0.2,
+        flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
     },
