@@ -4,6 +4,7 @@ using Core.Models;
 using Core.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ViewModel.ViewModel.Customer;
 using System.Security.Cryptography;
@@ -15,17 +16,15 @@ namespace Service.Services
     {
         bool CreateCustomer(CustomerRegisterViewModel model);
         string HashPassword(string password);
-
-
+        List<CustomerRowViewModel> GetCutomers(string param);
+        CustomerRowViewModel FindCustomerById(int id);
+        string UpdateCustomerAuthen(CustomerRowViewModel model);
     }
     public class CustomerService : ICustomerService
     {
-        
         private readonly ICustomerRepository _customerRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-
-
         public CustomerService(ICustomerRepository customerRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _customerRepository = customerRepository;
@@ -36,8 +35,8 @@ namespace Service.Services
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Customer>(model); //map từ ViewModel qua Model
 
-            if(_customerRepository.Get(x => x.Username.EndsWith(model.Username)
-            || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
+            if (_customerRepository.Get(x => x.Username.EndsWith(model.Username)
+             || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
             {
                 customer.PasswordHash = HashPassword(customer.PasswordHash);
                 customer.CreatedAt = DateTime.UtcNow;
@@ -45,7 +44,7 @@ namespace Service.Services
                 customer.IsActive = true;
                 _customerRepository.Add(customer);
                 _unitOfWork.CommitChanges();
-                
+
                 return true;
             }
             return false;
@@ -71,24 +70,56 @@ namespace Service.Services
             return hashed;
         }
 
-        public Task<CustomerRowViewModel> FindCustomerById(string userId)
+        //string orderBy, string param
+        public List<CustomerRowViewModel> GetCutomers(string param)
         {
-            throw new NotImplementedException();
+            param = param ?? "";
+            var customers = _customerRepository.GetAllQueryable()
+                            .Where(x => x.Username.Contains(param)
+                            || x.FullName.ToLower().Contains(param.ToLower())
+                            || x.Email.ToLower().Contains(param.ToLower())
+                            || x.PhoneNumber.Contains(param)).ToList();
+            var customerRowViewModels = _mapper.Map<List<Customer>, List<CustomerRowViewModel>>(customers);
+            return customerRowViewModels;
         }
 
-        public List<CustomerRowViewModel> GetCutomers(string orderBy, string param)
+        public CustomerRowViewModel FindCustomerById(int id)
         {
-            throw new NotImplementedException();
+            var customer = _customerRepository.Get(x => x.Id == id);
+            var customerRowViewModel = _mapper.Map<Customer, CustomerRowViewModel>(customer);
+            return customerRowViewModel;
         }
 
-        public Task<CustomerRowViewModel> getUserByCustomerName(string userName)
+        public string UpdateCustomerAuthen(CustomerRowViewModel model)
         {
-            throw new NotImplementedException();
+            var existedCustomer = _customerRepository.Get(x => x.Id == model.Id);
+            if (existedCustomer == null)
+            {
+                return "Not found customer";
+            }
+
+            existedCustomer.IsActive = model.IsActive;
+            _customerRepository.Update(existedCustomer);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
         }
 
-        public Task<string> UpdateUser(CustomerUpdateViewModel model)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<CustomerRowViewModel> getUserByCustomerName(string userName)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public Task<string> UpdateUser(CustomerRowViewModel model)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

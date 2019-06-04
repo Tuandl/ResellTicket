@@ -15,8 +15,6 @@ namespace Service.Services
     {
         Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model, string defaultPassword);
         List<UserRowViewModel> GetUsers(string orderBy, string param);
-        Task<UserRowViewModel> getUserByUserName(string userName);
-
         Task<UserRowViewModel> FindUserById(string userId);
 
         //List<UserRowViewModel> GetUsersByFullNameOrUserName(string param);
@@ -27,6 +25,8 @@ namespace Service.Services
         /// <param name="model"></param>
         /// <returns>Empty string if success</returns>
         Task<string> UpdateUser(UserUpdateViewModel model);
+
+        Task<String> UpdateUserProfile(UserUpdateViewModel model);
     }
 
     public class UserService : IUserService
@@ -66,12 +66,12 @@ namespace Service.Services
             return result.Errors;
         }
 
-        public async Task<UserRowViewModel> getUserByUserName(string userName)
-        {
-            var user = await _userManager.FindByNameAsync(userName);
-            var userRowViewModel = _mapper.Map<User, UserRowViewModel>(user);
-            return userRowViewModel;
-        }
+        //public async Task<UserRowViewModel> getUserByUserName(string userName)
+        //{
+        //    var user = await _userManager.FindByNameAsync(userName);
+        //    var userRowViewModel = _mapper.Map<User, UserRowViewModel>(user);
+        //    return userRowViewModel;
+        //}
 
         public async Task<UserRowViewModel> FindUserById(string userId)
         {
@@ -133,16 +133,6 @@ namespace Service.Services
 
             //Update IsActive
             existedUser.IsActive = model.IsActive;
-            _userRepository.Update(existedUser);
-            try
-            {
-                //push into database
-                _unitOfWork.CommitChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
 
             //If user is not assigned to this role yet
             existedUser = await _userManager.FindByIdAsync(model.Id);
@@ -158,8 +148,23 @@ namespace Service.Services
                 //Update Role
                 await _userManager.AddToRoleAsync(existedUser, model.RoleId);
             }
+            _userRepository.Update(existedUser);
+            try
+            {
+                //push into database
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
 
             return string.Empty;
+        }
+
+        public Task<string> UpdateUserProfile(UserUpdateViewModel model)
+        {
+            throw new NotImplementedException();
         }
     }
 }

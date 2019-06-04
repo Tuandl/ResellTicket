@@ -5,7 +5,6 @@ namespace Core.Repository
 {
     public interface ICustomerRepository : IRepository<Customer>
     {
-
     }
 
     public class CustomerRepository : RepositoryBase<Customer>, ICustomerRepository

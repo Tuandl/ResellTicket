@@ -25,17 +25,17 @@ export default {
     },
     {
       name: 'Customer',
-      url: '/user',
-      icon: 'icon-user'
+      url: '/customer',
+      icon: 'icon-people'
     },
     {
       name: 'City',
-      url: '/user',
+      url: '/city',
       icon: 'icon-user'
     },
     {
       name: 'Transportation',
-      url: '/user',
+      url: '/transportation',
       icon: 'icon-user'
     },
     {
@@ -50,7 +50,7 @@ export default {
     {
       name: 'New Posted Ticket',
       url: '/newPostedTicket',
-      icon: 'icon-ticket'
+      icon: 'fa fa-ticket'
     }
     // {
     //   title: true,
