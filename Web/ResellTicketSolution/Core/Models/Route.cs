@@ -4,9 +4,12 @@ namespace Core.Models
 {
     public class Route : EntityBase
     {
-        public int CustomerId { get; set; }
         public string Code { get; set; }
         public decimal TotalAmount { get; set; }
         public int Status { get; set; }
+
+        public int CustomerId { get; set; }
+
+        public virtual Customer Customer { get; set; }
     }
 }

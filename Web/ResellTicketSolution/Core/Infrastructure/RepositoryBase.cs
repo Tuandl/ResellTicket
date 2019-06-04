@@ -47,12 +47,12 @@ namespace Core.Infrastructure
 
         public T Get(Expression<Func<T, bool>> where)
         {
-            return _dbSet.AsNoTracking().Where(where).FirstOrDefault();
+            return _dbSet.Where(where).FirstOrDefault();
         }
 
         public IEnumerable<T> GetAll()
         {
-            return _dbSet.AsNoTracking().ToList();
+            return _dbSet.ToList();
         }
 
         public IQueryable<T> GetAllQueryable()
@@ -62,12 +62,22 @@ namespace Core.Infrastructure
 
         public IEnumerable<T> GetMany(Expression<Func<T, bool>> where)
         {
-            return _dbSet.AsNoTracking().Where(where).ToList();
+            return _dbSet.Where(where).ToList();
         }
 
         public void Update(T entity)
         {
             if(entity.GetType().IsSubclassOf(typeof(EntityBase)))
+            {
+                (entity as EntityBase).UpdatedAt = DateTime.Now;
+            }
+
+            _dbSet.Update(entity);
+        }
+
+        public void UpdateNoTracking(T entity)
+        {
+            if (entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
                 (entity as EntityBase).UpdatedAt = DateTime.Now;
             }
