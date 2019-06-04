@@ -78,11 +78,39 @@ export default class RegisterScreen extends Component {
     }
 
     submitRegisterCredentials() {
-        const { showLoading } = this.state;
+        const { username, password, fullName, phoneNumber, email } = this.state;
 
         this.setState({
-            showLoading: !showLoading,
+            showLoading: true,
         });
+
+        const data = {
+            username: username,
+            passwordHash: password,
+            fullName: fullName,
+            phoneNumber: phoneNumber,
+            email: email,
+        };
+
+        try {
+            const response = await Api.post('api/customer', data);
+            if(response.status === 200) {
+                RNToasty.Success({
+                    title: 'Register successfully',
+                });
+                this.props.navigation.navigate('Login');
+            } else {
+                RNToasty.Error({
+                    title: 'Register Error',
+                });
+            }
+        } catch(err) {
+            console.error('Register error', err);
+        } finally {
+            this.setState({
+                showLoading: false,
+            });
+        }
     }
 
     render() {
