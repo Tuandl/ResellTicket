@@ -47,8 +47,11 @@ class CustomersComponent extends Component {
         this.state = {
             customers: [],
             isLogin: false,
-            userRole: ''
+            userRole: '', 
+            searchParam : '',
         }
+        this.onSearch = this.onSearch.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     componentWillMount() {
@@ -78,6 +81,24 @@ class CustomersComponent extends Component {
         })
     }
 
+    onChange(event) {
+        var {name, value} = event.target;
+        this.setState({
+            [name] : value
+        })
+    }
+
+    async onSearch(event) {
+        event.preventDefault();
+        //console.log(this.state.searchParam);
+        await Axios.get('api/customer?param=' + this.state.searchParam).then(res => {
+            console.log(res)
+            this.setState({
+                customers : res.data
+            })
+        });
+    }
+
     render() {
         var { customers } = this.state;
         return (
@@ -86,10 +107,10 @@ class CustomersComponent extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                <Form className="text-right mr-2" onSubmit={this.onSubmit}>
+                                <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                     <InputGroup>
                                         <Input type="text" className="mr-2" placeholder="Username or Fullname"
-                                        />
+                                        value={this.state.searchParam} name="searchParam" onChange={this.onChange}/>
                                         <Button color="primary">
                                             <i className="fa fa-search fa-lg mr-1"></i>Search Customer
                                         </Button>
