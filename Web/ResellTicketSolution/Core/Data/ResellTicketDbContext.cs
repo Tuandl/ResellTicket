@@ -19,7 +19,7 @@ namespace Core.Data
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<RouteTicket> RouteTickets { get; set; }
         public virtual DbSet<Station> Stations { get; set; }
-        public virtual DbSet<TransportationCategory> TransportationCategories { get; set; }
+        public virtual DbSet<Vehicle> Vehicles { get; set; }
         public virtual DbSet<Transportation> Transportations { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Payout> Payouts { get; set; }
@@ -41,7 +41,7 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new CityMap());
             modelBuilder.ApplyConfiguration(new RouteTicketMap());
             modelBuilder.ApplyConfiguration(new StationMap());
-            modelBuilder.ApplyConfiguration(new TransportationCategoryMap());
+            modelBuilder.ApplyConfiguration(new VehicleMap());
             modelBuilder.ApplyConfiguration(new TransportationMap());
             modelBuilder.ApplyConfiguration(new NotificationMap());
             modelBuilder.ApplyConfiguration(new PayoutMap());

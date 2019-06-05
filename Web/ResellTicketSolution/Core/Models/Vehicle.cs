@@ -2,7 +2,7 @@
 
 namespace Core.Models
 {
-    public class TransportationCategory : EntityBase
+    public class Vehicle : EntityBase
     {
         public string Name { get; set; }
     }

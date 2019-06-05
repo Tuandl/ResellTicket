@@ -99,13 +99,13 @@ namespace Service.Services
                 users = _userRepository
                     .GetAllQueryable()
                     .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
-                    .OrderByDescending(u => u.UserName).ToList();
+                    .OrderByDescending(u => u.UserName.ToLower()).ToList();
             }
             else //Lấy user có FullName like param hoặc UserName like param và sắp xếp asc theo UserName
             {
                 users = _userRepository.GetAllQueryable()
                     .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
-                    .OrderBy(u => u.UserName).ToList();
+                    .OrderBy(u => u.UserName.ToLower()).ToList();
             }
             //Map từ Model qua ViewModel
             var userRowViewModels = _mapper.Map<List<User>, List<UserRowViewModel>>(users);
