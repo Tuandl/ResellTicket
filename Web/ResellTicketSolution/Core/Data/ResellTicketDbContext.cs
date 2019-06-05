@@ -16,6 +16,7 @@ namespace Core.Data
         //Register Models
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Ticket> Tickets { get; set; }
+        public virtual DbSet<TicketType> TicketTypes { get; set; }
         public virtual DbSet<City> Cities { get; set; }
         public virtual DbSet<RouteTicket> RouteTickets { get; set; }
         public virtual DbSet<Station> Stations { get; set; }
@@ -50,6 +51,7 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new RefundMap());
             modelBuilder.ApplyConfiguration(new PaymentMap());
             modelBuilder.ApplyConfiguration(new RouteMap());
+            modelBuilder.ApplyConfiguration(new TicketTypeMap());
 
 
             modelBuilder.Entity<User>().ToTable("User");

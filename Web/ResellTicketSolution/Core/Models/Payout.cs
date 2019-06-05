@@ -9,6 +9,7 @@ namespace Core.Models
         public decimal Amount { get; set; }
         public decimal FeeAmount { get; set; }
         public bool Status { get; set; }
-
+        public virtual Ticket Ticket { get; set; }
+        public virtual CreditCard CreditCard { get; set; }
     }
 }

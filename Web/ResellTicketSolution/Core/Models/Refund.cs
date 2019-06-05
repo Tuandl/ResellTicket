@@ -7,6 +7,7 @@ namespace Core.Models
         public int PaymentId { get; set; }
         public decimal Amount { get; set; }
         public int Status { get; set; }
+        public virtual  Payment Payment { get; set; }
 
     }
 }

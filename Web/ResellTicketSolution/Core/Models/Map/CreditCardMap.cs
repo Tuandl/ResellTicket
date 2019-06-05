@@ -11,7 +11,8 @@ namespace Core.Models.Map
 
             builder.HasOne(x => x.Customer) 
                 .WithMany(x => x.CreditCards)
-                .HasForeignKey(x => x.CustomerId);
+                .HasForeignKey(x => x.CustomerId)
+                .OnDelete(DeleteBehavior.Restrict);
             
             builder.ToTable("CreditCard");
         }

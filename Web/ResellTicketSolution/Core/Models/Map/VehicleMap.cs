@@ -9,7 +9,6 @@ namespace Core.Models.Map
         {
             builder.HasKey(x => x.Id);
 
-
             builder.ToTable("Vehicle");
         }
     }
