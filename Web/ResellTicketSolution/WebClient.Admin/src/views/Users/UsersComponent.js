@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table,
+    Pagination, PaginationItem, PaginationLink, } from 'reactstrap';
 import { getUsersRequest } from "../../action/UserAdminAction";
 
 // import usersData from './UsersData'
@@ -48,24 +49,24 @@ class UsersComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchValue: '', 
+            searchValue: '',
             userRole: ''
         }
     }
 
     componentWillMount() {
         var token = localStorage.getItem('userToken');
-        if(!token) {
+        if (!token) {
             this.props.getUsers();
         }
         var jwt = require('jwt-decode');
         var decode = jwt(token);
         var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        if(userRole === 'Manager') {
+        if (userRole === 'Manager') {
             this.props.getUsers(token);
-        } 
+        }
         this.setState({
-            userRole : userRole
+            userRole: userRole
         })
     }
 
@@ -86,53 +87,63 @@ class UsersComponent extends Component {
         const userList = this.props.users;
         var { searchValue, userRole } = this.state;
         return (
-            userRole === 'Manager' ? 
-            <div className="animated fadeIn">
-                <Row>
-                    <Col xl={12}>
-                        <Card>
-                            <CardHeader>
-                                <Link to='/user/add'>
-                                    <Button className="text-right" color="primary">
-                                        <i className="fa fa-plus fa-lg mr-1"></i>Create User
+            userRole === 'Manager' ?
+                <div className="animated fadeIn">
+                    <Row>
+                        <Col xl={12}>
+                            <Card>
+                                <CardHeader>
+                                    <Link to='/user/add'>
+                                        <Button className="text-right" color="primary">
+                                            <i className="fa fa-plus fa-lg mr-1"></i>Create User
                                         </Button>
-                                </Link>
-                                <Form className="text-right mr-2" onSubmit={this.onSubmit}>
-                                    <InputGroup>
-                                        <Input type="text" className="mr-2" placeholder="Username or Fullname"
-                                            name="searchValue" value={searchValue} onChange={this.onChange} />
-                                        <Button color="primary">
-                                            <i className="fa fa-search fa-lg mr-1"></i>Search User
+                                    </Link>
+                                    <Form className="text-right mr-2" onSubmit={this.onSubmit}>
+                                        <InputGroup>
+                                            <Input type="text" className="mr-2" placeholder="Username or Fullname"
+                                                name="searchValue" value={searchValue} onChange={this.onChange} />
+                                            <Button color="primary">
+                                                <i className="fa fa-search fa-lg mr-1"></i>Search User
                                                 </Button>
-                                    </InputGroup>
-                                </Form>
+                                        </InputGroup>
+                                    </Form>
 
-                            </CardHeader>
-                            <CardBody>
-                                <Table responsive hover>
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Username</th>
-                                            <th>Fullname</th>
-                                            <th>Email</th>
-                                            <th>Phone</th>
-                                            <th>Role</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {userList.map((user, index) =>
-                                            <UserRow key={index} user={user} index={index} />
-                                        )}
-                                    </tbody>
-                                </Table>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div> : ''
+                                </CardHeader>
+                                <CardBody>
+                                    <Table responsive hover>
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Username</th>
+                                                <th>Fullname</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {userList.map((user, index) =>
+                                                <UserRow key={index} user={user} index={index} />
+                                            )}
+                                        </tbody>
+                                    </Table>
+                                    <Pagination>
+                                        <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
+                                        <PaginationItem active>
+                                            <PaginationLink tag="button">1</PaginationLink>
+                                        </PaginationItem>
+                                        <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
+                                        <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
+                                        <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
+                                        <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
+                                    </Pagination>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div> : ''
         )
     }
 }
