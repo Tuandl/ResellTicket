@@ -100,7 +100,7 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="userName">Username</Label>
                                     <Input type="text" id="userName"
-                                        placeholder="Enter Username..." 
+                                        placeholder="Enter Username..."
                                         value={user.userName}
                                         onChange={this.handleOnChanged}
                                     />
@@ -110,7 +110,7 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="fullName">Full Name</Label>
                                     <Input type="text" id="fullName"
-                                        placeholder="Enter Full Name..." 
+                                        placeholder="Enter Full Name..."
                                         value={user.fullName}
                                         onChange={this.handleOnChanged}
                                     />
@@ -122,7 +122,7 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="email">Email</Label>
                                     <Input type="email" id="email"
-                                        placeholder="Enter email..." 
+                                        placeholder="Enter email..."
                                         value={user.email}
                                         onChange={this.handleOnChanged}
                                     />
@@ -132,7 +132,7 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="phoneNumber">Phone Number</Label>
                                     <Input type="text" id="phoneNumber"
-                                        placeholder="Enter Phone number..." 
+                                        placeholder="Enter Phone number..."
                                         value={user.phoneNumber}
                                         onChange={this.handleOnChanged}
                                     />
