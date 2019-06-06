@@ -3,6 +3,7 @@ import { createAppContainer, createStackNavigator } from "react-navigation";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import HomeScreen from "./screens/HomeScreen";
+import ConfirmPhoneNumberRegisterScreen from "./screens/ConfirmPhoneNumberRegisterScreen";
 
 const MainRoot = createAppContainer(createStackNavigator(
     {
@@ -13,6 +14,10 @@ const MainRoot = createAppContainer(createStackNavigator(
         Register: {
             screen: RegisterScreen,
             path: 'register',
+        },
+        ConfirmPhoneNumberRegister: {
+            screen: ConfirmPhoneNumberRegisterScreen,
+            path: 'confirmPhoneRegister'
         },
         Home: {
             screen: HomeScreen,

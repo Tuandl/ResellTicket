@@ -1,65 +1,82 @@
 import React, { Component } from 'react';
-import { Dimensions, ImageBackground, StyleSheet, Text, View } from 'react-native';
-import { Button, Icon, Input } from 'react-native-elements';
+import {
+    StyleSheet,
+    Text,
+    View,
+    ImageBackground,
+    Dimensions,
+} from 'react-native';
+import { Input, Button, Icon } from 'react-native-elements';
 import Api from './../service/Api';
-import { RNToasty } from "react-native-toasty";
+import { RNToasty } from 'react-native-toasty';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../assets/images/bg_screen1.jpg');
 
-export default class LoginScreen extends Component {
+export default class ConfirmPhoneNumberRegisterScreen extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            username: '',
-            username_valid: true,
+            phoneNumber: '',
+            phoneNumber_valid: true,
             password: '',
             login_failed: false,
             showLoading: false,
         };
+
+        this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
+        this.submitRegisterCredentials = this.submitRegisterCredentials.bind(this);
     }
 
-    validateUsername(username) {
-        let valid = true
-        if(!username || username.length == 0) {
-            valid = false;
+    validatePhoneNumber(phoneNumber) {
+        let isValid = true;
+
+        if(!phoneNumber) {
+            isValid = false;
         }
+        // else {
+        //     var regex = new RegExp(/\d[0-9]{9,12}/gm);
+        //     isValid = regex.test(phoneNo);
+        // }
+
         this.setState({
-            username: username,
-            username_valid: valid,
+            phoneNumber_valid: isValid,
+            phoneNumber: phoneNumber
         });
-        return valid;
+
+        return isValid;
     }
 
-    async submitLoginCredentials() {
-        const { username, password } = this.state;
-
+    async submitRegisterCredentials() {
+        const { phoneNumber } = this.state;
+        console.log(this.state);
         this.setState({
             showLoading: true,
         });
 
         const data = {
-            username: username,
-            password: password,
+            phoneNumber: phoneNumber
         };
 
         try {
-            const response = await Api.post('api/Authentication/customer', data);
+            const response = await Api.post('api/customer/checkPhone', data);
+            
+            console.log("Phone number", phoneNumber)
             if(response.status === 200) {
                 RNToasty.Success({
-                    title: 'Login successfully',
+                    title: 'Phone number is valid',
                 });
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('Register');
             } else {
                 RNToasty.Error({
-                    title: 'Invalid Username or Password',
+                    title: 'Phone Number is existed',
                 });
             }
         } catch(err) {
-            console.error('login error', err);
+            console.error('Phone Number is existed', err);
         } finally {
             this.setState({
                 showLoading: false,
@@ -68,21 +85,18 @@ export default class LoginScreen extends Component {
     }
 
     render() {
-        const { username, password, username_valid, showLoading } = this.state;
+        const { showLoading, phoneNumber, phoneNumber_valid } = this.state;
 
         return (
             <View style={styles.container}>
                 <ImageBackground source={BG_IMAGE} style={styles.bgImage}>
-                    <View style={styles.loginView}>
-                        <View style={styles.loginTitle}>
+                    <View style={styles.registerView}>
+                        <View style={styles.registerTitle}>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={styles.travelText}>RESELL</Text>
-                            </View>
-                            <View style={{ marginTop: -10 }}>
-                                <Text style={styles.travelText}>TICKET</Text>
+                                <Text style={styles.travelText}>REGISTER</Text>
                             </View>
                         </View>
-                        <View style={styles.loginInput}>
+                        <View style={styles.registerInput}>
                             <Input
                                 leftIcon={
                                     <Icon
@@ -93,61 +107,36 @@ export default class LoginScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={username => this.setState({ username })}
-                                value={username}
+                                onChangeText={phoneNumber => {this.setState({ phoneNumber: phoneNumber })}}
+                                value={phoneNumber}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
-                                placeholder="Username"
+                                placeholder="Phone Number"
                                 autoFocus={false}
                                 autoCapitalize="none"
                                 autoCorrect={false}
-                                keyboardType="default"
+                                keyboardType="number-pad"
                                 returnKeyType="next"
-                                ref={input => (this.usernameInput = input)}
+                                ref={input => (this.phoneNumberInput = input)}
                                 onSubmitEditing={() => {
-                                    this.validateUsername(username);
-                                    this.passwordInput.focus();
+                                    this.validatePhoneNumber(phoneNumber);
                                 }}
                                 blurOnSubmit={false}
                                 placeholderTextColor="white"
-                                errorStyle={{ textAlign: 'center', fontSize: 12, color: 'red' }}
+                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
-                                    username_valid ? null : 'Please enter a valid username'
+                                    phoneNumber_valid ? null : 'Please enter a valid phone number'
                                 }
-                            />
-                            <Input
-                                leftIcon={
-                                    <Icon
-                                        name="lock"
-                                        type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
-                                        size={25}
-                                    />
-                                }
-                                containerStyle={{ marginVertical: 10 }}
-                                onChangeText={password => this.setState({ password })}
-                                value={password}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
-                                secureTextEntry={true}
-                                keyboardAppearance="light"
-                                placeholder="Password"
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                keyboardType="default"
-                                returnKeyType="done"
-                                ref={input => (this.passwordInput = input)}
-                                blurOnSubmit={true}
-                                placeholderTextColor="white"
                             />
                         </View>
                         <Button
-                            title="LOG IN"
+                            title="REGISTER"
                             activeOpacity={1}
                             underlayColor="transparent"
-                            onPress={this.submitLoginCredentials.bind(this)}
+                            onPress={this.submitRegisterCredentials}
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: 'white' }}
-                            disabled={!username_valid && password.length < 8}
+                            disabled={!phoneNumber_valid && phoneNumber.length < 11}
                             buttonStyle={{
                                 height: 50,
                                 width: 250,
@@ -160,16 +149,13 @@ export default class LoginScreen extends Component {
                             titleStyle={{ fontWeight: 'bold', color: 'white' }}
                         />
                         <View style={styles.footerView}>
-                            <Text style={{ color: 'grey' }}>New here?</Text>
                             <Button
-                                title="Create an Account"
+                                title="Login"
                                 type="clear"
                                 activeOpacity={0.5}
                                 titleStyle={{ color: 'white', fontSize: 15 }}
                                 containerStyle={{ marginTop: -5 }}
-                                onPress={() => {
-                                    this.props.navigation.navigate('ConfirmPhoneNumberRegister');
-                                }}
+                                onPress={() => this.props.navigation.navigate('Login')}
                             />
                         </View>
                     </View>
@@ -192,14 +178,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loginView: {
-        marginTop: SCREEN_HEIGHT / 6,
+    registerView: {
+        marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
-        height: 400,
+        height: 600,
     },
-    loginTitle: {
-        flex: 1,
+    registerTitle: {
+        flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -213,14 +199,16 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontFamily: 'regular',
     },
-    loginInput: {
-        flex: 1,
+    registerInput: {
+        flex: 0.7,
         justifyContent: 'center',
         alignItems: 'center',
+        marginTop: -70,
+
     },
     footerView: {
-        marginTop: 5,
-        flex: 0.5,
+        marginTop: 0,
+        flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
     },

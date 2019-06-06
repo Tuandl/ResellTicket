@@ -17,9 +17,11 @@ namespace WebAPI.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        private readonly IOTPService _oTPService;
+        public CustomerController(ICustomerService customerService, IOTPService oTPService)
         {
             _customerService = customerService;
+            _oTPService = oTPService;
         }
         [HttpPost]
         [Route("")]
@@ -38,6 +40,27 @@ namespace WebAPI.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Route("checkPhone")]
+        public IActionResult CheckPhoneNumber(CustomerCheckPhoneNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var customer = _customerService.CheckIsExistedPhoneNumber(model.PhoneNumber);
+
+            if (customer == false)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, "Phone number already exists");
+            }
+
+            var phoneNumberToView = _oTPService.CreatOTPWithEachPhone(model.PhoneNumber);
+
+            return Ok(phoneNumberToView);
         }
     }
 }
