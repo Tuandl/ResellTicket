@@ -28,6 +28,8 @@ export default class RegisterScreen extends Component {
             phoneNumber_valid: true,
             email: '',
             email_valid: true,
+            OTPNumber: '',
+            otp_valid: true,
             password: '',
             login_failed: false,
             showLoading: false,
@@ -58,7 +60,7 @@ export default class RegisterScreen extends Component {
         }
         this.setState({
             fullName: fullName,
-            fullName_valid: isValid,
+            otp_valid: isValid,
         })
         return isValid;
     }
@@ -82,8 +84,20 @@ export default class RegisterScreen extends Component {
         return isValid;
     }
 
+    validateOTP(phoneNumber) {
+        let isValid = true;
+        if(!phoneNumber || phoneNumber.length == 0) {
+            isValid = false;
+        }
+        this.setState({
+            phoneNumber: phoneNumber,
+            fullName_valid: isValid,
+        })
+        return isValid;
+    }
+
     async submitRegisterCredentials() {
-        const { username, password, fullName, phoneNumber, email } = this.state;
+        const { username, password, fullName, phoneNumber, email, OTPNumber } = this.state;
 
         this.setState({
             showLoading: true,
@@ -95,6 +109,7 @@ export default class RegisterScreen extends Component {
             fullName: fullName,
             phoneNumber: phoneNumber,
             email: email,
+            OTPNumber: OTPNumber,
         };
 
         try {
@@ -119,7 +134,8 @@ export default class RegisterScreen extends Component {
     }
 
     render() {
-        const { username, password, username_valid, showLoading, fullName, fullName_valid, email, email_valid, phoneNumber, phoneNumber_valid } = this.state;
+        const { username, password, username_valid, showLoading, fullName, fullName_valid, 
+            email, email_valid, phoneNumber, phoneNumber_valid, OTPNumber, otp_valid } = this.state;
 
         return (
             <View style={styles.container}>
@@ -283,6 +299,38 @@ export default class RegisterScreen extends Component {
                                     email_valid ? null : 'Please enter a valid Email address'
                                 }
                             />
+                            {/* nhập OTP */}
+                            <Input
+                                leftIcon={
+                                    <Icon
+                                        name="user-o"
+                                        type="font-awesome"
+                                        color="rgba(171, 189, 219, 1)"
+                                        size={25}
+                                    />
+                                }
+                                containerStyle={{ marginVertical: 10 }}
+                                onChangeText={OTPNumber => {this.setState({ OTPNumber: OTPNumber })}}
+                                value={OTPNumber}
+                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                keyboardAppearance="light"
+                                placeholder="OTP Number"
+                                autoFocus={false}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                keyboardType="number-pad"
+                                returnKeyType="next"
+                                ref={input => (this.OTPNumberInput = input)}
+                                onSubmitEditing={() => {
+                                    this.validateOTP(OTPNumber);
+                                }}
+                                blurOnSubmit={false}
+                                placeholderTextColor="white"
+                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
+                                errorMessage={
+                                    otp_valid ? null : 'Please enter a valid otp number'
+                                }
+                            />
                         </View>
                         <Button
                             title="REGISTER"
@@ -337,7 +385,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
-        height: 600,
+        height: 650,
     },
     registerTitle: {
         flex: 0.3,

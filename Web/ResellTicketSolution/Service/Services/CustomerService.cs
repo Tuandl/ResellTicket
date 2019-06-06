@@ -19,15 +19,18 @@ namespace Service.Services
         List<CustomerRowViewModel> GetCutomers(string param);
         CustomerRowViewModel FindCustomerById(int id);
         string UpdateCustomerAuthen(CustomerRowViewModel model);
+        bool CheckIsExistedPhoneNumber(string phoneNumber);
     }
     public class CustomerService : ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOTPRepository _oTPRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        public CustomerService(ICustomerRepository customerRepository, IMapper mapper, IUnitOfWork unitOfWork)
+        public CustomerService(ICustomerRepository customerRepository, IOTPRepository oTPRepository, IMapper mapper, IUnitOfWork unitOfWork)
         {
             _customerRepository = customerRepository;
+            _oTPRepository = oTPRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
         }
@@ -35,8 +38,9 @@ namespace Service.Services
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Customer>(model); //map từ ViewModel qua Model
 
-            if (_customerRepository.Get(x => x.Username.EndsWith(model.Username)
-             || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
+            if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
+                    _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && 
+                    x.Code.Equals(model.OTPNumber) && x.ExpiredAt > DateTime.UtcNow) != null )
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -110,6 +114,16 @@ namespace Service.Services
             }
 
             return string.Empty;
+        }
+
+        public bool CheckIsExistedPhoneNumber(string phoneNumber)
+        {
+            if(_customerRepository.Get(x => x.PhoneNumber.Equals(phoneNumber)) == null)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         //public Task<CustomerRowViewModel> getUserByCustomerName(string userName)
