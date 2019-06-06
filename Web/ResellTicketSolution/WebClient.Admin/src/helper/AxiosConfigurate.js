@@ -12,6 +12,7 @@ const AxiosConfigurate = () => {
             localStorage.removeItem('userToken');
             window.location.replace('/login');
         } 
+        return err;
     });
     Axios.defaults.baseURL = API_URL;
 }
