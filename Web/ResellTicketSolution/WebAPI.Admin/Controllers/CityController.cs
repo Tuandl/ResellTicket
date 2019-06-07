@@ -15,7 +15,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/city")]
     [ApiController]
-    //[Authorize(Roles = "Manager")]
+    [Authorize(Roles = "Manager")]
     public class CityController : ControllerBase
     {
         private readonly ICityService _cityService;
