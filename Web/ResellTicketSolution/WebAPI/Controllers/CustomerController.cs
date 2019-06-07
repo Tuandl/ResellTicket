@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using ViewModel.ViewModel.Customer;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Services;
 using System.Net;
-using ViewModel.ViewModel.Authentication;
+using ViewModel.ViewModel.Customer;
 
 namespace WebAPI.Controllers
 {
@@ -61,6 +54,54 @@ namespace WebAPI.Controllers
             var phoneNumberToView = _oTPService.CreatOTPWithEachPhone(model.PhoneNumber);
 
             return Ok(phoneNumberToView);
+        }
+
+        /// <summary>
+        /// Forgot password. Send OTP confirm reset password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Send OTP success (Dev OTP = "123456")</response>
+        /// <response code="406">Not found customer with model Phone Number</response>
+        [HttpPost]
+        [Route("forget-password")]
+        public IActionResult SendOTPWhenForgotPassword(CustomerForgotPasswordViewModel model)
+        {
+            var sendOTPResult = _customerService.SendOTPForgotPassword(model);
+
+            if(sendOTPResult == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, sendOTPResult);
+            }
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Reset password with OTP confirmation
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Invalid OTP</response>
+        /// <response code="406">Not found Customer</response>
+        [HttpPost]
+        [Route("reset-password")]
+        public IActionResult ResetPassword(CustomerChangePasswordWithOTPConfirm model)
+        {
+            var resetPasswordResult = _customerService.ChangePasswordWithOTPConfirm(model);
+
+            if(resetPasswordResult == CustomerService.ERROR_INVALID_OTP)
+            {
+                return BadRequest(resetPasswordResult);
+            }
+
+            if(resetPasswordResult == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int) HttpStatusCode.NotAcceptable, resetPasswordResult);
+            }
+
+            return Ok();
         }
     }
 }

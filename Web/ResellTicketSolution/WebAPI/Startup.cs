@@ -13,6 +13,7 @@ namespace WebAPI
     public class Startup
     {
         private const string CONFIG_AUTH_SETTING = "AuthSetting";
+        private const string CONFIG_TWILIO_SETTING = "TwilioSetting";
 
         public Startup(IConfiguration configuration)
         {
@@ -26,6 +27,7 @@ namespace WebAPI
         {
             //Configuration for inject configuration into controller
             services.Configure<AuthSetting>(Configuration.GetSection(CONFIG_AUTH_SETTING));
+            services.Configure<TwilioSetting>(Configuration.GetSection(CONFIG_TWILIO_SETTING));
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
 
             //Add EntityFramework Configuration
