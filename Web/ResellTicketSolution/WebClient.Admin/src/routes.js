@@ -40,6 +40,9 @@ const UserProfile = React.lazy(() => import('./views/Users/UserProfileComponent'
 const NewPostedTickets = React.lazy(() => import('./views/Tickets/NewPostedTickets'));
 const Customers = React.lazy(() => import('./views/Customers/CustomersComponent'));
 const CustomerView = React.lazy(() => import('./views/Customers/CustomerViewComponent'));
+const Cities = React.lazy(() => import('./views/Cities/CitiesComponent'));
+const CityView = React.lazy(() => import('./views/Cities/CityViewComponent'));
+const CityCreate = React.lazy(() => import('./views/Cities/CityCreateComponent'));
 
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -89,7 +92,10 @@ const routes = [
   { path: '/profile', name: 'User Profile', component: UserProfile},
   {path: '/newPostedTicket', name: 'New Posted Tickets', component: NewPostedTickets},
   {path: '/customer', exact: true, name: 'Customers', component: Customers},
-  {path: '/customer/:id', name: 'Customer Details', component: CustomerView}
+  {path: '/customer/:id', name: 'Customer Details', component: CustomerView},
+  { path: '/city', exact: true,  name: 'Cities', component: Cities },
+  { path: '/city/add', exact: true, name: 'Add City', component: CityCreate },
+  {path: '/city/:id', name: 'City Details', component: CityView}
 
 ];
 
