@@ -6,24 +6,18 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../assets/images/bg_screen1.jpg');
+import AppNavigation from './../navigation/AppNavigation';
 
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
         };
     }
 
     render() {
         return (
-            <View style={styles.container}>
-                <View style={styles.footerView}>
-                    <Text>
-                        Hello World
-                    </Text>
-                </View>
-            </View>
+            <AppNavigation />
         );
     }
 }
