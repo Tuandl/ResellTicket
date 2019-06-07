@@ -159,6 +159,16 @@ export default class LoginScreen extends Component {
                             containerStyle={{ marginVertical: 10 }}
                             titleStyle={{ fontWeight: 'bold', color: 'white' }}
                         />
+                        <Button
+                            title="Forget Password?"
+                            type="clear"
+                            activeOpacity={0.5}
+                            titleStyle={{ color: 'white', fontSize: 15 }}
+                            containerStyle={{ marginTop: -5 }}
+                            onPress={() => {
+                                this.props.navigation.navigate('ForgotPassword');
+                            }}
+                        />
                         <View style={styles.footerView}>
                             <Text style={{ color: 'grey' }}>New here?</Text>
                             <Button
@@ -168,7 +178,7 @@ export default class LoginScreen extends Component {
                                 titleStyle={{ color: 'white', fontSize: 15 }}
                                 containerStyle={{ marginTop: -5 }}
                                 onPress={() => {
-                                    this.props.navigation.navigate('Register');
+                                    this.props.navigation.navigate('ConfirmPhoneNumberRegister');
                                 }}
                             />
                         </View>

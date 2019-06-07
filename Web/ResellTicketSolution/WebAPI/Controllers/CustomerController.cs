@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using ViewModel.ViewModel.Customer;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Services;
 using System.Net;
-using ViewModel.ViewModel.Authentication;
+using ViewModel.ViewModel.Customer;
 
 namespace WebAPI.Controllers
 {
@@ -17,9 +10,11 @@ namespace WebAPI.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        private readonly IOTPService _oTPService;
+        public CustomerController(ICustomerService customerService, IOTPService oTPService)
         {
             _customerService = customerService;
+            _oTPService = oTPService;
         }
         [HttpPost]
         [Route("")]
@@ -35,6 +30,75 @@ namespace WebAPI.Controllers
             if(customer == false)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, customer);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [Route("checkPhone")]
+        public IActionResult CheckPhoneNumber(CustomerCheckPhoneNumberViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var customer = _customerService.CheckIsExistedPhoneNumber(model.PhoneNumber);
+
+            if (customer == false)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, "Phone number already exists");
+            }
+
+            var phoneNumberToView = _oTPService.CreatOTPWithEachPhone(model.PhoneNumber);
+
+            return Ok(phoneNumberToView);
+        }
+
+        /// <summary>
+        /// Forgot password. Send OTP confirm reset password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Send OTP success (Dev OTP = "123456")</response>
+        /// <response code="406">Not found customer with model Phone Number</response>
+        [HttpPost]
+        [Route("forget-password")]
+        public IActionResult SendOTPWhenForgotPassword(CustomerForgotPasswordViewModel model)
+        {
+            var sendOTPResult = _customerService.SendOTPForgotPassword(model);
+
+            if(sendOTPResult == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, sendOTPResult);
+            }
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Reset password with OTP confirmation
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <response code="200">Success</response>
+        /// <response code="400">Invalid OTP</response>
+        /// <response code="406">Not found Customer</response>
+        [HttpPost]
+        [Route("reset-password")]
+        public IActionResult ResetPassword(CustomerChangePasswordWithOTPConfirm model)
+        {
+            var resetPasswordResult = _customerService.ChangePasswordWithOTPConfirm(model);
+
+            if(resetPasswordResult == CustomerService.ERROR_INVALID_OTP)
+            {
+                return BadRequest(resetPasswordResult);
+            }
+
+            if(resetPasswordResult == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int) HttpStatusCode.NotAcceptable, resetPasswordResult);
             }
 
             return Ok();

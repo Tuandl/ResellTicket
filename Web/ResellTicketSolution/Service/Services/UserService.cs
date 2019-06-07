@@ -25,12 +25,15 @@ namespace Service.Services
         /// <param name="model"></param>
         /// <returns>Empty string if success</returns>
         Task<string> UpdateUser(UserUpdateViewModel model);
+        Task<string> UpdateUserProfile(UserProfileViewModel model);
 
-        Task<String> UpdateUserProfile(UserUpdateViewModel model);
+        Task<string> ChangePassword(UserPasswordViewModel model);
     }
 
     public class UserService : IUserService
     {
+        public const string INCORRECT_PASS = "Current password is incorrect";
+
         private readonly UserManager<User> _userManager; //thư viện Identity của microsoft
         private readonly IUserRepository _userRepository;
         private readonly IUserRoleRepository _userRoleRepository;
@@ -161,9 +164,33 @@ namespace Service.Services
             return string.Empty;
         }
 
-        public Task<string> UpdateUserProfile(UserUpdateViewModel model)
+        public async Task<string> UpdateUserProfile(UserProfileViewModel model)
         {
-            throw new NotImplementedException();
+            //var user = _mapper.Map<UserProfileViewModel, User>(model);
+            User user = await _userManager.FindByIdAsync(model.Id);
+            user.FullName = model.FullName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            await _userManager.UpdateAsync(user);
+            return string.Empty;
+        }
+
+        public async Task<string> ChangePassword(UserPasswordViewModel model)
+        {
+            User user = await _userManager.FindByNameAsync(model.Username);
+            if (user == null)
+            {
+                return "Not found user";
+            }
+            var isCorrectPassword = await _userManager.CheckPasswordAsync(user, model.CurrentPass);
+            if (!isCorrectPassword)
+            {
+                return INCORRECT_PASS;
+            }
+            //await _userManager.RemovePasswordAsync(user);
+            //await _userManager.AddPasswordAsync(user, model.newPass);
+            await _userManager.ChangePasswordAsync(user, model.CurrentPass, model.NewPass);
+            return string.Empty;
         }
     }
 }

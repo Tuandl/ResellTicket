@@ -2,13 +2,12 @@
 using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using ViewModel.ViewModel.Customer;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using ViewModel.ViewModel.Customer;
 
 namespace Service.Services
 {
@@ -19,24 +18,56 @@ namespace Service.Services
         List<CustomerRowViewModel> GetCutomers(string param);
         CustomerRowViewModel FindCustomerById(int id);
         string UpdateCustomerAuthen(CustomerRowViewModel model);
+        bool CheckIsExistedPhoneNumber(string phoneNumber);
+
+        /// <summary>
+        /// Send OTP for customer when customer forgot password
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        string SendOTPForgotPassword(CustomerForgotPasswordViewModel model);
+
+        /// <summary>
+        /// Use when customer received OTP when forgot password
+        /// </summary>
+        /// <param name="customerChangePasswordWithOTPConfirm"></param>
+        /// <returns></returns>
+        string ChangePasswordWithOTPConfirm(CustomerChangePasswordWithOTPConfirm customerChangePasswordWithOTPConfirm);
     }
+
     public class CustomerService : ICustomerService
     {
+        public const string ERROR_NOT_FOUND_CUSTOMER = "Not found customer.";
+        public const string ERROR_INVALID_OTP = "Invalid OTP.";
+
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOTPRepository _oTPRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-        public CustomerService(ICustomerRepository customerRepository, IMapper mapper, IUnitOfWork unitOfWork)
+
+        private readonly IOTPService _oTPService;
+
+
+        public CustomerService(ICustomerRepository customerRepository, 
+            IOTPRepository oTPRepository, 
+            IMapper mapper, 
+            IUnitOfWork unitOfWork,
+            IOTPService oTPService)
         {
             _customerRepository = customerRepository;
+            _oTPRepository = oTPRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _oTPService = oTPService;
         }
+
         public bool CreateCustomer(CustomerRegisterViewModel model)
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Customer>(model); //map từ ViewModel qua Model
 
-            if (_customerRepository.Get(x => x.Username.EndsWith(model.Username)
-             || x.PhoneNumber.EndsWith(model.PhoneNumber)) == null)
+            if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
+                    _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && 
+                    x.Code.Equals(model.OTPNumber) && x.ExpiredAt > DateTime.UtcNow) != null )
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -112,14 +143,69 @@ namespace Service.Services
             return string.Empty;
         }
 
-        //public Task<CustomerRowViewModel> getUserByCustomerName(string userName)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public bool CheckIsExistedPhoneNumber(string phoneNumber)
+        {
+            if(_customerRepository.Get(x => x.PhoneNumber.Equals(phoneNumber)) == null)
+            {
+                return true;
+            }
 
-        //public Task<string> UpdateUser(CustomerRowViewModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            return false;
+        }
+
+        public string SendOTPForgotPassword(CustomerForgotPasswordViewModel model)
+        {
+            var existedCustomer = _customerRepository.Get(x => 
+                x.Deleted == false &&
+                x.PhoneNumber == model.PhoneNumber
+            );
+
+            if(existedCustomer == null)
+            {
+                return ERROR_NOT_FOUND_CUSTOMER;
+            }
+            _oTPService.CreatOTPWithEachPhone(model.PhoneNumber);
+            
+            return string.Empty;
+        }
+
+        public string ChangePasswordWithOTPConfirm(CustomerChangePasswordWithOTPConfirm model)
+        {
+            var validOtp = _oTPRepository.Get(x => 
+                x.Deleted == false &&
+                x.Code == model.OTP &&
+                x.ExpiredAt > DateTime.Now && 
+                x.PhoneNo == model.PhoneNumber
+            );
+
+            if(validOtp == null)
+            {
+                return ERROR_INVALID_OTP;
+            }
+
+            //Find existed customer -> update this customer
+            var existedCustomer = _customerRepository.Get(x =>
+                x.Deleted == false &&
+                x.PhoneNumber == model.PhoneNumber
+            );
+
+            if(existedCustomer == null)
+            {
+                return ERROR_NOT_FOUND_CUSTOMER;
+            }
+
+            //Generate new password hash
+            byte[] salt = new byte[128 / 8];
+            using (var randomNumberGenerator = RandomNumberGenerator.Create())
+            {
+                randomNumberGenerator.GetBytes(salt);
+            }
+            existedCustomer.PasswordHash = HashPassword(model.Password, salt);
+            existedCustomer.SaltPasswordHash = Convert.ToBase64String(salt);
+            _customerRepository.Update(existedCustomer);
+            _unitOfWork.CommitChanges();
+
+            return string.Empty;
+        }
     }
 }
