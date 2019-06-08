@@ -3,6 +3,7 @@ using Core.Models;
 using ViewModel.ViewModel.User;
 using ViewModel.ViewModel.Customer;
 using ViewModel.ViewModel.City;
+using ViewModel.ViewModel.TicketType;
 
 namespace ViewModel.AutoMapper
 {
@@ -16,6 +17,7 @@ namespace ViewModel.AutoMapper
             //    ForMember(dest => dest.Id, option => option.MapFrom(source => source.FullName));
             CreateMap<CustomerRegisterViewModel, Customer>();
             CreateMap<CityUpdateViewModel, City>();
+            CreateMap<TicketTypeCreateViewModel, TicketType>();
         }
     }
 }
