@@ -15,9 +15,9 @@ class TransportationCreateComponent extends Component {
                 email: '',
                 vehicleId: ''
             },
-            nameError: '*',
-            emailError: '*',
-            phoneError: '*'
+            nameError: '',
+            emailError: '',
+            phoneError: ''
         };
 
         this.handleOnChanged = this.handleOnChanged.bind(this);
@@ -59,10 +59,10 @@ class TransportationCreateComponent extends Component {
     handleOnChanged = (event) => {
         const { id, value } = event.target;
         if (id === 'phoneNumber') {
-            var regex = '[0-9]{10,11}';
+            var regex = '[0-9]{8,11}';
             if (!value.match(regex)) {
                 this.setState({
-                    phoneError: 'Phone required 10 - 11 digit numbers',
+                    phoneError: 'Phone required 8 - 11 digit numbers',
                 })
             } else {
                 this.setState({
@@ -118,28 +118,30 @@ class TransportationCreateComponent extends Component {
             <div className="animated fadeIn">
                 <Card>
                     <CardHeader>
-                        <strong><i className="icon-info pr-1"></i>User Detail</strong>
+                        <strong><i className="icon-info pr-1"></i>Transportstion Detail</strong>
                     </CardHeader>
                     <CardBody>
                         <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">Name &nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
                                     <Input type="text" id="name"
                                         placeholder="Enter name..."
                                         value={transportation.name}
                                         onChange={this.handleOnChanged}
+                                        required
                                     />
                                     <div style={{ color: 'red', float: 'right' }}>{this.state.nameError}</div>
                                 </FormGroup>
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="email">Email</Label>
+                                    <Label htmlFor="email">&nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
                                     <Input type="email" id="email"
                                         placeholder="Enter email..."
                                         value={transportation.email}
                                         onChange={this.handleOnChanged}
+                                        required
                                     />
                                     <div style={{ color: 'red', float: 'right' }}>{this.state.emailError}</div>
                                 </FormGroup>
@@ -148,18 +150,19 @@ class TransportationCreateComponent extends Component {
                         <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                                    <Label htmlFor="phoneNumber">Phone &nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
                                     <Input type="text" id="phoneNumber"
                                         placeholder="Enter Phone number..."
                                         value={transportation.phoneNumber}
                                         onChange={this.handleOnChanged}
+                                        required
                                     />
                                     <div style={{ color: 'red', float: 'right' }}>{this.state.phoneError}</div>
                                 </FormGroup>
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="vehicleId">Vehicle</Label>
+                                    <Label htmlFor="vehicleId">&nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
                                     <Input type="select" id="vehicleId"
                                         value={transportation.vehicleId}
                                         onChange={this.handleOnChanged}

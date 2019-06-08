@@ -70,16 +70,19 @@ namespace Service.Services
                 return "Not found Transportation";
             }
 
-            if (model.Name != null || model.Name != "")
+            if (model.Name != null && model.Name != "")
             {
                 existedTranportation.Name = model.Name;
             }
-            if (model.PhoneNumber != null || model.PhoneNumber != "")
+            if (model.PhoneNumber != null && model.PhoneNumber != "")
             {
                 existedTranportation.PhoneNumber = model.PhoneNumber;
             }
-
-            if (model.VehicleId.ToString() != null || model.VehicleId.ToString() != "")
+            if (model.Email != null && model.Email != "")
+            {
+                existedTranportation.Email = model.Email;
+            }
+            if (model.VehicleId.ToString() != null && model.VehicleId.ToString() != "")
             {
                 existedTranportation.VehicleId = model.VehicleId;
             }
