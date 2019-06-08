@@ -8,12 +8,18 @@ namespace Service.SMSService
 {
     public class TwilioSMSService : ISmsService
     {
+        private const string OTP_TEMPLATE = "Resell Ticket transaction code {0}. This code will be available within the next 2 minutes.";
         private readonly TwilioSetting SETTING;
 
         public TwilioSMSService(IOptions<TwilioSetting> settings)
         {
             //Inject Appsetting from appsettings.json
             SETTING = settings.Value;
+        }
+
+        public string SendOTP(string OTP, string phoneNumber)
+        {
+            return SendSMS(string.Format(OTP_TEMPLATE, OTP), phoneNumber);
         }
 
         public string SendSMS(string message, string phoneNumber)
