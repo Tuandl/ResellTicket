@@ -34,6 +34,11 @@ export default {
       icon: 'icon-user'
     },
     {
+      name: 'Station',
+      url: '/station',
+      icon: 'icon-user'
+    },
+    {
       name: 'Transportation',
       url: '/transportation',
       icon: 'icon-user'

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Service.Services;
+using Service.SMSService;
 using System.Linq;
 using System.Reflection;
 
@@ -51,6 +52,7 @@ namespace WebAPI.Admin.Configuration
             services.Add(new ServiceDescriptor(typeof(IDatabaseFactory), typeof(DatabaseFactory), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(DbContext), typeof(ResellTicketDbContext), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(UserManager<User>), typeof(UserManager<User>), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ISmsService), typeof(TwilioSMSService), ServiceLifetime.Scoped));
         }
     }
 }
