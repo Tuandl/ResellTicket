@@ -46,6 +46,9 @@ const TransportationCreateView = React.lazy(() => import('./views/transportation
 const Cities = React.lazy(() => import('./views/Cities/CitiesComponent'));
 const CityView = React.lazy(() => import('./views/Cities/CityViewComponent'));
 const CityCreate = React.lazy(() => import('./views/Cities/CityCreateComponent'));
+const TicketTypes = React.lazy(() => import('./views/TicketType/TicketTypeComponent'));
+const TicketTypeView = React.lazy(() => import('./views/TicketType/TicketTypeViewComponent'));
+const TicketTypeCreateView = React.lazy(() => import('./views/TicketType/TicketTypeCreateComponent'));
 
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -101,7 +104,10 @@ const routes = [
   { path: '/transportation/:id', name: 'Transportation Detail', component: TransportationView },
   { path: '/city', exact: true,  name: 'Cities', component: Cities },
   { path: '/city/add', exact: true, name: 'Add City', component: CityCreate },
-  {path: '/city/:id', name: 'City Details', component: CityView}
+  { path: '/city/:id', name: 'City Details', component: CityView},
+  { path: '/tickettype', exact: true,  name: 'Ticket Types', component: TicketTypes },
+  { path: '/tickettype/add', exact: true,  name: 'Create Ticket Type', component: TicketTypeCreateView },
+  { path: '/tickettype/:id', name: 'Ticket Type Details', component: TicketTypeView}
 
 ];
 

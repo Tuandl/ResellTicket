@@ -4,20 +4,16 @@ import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
 
-class TransportationCreateComponent extends Component {
+class TicketTypeCreateComponent extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            transportation: {
+            ticketType: {
                 name: '',
-                phoneNumber: '',
-                email: '',
                 vehicleId: ''
             },
             nameError: '',
-            emailError: '',
-            phoneError: ''
         };
 
         this.handleOnChanged = this.handleOnChanged.bind(this);
@@ -46,8 +42,8 @@ class TransportationCreateComponent extends Component {
             var vehicleResponse = await Axios.get('api/vehicle');
             this.setState({
                 vehicles: vehicleResponse.data,
-                transportation: {
-                    ...this.state.transportation,
+                ticketType: {
+                    ...this.state.ticketType,
                     vehicleId: vehicleResponse.data[0].id,
                 },
             });
@@ -58,49 +54,34 @@ class TransportationCreateComponent extends Component {
 
     handleOnChanged = (event) => {
         const { id, value } = event.target;
-        if (id === 'phoneNumber') {
-            var regex = '[0-9]{8,11}';
-            if (!value.match(regex)) {
-                this.setState({
-                    phoneError: 'Phone required 8 - 11 digit numbers',
-                })
-            } else {
-                this.setState({
-                    phoneError: '',
-                })
-            }
-        } else if (id === 'name') {
+        if (id === 'name') {
             this.setState({
                 nameError: '',
             })
-        } else if (id === 'email') {
-            this.setState({
-                emailError: '',
-            })
-        }
+        } 
         this.setState({
-            transportation: {
-                ...this.state.transportation,
+            ticketType: {
+                ...this.state.ticketType,
                 [id]: value
             },
         });
     }
 
     onBtnCancleClicked() {
-        this.props.history.push('/transportation');
+        this.props.history.push('/tickettype');
     }
 
     async onBtnCreateClicked() {
-        var { nameError, phoneError, emailError } = this.state
-        if (nameError === '' && phoneError === '' && emailError === '') {
-            let data = this.state.transportation;
+        var { nameError } = this.state;
+        if (nameError === '') {
+            let data = this.state.ticketType;
             toastr.info('Infomation', 'Please wait while we processing your request.');
-            var updateResponse = await Axios.post('api/transportation', data);
+            var updateResponse = await Axios.post('api/tickettype', data);
             if (updateResponse.status === 200) {
-                toastr.success('Create Success', 'Transportstion has been created successfully.');
-                this.props.history.push('/transportation');
+                toastr.success('Create Success', 'Ticket Type has been created successfully.');
+                this.props.history.push('/tickettype');
             } else {
-                toastr.error('Error', 'Error when create Transportstion');
+                toastr.error('Error', 'Error when create Ticket Type');
             }
         }
 
@@ -108,7 +89,7 @@ class TransportationCreateComponent extends Component {
 
     render() {
 
-        const { transportation } = this.state;
+        const { ticketType } = this.state;
 
         const getVehicleOptions = this.getVehicleOptions();
 
@@ -116,16 +97,16 @@ class TransportationCreateComponent extends Component {
             <div className="animated fadeIn">
                 <Card>
                     <CardHeader>
-                        <strong><i className="icon-info pr-1"></i>Transportstion Detail</strong>
+                        <strong><i className="icon-info pr-1"></i>Ticket Type Detail</strong>
                     </CardHeader>
                     <CardBody>
                         <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="name">Name <span style={{ color: 'red'}}>*</span></Label>
+                                    <Label htmlFor="name">Name <span style={{ color: 'red' }}>*</span></Label>
                                     <Input type="text" id="name"
                                         placeholder="Enter name..."
-                                        value={transportation.name}
+                                        value={ticketType.name}
                                         onChange={this.handleOnChanged}
                                         required
                                     />
@@ -134,35 +115,9 @@ class TransportationCreateComponent extends Component {
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></Label>
-                                    <Input type="email" id="email"
-                                        placeholder="Enter email..."
-                                        value={transportation.email}
-                                        onChange={this.handleOnChanged}
-                                        required
-                                    />
-                                    <div style={{ color: 'red', float: 'right' }}>{this.state.emailError}</div>
-                                </FormGroup>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col md="6" xs="12">
-                                <FormGroup>
-                                    <Label htmlFor="phoneNumber">Phone <span style={{ color: 'red' }}>*</span></Label>
-                                    <Input type="text" id="phoneNumber"
-                                        placeholder="Enter Phone number..."
-                                        value={transportation.phoneNumber}
-                                        onChange={this.handleOnChanged}
-                                        required
-                                    />
-                                    <div style={{ color: 'red', float: 'right' }}>{this.state.phoneError}</div>
-                                </FormGroup>
-                            </Col>
-                            <Col md="6" xs="12">
-                                <FormGroup>
-                                    <Label htmlFor="vehicleId">Vehicle <span style={{ color: 'red', float: 'right' }}>*</span></Label>
+                                    <Label htmlFor="vehicleId">Vehicle <span style={{ color: 'red', float: 'right' }}> *</span></Label>
                                     <Input type="select" id="vehicleId"
-                                        value={transportation.vehicleId}
+                                        value={ticketType.vehicleId}
                                         onChange={this.handleOnChanged}
                                     >
                                         {getVehicleOptions}
@@ -183,4 +138,4 @@ class TransportationCreateComponent extends Component {
     }
 }
 
-export default TransportationCreateComponent;
+export default TicketTypeCreateComponent;

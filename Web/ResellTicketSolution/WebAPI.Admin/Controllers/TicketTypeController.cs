@@ -10,7 +10,7 @@ using ViewModel.ViewModel.TicketType;
 
 namespace WebAPI.Admin.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/tickettype")]
     [ApiController]
     public class TicketTypeController : ControllerBase
     {
@@ -29,10 +29,11 @@ namespace WebAPI.Admin.Controllers
             return ticketTypeRowViewModels;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<TicketTypeRowViewModel> FindTicketById(int param)
+        [HttpGet]
+        [Route("{id}")]
+        public ActionResult<TicketTypeRowViewModel> FindTicketById(int id)
         {
-            var ticketTypeRowViewModels = _ticketTypeService.FindTicketTypeById(param);
+            var ticketTypeRowViewModels = _ticketTypeService.FindTicketTypeById(id);
             return ticketTypeRowViewModels;
         }
 

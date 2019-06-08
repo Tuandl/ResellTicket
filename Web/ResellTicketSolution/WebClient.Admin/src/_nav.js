@@ -37,6 +37,11 @@ export default {
       name: 'Transportation',
       url: '/transportation',
       icon: 'icon-user'
+    },    
+    {
+      name: 'Ticket Type',
+      url: '/tickettype',
+      icon: 'icon-user'
     },
     {
       title: true,
