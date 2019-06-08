@@ -8,31 +8,30 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
-using ViewModel.ViewModel.City;
-using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Station;
 
 namespace WebAPI.Admin.Controllers
 {
-    [Route("api/city")]
+    [Route("api/station")]
     [ApiController]
     [Authorize(Roles = "Manager")]
-    public class CityController : ControllerBase
+    public class StationController : ControllerBase
     {
-        private readonly ICityService _cityService;
+        private readonly IStationService _stationService;
 
-        public CityController(ICityService cityService)
+        public StationController(IStationService stationService)
         {
-            _cityService = cityService;
+            _stationService = stationService;
         }
 
         [HttpPost]
-        public ActionResult CreateCity(CityRowViewModel model)
+        public ActionResult CreateStation(StationCreateViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
-            var createResult = _cityService.CreateCity(model);
+            var createResult = _stationService.CreateStation(model);
             if (createResult == false)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, createResult);
@@ -40,29 +39,29 @@ namespace WebAPI.Admin.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public ActionResult<IEnumerable<CityRowViewModel>> GetCities(string param)
+        [HttpGet("{id}")]
+        public ActionResult<StationRowViewModel> FindStationById(int id)
         {
-            var cityRowViewModels = _cityService.GetCities(param);
-            return cityRowViewModels;
+            var stationRowViewModel = _stationService.FindStationById(id);
+            return stationRowViewModel;
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<CityRowViewModel> FindCityById(int id)
+        [HttpGet]
+        public ActionResult<IEnumerable<StationRowViewModel>> GetStations(string param)
         {
-            var cityRowViewModel = _cityService.FindCityById(id);
-            return cityRowViewModel;
+            var stationRowViewModels = _stationService.GetStations(param);
+            return stationRowViewModels;
         }
 
         [HttpPut]
-        public ActionResult UpdateCity(CityUpdateViewModel model)
+        public ActionResult UpdateCity(StationUpdateViewModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var updateResult = _cityService.UpdateCity(model);
+            var updateResult = _stationService.UpdateStation(model);
 
             if (!string.IsNullOrEmpty(updateResult))
             {

@@ -46,6 +46,9 @@ const TransportationCreateView = React.lazy(() => import('./views/transportation
 const Cities = React.lazy(() => import('./views/Cities/CitiesComponent'));
 const CityView = React.lazy(() => import('./views/Cities/CityViewComponent'));
 const CityCreate = React.lazy(() => import('./views/Cities/CityCreateComponent'));
+const Stations = React.lazy(() => import('./views/Stations/StationsComponent'));
+const StationView = React.lazy(() => import('./views/Stations/StationViewComponent'));
+const StationCreate = React.lazy(() => import('./views/Stations/StationCreateComponent'));
 
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
@@ -101,7 +104,10 @@ const routes = [
   { path: '/transportation/:id', name: 'Transportation Detail', component: TransportationView },
   { path: '/city', exact: true,  name: 'Cities', component: Cities },
   { path: '/city/add', exact: true, name: 'Add City', component: CityCreate },
-  {path: '/city/:id', name: 'City Details', component: CityView}
+  {path: '/city/:id', name: 'City Details', component: CityView},
+  { path: '/station', exact: true,  name: 'Stations', component: Stations },
+  { path: '/station/add', exact: true, name: 'Add Station', component: StationCreate },
+  {path: '/station/:id', name: 'Station Details', component: StationView}
 
 ];
 
