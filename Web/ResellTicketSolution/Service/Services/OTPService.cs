@@ -46,7 +46,7 @@ namespace Service.Services
             }
             _unitOfWork.CommitChanges();
 
-            return RandomNo;
+            return phoneNumber;
         }
 
 
