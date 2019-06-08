@@ -53,7 +53,7 @@ namespace WebAPI.Configuration
             services.Add(new ServiceDescriptor(typeof(DbContext), typeof(ResellTicketDbContext), ServiceLifetime.Scoped));
             services.Add(new ServiceDescriptor(typeof(UserManager<User>), typeof(UserManager<User>), ServiceLifetime.Scoped));
             //Inject Twilio Service for SMS
-            services.Add(new ServiceDescriptor(typeof(ISmsService), typeof(TwilioSMSService), ServiceLifetime.Scoped));
+            services.Add(new ServiceDescriptor(typeof(ISmsService), typeof(StringeeSMSService), ServiceLifetime.Scoped));
         }
     }
 }

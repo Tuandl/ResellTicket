@@ -17,8 +17,8 @@ namespace Service.Services
         //{0:D8} use for format OTP 
         //"0" means the first param
         //D6 means convert this number into 6 character string
-        private const string OTP_SMS_TEMPLATE = "Resell Ticket transaction code {0:D6}. This code will be available within the next 2 minutes.";
-        private const int OTP_EXPIRED_MIN = 2;
+        private const string OTP_TEMPLATE = "{0:D6}";
+        private const int OTP_EXPIRED_MIN = 5;
 
         private readonly IOTPRepository _oTPRepository;
         private readonly IMapper _mapper;
@@ -39,6 +39,8 @@ namespace Service.Services
         public string CreatOTPWithEachPhone(string phoneNumber)
         {
             var newOTP = _oTPRepository.Get(x => x.PhoneNo.Equals(phoneNumber));
+
+            //TODO: This will be changed when go into production
             string RandomNo = "123456";
             if (newOTP == null)
             {
@@ -56,7 +58,7 @@ namespace Service.Services
             }
             _unitOfWork.CommitChanges();
 
-            _smsService.SendSMS(string.Format(OTP_SMS_TEMPLATE, RandomNo), phoneNumber);
+            _smsService.SendOTP(string.Format(OTP_TEMPLATE, RandomNo), phoneNumber);
 
             return RandomNo;
         }
