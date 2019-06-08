@@ -2,6 +2,7 @@
 using Core.Models;
 using ViewModel.ViewModel.User;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Transportation;
 using ViewModel.ViewModel.City;
 
 namespace ViewModel.AutoMapper
@@ -15,6 +16,7 @@ namespace ViewModel.AutoMapper
             //    //Map fullname của userviewmodal vào Id của user
             //    ForMember(dest => dest.Id, option => option.MapFrom(source => source.FullName));
             CreateMap<CustomerRegisterViewModel, Customer>();
+            CreateMap<TransportationCreateViewModel, Transportation>();
             CreateMap<CityUpdateViewModel, City>();
         }
     }
