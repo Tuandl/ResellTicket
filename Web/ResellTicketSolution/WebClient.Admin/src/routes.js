@@ -40,6 +40,9 @@ const UserProfile = React.lazy(() => import('./views/Users/UserProfileComponent'
 const NewPostedTickets = React.lazy(() => import('./views/Tickets/NewPostedTickets'));
 const Customers = React.lazy(() => import('./views/Customers/CustomersComponent'));
 const CustomerView = React.lazy(() => import('./views/Customers/CustomerViewComponent'));
+const Transportations = React.lazy(() => import('./views/transportation/TransportationsComponent'));
+const TransportationView = React.lazy(() => import('./views/transportation/TransportationViewComponent'));
+const TransportationCreateView = React.lazy(() => import('./views/transportation/TransportationCreateComponent'));
 const Cities = React.lazy(() => import('./views/Cities/CitiesComponent'));
 const CityView = React.lazy(() => import('./views/Cities/CityViewComponent'));
 const CityCreate = React.lazy(() => import('./views/Cities/CityCreateComponent'));
@@ -93,6 +96,9 @@ const routes = [
   {path: '/newPostedTicket', name: 'New Posted Tickets', component: NewPostedTickets},
   {path: '/customer', exact: true, name: 'Customers', component: Customers},
   {path: '/customer/:id', name: 'Customer Details', component: CustomerView},
+  { path: '/transportation', exact: true,  name: 'Transportations', component: Transportations },
+  { path: '/transportation/add', exact: true, name: 'Create Transportation', component: TransportationCreateView},
+  { path: '/transportation/:id', name: 'Transportation Detail', component: TransportationView },
   { path: '/city', exact: true,  name: 'Cities', component: Cities },
   { path: '/city/add', exact: true, name: 'Add City', component: CityCreate },
   {path: '/city/:id', name: 'City Details', component: CityView}
