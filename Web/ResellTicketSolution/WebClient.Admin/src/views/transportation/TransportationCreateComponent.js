@@ -124,7 +124,7 @@ class TransportationCreateComponent extends Component {
                         <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="name">Name &nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
+                                    <Label htmlFor="name">Name <span style={{ color: 'red'}}>*</span></Label>
                                     <Input type="text" id="name"
                                         placeholder="Enter name..."
                                         value={transportation.name}
@@ -136,7 +136,7 @@ class TransportationCreateComponent extends Component {
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="email">&nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
+                                    <Label htmlFor="email">Email <span style={{ color: 'red' }}>*</span></Label>
                                     <Input type="email" id="email"
                                         placeholder="Enter email..."
                                         value={transportation.email}
@@ -150,7 +150,7 @@ class TransportationCreateComponent extends Component {
                         <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="phoneNumber">Phone &nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
+                                    <Label htmlFor="phoneNumber">Phone <span style={{ color: 'red' }}>*</span></Label>
                                     <Input type="text" id="phoneNumber"
                                         placeholder="Enter Phone number..."
                                         value={transportation.phoneNumber}
@@ -162,7 +162,7 @@ class TransportationCreateComponent extends Component {
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="vehicleId">&nbsp;</Label><span style={{ color: 'red', float: 'right' }}>*</span>
+                                    <Label htmlFor="vehicleId">Vehicle <span style={{ color: 'red', float: 'right' }}>*</span></Label>
                                     <Input type="select" id="vehicleId"
                                         value={transportation.vehicleId}
                                         onChange={this.handleOnChanged}
