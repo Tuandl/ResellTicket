@@ -69,7 +69,7 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                 RNToasty.Success({
                     title: 'Phone number is valid',
                 });
-                this.props.navigation.navigate('Register');
+                this.props.navigation.navigate('Register', { phoneNumber: phoneNumber });
             } else {
                 RNToasty.Error({
                     title: 'Phone Number is existed',

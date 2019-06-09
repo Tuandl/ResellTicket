@@ -18,14 +18,19 @@ const BG_IMAGE = require('../../assets/images/bg_screen1.jpg');
 export default class RegisterScreen extends Component {
     constructor(props) {
         super(props);
+        let { navigation } = props;
+        const phoneNumber = navigation.getParam('phoneNumber', '');
+        if(phoneNumber === '') {
+            navigation.navigate('Login');
+            return;
+        }
 
         this.state = {
             username: '',
             username_valid: true,
             fullName: '',
             fullName_valid: true,
-            phoneNumber: '',
-            phoneNumber_valid: true,
+            phoneNumber: phoneNumber,
             email: '',
             email_valid: true,
             OTPNumber: '',
@@ -37,7 +42,6 @@ export default class RegisterScreen extends Component {
 
         this.validateUsername = this.validateUsername.bind(this);
         this.validateFullName = this.validateFullName.bind(this);
-        this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
         this.submitRegisterCredentials = this.submitRegisterCredentials.bind(this);
     }
 
@@ -60,38 +64,19 @@ export default class RegisterScreen extends Component {
         }
         this.setState({
             fullName: fullName,
-            otp_valid: isValid,
+            fullName_valid: isValid,
         })
         return isValid;
     }
 
-    validatePhoneNumber(phoneNo) {
+    validateOTP(OTPNumber) {
         let isValid = true;
-
-        if(!phoneNo) {
-            isValid = false;
-        }
-        // else {
-        //     var regex = new RegExp(/\d[0-9]{9,12}/gm);
-        //     isValid = regex.test(phoneNo);
-        // }
-
-        this.setState({
-            phoneNumber_valid: isValid,
-            phoneNumber: phoneNo,
-        });
-
-        return isValid;
-    }
-
-    validateOTP(phoneNumber) {
-        let isValid = true;
-        if(!phoneNumber || phoneNumber.length == 0) {
+        if(!OTPNumber || OTPNumber.length == 0) {
             isValid = false;
         }
         this.setState({
-            phoneNumber: phoneNumber,
-            fullName_valid: isValid,
+            OTPNumber: OTPNumber,
+            otp_valid: isValid,
         })
         return isValid;
     }
@@ -135,7 +120,7 @@ export default class RegisterScreen extends Component {
 
     render() {
         const { username, password, username_valid, showLoading, fullName, fullName_valid, 
-            email, email_valid, phoneNumber, phoneNumber_valid, OTPNumber, otp_valid } = this.state;
+            email, email_valid, OTPNumber, otp_valid } = this.state;
 
         return (
             <View style={styles.container}>
@@ -237,38 +222,6 @@ export default class RegisterScreen extends Component {
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     fullName_valid ? null : 'Please enter a valid full name'
-                                }
-                            />
-                            <Input
-                                leftIcon={
-                                    <Icon
-                                        name="user-o"
-                                        type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
-                                        size={25}
-                                    />
-                                }
-                                containerStyle={{ marginVertical: 10 }}
-                                onChangeText={phoneNumber => {this.setState({ phoneNumber: phoneNumber })}}
-                                value={phoneNumber}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
-                                keyboardAppearance="light"
-                                placeholder="Phone Number"
-                                autoFocus={false}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                keyboardType="number-pad"
-                                returnKeyType="next"
-                                ref={input => (this.phoneNumberInput = input)}
-                                onSubmitEditing={() => {
-                                    this.validatePhoneNumber(phoneNumber);
-                                    this.emailInput.focus();
-                                }}
-                                blurOnSubmit={false}
-                                placeholderTextColor="white"
-                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
-                                errorMessage={
-                                    phoneNumber_valid ? null : 'Please enter a valid phone number'
                                 }
                             />
                             <Input
@@ -385,7 +338,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
-        height: 650,
+        height: 600,
     },
     registerTitle: {
         flex: 0.3,
