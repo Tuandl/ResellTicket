@@ -50,7 +50,7 @@ namespace WebAPI.Admin.Controllers
         /// <response code="400">Missing Parameter</response>
         /// <response code="404">Not found User</response>
         [HttpGet("{id}")]
-        [Authorize(Roles = "Manager")]
+        [Authorize]
         public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
         { //Lấy all admin users
             if(string.IsNullOrEmpty(id))

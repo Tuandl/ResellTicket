@@ -5,7 +5,7 @@ import { Text } from 'react-native-elements';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default class TicketScreen extends Component {
+export default class NotificationScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {

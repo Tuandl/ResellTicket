@@ -4,37 +4,52 @@ import { createStackNavigator, createBottomTabNavigator } from 'react-navigation
 import { Icon } from 'react-native-elements';
 
 
-import TicketScreen from './../screens/TicketScreen';
+import NotificationScreen from '../screens/NotificationScreen';
 import RouteScreen from './../screens/RouteScreen';
 import TourScreen from './../screens/TourScreen';
 import MeScreen from './../screens/MeScreen';
 
-// const HomeStack = createStackNavigator({
-//   Home: {
-//       screen: HomeScreen
-//     }
-// });
 
-// HomeStack.navigationOptions = {
-//   tabBarLabel: 'Home',
-// };
-
-
-export default createBottomTabNavigator({
-  Ticket: TicketScreen,
-  Route: RouteScreen,
-  Tour: TourScreen,
-  Me: MeScreen
-},
-{
-  defaultNavigationOptions: ({navigation}) => ({
-    tabBarIcon: ({ focused }) => {
-      const { routeName } = navigation.state;
-      if(routeName === 'Ticket') {
-        return <Icon name="ticket-alt" type="font-awesome"/>;
-      } else if(routeName === 'Route') {
-        return <Icon name='user-o' type='font-awesome'/>
+export default createBottomTabNavigator(
+  {
+    Route: {
+      screen: RouteScreen,
+      navigationOptions: {
+        tabBarLabel: 'Route',
+        tabBarIcon: ({tintColor}) => {
+          return <Icon name="map-o" type="font-awesome"/>
+        }
+      }
+    },
+    Tour: {
+      screen: TourScreen,
+      navigationOptions: {
+        tabBarLabel: 'Tour',
+        tabBarIcon: ({}) => {
+          return <Icon name="exchange" type="font-awesome"/>
+        }
+      }
+    },
+    Notification: {
+      screen: NotificationScreen,
+      navigationOptions: {
+        tabBarLabel: 'Notification',
+        tabBarIcon: ({}) => {
+          return <Icon name="bell-o" type="font-awesome"/>
+        }
+      }
+    },
+    Me: {
+      screen: MeScreen,
+      navigationOptions: {
+        tabBarLabel: 'Me',
+        tabBarIcon: ({}) => {
+          return <Icon name="user-o" type="font-awesome"/>
+        }
       }
     }
-  })
-});
+  },
+  {
+    initialRouteName: 'Route'
+  }
+);

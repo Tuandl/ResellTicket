@@ -52,7 +52,7 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
 
     async submitRegisterCredentials() {
         const { phoneNumber } = this.state;
-        console.log(this.state);
+        //console.log(this.state);
         this.setState({
             showLoading: true,
         });
