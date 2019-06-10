@@ -14,7 +14,7 @@ namespace Service.Services
     public interface ITicketService
     {
         List<TicketRowViewModel> GetTickets();
-        TicketRowViewModel ApproveTicket(int id);
+        string ApproveTicket(int id);
     }
     public class TicketService : ITicketService
     {
@@ -46,15 +46,26 @@ namespace Service.Services
             return ticketRowViewModels;
         }
 
-        public TicketRowViewModel ApproveTicket(int id)
+        public string ApproveTicket(int id)
         {
-            var ticket = _ticketRepository.Get(x => x.Id == id);
-            var ticketRowViewModel = _mapper.Map<Ticket, TicketRowViewModel>(ticket);
-            if (ticket.Status == Core.Enum.TicketStatus.Pending)
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
             {
-                ticketRowViewModel.Status = Core.Enum.TicketStatus.Valid;
+                return "Not found ticket";
             }
-            return ticketRowViewModel;
+
+            existedTicket.Status = Core.Enum.TicketStatus.Valid;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -37,11 +38,21 @@ namespace WebAPI.Admin.Controllers
         /// Approve Ticket
         /// </summary>
         /// <returns></returns>
-        [HttpPost("{id}")]
-        public ActionResult<TicketRowViewModel> ApproveTicket(int id)
+        [HttpPut("{id}")]
+        public ActionResult ApproveTicket(int id)
         {
-            var ticketRowViewModel = _ticketService.ApproveTicket(id);
-            return ticketRowViewModel;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var approveResult = _ticketService.ApproveTicket(id);
+
+            if (!string.IsNullOrEmpty(approveResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, approveResult);
+            }
+            return Ok();
         }
     }
 }
