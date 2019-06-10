@@ -32,5 +32,16 @@ namespace WebAPI.Admin.Controllers
             var tickets = _ticketService.GetTickets();
             return tickets;
         }
+
+        /// <summary>
+        /// Approve Ticket
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("{id}")]
+        public ActionResult<TicketRowViewModel> ApproveTicket(int id)
+        {
+            var ticketRowViewModel = _ticketService.ApproveTicket(id);
+            return ticketRowViewModel;
+        }
     }
 }
