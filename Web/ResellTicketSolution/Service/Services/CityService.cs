@@ -50,7 +50,7 @@ namespace Service.Services
 
             param = param ?? "";
             var cities = _cityRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(param)).ToList();
+                         .Where(x => x.Name.ToLower().Contains(param.ToLower())).ToList();
             var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
             return cityRowViewModels;
         }
@@ -83,15 +83,5 @@ namespace Service.Services
 
             return string.Empty;
         }
-
-        //public Task<CustomerRowViewModel> getUserByCustomerName(string userName)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public Task<string> UpdateUser(CustomerRowViewModel model)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }
