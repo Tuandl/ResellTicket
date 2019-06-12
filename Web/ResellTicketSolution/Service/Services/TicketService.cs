@@ -14,6 +14,7 @@ namespace Service.Services
     public interface ITicketService
     {
         List<TicketRowViewModel> GetTickets();
+        void PostTicket(TicketPostViewModel model);
     }
     public class TicketService : ITicketService
     {
@@ -43,6 +44,16 @@ namespace Service.Services
             }
             
             return ticketRowViewModels;
+        }
+
+        public void PostTicket(TicketPostViewModel model)
+        {
+            var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
+            ticket.CommissionPercent = 10;
+            ticket.Status = Core.Enum.TicketStatus.Pending;
+            ticket.CustomerId = 1;
+            _ticketRepository.Add(ticket);
+            _unitOfWork.CommitChanges();
         }
     }
 }

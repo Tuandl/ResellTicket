@@ -4,6 +4,7 @@ using ViewModel.ViewModel.User;
 using ViewModel.ViewModel.Customer;
 using ViewModel.ViewModel.Transportation;
 using ViewModel.ViewModel.City;
+using ViewModel.ViewModel.Ticket;
 using ViewModel.ViewModel.TicketType;
 
 namespace ViewModel.AutoMapper
@@ -20,6 +21,7 @@ namespace ViewModel.AutoMapper
             CreateMap<TransportationCreateViewModel, Transportation>();
             CreateMap<CityUpdateViewModel, City>();
             CreateMap<TicketTypeCreateViewModel, TicketType>();
+            CreateMap<TicketPostViewModel, Ticket>();
         }
     }
 }

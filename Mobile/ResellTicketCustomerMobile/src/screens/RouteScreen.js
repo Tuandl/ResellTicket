@@ -33,7 +33,7 @@ export default class RouteScreen extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content style={{ flex: 1, backgroundColor: 'lightgrey' }}
+                <Content style={{ flex: 1, backgroundColor: '#b3e5fc' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                     <RouteView />
                     <RouteView />
