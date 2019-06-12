@@ -42,7 +42,7 @@ export default {
       name: 'Transportation',
       url: '/transportation',
       icon: 'icon-user'
-    },    
+    },
     {
       name: 'Ticket Type',
       url: '/tickettype',
@@ -60,6 +60,11 @@ export default {
     {
       name: 'New Posted Ticket',
       url: '/newPostedTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Valid Ticket',
+      url: '/validTicket',
       icon: 'fa fa-ticket'
     }
     // {
