@@ -26,18 +26,20 @@ export default class PostNewTicket extends Component {
             departureCity: -1, //id
             departureStationId: -1,
             departureDateTime: '',
+            departureDateTimeUI: '',
 
             arrivalVisible: false,
             arrivalCity: -1, //id
             arrivalStationId: -1,
             arrivalDateTime: '',
+            arrivalDateTimeUI: '',
 
             vehicles: [],
             transportations: [],
             ticketTypes: [],
             cities: [],
             departStations: [],
-            arrivalStations: []
+            arrivalStations: [],
         }
     }
 
@@ -128,11 +130,21 @@ export default class PostNewTicket extends Component {
     }
 
     //Departure
-    onDepartCityChange(value, key) {
-        this.setState({
-            departureCity: value
-        })
-        this.getDepartStations(value)
+    onDepartCityChange(value) {
+        var { arrivalCity } = this.state;
+        if (arrivalCity !== -1 && arrivalCity === value) {
+            RNToasty.Error({
+                title: 'Invalid Departure City'
+            })
+            this.setState({
+                departureCity: -1
+            })
+        } else {
+            this.setState({
+                departureCity: value
+            })
+            this.getDepartStations(value)
+        }
     }
 
     onDepartStationChange(value) {
@@ -150,29 +162,43 @@ export default class PostNewTicket extends Component {
     };
 
     handleDepartureDateTimePicked = dateTime => {
-        dateTime = moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
-        var {arrivalDateTime} = this.state;
-        if(arrivalDateTime !== '' && !moment(dateTime).isBefore(moment(arrivalDateTime))) {
+        dateTime = moment(dateTime).format('YYYY-MM-DD HH:mm');
+        var { arrivalDateTime } = this.state;
+        //var arrivalTemp = moment(arrivalDateTime).format('YYYY-MM-DD HH:mm');
+        if (arrivalDateTime !== '' && !moment(dateTime).isBefore(moment(arrivalDateTime))) {
             RNToasty.Error({
                 title: 'Invalid Departure Date',
             });
             this.setState({
-                departureDateTime: ''
+                departureDateTime: '',
+                departureDateTimeUI: '',
             })
         } else {
             this.setState({
-                departureDateTime: dateTime
+                departureDateTime: dateTime,
+                departureDateTimeUI: moment(dateTime).format('MMM DD YYYY HH:mm')
             })
         }
         this.hideDepartureDateTimePicker();
     };
 
     //Arrival
-    onArrivalCityChange(value, key) {
-        this.setState({
-            arrivalCity: value
-        })
-        this.getArrivalStations(value)
+    onArrivalCityChange(value) {
+        var { departureCity } = this.state;
+        if (departureCity !== -1 && departureCity === value) {
+            RNToasty.Error({
+                title: 'Invalid Arrival City'
+            })
+            this.setState({
+                arrivalCity: -1
+            })
+        } else {
+            this.setState({
+                arrivalCity: value
+            })
+            this.getArrivalStations(value)
+        }
+
     }
 
     onArrivalStationChange(value) {
@@ -190,52 +216,82 @@ export default class PostNewTicket extends Component {
     };
 
     handleArrivalDateTimePicked = dateTime => {
-        dateTime = moment(dateTime).format('YYYY-MM-DD HH:mm:ss');
-        var {departureDateTime} = this.state;
-        if(departureDateTime !== '' && !moment(departureDateTime).isBefore(moment(dateTime))) {
+        dateTime = moment(dateTime).format('YYYY-MM-DD HH:mm');
+        var { departureDateTime } = this.state;
+        //var departTemp = moment(departureDateTime).format('YYYY-MM-DD HH:mm');
+        if (departureDateTime !== '' && !moment(departureDateTime).isBefore(moment(dateTime))) {
             RNToasty.Error({
                 title: 'Invalid Arrival Date',
             });
             this.setState({
-                arrivalDateTime: ''
+                arrivalDateTime: '',
+                arrivalDateTimeUI: '',
             })
         } else {
             this.setState({
-                arrivalDateTime: dateTime
+                arrivalDateTime: dateTime,
+                arrivalDateTimeUI: moment(dateTime).format('MMM DD YYYY HH:mm')
             })
         }
-        
+
         this.hideArrivalDateTimePicker();
     };
 
     postTicket = async () => {
-        const { transportationId, ticketTypeId, ticketCode, sellingPrice,
-            departureStationId, departureDateTime, arrivalStationId, arrivalDateTime } = this.state;
-        var ticket = {
-            ticketCode: ticketCode,
-            transportationId: transportationId,
-            departureStationId: departureStationId,
-            arrivalStationId: arrivalStationId,
-            sellingPrice: sellingPrice,
-            description: '',
-            departureDateTime: moment(departureDateTime).format('YYYY-MM-DD HH:mm:ss'),
-            arrivalDateTime: arrivalDateTime,
-            ticketTypeId: ticketTypeId
+        var { transportationId, ticketTypeId, departureStationId, arrivalStationId,
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime } = this.state;
+
+        if (transportationId !== -1 && ticketTypeId !== -1 && departureStationId !== -1 && arrivalStationId !== -1
+            && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== '' && arrivalDateTime !== '') {
+            var ticket = {
+                ticketCode: ticketCode,
+                transportationId: transportationId,
+                departureStationId: departureStationId,
+                arrivalStationId: arrivalStationId,
+                sellingPrice: sellingPrice,
+                description: '',
+                departureDateTime: departureDateTime,
+                arrivalDateTime: arrivalDateTime,
+                ticketTypeId: ticketTypeId
+            }
+            const resPostTicket = await Api.post('api/ticket', ticket);
+            if (resPostTicket.status === 200) {
+                RNToasty.Success({
+                    title: 'Post Ticket Successfully'
+                })
+                this.props.navigation.navigate('PostedTicket');
+            }
+        } else {
+            RNToasty.Error({
+                title: 'Please input required fields'
+            })
         }
-        const resPostTicket = await Api.post('api/ticket', ticket);
-        if (resPostTicket.status === 200) {
-            console.log(resPostTicket);
-        }
+
     }
 
     render() {
         const { navigate } = this.props.navigation;
         //const username = this.props.navigation.getParam('username');
-        const { departureCity, departureStationId, vehicleId, transportationId, departureDateTime,
-            arrivalCity, arrivalStationId, arrivalDateTime, ticketTypeId, ticketCode, sellingPrice,
-            cities, vehicles, transportations, ticketTypes, departStations, arrivalStations } = this.state;
+        const { departureCity,
+            departureStationId,
+            vehicleId,
+            transportationId,
+            departureDateTime,
+            departureDateTimeUI,
+            arrivalCity,
+            arrivalStationId,
+            arrivalDateTime,
+            arrivalDateTimeUI,
+            ticketTypeId,
+            ticketCode,
+            sellingPrice,
+            cities,
+            vehicles,
+            transportations,
+            ticketTypes,
+            departStations,
+            arrivalStations } = this.state;
         return (
-
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
@@ -249,6 +305,7 @@ export default class PostNewTicket extends Component {
                             Post New Ticket
                         </Title>
                     </Body>
+                    <Right/>
                 </Header>
                 <ScrollView>
                     <Content
@@ -303,7 +360,7 @@ export default class PostNewTicket extends Component {
                                 placeholderIconColor="#007aff"
                                 selectedValue={ticketTypeId}
                                 onValueChange={this.onTicketTypeChange.bind(this)}
-                                
+
                             >
                                 <Picker.Item label="" value='-1' />
                                 {ticketTypes.map((ticketType, index) => {
@@ -326,7 +383,7 @@ export default class PostNewTicket extends Component {
                                 selectedValue={departureCity}
                                 onValueChange={this.onDepartCityChange.bind(this)}
                             >
-                                <Picker.Item label="" value='-1' />
+                                <Picker.Item label="" value={-1} />
                                 {cities.map((city, index) => {
                                     return (<Picker.Item label={city.name} value={city.id} key={index} />)
                                 })}
@@ -346,7 +403,7 @@ export default class PostNewTicket extends Component {
                                 selectedValue={departureStationId}
                                 onValueChange={this.onDepartStationChange.bind(this)}
                             >
-                                <Picker.Item label="" value='-1' />
+                                <Picker.Item label="" value={-1} />
                                 {departStations.map((station, index) => {
                                     return (<Picker.Item label={station.name} value={station.id} key={index} />)
                                 })}
@@ -356,13 +413,13 @@ export default class PostNewTicket extends Component {
                         {/* Select Departure Datetime */}
                         <Label style={{ paddingTop: 10, fontSize: 10 }}>Departure Date:</Label>
                         <Item>
-                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>{departureDateTime}</Text>
+                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>{departureDateTimeUI}</Text>
                             <DateTimePicker
                                 isVisible={this.state.departureVisible}
                                 onConfirm={this.handleDepartureDateTimePicked}
                                 onCancel={this.hideDepartureDateTimePicker}
-                                mode={'datetime'} 
-                                minimumDate={new Date()}/>
+                                mode={'datetime'}
+                                minimumDate={new Date()} />
                             <Right>
                                 <TouchableNativeFeedback onPress={this.showDepartureDateTimePicker}>
                                     <Icon name="calendar-check" type="material-community" color="grey" />
@@ -413,13 +470,13 @@ export default class PostNewTicket extends Component {
                         {/* Select Arrival Date */}
                         <Label style={{ paddingTop: 10, fontSize: 10 }}>Arrival Date:</Label>
                         <Item>
-                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>{arrivalDateTime}</Text>
+                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>{arrivalDateTimeUI}</Text>
                             <DateTimePicker
                                 isVisible={this.state.arrivalVisible}
                                 onConfirm={this.handleArrivalDateTimePicked}
                                 onCancel={this.hideArrivalDateTimePicker}
-                                mode={'datetime'} 
-                                minimumDate={new Date()}/>
+                                mode={'datetime'}
+                                minimumDate={new Date()} />
                             <Right>
                                 <TouchableNativeFeedback onPress={this.showArrivalDateTimePicker}>
                                     <Icon name="calendar-check" type="material-community" color="grey" />
@@ -440,8 +497,8 @@ export default class PostNewTicket extends Component {
                                 <Input
                                     onChangeText={sellingPrice => this.setState({ sellingPrice })}
                                     value={value}
-                                    inputStyle={{ fontSize: 15, color: 'black' }} 
-                                    keyboardType="numeric"                             
+                                    inputStyle={{ fontSize: 15, color: 'black' }}
+                                    keyboardType="numeric"
                                 />
                             )}
                         />
