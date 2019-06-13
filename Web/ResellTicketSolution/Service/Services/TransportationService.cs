@@ -14,6 +14,7 @@ namespace Service.Services
     {
         bool CreateTransportation(TransportationCreateViewModel transportation);
         List<TransportationRowViewModel> GetTransportations(string param);
+        List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId);
         TransportationRowViewModel FindTransportationById(int id);
         string UpdateTransportation(TransportationUpdateViewModel model);
         string DeleteTransportation(TransportationUpdateViewModel model);
@@ -44,6 +45,15 @@ namespace Service.Services
                 return true;
             }
             return false;
+        }
+
+        public List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId)
+        {
+            var transportation = _transportationRepository.GetAllQueryable()
+                .Where(x => x.VehicleId == vehicleId).ToList();
+            var transportationRowVMs = _mapper.Map<List<Transportation>,
+                                     List<TransportationRowViewModel>>(transportation);
+            return transportationRowVMs;
         }
 
         public TransportationRowViewModel FindTransportationById(int id)

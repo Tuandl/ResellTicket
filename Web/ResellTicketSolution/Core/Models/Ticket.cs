@@ -10,14 +10,14 @@ namespace Core.Models
     {
         public string TicketCode { get; set; }
         public int TransportationId { get; set; }
-        public int DepartureId { get; set; }
-        public int ArrivalId { get; set; }
+        public int DepartureStationId { get; set; }
+        public int ArrivalStationId { get; set; }
         public TicketStatus Status { get; set; }
-        public decimal Price { get; set; }
+        public decimal SellingPrice { get; set; }
         public string Description { get; set; }
         public decimal CommissionPercent { get; set; }
-        public DateTime DepartureDate { get; set; }
-        public DateTime ArrivalDate { get; set; }
+        public DateTime DepartureDateTime { get; set; }
+        public DateTime ArrivalDateTime { get; set; }
         public int TicketTypeId { get; set; }
         public virtual TicketType TicketType { get; set; }
         public int CustomerId { get; set; }
