@@ -99,7 +99,7 @@ export default class ProfileDetailScreen extends Component {
         }
     }
     async submitRegisterCredentials() {
-        const { username, fullName, email } = this.state;
+        const { username, fullName, email, address } = this.state;
 
         this.setState({
             showLoading: true,
@@ -108,7 +108,8 @@ export default class ProfileDetailScreen extends Component {
         const data = {
             username: username,
             fullName: fullName,
-            email: email
+            email: email,
+            address: address
         };
 
         try {
@@ -329,7 +330,7 @@ export default class ProfileDetailScreen extends Component {
                                 activeOpacity={0.5}
                                 titleStyle={{ color: 'white', fontSize: 15 }}
                                 containerStyle={{ marginTop: -5 }}
-                                onPress={() => this.props.navigation.navigate('Home')}
+                                onPress={() => this.props.navigation.navigate('Me')}
                             />
                         </View>
                     </View>

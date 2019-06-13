@@ -23,6 +23,12 @@ const MeStack = createStackNavigator(
     },
     PostNewTicket: {
       screen: PostNewTicketScreen
+    },
+    ProfileDetail: {
+      screen: ProfileDetailScreen
+    },
+    ChangePassword: {
+      screen: ChangePasswordScreen
     }
   },
   {
@@ -43,7 +49,7 @@ export default createBottomTabNavigator(
       }
     },
     Tour: {
-      screen: ChangePasswordScreen,
+      screen: TourScreen,
       navigationOptions: {
         tabBarLabel: 'Tour',
         tabBarIcon: ({ }) => {
@@ -52,9 +58,7 @@ export default createBottomTabNavigator(
       }
     },
     Notification: {
-      //screen: NotificationScreen,
-      //Thanh để đỡ profile customer screen ở đây
-      screen: ProfileDetailScreen,
+      screen: NotificationScreen,
       navigationOptions: {
         tabBarLabel: 'Notification',
         tabBarIcon: ({ }) => {

@@ -1,9 +1,7 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
-import { tsImportEqualsDeclaration } from '@babel/types';
 
 class UserProfileComponent extends Component {
     constructor(props) {
@@ -43,6 +41,7 @@ class UserProfileComponent extends Component {
         
     }
 
+    //get user profile không cần decode, token gửi lên backend có thể lấy username ra
     async getUserProfile(id) {
         await Axios.get(`/api/user/${id}`).then(res => {
             this.setState({

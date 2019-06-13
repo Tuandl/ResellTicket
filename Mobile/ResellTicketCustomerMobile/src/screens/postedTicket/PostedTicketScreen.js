@@ -32,7 +32,7 @@ export default class PostedTicket extends Component {
                 </Header>
                 <Content style={{ flex: 1, backgroundColor: '#b3e5fc' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
-
+                        
                 </Content>
             </Container>
         )

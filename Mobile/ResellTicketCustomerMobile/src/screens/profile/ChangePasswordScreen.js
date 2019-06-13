@@ -100,18 +100,18 @@ export default class ChangePasswordScreen extends Component {
 
             if (response.status === 200) {
                 RNToasty.Success({
-                    title: 'Change Password Success!',
+                    title: 'Change Password Successfully!',
                 });
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('ProfileDetail');
+            }
+            else if (response.status === 400) {
+                RNToasty.Error({
+                    title: 'Invalid Current Password.',
+                });
             }
             else if (response.status === 406) {
                 RNToasty.Error({
                     title: 'Wrong Old password.',
-                });
-            }
-            else if (response.status === 406) {
-                RNToasty.Error({
-                    title: 'Wrong Old password.2',
                 });
             }
         } catch (err) {
@@ -239,7 +239,7 @@ export default class ChangePasswordScreen extends Component {
 
                         </View>
                         <Button
-                            title="RESET"
+                            title="Change Password"
                             activeOpacity={1}
                             underlayColor="transparent"
                             onPress={this.submitResetPassword}
@@ -259,12 +259,12 @@ export default class ChangePasswordScreen extends Component {
                         />
                         <View style={styles.footerView}>
                             <Button
-                                title="Go Home"
+                                title="Back"
                                 type="clear"
                                 activeOpacity={0.5}
                                 titleStyle={{ color: 'white', fontSize: 15 }}
                                 containerStyle={{ marginTop: -5 }}
-                                onPress={() => this.props.navigation.navigate('Home')}
+                                onPress={() => this.props.navigation.navigate('ProfileDetail')}
                             />
                         </View>
                     </View>

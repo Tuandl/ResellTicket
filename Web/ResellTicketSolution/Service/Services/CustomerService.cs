@@ -95,7 +95,6 @@ namespace Service.Services
 
         public string HashPassword(string password, byte[] salt)
         {
-            
             // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,

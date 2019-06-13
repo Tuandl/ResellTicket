@@ -7,17 +7,29 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../assets/images/bg_screen1.jpg');
 import AppNavigation from './../navigation/AppNavigation';
+//import { createStackNavigator } from 'react-navigation';
+//import PostedTicketScreen from "./postedTicket/PostedTicketScreen";
+
+// const navigation = createStackNavigator({
+//     Tabbar: {
+//         screen: AppNavigation
+//     },
+//     PostedTicket: {
+//         screen: PostedTicketScreen
+//     }
+// })
 
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
-    }
+    } 
 
     render() {
+        //const name = this.props.navigation.getParam('username')
         return (
-            <AppNavigation />
+            <AppNavigation screenProps={{username: 'huy0933'}}/>
         );
     }
 }

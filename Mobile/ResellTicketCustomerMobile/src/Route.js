@@ -5,6 +5,7 @@ import HomeScreen from "./screens/HomeScreen";
 import ConfirmPhoneNumberRegisterScreen from "./screens/ConfirmPhoneNumberRegisterScreen";
 import ForgotPasswordScreen from "./screens/resetPassword/ForgotPasswordScreen";
 import ResetPasswordScreen from "./screens/resetPassword/ResetPasswordScreen";
+import PostedTicketScreen from "./screens/postedTicket/PostedTicketScreen";
 import ProfileDetailScreen from "./screens/profile/ProfileDetailScreen";
 import ChangePasswordScreen from "./screens/profile/ChangePasswordScreen";
 
@@ -36,18 +37,9 @@ const MainRoot = createAppContainer(createStackNavigator(
             path: 'resetPassword',
         }, 
         //END Reset Password
-        //BEGIN rud Customer profile
-        ProfileDetail: {
-            screen: ProfileDetailScreen,
-            path: 'profileDetail',
-        },
-        ChangePassword: {
-            screen: ChangePasswordScreen,
-            path: 'changePassword',
-        },
-        //END rud Customer profile
     },
     {
+        initialRouteName: 'Login',
         headerMode: 'none',
         navigationOptions: {
             headerVisible: false,

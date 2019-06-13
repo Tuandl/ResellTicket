@@ -53,7 +53,7 @@ export default class LoginScreen extends Component {
                     title: 'Login successfully',
                 });
                 AsyncStorage.setItem('USENAME', username);
-                this.props.navigation.navigate('Home');
+                this.props.navigation.navigate('Home', {username: username});
             } else {
                 RNToasty.Error({
                     title: 'Invalid Username or Password',
