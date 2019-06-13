@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, ImageBackground, StyleSheet, Text, View, AsyncStorage } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 import Api from './../service/Api';
 import { RNToasty } from "react-native-toasty";
@@ -52,6 +52,7 @@ export default class LoginScreen extends Component {
                 RNToasty.Success({
                     title: 'Login successfully',
                 });
+                AsyncStorage.setItem('USENAME', username);
                 this.props.navigation.navigate('Home');
             } else {
                 RNToasty.Error({
@@ -188,6 +189,7 @@ export default class LoginScreen extends Component {
         );
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {

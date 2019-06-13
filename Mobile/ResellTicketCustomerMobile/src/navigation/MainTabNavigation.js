@@ -8,6 +8,8 @@ import NotificationScreen from '../screens/NotificationScreen';
 import RouteScreen from './../screens/RouteScreen';
 import TourScreen from './../screens/TourScreen';
 import MeScreen from './../screens/MeScreen';
+import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
+import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
 import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen';
 
@@ -41,7 +43,7 @@ export default createBottomTabNavigator(
       }
     },
     Tour: {
-      screen: TourScreen,
+      screen: ChangePasswordScreen,
       navigationOptions: {
         tabBarLabel: 'Tour',
         tabBarIcon: ({ }) => {
@@ -50,7 +52,9 @@ export default createBottomTabNavigator(
       }
     },
     Notification: {
-      screen: NotificationScreen,
+      //screen: NotificationScreen,
+      //Thanh để đỡ profile customer screen ở đây
+      screen: ProfileDetailScreen,
       navigationOptions: {
         tabBarLabel: 'Notification',
         tabBarIcon: ({ }) => {
