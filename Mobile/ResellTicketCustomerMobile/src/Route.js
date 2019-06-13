@@ -5,6 +5,9 @@ import HomeScreen from "./screens/HomeScreen";
 import ConfirmPhoneNumberRegisterScreen from "./screens/ConfirmPhoneNumberRegisterScreen";
 import ForgotPasswordScreen from "./screens/resetPassword/ForgotPasswordScreen";
 import ResetPasswordScreen from "./screens/resetPassword/ResetPasswordScreen";
+import PostedTicketScreen from "./screens/postedTicket/PostedTicketScreen";
+import ProfileDetailScreen from "./screens/profile/ProfileDetailScreen";
+import ChangePasswordScreen from "./screens/profile/ChangePasswordScreen";
 
 const MainRoot = createAppContainer(createStackNavigator(
     {
@@ -24,18 +27,9 @@ const MainRoot = createAppContainer(createStackNavigator(
             screen: HomeScreen,
             path: 'home',
         },
-        //BEGIN Reset Password
-        ForgotPassword: {
-            screen: ForgotPasswordScreen,
-            path: 'forgotPassword',
-        },
-        ResetPassword: {
-            screen: ResetPasswordScreen,
-            path: 'resetPassword',
-        }, 
-        //END Reset Password
     },
     {
+        initialRouteName: 'Login',
         headerMode: 'none',
         navigationOptions: {
             headerVisible: false,

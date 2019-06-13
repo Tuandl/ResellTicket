@@ -1,23 +1,35 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Dimensions, StyleSheet, View, Text } from 'react-native';
+import { Button, Icon, Input } from 'react-native-elements';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const BG_IMAGE = require('../../assets/images/bg_screen1.jpg');
 import AppNavigation from './../navigation/AppNavigation';
+//import { createStackNavigator } from 'react-navigation';
+//import PostedTicketScreen from "./postedTicket/PostedTicketScreen";
+
+// const navigation = createStackNavigator({
+//     Tabbar: {
+//         screen: AppNavigation
+//     },
+//     PostedTicket: {
+//         screen: PostedTicketScreen
+//     }
+// })
 
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
         };
-    }
+    } 
 
     render() {
+        //const name = this.props.navigation.getParam('username')
         return (
-            <AppNavigation />
+            <AppNavigation screenProps={{username: 'huy0933'}}/>
         );
     }
 }

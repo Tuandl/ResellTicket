@@ -8,6 +8,8 @@ import NotificationScreen from '../screens/NotificationScreen';
 import RouteScreen from './../screens/RouteScreen';
 import TourScreen from './../screens/TourScreen';
 import MeScreen from './../screens/MeScreen';
+import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
+import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
 import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen';
 
@@ -21,6 +23,12 @@ const MeStack = createStackNavigator(
     },
     PostNewTicket: {
       screen: PostNewTicketScreen
+    },
+    ProfileDetail: {
+      screen: ProfileDetailScreen
+    },
+    ChangePassword: {
+      screen: ChangePasswordScreen
     }
   },
   {

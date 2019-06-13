@@ -18,7 +18,10 @@ namespace Service.Services
         List<CustomerRowViewModel> GetCutomers(string param);
         CustomerRowViewModel FindCustomerById(int id);
         string UpdateCustomerAuthen(CustomerRowViewModel model);
+        //update profile phía client
+        string UpdateCustomerPofile(CustomerRowViewModel model);
         bool CheckIsExistedPhoneNumber(string phoneNumber);
+        CustomerRowViewModel FindCustomerByUsername(string usename);
 
         /// <summary>
         /// Send OTP for customer when customer forgot password
@@ -33,12 +36,14 @@ namespace Service.Services
         /// <param name="customerChangePasswordWithOTPConfirm"></param>
         /// <returns></returns>
         string ChangePasswordWithOTPConfirm(CustomerChangePasswordWithOTPConfirm customerChangePasswordWithOTPConfirm);
+        string ChangePasswordWithNoOTPConfirm(CustomerChangePasswordViewModel model);
     }
 
     public class CustomerService : ICustomerService
     {
         public const string ERROR_NOT_FOUND_CUSTOMER = "Not found customer.";
         public const string ERROR_INVALID_OTP = "Invalid OTP.";
+        public const string ERROR_INVALID_PASSWORD = "Invalid Password.";
 
         private readonly ICustomerRepository _customerRepository;
         private readonly IOTPRepository _oTPRepository;
@@ -90,7 +95,6 @@ namespace Service.Services
 
         public string HashPassword(string password, byte[] salt)
         {
-            
             // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
             string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
@@ -201,6 +205,73 @@ namespace Service.Services
                 randomNumberGenerator.GetBytes(salt);
             }
             existedCustomer.PasswordHash = HashPassword(model.Password, salt);
+            existedCustomer.SaltPasswordHash = Convert.ToBase64String(salt);
+            _customerRepository.Update(existedCustomer);
+            _unitOfWork.CommitChanges();
+
+            return string.Empty;
+        }
+
+        public string UpdateCustomerPofile(CustomerRowViewModel model)
+        {
+            var existedCustomer = _customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.OrdinalIgnoreCase));
+            if (existedCustomer == null)
+            {
+                return "Not found customer";
+            }
+
+            if (model.FullName != null && !model.FullName.Equals(""))
+            {
+                existedCustomer.FullName = model.FullName;
+            }
+            if (model.Email != null && !model.Email.Equals(""))
+            {
+                existedCustomer.Email = model.Email;
+            }
+            if (model.Address != null && !model.Address.Equals(""))
+            {
+                existedCustomer.Address = model.Address;
+            }
+            existedCustomer.UpdatedAt = DateTime.Now;
+            existedCustomer.IsActive = true;
+            _customerRepository.Update(existedCustomer);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
+
+        public CustomerRowViewModel FindCustomerByUsername(string usename)
+        {
+            var customer = _customerRepository.Get(x => x.Username.Equals(usename, StringComparison.Ordinal));
+            var customerRowViewModel = _mapper.Map<Customer, CustomerRowViewModel>(customer);
+            return customerRowViewModel;
+        }
+
+        public string ChangePasswordWithNoOTPConfirm(CustomerChangePasswordViewModel model)
+        {
+            var existedCustomer = _customerRepository.Get(x => 
+               x.Username.Equals(model.Username) && 
+               x.PasswordHash.Equals(HashPassword(model.PasswordHash, Convert.FromBase64String(x.SaltPasswordHash))));
+
+            if (existedCustomer == null)
+            {
+                return ERROR_INVALID_PASSWORD;
+            }
+
+            //Generate new password hash
+            byte[] salt = new byte[128 / 8];
+            using (var randomNumberGenerator = RandomNumberGenerator.Create())
+            {
+                randomNumberGenerator.GetBytes(salt);
+            }
+            existedCustomer.PasswordHash = HashPassword(model.NewPassword, salt);
             existedCustomer.SaltPasswordHash = Convert.ToBase64String(salt);
             _customerRepository.Update(existedCustomer);
             _unitOfWork.CommitChanges();

@@ -15,18 +15,18 @@ export default class MeScreen extends Component {
     }
 
     render() {
-        const {navigate} = this.props.navigation;
+        const { navigate } = this.props.navigation;
         const username = this.props.screenProps.username
         return (
             <Container style={{ flex: 1 }}>
-                <Content style={{ flex: 1, backgroundColor: '#fff'}}>
+                <Content style={{ flex: 1, backgroundColor: '#fff' }}>
                     <View style={styles.avatar}>
                         <Avatar />
                         <Text>{username}</Text>
                     </View>
                     <View style={styles.profile}>
                         <List>
-                            <TouchableNativeFeedback onPress={() => navigate('PostedTicket', {username: username})}>
+                            <TouchableNativeFeedback onPress={() => navigate('PostedTicket', { username: username })}>
                                 <ListItem>
                                     <Left>
                                         <Text>Posted Ticket</Text>
@@ -50,13 +50,15 @@ export default class MeScreen extends Component {
                                     <Icon name="chevron-right" type="font-awesome" />
                                 </Right>
                             </ListItem>
-                            <ListItem>
-                                <Left>
-                                    <Text>Edit Profile</Text></Left>
-                                <Right style={{ opacity: 0.5 }}>
-                                    <Icon name="chevron-right" type="font-awesome" />
-                                </Right>
-                            </ListItem>
+                            <TouchableNativeFeedback onPress={() => navigate('ProfileDetail')}>
+                                <ListItem>
+                                    <Left>
+                                        <Text>Edit Profile</Text></Left>
+                                    <Right style={{ opacity: 0.5 }}>
+                                        <Icon name="chevron-right" type="font-awesome" />
+                                    </Right>
+                                </ListItem>
+                            </TouchableNativeFeedback>
                             <ListItem>
                                 <Text>Logout</Text>
                             </ListItem>
