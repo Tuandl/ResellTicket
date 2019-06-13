@@ -83,7 +83,7 @@ export default class ProfileDetailScreen extends Component {
     }
 
     async getCustomerProfile() {
-        var usernameDefault = await AsyncStorage.getItem('USENAME');
+        var usernameDefault = await AsyncStorage.getItem('USERNAME');
         try {
             var customerResponse = await Api.get('api/customer/getCustomerByUsename?usename=' + usernameDefault);
             console.log('repone', customerResponse);

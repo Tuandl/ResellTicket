@@ -52,7 +52,7 @@ export default class LoginScreen extends Component {
                 RNToasty.Success({
                     title: 'Login successfully',
                 });
-                AsyncStorage.setItem('USENAME', username);
+                AsyncStorage.setItem('USERNAME', username);
                 this.props.navigation.navigate('Home', {username: username});
             } else {
                 RNToasty.Error({

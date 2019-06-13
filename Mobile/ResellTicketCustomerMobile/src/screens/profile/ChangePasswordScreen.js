@@ -32,7 +32,7 @@ export default class ChangePasswordScreen extends Component {
     validateOldPassword(oldpassword) {
         let isValid = true;
 
-        if (!password) {
+        if (!oldpassword) {
             isValid = false;
         }
 
@@ -75,15 +75,15 @@ export default class ChangePasswordScreen extends Component {
     }
 
     async submitResetPassword() {
-        var usernameDefault = await AsyncStorage.getItem('USENAME');
+        var usernameDefault = await AsyncStorage.getItem('USERNAME');
         const { password, passwordConfirm, oldpassword } = this.state;
 
-        // if (!this.validatePassword(password) ||
-        //     !this.validatePasswordConfirm(password, passwordConfirm) ||
-        //     !this.validateOldPassword(oldpassword)
-        // ) {
-        //     return;
-        // }
+        if (!this.validateOldPassword(oldpassword) || !this.validatePassword(password) ||
+            !this.validatePasswordConfirm(password, passwordConfirm)
+            
+        ) {
+            return;
+        }
 
         this.setState({
             showLoading: true,
