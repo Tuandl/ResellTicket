@@ -103,5 +103,48 @@ namespace WebAPI.Controllers
 
             return Ok();
         }
+
+        [HttpPut]
+        [Route("change-password")]
+        public IActionResult ResetPasswordWithNoOTPnumber(CustomerChangePasswordViewModel model)
+        {
+            var resetPasswordResult = _customerService.ChangePasswordWithNoOTPConfirm(model);
+
+            if (resetPasswordResult == CustomerService.ERROR_INVALID_PASSWORD)
+            {
+                return BadRequest(resetPasswordResult);
+            }
+
+            if (resetPasswordResult == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, resetPasswordResult);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut]
+        public ActionResult UpdateProfileCustomer(CustomerRowViewModel model)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest("Invalid Request");
+            //}
+
+            var updateResult = _customerService.UpdateCustomerPofile(model);
+
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+            return Ok();
+        }
+        [HttpGet]
+        [Route("getCustomerByUsename")]
+        public ActionResult<CustomerRowViewModel> FindCustomerByUsename(string usename)
+        {
+            var customerRowViewModel = _customerService.FindCustomerByUsername(usename);
+            return customerRowViewModel;
+        }
     }
 }
