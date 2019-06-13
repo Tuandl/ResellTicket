@@ -32,5 +32,26 @@
         /// Weight of Edge
         /// </summary>
         public double Weight { get; set; }
+
+        /// <summary>
+        /// Returns the side track deltaWeight 
+        /// Only valid when shortest path is already calculated
+        /// </summary>
+        public double DeltaWeight { 
+            get
+            {
+                return this.Head.MinDistance - this.Tail.MinDistance + this.Weight;
+            }    
+        }
+
+        /// <summary>
+        /// Check whether this edge is a sidetrack of specific vertex
+        /// </summary>
+        /// <param name="v">Vertex to evaluate</param>
+        /// <returns>True if this edge is sidetrack of v. False if not.</returns>
+        public bool IsSideTrackOf(Vertex v)
+        {
+            return this.Tail == v && v.EdgeToShortestPath != this;
+        }
     }
 }

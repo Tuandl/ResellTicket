@@ -24,9 +24,30 @@ namespace Algorithm.KShortestPaths.Models
         public int Id { get; set; }
 
         /// <summary>
-        /// Related Edges of this Vertex
+        /// Related Edges of this Vertex. Available after calculate shortest path.
         /// </summary>
         public List<Edge> RelatedEdges { get; set; }
+
+        /// <summary>
+        /// Min distance to destination. Available after calculate shortest path.
+        /// </summary>
+        public double MinDistance { get; set; }
+
+        /// <summary>
+        /// Edge belong to shortest path from this vertex to destination
+        /// </summary>
+        public Edge EdgeToShortestPath { get; set; }
+
+        /// <summary>
+        /// Next Vertex in shortest path
+        /// </summary>
+        public Vertex NextVertexInShortestPath { 
+            get
+            {
+                if(EdgeToShortestPath == null) return null;
+                return EdgeToShortestPath.Head;
+            }    
+        }
 
         /// <summary>
         /// Comparation between 2 Vertex

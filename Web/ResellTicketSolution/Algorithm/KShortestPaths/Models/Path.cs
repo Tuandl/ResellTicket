@@ -2,6 +2,9 @@
 
 namespace Algorithm.KShortestPaths.Models
 {
+    /// <summary>
+    /// Contains Edges
+    /// </summary>
     public class Path : List<Edge>
     {
         /// <summary>
@@ -26,6 +29,18 @@ namespace Algorithm.KShortestPaths.Models
             }
         }
 
-
+        /// <summary>
+        /// Return sum of all delta weight of this path
+        /// </summary>
+        public double DeltaWeight { 
+            get {
+                double totalWeight = 0;
+                foreach (var edge in this)
+                {
+                    totalWeight += edge.DeltaWeight;
+                }
+                return totalWeight;
+            } 
+        }
     }
 }
