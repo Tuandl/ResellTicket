@@ -25,11 +25,11 @@ namespace Core.Models.Map
 
             builder.HasOne(x => x.Departure)
                 .WithMany(x => x.DepartureTickets)
-                .HasForeignKey(x => x.DepartureId)
+                .HasForeignKey(x => x.DepartureStationId)
                 .OnDelete(DeleteBehavior.Restrict);
             builder.HasOne(x => x.Arrival)
                 .WithMany(x => x.ArrivalTickets)
-                .HasForeignKey(x => x.ArrivalId)
+                .HasForeignKey(x => x.ArrivalStationId)
                 .OnDelete(DeleteBehavior.Restrict);
             builder.ToTable("Ticket");
         }

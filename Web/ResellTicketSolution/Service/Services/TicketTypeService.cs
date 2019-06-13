@@ -14,6 +14,7 @@ namespace Service.Services
     {
         bool CreateTicketType(TicketTypeCreateViewModel model);
         List<TicketTypeRowViewModel> GetTicketType(string param);
+        List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId);
         TicketTypeRowViewModel FindTicketTypeById(int id);
         string UpdateTicketType(TicketTypeRowViewModel model);
     }
@@ -42,8 +43,7 @@ namespace Service.Services
                 _unitOfWork.CommitChanges();
                 return true;
             }
-
-                return false;
+            return false;
         }
 
         public TicketTypeRowViewModel FindTicketTypeById(int id)
@@ -52,7 +52,13 @@ namespace Service.Services
             var ticketTypeRow = _mapper.Map<TicketType, TicketTypeRowViewModel>(ticketType);
             return ticketTypeRow;
         }
-
+        public List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId)
+        {
+            var ticketTypes = _ticketTypeRepository.GetAllQueryable()
+                .Where(x => x.VehicleId == vehicleId).ToList();
+            var ticketTypeRowVMs = _mapper.Map<List<TicketType>, List<TicketTypeRowViewModel>>(ticketTypes);
+            return ticketTypeRowVMs;
+        }
         public List<TicketTypeRowViewModel> GetTicketType(string param)
         {
             param = param ?? "";

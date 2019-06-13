@@ -13,6 +13,7 @@ namespace Service.Services
     {
         bool CreateStation(StationCreateViewModel model);
         List<StationRowViewModel> GetStations(string param);
+        List<StationRowViewModel> GetStationsByCityId(int cityId);
         StationRowViewModel FindStationById(int id);
         string UpdateStation(StationUpdateViewModel model);
     }
@@ -61,6 +62,14 @@ namespace Service.Services
             //    station.CityName = _CityRepository.GetAllQueryable().SingleOrDefault(c => c.Id == station.CityId).Name;
             //}
             return StationRowViewModels;
+        }
+
+        public List<StationRowViewModel> GetStationsByCityId(int cityId)
+        {
+            var stations = _StationRepository.GetAllQueryable()
+                .Where(x => x.CityId == cityId).ToList();
+            var stationRowViewModels = _mapper.Map<List<Station>, List<StationRowViewModel>>(stations);
+            return stationRowViewModels;
         }
 
         public StationRowViewModel FindStationById(int id)
