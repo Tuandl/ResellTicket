@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import RouteView from './../components/RouteViewComponent';
 
 const {width} = Dimensions.get('window');

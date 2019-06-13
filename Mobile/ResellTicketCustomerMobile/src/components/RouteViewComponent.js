@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { Icon } from 'react-native-elements'
-import { Text, Card, CardItem } from 'native-base';
+import { Text, Card} from 'native-base';
+import CardView from 'react-native-cardview';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('window');
@@ -13,22 +13,21 @@ export default class RouteViewComponent extends Component {
     }
 
     render() {
-        const { wrapper } = styles
         return (
             <TouchableOpacity onPress={this.onPress}>
-                <Card style={wrapper}>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: 'lightgrey' }}>
-                        <Text style={{ fontSize: 20 }}>2.000.000 VND</Text>
+                <Card style={styles.wrapper}>
+                    <View>
+                        <Text>2.000.000 VND</Text>
                     </View>
                     <View style={{ flex: 2, flexDirection: 'row' }}>
                         <View style={styles.alignCenter}>
                             <Text>Tickets: 3</Text>
-                            <Text>Depature Date</Text>
+                            <Text>From</Text>
                             <Text>8/6/2019 12:00</Text>
                         </View>
                         <View style={styles.alignCenter}>
                             <Text>5 Hours left</Text>
-                            <Text>Arrival Date</Text>
+                            <Text>To</Text>
                             <Text>8/6/2019 13:00</Text>
                         </View>
                     </View>
@@ -47,6 +46,13 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: 'blue',
         borderWidth: 10,
+    },
+    ticketHeader: {
+        flex: 1, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        borderBottomWidth: 0.5, 
+        borderBottomColor: 'lightgrey' 
     },
     alignCenter: {
         flex: 1,
