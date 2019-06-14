@@ -11,6 +11,11 @@ namespace ViewModel.AutoMapper
         {
             CreateMap<User, UserRowViewModel>();
             CreateMap<Ticket, TicketRowViewModel>();
+            CreateMap<Ticket, CustomerTicketViewModel>()
+                .ForMember(dest => dest.DepartureCity, option => option.MapFrom(source => source.Departure.City.Name))
+                .ForMember(dest => dest.ArrivalCity, option => option.MapFrom(source => source.Arrival.City.Name))
+                .ForMember(dest => dest.Vehicle, option => option.MapFrom(source => source.Transportation.Vehicle.Name));
+                
         }
     }
 }

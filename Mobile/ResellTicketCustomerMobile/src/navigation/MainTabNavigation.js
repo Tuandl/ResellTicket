@@ -1,5 +1,4 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 
@@ -11,7 +10,8 @@ import MeScreen from './../screens/MeScreen';
 import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
 import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
-import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen';
+import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen'
+import EditPostedTicketScreen from './../screens/postedTicket/EditPostedTicketScreen';
 
 const MeStack = createStackNavigator(
   {
@@ -23,6 +23,9 @@ const MeStack = createStackNavigator(
     },
     PostNewTicket: {
       screen: PostNewTicketScreen
+    },
+    EditPostedTicket: {
+      screen: EditPostedTicketScreen
     },
     ProfileDetail: {
       screen: ProfileDetailScreen
@@ -78,6 +81,5 @@ export default createBottomTabNavigator(
   },
   {
     initialRouteName: 'Me',
-    
   }
 );

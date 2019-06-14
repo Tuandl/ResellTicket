@@ -486,9 +486,10 @@ export default class PostNewTicket extends Component {
                         {/* Enter Ticket Code */}
                         <Label style={{ paddingTop: 10, fontSize: 10 }}>Ticket Code:</Label>
                         <Input
+                            
                             onChangeText={ticketCode => this.setState({ ticketCode })}
                             value={ticketCode}
-                            inputStyle={{ fontSize: 15, color: 'black' }}
+                            inputStyle={{ fontSize: 15, color: 'black'}}
                         />
                         {/* Enter Selling Price */}
                         <Label style={{ paddingTop: 10, fontSize: 10 }}>Selling Price:</Label>
@@ -499,6 +500,7 @@ export default class PostNewTicket extends Component {
                                     value={value}
                                     inputStyle={{ fontSize: 15, color: 'black' }}
                                     keyboardType="numeric"
+                                    
                                 />
                             )}
                         />

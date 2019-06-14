@@ -41,5 +41,19 @@ namespace WebAPI.Controllers
             
             return Ok();
         }
+
+        [HttpGet]
+        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int customerId)
+        {
+            try
+            {
+                var customerTicketVMs = _ticketService.GetCustomerTickets(customerId);
+                return Ok(customerTicketVMs);
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+           
+        }
     }
 }

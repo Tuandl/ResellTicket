@@ -8,9 +8,9 @@ namespace ViewModel.ViewModel.Ticket
     public class TicketRowViewModel
     {
         public string TicketCode { get; set; }
-        public DateTime DepartureDate { get; set; }
-        public DateTime ArrivalDate { get; set; }
-        public decimal Price { get; set; }
+        public DateTime DepartureDateTime { get; set; }
+        public DateTime ArrivalDateTime { get; set; }
+        public decimal SellingPrice { get; set; }
         public TicketStatus Status { get; set; }
         public string SellerPhone { get; set; }
         public decimal FeeAmount { get; set; }

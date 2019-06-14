@@ -1,47 +1,103 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { Text, Card } from 'native-base';
-import CardView from 'react-native-cardview';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Text } from 'native-base';
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-elements';
+import moment from 'moment';
+import NumberFormat from 'react-number-format';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
 export default class TicketViewComponent extends Component {
 
-    onPress = () => {
+    constructor(props) {
+        super(props);
+        this.state = {
+        }
+    }
 
+    editTicketOrViewTicketDetails = () => {
+        const { postedTicket, navigate } = this.props;
+        if(postedTicket.status === 1) {
+            const editTicket = {
+                id: postedTicket.id,
+                vehicleId: postedTicket.vehicleId,
+                transportationId: postedTicket.transportationId,
+                ticketTypeId: postedTicket.ticketTypeId,
+                departureStationId: postedTicket.departureStationId,
+                arrivalStationId: postedTicket.arrivalStationId,
+                departureDateTime: postedTicket.departureDateTime,
+                arrivalDateTime: postedTicket.arrivalDateTime,
+                ticketCode: postedTicket.ticketCode,
+                sellingPrice: postedTicket.sellingPrice
+            }
+            navigate('EditPostedTicket', {editTicket: editTicket})
+        }
     }
 
     render() {
+        const { departureCity,
+            arrivalCity,
+            sellingPrice,
+            departureDateTime,
+            arrivalDateTime,
+            status,
+            vehicle,
+            ticketCode } = this.props.postedTicket;
+
         return (
-            <TouchableOpacity>
+            <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
                 <View style={styles.wrapper}>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: 'lightgrey' }}>
-                        <Text style={{ fontSize: 20 }}>2.000.000 VND</Text>
+                    <View style={styles.ticketHeader}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text>{departureCity}  </Text>
+                            {vehicle === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
+                                : vehicle === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
+                                    : <Icon name='train' type="material-community" color="grey" />
+                            }
+                            <Text>  {arrivalCity}</Text>
+                        </View>
+                        <View>
+                            <NumberFormat value={sellingPrice}
+                                displayType={'text'}
+                                thousandSeparator={true}
+                                renderText={value => (
+                                    <Text style={{ fontSize: 20, color: 'red' }}>{value} đ</Text>
+                                )}
+                            />
+                        </View>
                     </View>
-                    <View style={{ flex: 2, flexDirection: 'row' }}>
-                        <View style={styles.alignCenter}>
-                            <Text>Tickets: 3</Text>
-                            <Text>From</Text>
-                            <Text>8/6/2019 12:00</Text>
+                    <View style={styles.ticketBody}>
+                        <View style={styles.ticketBodyContent}>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Ticket</Text>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Departure</Text>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Arrival</Text>
                         </View>
-                        <View style={styles.alignCenter}>
-                            <Text>5 Hours left</Text>
-                            <Text>To</Text>
-                            <Text>8/6/2019 13:00</Text>
+                        <View style={styles.ticketBodyContent}>
+                            <Text>{ticketCode}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('MMM DD YYYY')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('MMM DD YYYY')}</Text>
                         </View>
+                        <View style={styles.ticketBodyContent}>
+                            <Text style={{ fontSize: 12, color: 'orange' }}>Pending</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.ticketFooter}>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: 15-6-2019 21:00</Text>
                     </View>
                 </View>
-            </TouchableOpacity>
+            </TouchableNativeFeedback>
         )
     }
 }
 
 const styles = StyleSheet.create({
     wrapper: {
-        height: height / 4,
-        width: width / 1.2,
+        height: height / 4.5,
+        width: width / 1.1,
         backgroundColor: "#fff",
         borderRadius: 10,
         borderTopWidth: 0.5,
@@ -50,15 +106,32 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
         borderColor: 'grey',
         margin: 10,
+        paddingLeft: 10,
+        paddingRight: 10
     },
     ticketHeader: {
-        height: height / 25,
+        flex: 1.2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         borderBottomWidth: 0.5,
         borderBottomColor: 'lightgrey',
     },
-    alignCenter: {
+    ticketBody: {
+        flex: 2,
+        flexDirection: 'column',
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'lightgrey',
+    },
+    ticketBodyContent: {
         flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    ticketFooter: {
+        flex: 0.8,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-end'
     }
 })
