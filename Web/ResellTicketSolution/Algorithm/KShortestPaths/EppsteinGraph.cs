@@ -14,7 +14,7 @@ namespace Algorithm.KShortestPaths
         /// <summary>
         /// List of vertices in this graph
         /// </summary>
-        private List<Vertex> vertices;
+        private readonly List<Vertex> vertices;
 
         /// <summary>
         /// Flag to indicate if shortest paths have been calculated
@@ -37,6 +37,11 @@ namespace Algorithm.KShortestPaths
         private PriorityQueue<SideTrack_Node> SideTrackPathsHeap;
 
         /// <summary>
+        /// Maximum node in final path
+        /// </summary>
+        private int MaxCombination = int.MaxValue;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public EppsteinGraph()
@@ -51,13 +56,14 @@ namespace Algorithm.KShortestPaths
         /// <param name="sourceId">Source vertex Id</param>
         /// <param name="destinationId">Destination vertex Id</param>
         /// <returns>Directional paths if found, empty path if not or id of vertex is invalid.</returns>
-        public Path FindTheShortestPath(int sourceId, int destinationId)
+        public Path FindTheShortestPath(int sourceId, int destinationId, int maxCombination = int.MaxValue)
         {
             isCaculated = false;
 
             //Parse start and end vertex
             this.SourceVertex = GetVertex(sourceId);
             this.DestinationVertex = GetVertex(destinationId);
+            this.MaxCombination = maxCombination;
 
             if(SourceVertex == null || DestinationVertex == null)
             {
@@ -78,7 +84,7 @@ namespace Algorithm.KShortestPaths
             return FindNextShortestPath();
         }
 
-        private Vertex GetVertex(int vertexId)
+        public Vertex GetVertex(int vertexId)
         {
             return vertices.FirstOrDefault(x => x.Id == vertexId);
         }
@@ -112,12 +118,13 @@ namespace Algorithm.KShortestPaths
 
             do
             {
+                //TODO: Add filter max combination
                 if(v != null)
                 {
                     foreach (var edge in v.RelatedEdges) // Evaluate all incoming edges
                     {
                         //Excluse negative edges
-                        if(edge.Head == v && edge.Weight >= 0) 
+                        if(edge.Head != v && edge.Weight >= 0) 
                         {
                             priorityQueue.Enqueue(new ShortestPath_Node(edge, edge.Weight + v.MinDistance));
                         }
@@ -163,6 +170,7 @@ namespace Algorithm.KShortestPaths
         /// <param name="currentVertex">Vertex to evaluate</param>
         private void AddSideTracks(Path currentPath, Vertex currentVertex)
         {
+            //TODO: Add filter max combination
             foreach (var edge in currentVertex.RelatedEdges)
             {
                 if(edge.IsSideTrackOf(currentVertex) && (edge.Head.EdgeToShortestPath != null || edge.Head == this.DestinationVertex))
@@ -233,6 +241,24 @@ namespace Algorithm.KShortestPaths
                 }
             }
             return path;
+        }
+
+        /// <summary>
+        /// Add vertex into this graph
+        /// </summary>
+        /// <param name="newVertex"></param>
+        public void AddVertex(Vertex newVertex)
+        {
+            var existedVertex = this.GetVertex(newVertex.Id);
+            if(existedVertex != null)
+            {
+                //Don't allow to add duplicate vertex id
+                return;
+            }
+
+            //Flag graph must rebuild
+            isCaculated = false;
+            this.vertices.Add(newVertex);
         }
     }
 }

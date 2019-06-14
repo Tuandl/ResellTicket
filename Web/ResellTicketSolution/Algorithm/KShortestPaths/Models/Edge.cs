@@ -53,5 +53,10 @@
         {
             return this.Tail == v && v.EdgeToShortestPath != this;
         }
+
+        public override string ToString()
+        {
+            return Tail.Id + " -> " + Head.Id;
+        }
     }
 }

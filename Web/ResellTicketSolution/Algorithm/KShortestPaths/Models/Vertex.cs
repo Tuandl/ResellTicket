@@ -11,6 +11,7 @@ namespace Algorithm.KShortestPaths.Models
         {
             this.Id = id;
             this.Data = ObjectValue;
+            this.RelatedEdges = new List<Edge>();
         }
 
         /// <summary>

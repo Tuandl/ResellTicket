@@ -42,5 +42,15 @@ namespace Algorithm.KShortestPaths.Models
                 return totalWeight;
             } 
         }
+
+        public override string ToString()
+        {
+            var result = string.Empty;
+            foreach (var edge in this)
+            {
+                result += edge.ToString() + "; ";
+            }
+            return result;
+        }
     }
 }
