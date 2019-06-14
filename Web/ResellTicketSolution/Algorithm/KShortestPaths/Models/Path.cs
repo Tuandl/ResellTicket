@@ -50,6 +50,7 @@ namespace Algorithm.KShortestPaths.Models
             {
                 result += edge.ToString() + "; ";
             }
+            result += $"Weight = {Weight}; DeltaWeight = {DeltaWeight}";
             return result;
         }
     }

@@ -37,6 +37,11 @@ namespace Algorithm.KShortestPaths
         private PriorityQueue<SideTrack_Node> SideTrackPathsHeap;
 
         /// <summary>
+        /// Number of K shortest path
+        /// </summary>
+        private int KShortestPathQuantity= 0;
+
+        /// <summary>
         /// Maximum node in final path
         /// </summary>
         private int MaxCombination = int.MaxValue;
@@ -56,7 +61,7 @@ namespace Algorithm.KShortestPaths
         /// <param name="sourceId">Source vertex Id</param>
         /// <param name="destinationId">Destination vertex Id</param>
         /// <returns>Directional paths if found, empty path if not or id of vertex is invalid.</returns>
-        public Path FindTheShortestPath(int sourceId, int destinationId, int maxCombination = int.MaxValue)
+        public Path FindTheShortestPath(int sourceId, int destinationId, int maxCombination = int.MaxValue, int kShortestPathQuantity = 10)
         {
             isCaculated = false;
 
@@ -64,6 +69,7 @@ namespace Algorithm.KShortestPaths
             this.SourceVertex = GetVertex(sourceId);
             this.DestinationVertex = GetVertex(destinationId);
             this.MaxCombination = maxCombination;
+            this.KShortestPathQuantity = kShortestPathQuantity;
 
             if(SourceVertex == null || DestinationVertex == null)
             {
@@ -76,7 +82,7 @@ namespace Algorithm.KShortestPaths
 
             // Fills a heap with all possible tracks from source to destination, as described in Eppstein
             // Paths are defined uniquely by sidetrack collections (edges not in shortest paths) 
-            BuildSidetracksHeap();
+            BuildSidetracksHeapV2();
 
             // Flag to indicate that shortest paths have been calculated
             isCaculated = true;
@@ -124,19 +130,14 @@ namespace Algorithm.KShortestPaths
                     foreach (var edge in v.RelatedEdges) // Evaluate all incoming edges
                     {
                         //Excluse negative edges
-                        if(edge.Head != v && edge.Weight >= 0) 
-                        {
+                        if(edge.Tail != v && edge.Weight >= 0) 
                             priorityQueue.Enqueue(new ShortestPath_Node(edge, edge.Weight + v.MinDistance));
-                        }
                     }
                 }
 
                 var shortestNode = priorityQueue.Dequeue(); // Extracts next element in queue
                 if (shortestNode == null)
-                {
-                    //No pending node to evaluate
-                    break;
-                }
+                    break; //No pending node to evaluate
 
                 Edge e = shortestNode.Edge;
                 v = e.Tail;
@@ -146,10 +147,53 @@ namespace Algorithm.KShortestPaths
                     v.EdgeToShortestPath = e;
                 }
                 else
-                {
                     v = null;
-                }
+
+                if(priorityQueue.Count() == 0)
+                    break;
             } while (true);
+        }
+
+        /// <summary>
+        /// Create sidetrack using BFS
+        /// </summary>
+        private void BuildSidetracksHeapV2()
+        {
+            SideTrackPathsHeap = new PriorityQueue<SideTrack_Node>();
+            var priorityQueue = new PriorityQueue<SideTrack_Node>();
+
+            Path emptyPath = new Path();
+            priorityQueue.Enqueue(new SideTrack_Node(emptyPath, SourceVertex));
+
+            //Only stop looping when queue is empty or have not found kth shortest path
+            while (priorityQueue.Count() > 0 && SideTrackPathsHeap.Count() < KShortestPathQuantity)
+            {
+                var currentSideTrack = priorityQueue.Dequeue();
+                SideTrackPathsHeap.Enqueue(currentSideTrack);
+                var currentVertex = currentSideTrack.CurrentVertex;
+                var currentPath = new Path();
+                currentPath.AddRange(currentSideTrack.SideTrack);
+
+                while(currentVertex.EdgeToShortestPath != null && currentVertex != DestinationVertex)
+                {
+                    //Search sidetrack in current vertex
+                    foreach (var edge in currentVertex.RelatedEdges)
+                    {
+                        if(edge.IsSideTrackOf(currentVertex) && (edge.Head.EdgeToShortestPath != null))
+                        {
+                            //If found a side track, put it into queue
+                            var nextSideTrack = new Path();
+                            nextSideTrack.AddRange(currentPath);
+                            nextSideTrack.Add(edge);
+                            priorityQueue.Enqueue(new SideTrack_Node(nextSideTrack, edge.Head));
+                        }
+                    }
+
+                    //Move to next vertex in shortest path
+                    currentPath.Add(currentVertex.EdgeToShortestPath);
+                    currentVertex = currentVertex.EdgeToShortestPath.Head;
+                }
+            }
         }
 
         /// <summary>
@@ -159,15 +203,16 @@ namespace Algorithm.KShortestPaths
         {
             SideTrackPathsHeap = new PriorityQueue<SideTrack_Node>();
             Path emptyPath = new Path();
-            this.SideTrackPathsHeap.Enqueue(new SideTrack_Node(emptyPath));
+            this.SideTrackPathsHeap.Enqueue(new SideTrack_Node(emptyPath, null));
             AddSideTracks(emptyPath, SourceVertex);
         }
 
         /// <summary>
-        /// Add SideTrack using DFS
+        /// Add SideTrack using DFS 
         /// </summary>
         /// <param name="currentPath">Previous sidetrack collection</param>
         /// <param name="currentVertex">Vertex to evaluate</param>
+        /// <remarks>This will not work with graph contains circle</remarks>
         private void AddSideTracks(Path currentPath, Vertex currentVertex)
         {
             //TODO: Add filter max combination
@@ -178,7 +223,7 @@ namespace Algorithm.KShortestPaths
                     Path nextSideTrackPath = new Path();
                     nextSideTrackPath.AddRange(currentPath);
                     nextSideTrackPath.Add(edge);
-                    this.SideTrackPathsHeap.Enqueue(new SideTrack_Node(nextSideTrackPath));
+                    this.SideTrackPathsHeap.Enqueue(new SideTrack_Node(nextSideTrackPath, null));
 
                     if(edge.Head != currentVertex)
                     {

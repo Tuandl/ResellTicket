@@ -1,19 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Algorithm.KShortestPaths.Models
 {
     public class SideTrack_Node : IComparable
     {
         public Path SideTrack { get; set; }
+
         public double Weight { get; set; }
 
+        public Vertex CurrentVertex { get; set; }
+
         public SideTrack_Node(
-            Path sideTrack)
+            Path sideTrack,
+            Vertex vertex)
         {
             SideTrack = sideTrack;
             Weight = sideTrack.DeltaWeight;
+            CurrentVertex = vertex;
         }
 
         /// <summary>

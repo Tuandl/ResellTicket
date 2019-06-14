@@ -44,6 +44,8 @@ namespace Algorithm.KShortestPaths.Models
         /// <returns></returns>
         public T Dequeue()
         {
+            if(this.Count() == 0) return default;
+
             // assumes pq is not empty; up to calling code
             int last_index = data.Count - 1; // last index (before removal)
             T frontItem = data[0];   // fetch the front
