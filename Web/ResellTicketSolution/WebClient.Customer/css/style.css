@@ -500,7 +500,7 @@ span.fa.fa-shopping-cart.my-cart-icon {
     background: rgba(255, 255, 255, 0.45);
 }
 .search-form input[type='submit']{
-	    width: 60px;
+	    width: 120px;
     height: 40px;
     outline: none;
     border: 1px solid #fff;
