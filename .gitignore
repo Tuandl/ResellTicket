@@ -23,3 +23,5 @@ Web/ResellTicketSolution/WebClient.Admin/package-lock.json
 Mobile/ResellTicketCustomerMobile/package-lock.json
 /Web/ResellTicketSolution/Algorithm/obj
 /Web/ResellTicketSolution/Algorithm/bin/
+/Web/ResellTicketSolution/AlgorithmTest/bin
+/Web/ResellTicketSolution/AlgorithmTest/obj
