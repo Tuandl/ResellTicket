@@ -45,6 +45,7 @@ namespace WebAPI.Controllers
         [HttpGet]
         public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int customerId)
         {
+
             try
             {
                 var customerTicketVMs = _ticketService.GetCustomerTickets(customerId);
@@ -63,6 +64,36 @@ namespace WebAPI.Controllers
                 var ticketDetailVM = _ticketService.GetTicketDetail(ticketId);
                 return Ok(ticketDetailVM);
             }catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpPut]
+        public ActionResult UpdateCustomerTicket(TicketEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+            try
+            {
+                _ticketService.EditTicket(model);
+                return Ok();
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpDelete]
+        public ActionResult DeleteCustomerTicket(int ticketId)
+        {
+            try
+            {
+                _ticketService.DeleteTicket(ticketId);
+                return Ok();
+            } catch(Exception e)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
             }

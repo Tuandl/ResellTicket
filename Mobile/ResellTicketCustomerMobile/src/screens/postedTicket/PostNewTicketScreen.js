@@ -57,8 +57,6 @@ export default class PostNewTicket extends Component {
         }
     }
 
-
-
     async getCities() {
         const resCity = await Api.get('api/city');
         if (resCity.status === 200) {
@@ -240,6 +238,7 @@ export default class PostNewTicket extends Component {
     postTicket = async () => {
         var { transportationId, ticketTypeId, departureStationId, arrivalStationId,
             ticketCode, sellingPrice, departureDateTime, arrivalDateTime } = this.state;
+            var {navigation} = this.props;
 
         if (transportationId !== -1 && ticketTypeId !== -1 && departureStationId !== -1 && arrivalStationId !== -1
             && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== '' && arrivalDateTime !== '') {
@@ -259,7 +258,8 @@ export default class PostNewTicket extends Component {
                 RNToasty.Success({
                     title: 'Post Ticket Successfully'
                 })
-                this.props.navigation.navigate('PostedTicket');
+                navigation.state.params.refreshPostedTicket();
+                navigation.navigate('PostedTicket');
             }
         } else {
             RNToasty.Error({

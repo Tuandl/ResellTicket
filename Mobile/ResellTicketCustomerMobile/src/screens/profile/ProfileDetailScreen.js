@@ -7,7 +7,8 @@ import {
     Dimensions,
     AsyncStorage
 } from 'react-native';
-import { Input, Button, Icon } from 'react-native-elements';
+import { Container, Button, Header, Body, Title, Left, Right } from 'native-base';
+import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from './../../service/Api';
 
@@ -83,7 +84,7 @@ export default class ProfileDetailScreen extends Component {
     }
 
     async getCustomerProfile() {
-        var usernameDefault = await AsyncStorage.getItem('USENAME');
+        var usernameDefault = await AsyncStorage.getItem('USERNAME');
         try {
             var customerResponse = await Api.get('api/customer/getCustomerByUsename?usename=' + usernameDefault);
             console.log('repone', customerResponse);
@@ -138,28 +139,42 @@ export default class ProfileDetailScreen extends Component {
             address, address_valid, phoneNumber, showLoading } = this.state;
 
         return (
-            <View style={styles.container}>
-                <ImageBackground source={BG_IMAGE} style={styles.bgImage}>
+            <Container style={{ flex: 1 }}>
+                <Header>
+                    <Left>
+                        <Button
+                            onPress={() => this.props.navigation.navigate('Me')}>
+                            <Icon name="arrow-left" type="material-community" color="#fff" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>
+                            Profile Detail
+                        </Title>
+                    </Body>
+                    <Right />
+                </Header>
+                <ImageBackground style={styles.bgImage}>
                     <View style={styles.registerView}>
-                        <View style={styles.registerTitle}>
+                        {/* <View style={styles.registerTitle}>
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={styles.travelText}>Profile Detail</Text>
                             </View>
-                        </View>
+                        </View> */}
                         <View style={styles.registerInput}>
                             <Input
                                 leftIcon={
                                     <Icon
                                         name="user-o"
                                         type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
+                                        color="black"
                                         size={25}
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={username => { this.setState({ username: username }) }}
                                 value={username}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Username"
                                 autoFocus={false}
@@ -169,22 +184,22 @@ export default class ProfileDetailScreen extends Component {
                                 returnKeyType="next"
                                 ref={input => (this.usernameInput = input)}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
-                                enabled={false}
+                                placeholderTextColor="black"
+                                editable={false}
                             />
                             <Input
                                 leftIcon={
                                     <Icon
                                         name="user-o"
                                         type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
+                                        color="black"
                                         size={25}
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={fullName => { this.setState({ fullName: fullName }) }}
                                 value={fullName}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Full Name"
                                 autoFocus={false}
@@ -197,7 +212,7 @@ export default class ProfileDetailScreen extends Component {
                                     this.validateFullName(fullName);
                                 }}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     fullName_valid ? null : 'Please enter a valid full name'
@@ -208,14 +223,14 @@ export default class ProfileDetailScreen extends Component {
                                     <Icon
                                         name="user-o"
                                         type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
+                                        color="black"
                                         size={25}
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={email => { this.setState({ email: email }) }}
                                 value={email}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Email Address"
                                 autoFocus={false}
@@ -225,7 +240,7 @@ export default class ProfileDetailScreen extends Component {
                                 returnKeyType="next"
                                 ref={input => (this.emailInput = input)}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     email_valid ? null : 'Please enter a valid Email address'
@@ -236,14 +251,14 @@ export default class ProfileDetailScreen extends Component {
                                     <Icon
                                         name="user-o"
                                         type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
+                                        color="black"
                                         size={25}
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={address => { this.setState({ address: address }) }}
                                 value={address}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Address"
                                 autoFocus={false}
@@ -253,7 +268,7 @@ export default class ProfileDetailScreen extends Component {
                                 returnKeyType="next"
                                 ref={input => (this.addressInput = input)}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     address_valid ? null : 'Please enter a valid Address'
@@ -264,14 +279,14 @@ export default class ProfileDetailScreen extends Component {
                                     <Icon
                                         name="user-o"
                                         type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
+                                        color="black"
                                         size={25}
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
                                 value={phoneNumber}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Phone Number"
                                 autoFocus={false}
@@ -281,61 +296,37 @@ export default class ProfileDetailScreen extends Component {
                                 returnKeyType="next"
                                 ref={input => (this.phoneNumberInput = input)}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
-                                enabled={false}
+                                placeholderTextColor="black"
+                                editable={false}
                             />
                         </View>
-                        <Button
-                            title="UPDATE PROFILE"
-                            activeOpacity={1}
+                        <Button rounded block primary
+                            //activeOpacity={1}
                             underlayColor="transparent"
                             onPress={this.submitRegisterCredentials}
                             loading={showLoading}
-                            loadingProps={{ size: 'small', color: 'white' }}
-                            //disabled={isEditting == false}
-                            buttonStyle={{
-                                height: 50,
-                                width: 250,
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderColor: 'white',
-                                borderRadius: 30,
+                            loadingProps={{ size: 'small', color: '#fff' }}
+                            style={{
+                                marginTop:10 
                             }}
-                            containerStyle={{ marginVertical: 10 }}
-                            titleStyle={{ fontWeight: 'bold', color: 'white' }}
-                        />
-                        <Button
-                            title="CHANGE PASSWORD"
-                            activeOpacity={1}
+                            titleStyle={{ fontSize: 20, color: '#fff' }}
+                        ><Text style={{ color: '#fff', fontSize: 20 }}>Upate Profile</Text></Button>
+                         
+                        <Button rounded block primary
+                            //activeOpacity={1}
                             underlayColor="transparent"
                             onPress={() => this.props.navigation.navigate('ChangePassword')}
                             loading={showLoading}
-                            loadingProps={{ size: 'small', color: 'white' }}
-                            //disabled={isEditting == false}
-                            buttonStyle={{
-                                height: 50,
-                                width: 250,
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderColor: 'white',
-                                borderRadius: 30,
+                            loadingProps={{ size: 'small', color: '#fff' }}
+                            style={{
+                                marginTop:10 
                             }}
-                            containerStyle={{ marginVertical: 10 }}
-                            titleStyle={{ fontWeight: 'bold', color: 'white' }}
-                        />
-                        <View style={styles.footerView}>
-                            <Button
-                                title="Go Back Home"
-                                type="clear"
-                                activeOpacity={0.5}
-                                titleStyle={{ color: 'white', fontSize: 15 }}
-                                containerStyle={{ marginTop: -5 }}
-                                onPress={() => this.props.navigation.navigate('Me')}
-                            />
-                        </View>
+                        >
+                            <Text style={{ color: '#fff', fontSize: 20 }}>Change Password</Text>
+                        </Button>
                     </View>
                 </ImageBackground>
-            </View>
+            </Container>
         );
     }
 }
@@ -344,7 +335,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     bgImage: {
-        flex: 1,
+        //flex: 1,
         top: 0,
         left: 0,
         width: SCREEN_WIDTH,
@@ -353,13 +344,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     registerView: {
-        marginTop: 0,
+        //marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
         height: 600,
     },
     registerTitle: {
-        flex: 0.3,
+        //flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -374,15 +365,15 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
     },
     registerInput: {
-        flex: 0.7,
+        //flex: 0.7,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -70,
+        //marginTop: -70,
 
     },
     footerView: {
-        marginTop: 0,
-        flex: 0.1,
+        //marginTop: 0,
+        //flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
     },

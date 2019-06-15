@@ -5,6 +5,7 @@ import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 import { Icon } from 'react-native-elements';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
+import convertTicketStatus from '../helper/convertTicketStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -18,8 +19,8 @@ export default class TicketViewComponent extends Component {
     }
 
     editTicketOrViewTicketDetails = () => {
-        const { postedTicket, navigate } = this.props;
-        navigate('EditPostedTicket', {ticketId: postedTicket.id})
+        const { postedTicket, navigate, refreshPostedTicket } = this.props;
+        navigate('EditPostedTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
     }
 
     render() {
@@ -67,7 +68,7 @@ export default class TicketViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: 'orange' }}>Pending</Text>
+                            <Text style={{ fontSize: 12, color: 'orange' }}>{convertTicketStatus.toString(status)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
                         </View>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Dimensions, StyleSheet, Text } from 'react-native';
 import { Container, Header, Body, Title, Item, Picker, Content, Button, Left, Label, Right } from 'native-base';
 import { Icon, Input } from 'react-native-elements';
 import Api from './../../service/Api';
@@ -8,6 +8,9 @@ import NumberFormat from 'react-number-format';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { TouchableNativeFeedback, ScrollView } from 'react-native-gesture-handler';
 import { RNToasty } from 'react-native-toasty';
+
+const { width } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default class EditPostedTicket extends Component {
     constructor(props) {
@@ -46,17 +49,12 @@ export default class EditPostedTicket extends Component {
     }
 
     componentDidMount() {
-        // this.getTicketDetail();
-
-        // this.setState({
-        //     vehicleId: 7
-        // })
     }
 
     async getTicketDetail() {
         const ticketId = this.props.navigation.getParam('ticketId');
         const resTicketDetail = await Api.get('api/ticket/detail?ticketId=' + ticketId);
-        if(resTicketDetail.status === 200) {
+        if (resTicketDetail.status === 200) {
             const ticketDetail = resTicketDetail.data
             this.onVehicleChange(ticketDetail.vehicleId)
             this.onTransportationChange(ticketDetail.transportationId)
@@ -85,8 +83,6 @@ export default class EditPostedTicket extends Component {
         }
     }
 
-
-
     async getCities() {
         const resCity = await Api.get('api/city');
         if (resCity.status === 200) {
@@ -95,7 +91,6 @@ export default class EditPostedTicket extends Component {
             })
         }
         this.getTicketDetail();
-
     }
 
     async getDepartStations(value) {
@@ -265,6 +260,53 @@ export default class EditPostedTicket extends Component {
         this.hideArrivalDateTimePicker();
     };
 
+    editPostedTicket = async () => {
+        const { transportationId, ticketTypeId, departureStationId, arrivalStationId,
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime } = this.state;
+        const { navigation } = this.props;
+        const ticketId = this.props.navigation.getParam('ticketId');
+
+        if (transportationId !== -1 && ticketTypeId !== -1 && departureStationId !== -1 && arrivalStationId !== -1
+            && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== '' && arrivalDateTime !== '') {
+            var ticket = {
+                id: ticketId,
+                ticketCode: ticketCode,
+                transportationId: transportationId,
+                departureStationId: departureStationId,
+                arrivalStationId: arrivalStationId,
+                sellingPrice: sellingPrice,
+                description: '',
+                departureDateTime: departureDateTime,
+                arrivalDateTime: arrivalDateTime,
+                ticketTypeId: ticketTypeId
+            }
+            const resEditTicket = await Api.put('api/ticket', ticket);
+            if (resEditTicket.status === 200) {
+                RNToasty.Success({
+                    title: 'Edit Ticket Successfully'
+                })
+                navigation.state.params.refreshPostedTicket();
+                navigation.navigate('PostedTicket');
+            }
+        } else {
+            RNToasty.Error({
+                title: 'Please input required fields'
+            })
+        }
+    }
+
+    deletePostedTicket = async () => {
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
+        const { navigation } = this.props;
+        if(resDeleteTicket.status === 200) {
+            RNToasty.Success({
+                title: 'Delete Ticket Successfully'
+            })
+            navigation.state.params.refreshPostedTicket();
+            navigation.navigate('PostedTicket');
+        }
+    }
 
     render() {
         const { vehicleId,
@@ -314,7 +356,7 @@ export default class EditPostedTicket extends Component {
                                 selectedValue={vehicleId}
                                 onValueChange={this.onVehicleChange.bind(this)}
                             >
-                                <Picker.Item label="" value={-1}/>
+                                <Picker.Item label="" value={-1} />
                                 {vehicles.map((vehicle, index) => {
                                     return (<Picker.Item label={vehicle.name} value={vehicle.id} key={index} />)
                                 })}
@@ -333,7 +375,7 @@ export default class EditPostedTicket extends Component {
                                 selectedValue={transportationId}
                                 onValueChange={this.onTransportationChange.bind(this)}
                             >
-                                <Picker.Item label="" value={-1}/>
+                                <Picker.Item label="" value={-1} />
                                 {transportations.map((transportation, index) => {
                                     return (<Picker.Item label={transportation.name} value={transportation.id} key={index} />)
                                 })}
@@ -473,7 +515,7 @@ export default class EditPostedTicket extends Component {
                         <Input
                             onChangeText={ticketCode => this.setState({ ticketCode })}
                             value={ticketCode}
-                            inputStyle={{ fontSize: 15, color: 'black'}}
+                            inputStyle={{ fontSize: 15, color: 'black' }}
                         />
                         {/* Enter Selling Price */}
                         <Label style={{ paddingTop: 10, fontSize: 10 }}>Selling Price:</Label>
@@ -484,14 +526,18 @@ export default class EditPostedTicket extends Component {
                                     value={value}
                                     inputStyle={{ fontSize: 15, color: 'black' }}
                                     keyboardType="numeric"
-                                    
                                 />
                             )}
                         />
                         <Button rounded block primary
-                            style={{ margin: 40 }}
-                            onPress={this.postTicket}>
+                            style={{ margin: 40, marginBottom: 0 }}
+                            onPress={this.editPostedTicket}>
                             <Text style={{ color: '#fff', fontSize: 20 }}>Edit</Text>
+                        </Button>
+                        <Button rounded block danger
+                            style={{ margin: 40,marginTop: 10,marginBottom: 0  }}
+                            onPress={this.deletePostedTicket}>
+                            <Text style={{ color: '#fff', fontSize: 20 }}>Delete</Text>
                         </Button>
                     </Content>
                 </ScrollView>

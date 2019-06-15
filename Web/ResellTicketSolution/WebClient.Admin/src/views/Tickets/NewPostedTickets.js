@@ -1,10 +1,18 @@
-import React, { Component } from 'react';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
-import { Redirect } from 'react-router-dom';
 import Axios from 'axios';
+import React, { Component } from 'react';
+import { toastr } from 'react-redux-toastr';
+import { Redirect } from 'react-router-dom';
+import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 
 function TicketRow(props) {
-    const ticket = props.ticket
+  const {ticket, parent} = props;
+  const getBadge = (status) => {
+    if (status == 1) {
+        return (
+            <Badge color="danger">Peding</Badge>
+        )
+    }
+}
     //const userLink = `/user/${user.id}`
 
     // const getBadge = (isActive) => {
@@ -28,9 +36,9 @@ function TicketRow(props) {
             <td>{ticket.sellerPhone}</td>
             <td>{ticket.price}</td>
             <td>{ticket.feeAmount}</td>
-            <td>{ticket.status}</td>
+            <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2">
+                <Button color="success" className="mr-2" onClick={() => {parent.onSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
                 <Button color="danger">
@@ -64,25 +72,45 @@ class NewPostedTickets extends Component {
             var decode = jwt(token);
             var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             if (userRole === 'Staff') {
-                this.getTickets();
+                this.getPendingTickets();
                 this.setState({
                     userRole: userRole
                 })
             }
-        } 
+        }
     }
 
-    getTickets = async () => {
-        await Axios.get('api/ticket').then(res => {
-            this.setState({
-                tickets: res.data
-            })
-            //console.log(this.state.tickets);
-        });
+    // getTickets = async () => {
+    //     await Axios.get('api/ticket').then(res => {
+    //         this.setState({
+    //             tickets: res.data
+    //         })
+    //         //console.log(this.state.tickets);
+    //     });
 
-    }
+    // }
 
+    getPendingTickets = () => {
+      Axios.get('api/ticket/pending').then(res => {
+          this.setState({
+              tickets: res.data
+          })
+          //console.log(this.state.tickets);
+      });
 
+  }
+
+    onSaveChanges = (id) => {
+      Axios.put('api/ticket/approve/' + id).then(res => {
+          if(res.status === 200) {
+              toastr.success('Update Success', 'Ticket has been valid successfully.');
+              // this.props.history.push('/ticket');
+              this.getPendingTickets();
+          } else {
+              toastr.error('Error', 'Error when valid Ticket');
+          }
+      })
+  }
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -125,7 +153,7 @@ class NewPostedTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} />
+                                                <TicketRow key={index} ticket={ticket} index={index} parent={this}/>
                                             )}
                                         </tbody>
                                     </Table>

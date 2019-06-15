@@ -7,6 +7,7 @@ namespace ViewModel.ViewModel.Ticket
 {
     public class TicketRowViewModel
     {
+        public int id { get; set; }
         public string TicketCode { get; set; }
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }

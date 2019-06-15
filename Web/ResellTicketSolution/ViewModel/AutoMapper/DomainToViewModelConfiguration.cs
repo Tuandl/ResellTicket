@@ -19,7 +19,6 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.VehicleId, option => option.MapFrom(source => source.Transportation.VehicleId))
                 .ForMember(dest => dest.DepartureCityId, option => option.MapFrom(source => source.Departure.CityId))
                 .ForMember(dest => dest.ArrivalCityId, option => option.MapFrom(source => source.Arrival.CityId));
-
         }
     }
 }
