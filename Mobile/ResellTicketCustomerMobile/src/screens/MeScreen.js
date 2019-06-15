@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import { Container, Text, Content, List, ListItem, Left, Right } from 'native-base';
 import { Icon, Avatar } from 'react-native-elements';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { Transitioner } from 'react-navigation';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');

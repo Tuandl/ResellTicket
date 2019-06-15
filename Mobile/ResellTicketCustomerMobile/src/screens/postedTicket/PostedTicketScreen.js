@@ -55,7 +55,7 @@ export default class PostedTicket extends Component {
                     </Right>
                 </Header>
                 <Content padder
-                    style={{ flex: 1, backgroundColor: '#b3e5fc' }}
+                    style={{ flex: 1 }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                         {postedTickets.map((postedTicket, index)=> {
                             return (<TicketView key={index} postedTicket={postedTicket} navigate={navigate}/>)

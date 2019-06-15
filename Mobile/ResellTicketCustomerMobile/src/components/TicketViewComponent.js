@@ -19,44 +19,31 @@ export default class TicketViewComponent extends Component {
 
     editTicketOrViewTicketDetails = () => {
         const { postedTicket, navigate } = this.props;
-        if(postedTicket.status === 1) {
-            const editTicket = {
-                id: postedTicket.id,
-                vehicleId: postedTicket.vehicleId,
-                transportationId: postedTicket.transportationId,
-                ticketTypeId: postedTicket.ticketTypeId,
-                departureStationId: postedTicket.departureStationId,
-                arrivalStationId: postedTicket.arrivalStationId,
-                departureDateTime: postedTicket.departureDateTime,
-                arrivalDateTime: postedTicket.arrivalDateTime,
-                ticketCode: postedTicket.ticketCode,
-                sellingPrice: postedTicket.sellingPrice
-            }
-            navigate('EditPostedTicket', {editTicket: editTicket})
-        }
+        navigate('EditPostedTicket', {ticketId: postedTicket.id})
     }
 
     render() {
-        const { departureCity,
-            arrivalCity,
+        const { departureCityName,
+            arrivalCityName,
             sellingPrice,
             departureDateTime,
             arrivalDateTime,
             status,
             vehicle,
             ticketCode } = this.props.postedTicket;
+            
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
                 <View style={styles.wrapper}>
                     <View style={styles.ticketHeader}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text>{departureCity}  </Text>
+                            <Text>{departureCityName}  </Text>
                             {vehicle === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
                                 : vehicle === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
                                     : <Icon name='train' type="material-community" color="grey" />
                             }
-                            <Text>  {arrivalCity}</Text>
+                            <Text>  {arrivalCityName}</Text>
                         </View>
                         <View>
                             <NumberFormat value={sellingPrice}

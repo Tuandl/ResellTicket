@@ -10,7 +10,10 @@ import MeScreen from './../screens/MeScreen';
 import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
 import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
-import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen'
+
+import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen';
+import PostNewTicketScreen2 from './../screens/postedTicket/PostNewTicketScreen2';
+import ValueSelectedScreen from '../screens/postedTicket/ValueSelectedScreen';
 import EditPostedTicketScreen from './../screens/postedTicket/EditPostedTicketScreen';
 
 const MeStack = createStackNavigator(
@@ -19,10 +22,13 @@ const MeStack = createStackNavigator(
       screen: MeScreen
     },
     PostedTicket: {
-      screen: PostedTicketScreen,
+      screen: PostedTicketScreen
     },
     PostNewTicket: {
       screen: PostNewTicketScreen
+    },
+    ValueSelected: {
+      screen: ValueSelectedScreen
     },
     EditPostedTicket: {
       screen: EditPostedTicketScreen

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
 import { Text, Card} from 'native-base';
-import CardView from 'react-native-cardview';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('window');
@@ -16,8 +15,8 @@ export default class RouteViewComponent extends Component {
         return (
             <TouchableOpacity onPress={this.onPress}>
                 <Card style={styles.wrapper}>
-                    <View>
-                        <Text>2.000.000 VND</Text>
+                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: 'lightgrey' }}>
+                        <Text style={{ fontSize: 20 }}>2.000.000 VND</Text>
                     </View>
                     <View style={{ flex: 2, flexDirection: 'row' }}>
                         <View style={styles.alignCenter}>
@@ -46,13 +45,6 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderColor: 'blue',
         borderWidth: 10,
-    },
-    ticketHeader: {
-        flex: 1, 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        borderBottomWidth: 0.5, 
-        borderBottomColor: 'lightgrey' 
     },
     alignCenter: {
         flex: 1,

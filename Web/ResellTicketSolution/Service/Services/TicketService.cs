@@ -16,6 +16,7 @@ namespace Service.Services
         List<TicketRowViewModel> GetTickets();
         void PostTicket(TicketPostViewModel model);
         List<CustomerTicketViewModel> GetCustomerTickets(int customerId);
+        TicketDetailViewModel GetTicketDetail(int ticketId);
     }
     public class TicketService : ITicketService
     {
@@ -34,14 +35,7 @@ namespace Service.Services
             _ticketRepository = ticketRepository;
             _customerRepository = customerRepository;
         }
-
-        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId)
-        {
-            var customerTickets = _ticketRepository.GetAllQueryable().Where(x => x.CustomerId == customerId).ToList();
-            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
-            return customerTicketVMs;
-        }
-
+        
         public List<TicketRowViewModel> GetTickets()
         {
             var tickets = _ticketRepository.GetAll().ToList();
@@ -54,6 +48,19 @@ namespace Service.Services
             
             return ticketRowViewModels;
         }
+        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId)
+        {
+            var customerTickets = _ticketRepository.GetAllQueryable().Where(x => x.CustomerId == customerId).ToList();
+            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
+            return customerTicketVMs;
+        }
+
+        public TicketDetailViewModel GetTicketDetail(int ticketId)
+        {
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
+            var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
+            return ticketDetailVM;
+        }
 
         public void PostTicket(TicketPostViewModel model)
         {
@@ -64,5 +71,7 @@ namespace Service.Services
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
         }
+
+        
     }
 }

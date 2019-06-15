@@ -53,7 +53,19 @@ namespace WebAPI.Controllers
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
             }
-           
+        }
+
+        [HttpGet("detail")]
+        public ActionResult<TicketDetailViewModel> GetTicketDetail(int ticketId)
+        {
+            try
+            {
+                var ticketDetailVM = _ticketService.GetTicketDetail(ticketId);
+                return Ok(ticketDetailVM);
+            }catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
         }
     }
 }
