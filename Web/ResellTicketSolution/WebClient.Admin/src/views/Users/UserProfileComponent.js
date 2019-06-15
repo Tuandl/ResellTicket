@@ -2,6 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
+// import { tsImportEqualsDeclaration } from '@babel/types';
 
 class UserProfileComponent extends Component {
     constructor(props) {
@@ -38,7 +39,7 @@ class UserProfileComponent extends Component {
         var decode = jwt(token);
         var userId = decode['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']
         this.getUserProfile(userId);
-        
+
     }
 
     //get user profile không cần decode, token gửi lên backend có thể lấy username ra
@@ -106,7 +107,7 @@ class UserProfileComponent extends Component {
                 currentPass : this.state.currentPass,
                 newPass : this.state.confirmPass
             }
-            
+
             Axios.put('api/user/password', userChangePass).then(res => {
                 if(res.status === 200) {
                     toastr.success('Change Success', 'Your password has been changed successfully.');
@@ -115,7 +116,7 @@ class UserProfileComponent extends Component {
                 }
             })
         }
-        
+
     }
 
     render() {

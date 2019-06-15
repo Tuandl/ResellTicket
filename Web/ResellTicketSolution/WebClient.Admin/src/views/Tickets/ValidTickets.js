@@ -5,28 +5,14 @@ import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 
 function TicketRow(props) {
-  const {ticket, parent} = props;
-  const getBadge = (status) => {
-    if (status == 1) {
-        return (
-            <Badge color="danger">Peding</Badge>
-        )
+    const {ticket} = props;
+    const getBadge = (status) => {
+      if (status == 2) {
+          return (
+              <Badge color="success">Valid</Badge>
+          )
+      }
     }
-}
-    //const userLink = `/user/${user.id}`
-
-    // const getBadge = (isActive) => {
-    //     if (isActive === true) {
-    //         return (
-    //             <Badge color="success">Active</Badge>
-    //         )
-    //     } else {
-    //         return (
-    //             <Badge color="danger">Inactive</Badge>
-    //         )
-    //     }
-    // }
-
     return (
         <tr>
             <th>{props.index + 1}</th>
@@ -38,11 +24,8 @@ function TicketRow(props) {
             <td>{ticket.feeAmount}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2" onClick={() => {parent.onSaveChanges(ticket.id)}}>
+                <Button color="success" className="mr-2">
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
-                </Button>
-                <Button color="danger">
-                    <i className="fa fa-edit fa-lg mr-1"></i>Invalid
                 </Button>
             </td>
         </tr>
@@ -51,7 +34,7 @@ function TicketRow(props) {
     )
 }
 
-class NewPostedTickets extends Component {
+class ValidTickets extends Component {
 
     constructor(props) {
         super(props);
@@ -72,7 +55,7 @@ class NewPostedTickets extends Component {
             var decode = jwt(token);
             var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             if (userRole === 'Staff') {
-                this.getPendingTickets();
+                this.getValidTickets();
                 this.setState({
                     userRole: userRole
                 })
@@ -85,32 +68,31 @@ class NewPostedTickets extends Component {
     //         this.setState({
     //             tickets: res.data
     //         })
-    //         //console.log(this.state.tickets);
+    //         // console.log(this.state.tickets);
     //     });
 
     // }
-
-    getPendingTickets = () => {
-      Axios.get('api/ticket/pending').then(res => {
+    getValidTickets = () => {
+      Axios.get('api/ticket/valid').then(res => {
           this.setState({
               tickets: res.data
           })
-          //console.log(this.state.tickets);
+          // console.log(this.state.tickets);
       });
 
   }
 
     onSaveChanges = (id) => {
-      Axios.put('api/ticket/approve/' + id).then(res => {
+      Axios.put('api/ticket/' + id).then(res => {
           if(res.status === 200) {
               toastr.success('Update Success', 'Ticket has been valid successfully.');
               // this.props.history.push('/ticket');
-              this.getPendingTickets();
           } else {
               toastr.error('Error', 'Error when valid Ticket');
           }
       })
   }
+
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -121,11 +103,6 @@ class NewPostedTickets extends Component {
                         <Col xl={12}>
                             <Card>
                                 <CardHeader>
-                                    {/* <Link to='/user/add'>
-                                    <Button className="text-right" color="primary">
-                                        <i className="fa fa-plus fa-lg mr-1"></i>Create User
-                                        </Button>
-                                </Link> */}
                                     <Form className="text-right mr-2" onSubmit={this.onSubmit}>
                                         <InputGroup>
                                             <Input type="text" className="mr-2" placeholder="" /> {/*name="searchValue" value={searchValue} onChange={this.onChange}*/}
@@ -153,7 +130,7 @@ class NewPostedTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} parent={this}/>
+                                                <TicketRow key={index} ticket={ticket} index={index} />
                                             )}
                                         </tbody>
                                     </Table>
@@ -169,4 +146,4 @@ class NewPostedTickets extends Component {
     }
 }
 
-export default NewPostedTickets
+export default ValidTickets;

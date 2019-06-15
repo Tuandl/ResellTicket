@@ -52,7 +52,7 @@ const TicketTypeCreateView = React.lazy(() => import('./views/TicketType/TicketT
 const Stations = React.lazy(() => import('./views/Stations/StationsComponent'));
 const StationView = React.lazy(() => import('./views/Stations/StationViewComponent'));
 const StationCreate = React.lazy(() => import('./views/Stations/StationCreateComponent'));
-
+const ValidTickets = React.lazy(() => import('./views/Tickets/ValidTickets'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
@@ -113,8 +113,8 @@ const routes = [
   { path: '/tickettype/:id', name: 'Ticket Type Details', component: TicketTypeView},
   { path: '/station', exact: true,  name: 'Stations', component: Stations },
   { path: '/station/add', exact: true, name: 'Add Station', component: StationCreate },
-  {path: '/station/:id', name: 'Station Details', component: StationView}
-
+  {path: '/station/:id', name: 'Station Details', component: StationView},
+  {path: '/validTicket', name: 'Valid Tickets', component: ValidTickets}
 ];
 
 export default routes;
