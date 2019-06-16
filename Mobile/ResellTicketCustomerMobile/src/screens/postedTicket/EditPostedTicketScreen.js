@@ -127,7 +127,6 @@ export default class EditPostedTicket extends Component {
     async getTicketTypes(value) {
         const resTicketType = await Api.get('api/ticketType?vehicleId=' + value);
         if (resTicketType.status === 200) {
-            console.log(resTicketType)
             this.setState({
                 ticketTypes: resTicketType.data
             })

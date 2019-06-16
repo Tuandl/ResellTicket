@@ -18,27 +18,13 @@ import EditPostedTicketScreen from './../screens/postedTicket/EditPostedTicketSc
 
 const MeStack = createStackNavigator(
   {
-    Me: {
-      screen: MeScreen
-    },
-    PostedTicket: {
-      screen: PostedTicketScreen
-    },
-    PostNewTicket: {
-      screen: PostNewTicketScreen
-    },
-    ValueSelected: {
-      screen: ValueSelectedScreen
-    },
-    EditPostedTicket: {
-      screen: EditPostedTicketScreen
-    },
-    ProfileDetail: {
-      screen: ProfileDetailScreen
-    },
-    ChangePassword: {
-      screen: ChangePasswordScreen
-    }
+    Me: MeScreen,
+    PostedTicket: PostedTicketScreen,
+    PostNewTicket: PostNewTicketScreen,
+    ValueSelected: ValueSelectedScreen,
+    EditPostedTicket: EditPostedTicketScreen,
+    ProfileDetail: ProfileDetailScreen,
+    ChangePassword: ChangePasswordScreen
   },
   {
     initialRouteName: 'Me',
@@ -77,13 +63,14 @@ export default createBottomTabNavigator(
     },
     Me: {
       screen: MeStack,
-      navigationOptions: {
+      navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Me',
         tabBarIcon: ({ }) => {
           return <Icon name="user-o" type="font-awesome" />
         },
-      }
-    },
+        tabBarVisible: navigation.state.index > 0 ? false: true
+      })
+    }
   },
   {
     initialRouteName: 'Me',

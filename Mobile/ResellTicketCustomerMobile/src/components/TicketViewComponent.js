@@ -15,6 +15,7 @@ export default class TicketViewComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            statusColor: ''
         }
     }
 
@@ -32,7 +33,12 @@ export default class TicketViewComponent extends Component {
             status,
             vehicle,
             ticketCode } = this.props.postedTicket;
-            
+
+        {   //check hết hạn vé
+            status === 1 ? this.state.statusColor = 'orange' 
+            : status === 3 ? this.state.statusColor = 'red' 
+            : this.state.statusColor = '#28a745'
+        } 
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
@@ -50,8 +56,9 @@ export default class TicketViewComponent extends Component {
                             <NumberFormat value={sellingPrice}
                                 displayType={'text'}
                                 thousandSeparator={true}
+                                suffix={' $'}
                                 renderText={value => (
-                                    <Text style={{ fontSize: 20, color: 'red' }}>{value} đ</Text>
+                                    <Text style={{ fontSize: 20, color: '#d32f2f' }}>{value}</Text>
                                 )}
                             />
                         </View>
@@ -68,7 +75,7 @@ export default class TicketViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: 'orange' }}>{convertTicketStatus.toString(status)}</Text>
+                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toString(status)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
                         </View>

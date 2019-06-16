@@ -28,12 +28,13 @@ export default class RouteScreen extends Component {
                     </Body>
                     <Right>
                         <Button>
-                            <Icon name="search" type="font-awesome" />
+                            <Icon name="search" type="font-awesome" color="#fff"/>
                         </Button>
                     </Right>
                 </Header>
                 <Content style={{ flex: 1, backgroundColor: '#b3e5fc' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+                    
                     <RouteView />
                     <RouteView />
                     <RouteView />

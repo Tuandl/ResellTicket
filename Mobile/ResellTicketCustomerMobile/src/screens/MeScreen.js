@@ -22,7 +22,6 @@ export default class MeScreen extends Component {
     async getUsename() {
         var usernameDefault = await AsyncStorage.getItem('USERNAME');
         //var data = JSON.parse(usernameDefault);
-        console.log('Mescreen', usernameDefault);
         this.setState({
             username: usernameDefault
         })

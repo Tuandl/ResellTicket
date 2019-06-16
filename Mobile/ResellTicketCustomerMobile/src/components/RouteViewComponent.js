@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { Text, Card} from 'native-base';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Text } from 'native-base';
+import { Icon } from 'react-native-elements';
+import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
+import moment from 'moment';
+import NumberFormat from 'react-number-format';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -13,42 +16,89 @@ export default class RouteViewComponent extends Component {
 
     render() {
         return (
-            <TouchableOpacity onPress={this.onPress}>
-                <Card style={styles.wrapper}>
-                    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: 'lightgrey' }}>
-                        <Text style={{ fontSize: 20 }}>2.000.000 VND</Text>
-                    </View>
-                    <View style={{ flex: 2, flexDirection: 'row' }}>
-                        <View style={styles.alignCenter}>
-                            <Text>Tickets: 3</Text>
-                            <Text>From</Text>
-                            <Text>8/6/2019 12:00</Text>
+            <TouchableNativeFeedback onPress={this.onPress}>
+                <View style={styles.wrapper}>
+                    <View style={styles.routeHeader}>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text>Ho Chi Minh  </Text>
+                            <Icon name="long-arrow-right" type="font-awesome" color="grey"/>
+                            <Text>  Hai Phong</Text>
                         </View>
-                        <View style={styles.alignCenter}>
-                            <Text>5 Hours left</Text>
-                            <Text>To</Text>
-                            <Text>8/6/2019 13:00</Text>
+                        <View>
+                            <NumberFormat value={200}
+                                displayType={'text'}
+                                thousandSeparator={true}
+                                suffix={' $'}
+                                renderText={value => (
+                                    <Text style={{ fontSize: 20, color: '#d32f2f' }}>{value}</Text>
+                                )}
+                            />
                         </View>
                     </View>
-                </Card>
-            </TouchableOpacity>
+                    <View style={styles.routeBody}>
+                        <View style={styles.routeBodyContent}>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Route</Text>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Departure</Text>
+                            <Text style={{ fontSize: 12, color: 'grey' }}>Arrival</Text>
+                        </View>
+                        <View style={styles.routeBodyContent}>
+                            <Text style={{ fontSize: 15 }}>3 tickets</Text>
+                            <Text style={{ fontSize: 12 }}>JUN 18 2019</Text>
+                            <Text style={{ fontSize: 12 }}>JUN 19 2019</Text>
+                        </View>
+                        <View style={styles.routeBodyContent}>
+                            <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
+                            <Text style={{ fontSize: 12 }}>11:00</Text>
+                            <Text style={{ fontSize: 12 }}>12:30</Text>
+                        </View>
+                    </View>
+                    <View style={styles.routeFooter}>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: JUN 17 2019 11:00</Text>
+                    </View>
+                </View>
+            </TouchableNativeFeedback>
         )
     }
 }
 
 const styles = StyleSheet.create({
     wrapper: {
-        height: height / 4,
-        width: width / 1.2,
+        height: height / 4.5,
+        width: width / 1.1,
         backgroundColor: "#fff",
-        margin: 10,
         borderRadius: 10,
-        borderColor: 'blue',
-        borderWidth: 10,
+        borderTopWidth: 0.5,
+        borderLeftWidth: 0.5,
+        borderRightWidth: 2,
+        borderBottomWidth: 2,
+        borderColor: 'grey',
+        margin: 10,
+        paddingLeft: 10,
+        paddingRight: 10
     },
-    alignCenter: {
+    routeHeader: {
+        flex: 1.2,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'lightgrey',
+    },
+    routeBody: {
+        flex: 2,
+        flexDirection: 'column',
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'lightgrey',
+    },
+    routeBodyContent: {
         flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    routeFooter: {
+        flex: 0.8,
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'flex-end'
     }
 })
