@@ -19,6 +19,12 @@ const MainRoot = createAppContainer(createStackNavigator(
             screen: RegisterScreen,
             path: 'register',
         },
+        ForgotPassword: {
+            screen: ForgotPasswordScreen
+        },
+        ResetPassword: {
+            screen: ResetPasswordScreen
+        },
         ConfirmPhoneNumberRegister: {
             screen: ConfirmPhoneNumberRegisterScreen,
             path: 'confirmPhoneRegister'
