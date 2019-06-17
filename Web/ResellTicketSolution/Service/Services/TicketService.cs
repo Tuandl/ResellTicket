@@ -20,9 +20,12 @@ namespace Service.Services
 
         //getTicketsValidStatus
         List<TicketRowViewModel> GetValidTickets();
-
         string ApproveTicket(int id);
         void PostTicket(TicketPostViewModel model);
+        void EditTicket(TicketEditViewModel model);
+        void DeleteTicket(int ticketId);
+        List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
+        TicketDetailViewModel GetTicketDetail(int ticketId);
     }
     public class TicketService : ITicketService
     {
@@ -32,7 +35,7 @@ namespace Service.Services
         private readonly ICustomerRepository _customerRepository;
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
-                             ITicketRepository ticketRepository, 
+                             ITicketRepository ticketRepository,
                              ICustomerRepository customerRepository
         )
         {
@@ -41,6 +44,7 @@ namespace Service.Services
             _ticketRepository = ticketRepository;
             _customerRepository = customerRepository;
         }
+
         public List<TicketRowViewModel> GetTickets()
         {
             var tickets = _ticketRepository.GetAll().ToList();
@@ -50,10 +54,10 @@ namespace Service.Services
                 var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
                 ticketRow.SellerPhone = customer.PhoneNumber;
             }
-            
+
             return ticketRowViewModels;
         }
-        
+
         public List<TicketRowViewModel> GetPendingTickets()
         {
             var pendingTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Pending).ToList();
@@ -79,6 +83,17 @@ namespace Service.Services
 
             return ticketRowViewModels;
         }
+        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
+        {
+            var customerTickets = _ticketRepository.GetAllQueryable()
+                .Where(x => x.CustomerId == customerId)
+                .Where(x => x.Deleted == false)
+                .OrderByDescending(x => x.UpdatedAt)
+                .Skip((page - 1) * 5).Take(5)
+                .ToList();
+            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
+            return customerTicketVMs;
+        }
 
         public string ApproveTicket(int id)
         {
@@ -102,6 +117,13 @@ namespace Service.Services
             return string.Empty;
         }
 
+        public TicketDetailViewModel GetTicketDetail(int ticketId)
+        {
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
+            var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
+            return ticketDetailVM;
+        }
+
         public void PostTicket(TicketPostViewModel model)
         {
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
@@ -109,6 +131,31 @@ namespace Service.Services
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.CustomerId = 1;
             _ticketRepository.Add(ticket);
+            _unitOfWork.CommitChanges();
+        }
+
+        public void EditTicket(TicketEditViewModel model)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
+            existedTicket.DepartureStationId = model.DepartureStationId;
+            existedTicket.ArrivalStationId = model.ArrivalStationId;
+            existedTicket.TransportationId = model.TransportationId;
+            existedTicket.TicketTypeId = model.TicketTypeId;
+            existedTicket.DepartureDateTime = model.DepartureDateTime;
+            existedTicket.ArrivalDateTime = model.ArrivalDateTime;
+            existedTicket.TicketCode = model.TicketCode;
+            existedTicket.SellingPrice = model.SellingPrice;
+            //var editTicket = _mapper.Map<TicketEditViewModel, Ticket>(model);
+            //editTicket.CustomerId = existedTicket.CustomerId;
+            //editTicket.Status = Core.Enum.TicketStatus.Pending;
+            //editTicket.CommissionPercent = existedTicket.CommissionPercent;
+            _ticketRepository.Update(existedTicket);
+            _unitOfWork.CommitChanges();
+        }
+
+        public void DeleteTicket(int ticketId)
+        {
+            _ticketRepository.Delete(x => x.Id == ticketId);
             _unitOfWork.CommitChanges();
         }
     }

@@ -15,14 +15,13 @@ export default class MeScreen extends Component {
         };
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getUsename();
     }
 
     async getUsename() {
         var usernameDefault = await AsyncStorage.getItem('USERNAME');
         //var data = JSON.parse(usernameDefault);
-        console.log('Mescreen', usernameDefault);
         this.setState({
             username: usernameDefault
         })
@@ -41,39 +40,43 @@ export default class MeScreen extends Component {
                     <View style={styles.profile}>
                         <List>
                             <TouchableNativeFeedback onPress={() => navigate('PostedTicket', { username: username })}>
-                                <ListItem>
+                                <ListItem style={{borderBottomWidth: 0.5}}>
                                     <Left>
                                         <Text>Posted Ticket</Text>
                                     </Left>
                                     <Right style={{ opacity: 0.5 }}>
-                                        <Icon name="chevron-right" type="font-awesome" />
+                                        <Icon name="chevron-right" type="font-awesome" size={15}/>
                                     </Right>
                                 </ListItem>
                             </TouchableNativeFeedback>
-                            <ListItem>
-                                <Left>
-                                    <Text>Credit Card</Text>
-                                </Left>
-                                <Right style={{ opacity: 0.5 }}>
-                                    <Icon name="chevron-right" type="font-awesome" />
-                                </Right>
-                            </ListItem>
-                            <ListItem>
-                                <Left><Text>Transaction History</Text></Left>
-                                <Right style={{ opacity: 0.5 }}>
-                                    <Icon name="chevron-right" type="font-awesome" />
-                                </Right>
-                            </ListItem>
+                            <TouchableNativeFeedback>
+                                <ListItem style={{borderBottomWidth: 0.5}}>
+                                    <Left>
+                                        <Text>Credit Card</Text>
+                                    </Left>
+                                    <Right style={{ opacity: 0.5 }}>
+                                        <Icon name="chevron-right" type="font-awesome" size={15}/>
+                                    </Right>
+                                </ListItem>
+                            </TouchableNativeFeedback>
+                            <TouchableNativeFeedback>
+                                <ListItem style={{borderBottomWidth: 0.5}}>
+                                    <Left><Text>Transaction History</Text></Left>
+                                    <Right style={{ opacity: 0.5 }}>
+                                        <Icon name="chevron-right" type="font-awesome" size={15}/>
+                                    </Right>
+                                </ListItem>
+                            </TouchableNativeFeedback>
                             <TouchableNativeFeedback onPress={() => navigate('ProfileDetail')}>
-                                <ListItem>
+                                <ListItem style={{borderBottomWidth: 0.5}}>
                                     <Left>
                                         <Text>Edit Profile</Text></Left>
                                     <Right style={{ opacity: 0.5 }}>
-                                        <Icon name="chevron-right" type="font-awesome" />
+                                        <Icon name="chevron-right" type="font-awesome" size={15}/>
                                     </Right>
                                 </ListItem>
                             </TouchableNativeFeedback>
-                            <ListItem>
+                            <ListItem style={{borderBottomWidth: 0.5}}>
                                 <Text>Logout</Text>
                             </ListItem>
                         </List>
@@ -94,7 +97,6 @@ const styles = StyleSheet.create({
     },
     profile: {
         flex: 3,
-
         paddingTop: 10
     }
 })

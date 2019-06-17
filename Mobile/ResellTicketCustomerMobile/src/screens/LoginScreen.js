@@ -54,8 +54,8 @@ export default class LoginScreen extends Component {
                 });
                 AsyncStorage.setItem('USERNAME', response.data.username);
                 AsyncStorage.setItem('TOKEN', response.data.token);
-                console.log("use : ", response.data.username);
-                console.log("token : ", response.data.token);
+                // console.log("use : ", response.data.username);
+                // console.log("token : ", response.data.token);
                 this.props.navigation.navigate('Home', {username: username});
             } else {
                 RNToasty.Error({

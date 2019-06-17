@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { Icon } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import RouteView from './../components/RouteViewComponent';
 
 const {width} = Dimensions.get('window');
@@ -29,12 +28,13 @@ export default class RouteScreen extends Component {
                     </Body>
                     <Right>
                         <Button>
-                            <Icon name="search" type="font-awesome" />
+                            <Icon name="search" type="font-awesome" color="#fff"/>
                         </Button>
                     </Right>
                 </Header>
                 <Content style={{ flex: 1, backgroundColor: '#b3e5fc' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+                    
                     <RouteView />
                     <RouteView />
                     <RouteView />

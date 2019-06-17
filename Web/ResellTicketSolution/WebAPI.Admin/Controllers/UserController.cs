@@ -53,7 +53,6 @@ namespace WebAPI.Admin.Controllers
         [Authorize]
         public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
         { //Lấy all admin users
-            
             if(string.IsNullOrEmpty(id))
             {
                 return BadRequest("Invalid Request.");
@@ -65,7 +64,7 @@ namespace WebAPI.Admin.Controllers
             {
                 return NotFound();
             }
-            return userRowViewModel;    
+            return userRowViewModel;
         }
 
         /// <summary>
