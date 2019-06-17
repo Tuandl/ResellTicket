@@ -21,7 +21,14 @@ namespace Service.Services
         //getTicketsValidStatus
         List<TicketRowViewModel> GetValidTickets();
 
+        List<TicketRowViewModel> GetInValidTickets();
+
+        List<TicketRowViewModel> GetTickets(string param);
+
         string ApproveTicket(int id);
+
+        string RejectTicket(int id);
+
         void PostTicket(TicketPostViewModel model);
     }
     public class TicketService : ITicketService
@@ -80,6 +87,28 @@ namespace Service.Services
             return ticketRowViewModels;
         }
 
+        public List<TicketRowViewModel> GetTickets(string param)
+        {
+            param = param ?? "";
+            var tickets = _ticketRepository.GetAllQueryable()
+                         .Where(x => x.TicketCode.ToLower().Contains(param.ToLower())).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetInValidTickets()
+        {
+            var invalidTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Invalid).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(invalidTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
         public string ApproveTicket(int id)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == id);
@@ -101,7 +130,27 @@ namespace Service.Services
 
             return string.Empty;
         }
+        public string RejectTicket(int id)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
 
+            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
         public void PostTicket(TicketPostViewModel model)
         {
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);

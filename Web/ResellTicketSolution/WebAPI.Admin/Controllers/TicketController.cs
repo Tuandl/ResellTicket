@@ -47,6 +47,20 @@ namespace WebAPI.Admin.Controllers
             return tickets;
         }
 
+        [HttpGet("invalid")]
+        public ActionResult<IEnumerable<TicketRowViewModel>> GetInValidTickets()
+        {
+            var tickets = _ticketService.GetInValidTickets();
+            return tickets;
+        }
+
+        [HttpGet("search")]
+        public ActionResult<IEnumerable<TicketRowViewModel>> GetSearchTickets(string param)
+        {
+            var ticketRowViewModels = _ticketService.GetTickets(param);
+            return ticketRowViewModels;
+        }
+
         /// <summary>
         /// Approve Ticket
         /// </summary>
@@ -64,6 +78,27 @@ namespace WebAPI.Admin.Controllers
             if (!string.IsNullOrEmpty(approveResult))
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, approveResult);
+            }
+            return Ok();
+        }
+
+        /// <summary>
+        /// Reject Ticket
+        /// </summary>
+        /// <returns></returns>
+        [HttpPut("reject/{id}")]
+        public ActionResult RejectTicket(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var rejectResult = _ticketService.RejectTicket(id);
+
+            if (!string.IsNullOrEmpty(rejectResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, rejectResult);
             }
             return Ok();
         }
