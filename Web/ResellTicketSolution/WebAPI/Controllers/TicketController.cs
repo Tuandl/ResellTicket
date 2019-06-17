@@ -43,12 +43,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int customerId)
+        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int customerId, int page)
         {
 
             try
             {
-                var customerTicketVMs = _ticketService.GetCustomerTickets(customerId);
+                var customerTicketVMs = _ticketService.GetCustomerTickets(customerId, page);
                 return Ok(customerTicketVMs);
             } catch(Exception e)
             {

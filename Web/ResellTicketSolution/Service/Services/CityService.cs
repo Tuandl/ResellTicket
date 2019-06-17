@@ -12,7 +12,7 @@ namespace Service.Services
     public interface ICityService
     {
         bool CreateCity(CityRowViewModel model);
-        List<CityRowViewModel> GetCities(string param);
+        List<CityRowViewModel> GetCities(string name);
         CityRowViewModel FindCityById(int id);
         string UpdateCity(CityUpdateViewModel model);
     }
@@ -43,14 +43,14 @@ namespace Service.Services
         }
 
         //get city by param or get all cities when param = ""
-        public List<CityRowViewModel> GetCities(string param)
+        public List<CityRowViewModel> GetCities(string name)
         {
             //select * from city
             //select * from city where name like '%abc%'
 
-            param = param ?? "";
+            name = name ?? "";
             var cities = _cityRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(param.ToLower())).ToList();
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower())).ToList();
             var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
             return cityRowViewModels;
         }
@@ -83,5 +83,7 @@ namespace Service.Services
 
             return string.Empty;
         }
+
+        
     }
 }

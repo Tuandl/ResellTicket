@@ -24,7 +24,7 @@ namespace Service.Services
         void PostTicket(TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
         void DeleteTicket(int ticketId);
-        List<CustomerTicketViewModel> GetCustomerTickets(int customerId);
+        List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
         TicketDetailViewModel GetTicketDetail(int ticketId);
     }
     public class TicketService : ITicketService
@@ -83,11 +83,13 @@ namespace Service.Services
 
             return ticketRowViewModels;
         }
-        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId)
+        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
         {
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.CustomerId == customerId)
+                .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt)
+                .Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
             return customerTicketVMs;

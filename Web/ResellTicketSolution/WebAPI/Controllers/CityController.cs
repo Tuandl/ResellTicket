@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CityRowViewModel>> GetCities(string param)
+        public ActionResult<IEnumerable<CityRowViewModel>> GetCities(string name)
         {
-            var cityRowViewModels = _cityService.GetCities(param);
+            var cityRowViewModels = _cityService.GetCities(name);
             return cityRowViewModels;
         }
     }
