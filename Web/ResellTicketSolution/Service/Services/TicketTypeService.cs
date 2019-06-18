@@ -14,7 +14,7 @@ namespace Service.Services
     {
         bool CreateTicketType(TicketTypeCreateViewModel model);
         List<TicketTypeRowViewModel> GetTicketType(string param);
-        List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId);
+        List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId, string ticketTypeName);
         TicketTypeRowViewModel FindTicketTypeById(int id);
         string UpdateTicketType(TicketTypeRowViewModel model);
     }
@@ -52,10 +52,25 @@ namespace Service.Services
             var ticketTypeRow = _mapper.Map<TicketType, TicketTypeRowViewModel>(ticketType);
             return ticketTypeRow;
         }
-        public List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId)
+        public List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId, string ticketTypeName)
         {
-            var ticketTypes = _ticketTypeRepository.GetAllQueryable()
-                .Where(x => x.VehicleId == vehicleId).ToList();
+            ticketTypeName = ticketTypeName ?? "";
+            List<TicketType> ticketTypes = null;
+            if (vehicleId == -1)
+            {
+                ticketTypes = _ticketTypeRepository.GetAllQueryable()
+                   .Where(x => x.Name.ToLower().Contains(ticketTypeName.ToLower()))
+                   .Where(x => x.Deleted == false)
+                   .ToList();
+            }
+            else
+            {
+                ticketTypes = _ticketTypeRepository.GetAllQueryable()
+                .Where(x => x.VehicleId == vehicleId)
+                .Where(x => x.Name.ToLower().Contains(ticketTypeName.ToLower()))
+                .Where(x => x.Deleted == false)
+                .ToList();
+            }
             var ticketTypeRowVMs = _mapper.Map<List<TicketType>, List<TicketTypeRowViewModel>>(ticketTypes);
             return ticketTypeRowVMs;
         }
@@ -63,8 +78,10 @@ namespace Service.Services
         {
             param = param ?? "";
 
-            var ticketTypes = _ticketTypeRepository.GetAllQueryable().
-                Where(x => x.Name.ToLower().Contains(param.ToLower())).ToList();
+            var ticketTypes = _ticketTypeRepository.GetAllQueryable()
+                .Where(x => x.Name.ToLower().Contains(param.ToLower()))
+                .Where(x => x.Deleted == false)
+                .ToList();
             var ticketTypeReturn = _mapper.Map<List<TicketType>, List<TicketTypeRowViewModel>>(ticketTypes);
 
             return ticketTypeReturn;
@@ -73,11 +90,11 @@ namespace Service.Services
         public string UpdateTicketType(TicketTypeRowViewModel model)
         {
             var existedTicketType = _ticketTypeRepository.Get(x => x.Id == model.Id);
-            if( existedTicketType == null)
+            if (existedTicketType == null)
             {
                 return "Ticket Type Not Found";
             }
-            if(model.Name != null && !model.Name.Equals(""))
+            if (model.Name != null && !model.Name.Equals(""))
             {
                 existedTicketType.Name = model.Name;
             }

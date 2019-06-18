@@ -137,25 +137,41 @@ namespace Service.Services
         public void EditTicket(TicketEditViewModel model)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
-            existedTicket.DepartureStationId = model.DepartureStationId;
-            existedTicket.ArrivalStationId = model.ArrivalStationId;
-            existedTicket.TransportationId = model.TransportationId;
-            existedTicket.TicketTypeId = model.TicketTypeId;
-            existedTicket.DepartureDateTime = model.DepartureDateTime;
-            existedTicket.ArrivalDateTime = model.ArrivalDateTime;
+            if(model.TransportationId != -1 && model.TransportationId != existedTicket.TransportationId)
+            {
+                existedTicket.TransportationId = model.TransportationId;
+            }
+            if(model.ArrivalStationId != -1 && model.ArrivalStationId != existedTicket.ArrivalStationId)
+            {
+                existedTicket.ArrivalStationId = model.ArrivalStationId;
+            }
+            if(model.DepartureStationId != -1 && model.DepartureStationId != existedTicket.DepartureStationId)
+            {
+                existedTicket.DepartureStationId = model.DepartureStationId;
+            }
+            if(model.TicketTypeId != -1 && model.TicketTypeId != existedTicket.TicketTypeId)
+            {
+                existedTicket.TicketTypeId = model.TicketTypeId;
+            }
+            if(model.DepartureDateTime != existedTicket.DepartureDateTime)
+            {
+                existedTicket.DepartureDateTime = model.DepartureDateTime;
+            }
+            if(model.ArrivalDateTime != existedTicket.ArrivalDateTime)
+            {
+                existedTicket.ArrivalDateTime = model.ArrivalDateTime;
+            }
             existedTicket.TicketCode = model.TicketCode;
             existedTicket.SellingPrice = model.SellingPrice;
-            //var editTicket = _mapper.Map<TicketEditViewModel, Ticket>(model);
-            //editTicket.CustomerId = existedTicket.CustomerId;
-            //editTicket.Status = Core.Enum.TicketStatus.Pending;
-            //editTicket.CommissionPercent = existedTicket.CommissionPercent;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
 
         public void DeleteTicket(int ticketId)
         {
-            _ticketRepository.Delete(x => x.Id == ticketId);
+            var existedTicket = _ticketRepository.Get(x => x.Id == ticketId);
+            existedTicket.Deleted = true;
+            _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
     }
