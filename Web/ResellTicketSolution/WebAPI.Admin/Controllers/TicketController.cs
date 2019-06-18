@@ -47,6 +47,13 @@ namespace WebAPI.Admin.Controllers
             return tickets;
         }
 
+        [HttpGet("renamed")]
+        public ActionResult<IEnumerable<TicketRowViewModel>> GetRenamedTickets()
+        {
+            var tickets = _ticketService.GetRenamedTickets();
+            return tickets;
+        }
+
         /// <summary>
         /// Approve Ticket
         /// </summary>
@@ -64,6 +71,23 @@ namespace WebAPI.Admin.Controllers
             if (!string.IsNullOrEmpty(approveResult))
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, approveResult);
+            }
+            return Ok();
+        }
+
+        [HttpPost("validate-rename")]
+        public ActionResult ValidateRenameTicket(int id, bool renameSuccess)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var validResult = _ticketService.ValidateRenameTicket(id, renameSuccess);
+
+            if (!string.IsNullOrEmpty(validResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
             }
             return Ok();
         }

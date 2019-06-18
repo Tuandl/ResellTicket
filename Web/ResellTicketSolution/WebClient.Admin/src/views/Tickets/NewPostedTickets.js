@@ -31,10 +31,10 @@ function TicketRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureDate}</td>
-            <td>{ticket.arrivalDate}</td>
+            <td>{ticket.departureDateTime}</td>
+            <td>{ticket.arrivalDateTime}</td>
             <td>{ticket.sellerPhone}</td>
-            <td>{ticket.price}</td>
+            <td>{ticket.sellingPrice}</td>
             <td>{ticket.feeAmount}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
