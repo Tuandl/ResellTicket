@@ -7,7 +7,7 @@ import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup
 function TicketRow(props) {
   const {ticket, parent} = props;
   const getBadge = (status) => {
-    if (status == 1) {
+    if (status === 1) {
         return (
             <Badge color="danger">Peding</Badge>
         )
@@ -38,10 +38,10 @@ function TicketRow(props) {
             <td>{ticket.feeAmount}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2" onClick={() => {parent.onSaveChanges(ticket.id)}}>
+                <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
-                <Button color="danger">
+                <Button color="danger" className="mr-2" onClick={() => {parent.onInValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
                 </Button>
             </td>
@@ -100,7 +100,25 @@ class NewPostedTickets extends Component {
 
   }
 
-    onSaveChanges = (id) => {
+  onChange = (event) => {
+    var {name, value} = event.target;
+    this.setState({
+        [name] : value
+    })
+  }
+  
+  onSearch = (event) => {
+    event.preventDefault();
+    //console.log(this.state.searchParam);
+    Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
+        console.log(res)
+        this.setState({
+            tickets : res.data
+        })
+    });
+  }
+
+    onValidSaveChanges = (id) => {
       Axios.put('api/ticket/approve/' + id).then(res => {
           if(res.status === 200) {
               toastr.success('Update Success', 'Ticket has been valid successfully.');
@@ -111,6 +129,18 @@ class NewPostedTickets extends Component {
           }
       })
   }
+
+  onInValidSaveChanges = (id) => {
+    Axios.put('api/ticket/reject/' + id).then(res => {
+        if(res.status === 200) {
+            toastr.success('Reject Success', 'Ticket has been rejected.');
+            // this.props.history.push('/ticket');
+            this.getPendingTickets();
+        } else {
+            toastr.error('Error', 'Error when reject Ticket');
+        }
+    })
+}
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -126,9 +156,9 @@ class NewPostedTickets extends Component {
                                         <i className="fa fa-plus fa-lg mr-1"></i>Create User
                                         </Button>
                                 </Link> */}
-                                    <Form className="text-right mr-2" onSubmit={this.onSubmit}>
+                                    <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="" /> {/*name="searchValue" value={searchValue} onChange={this.onChange}*/}
+                                            <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
                                             <Button color="primary">
                                                 <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
                                                 </Button>

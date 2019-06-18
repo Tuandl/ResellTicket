@@ -66,6 +66,11 @@ export default {
       name: 'Valid Ticket',
       url: '/validTicket',
       icon: 'fa fa-ticket'
+    },
+    {
+      name: 'InValid Ticket',
+      url: '/invalidTicket',
+      icon: 'fa fa-ticket'
     }
     // {
     //   title: true,
