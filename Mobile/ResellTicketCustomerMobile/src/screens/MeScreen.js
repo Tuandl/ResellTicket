@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View, AsyncStorage } from 'react-native';
 import { Container, Text, Content, List, ListItem, Left, Right } from 'native-base';
 import { Icon, Avatar } from 'react-native-elements';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
@@ -11,12 +11,26 @@ export default class MeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: ''
         };
+    }
+
+    componentDidMount(){
+        this.getUsename();
+    }
+
+    async getUsename() {
+        var usernameDefault = await AsyncStorage.getItem('USERNAME');
+        //var data = JSON.parse(usernameDefault);
+        console.log('Mescreen', usernameDefault);
+        this.setState({
+            username: usernameDefault
+        })
     }
 
     render() {
         const { navigate } = this.props.navigation;
-        const username = this.props.screenProps.username
+        const { username } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Content style={{ flex: 1, backgroundColor: '#fff' }}>

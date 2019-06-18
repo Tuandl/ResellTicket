@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Dimensions, ImageBackground, StyleSheet, Text, View, AsyncStorage } from 'react-native';
-import { Button, Icon, Input } from 'react-native-elements';
+import { Container, Button, Header, Body, Title, Left, Right } from 'native-base';
+import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from '../../service/Api';
 
@@ -32,7 +33,7 @@ export default class ChangePasswordScreen extends Component {
     validateOldPassword(oldpassword) {
         let isValid = true;
 
-        if (!password) {
+        if (!oldpassword) {
             isValid = false;
         }
 
@@ -75,15 +76,15 @@ export default class ChangePasswordScreen extends Component {
     }
 
     async submitResetPassword() {
-        var usernameDefault = await AsyncStorage.getItem('USENAME');
+        var usernameDefault = await AsyncStorage.getItem('USERNAME');
         const { password, passwordConfirm, oldpassword } = this.state;
 
-        // if (!this.validatePassword(password) ||
-        //     !this.validatePasswordConfirm(password, passwordConfirm) ||
-        //     !this.validateOldPassword(oldpassword)
-        // ) {
-        //     return;
-        // }
+        if (!this.validateOldPassword(oldpassword) || !this.validatePassword(password) ||
+            !this.validatePasswordConfirm(password, passwordConfirm)
+
+        ) {
+            return;
+        }
 
         this.setState({
             showLoading: true,
@@ -128,14 +129,23 @@ export default class ChangePasswordScreen extends Component {
             passwordConfirm_valid, oldpassword, oldpassword_valid } = this.state;
 
         return (
-            <View style={styles.container}>
-                <ImageBackground source={BG_IMAGE} style={styles.bgImage}>
+            <Container style={{ flex: 1 }}>
+                <Header>
+                    <Left>
+                        <Button
+                            onPress={() => this.props.navigation.navigate('ProfileDetail')}>
+                            <Icon name="arrow-left" type="material-community" color="#fff" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>
+                            Change Password
+                        </Title>
+                    </Body>
+                    <Right />
+                </Header>
+                <ImageBackground style={styles.bgImage}>
                     <View style={styles.registerView}>
-                        <View style={styles.registerTitle}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <Text style={styles.travelText}>CHANGE PASSWORD</Text>
-                            </View>
-                        </View>
                         <View style={styles.changePasswordInput}>
                             <Input
                                 leftIcon={
@@ -150,7 +160,7 @@ export default class ChangePasswordScreen extends Component {
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={oldpassword => { this.setState({ oldpassword: oldpassword }) }}
                                 value={oldpassword}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 secureTextEntry={true}
                                 keyboardAppearance="light"
                                 placeholder="Old Password"
@@ -165,7 +175,7 @@ export default class ChangePasswordScreen extends Component {
                                     this.passwordInput.focus();
                                 }}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     oldpassword_valid ? null : 'Please enter a valid Password.'
@@ -183,7 +193,7 @@ export default class ChangePasswordScreen extends Component {
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={password => { this.setState({ password: password }) }}
                                 value={password}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 secureTextEntry={true}
                                 keyboardAppearance="light"
                                 placeholder="New Password"
@@ -198,7 +208,7 @@ export default class ChangePasswordScreen extends Component {
                                     this.passwordConfirmInput.focus();
                                 }}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     password_valid ? null : 'Please enter a valid Password.'
@@ -216,7 +226,7 @@ export default class ChangePasswordScreen extends Component {
                                 containerStyle={{ marginVertical: 10 }}
                                 onChangeText={passwordConfirm => { this.setState({ passwordConfirm: passwordConfirm }) }}
                                 value={passwordConfirm}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                inputStyle={{ marginLeft: 10, color: 'black' }}
                                 secureTextEntry={true}
                                 keyboardAppearance="light"
                                 placeholder="Confirm Password"
@@ -230,7 +240,7 @@ export default class ChangePasswordScreen extends Component {
                                     this.validatePasswordConfirm(password, passwordConfirm);
                                 }}
                                 blurOnSubmit={false}
-                                placeholderTextColor="white"
+                                placeholderTextColor="black"
                                 errorStyle={{ textAlign: 'center', fontSize: 12 }}
                                 errorMessage={
                                     passwordConfirm_valid ? null : 'Password Confirm does not match new Password.'
@@ -238,48 +248,30 @@ export default class ChangePasswordScreen extends Component {
                             />
 
                         </View>
-                        <Button
+                        <Button rounded block primary
                             title="Change Password"
                             activeOpacity={1}
                             underlayColor="transparent"
                             onPress={this.submitResetPassword}
                             loading={showLoading}
-                            loadingProps={{ size: 'small', color: 'white' }}
-                            disabled={false}
-                            buttonStyle={{
-                                height: 50,
-                                width: 250,
-                                backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                borderColor: 'white',
-                                borderRadius: 30,
+                            loadingProps={{ size: 'small', color: '#fff' }}
+                            style={{
+                                marginTop: 10
                             }}
-                            containerStyle={{ marginVertical: 10 }}
-                            titleStyle={{ fontWeight: 'bold', color: 'white' }}
-                        />
-                        <View style={styles.footerView}>
-                            <Button
-                                title="Back"
-                                type="clear"
-                                activeOpacity={0.5}
-                                titleStyle={{ color: 'white', fontSize: 15 }}
-                                containerStyle={{ marginTop: -5 }}
-                                onPress={() => this.props.navigation.navigate('ProfileDetail')}
-                            />
-                        </View>
+                            
+                        ><Text style={{ color: '#fff', fontSize: 20 }}>Change Password</Text></Button>
                     </View>
                 </ImageBackground>
-            </View>
+            </Container>
         );
     }
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
     bgImage: {
-        flex: 1,
+        //flex: 1,
         top: 0,
         left: 0,
         width: SCREEN_WIDTH,
@@ -288,13 +280,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     registerView: {
-        marginTop: 0,
+        //marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
         height: 600,
     },
     registerTitle: {
-        flex: 0.3,
+        //flex: 0.3,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -302,23 +294,22 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 30,
         fontFamily: 'bold',
-        width: 255,
     },
     plusText: {
         color: 'white',
         fontSize: 30,
         fontFamily: 'regular',
     },
-    changePasswordInput: {
-        flex: 0.7,
+    registerInput: {
+        //flex: 0.7,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -70,
+        //marginTop: -70,
 
     },
     footerView: {
-        marginTop: 0,
-        flex: 0.1,
+        //marginTop: 0,
+        //flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
     },

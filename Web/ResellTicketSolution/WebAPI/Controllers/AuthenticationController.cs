@@ -67,7 +67,13 @@ namespace WebAPI.Controllers
 
             //Get Value from appSetting.json
             var token = customer.BuildToken(AUTH_SETTING.Value);
-            return Ok(token);
+            //return value to client ( username, phone, token)
+            LoginReturnViewModel loginReturn = new LoginReturnViewModel();
+            loginReturn.PhoneNumber = customer.PhoneNumber;
+            loginReturn.Username = customer.Username;
+            loginReturn.Token = token;
+
+            return Ok(loginReturn);
         }
     }
 }
