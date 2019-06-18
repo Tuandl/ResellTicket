@@ -56,18 +56,62 @@ namespace Algorithm.KShortestPaths
         }
 
         /// <summary>
+        /// Create custome graph to find k shortest paths with schedule-base criterial
+        /// </summary>
+        /// <param name="departureId"></param>
+        /// <param name="destinationId"></param>
+        private void InitSourceDestination(int departureId, int destinationId)
+        {
+            SourceVertex = new Vertex(departureId, DateTime.MinValue, null);
+            DestinationVertex = new Vertex(destinationId, DateTime.MaxValue, null);
+            foreach (var vertex in vertices)
+            {
+                if(vertex.GroupId == departureId)
+                {
+                    //connect to source vertex
+                    var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting);
+                    SourceVertex.RelatedEdges.Add(edge);
+                    vertex.RelatedEdges.Add(edge);
+                }
+                else if(vertex.GroupId == destinationId)
+                {
+                    //connect to destination vertex
+                    var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting);
+                    vertex.RelatedEdges.Add(edge);
+                    DestinationVertex.RelatedEdges.Add(edge);
+                }
+                else
+                {
+                    //connect to other vertex in the same group
+                    var verticesToConnect = vertices.Where(x =>
+                        x.GroupId == vertex.GroupId &&
+                        x.ArrivalTime > vertex.ArrivalTime
+                    );
+                    foreach (var waitingVertex in verticesToConnect)
+                    {
+                        var edge = new Edge(vertex, waitingVertex, 0, EdgeType.Waiting);
+                        vertex.RelatedEdges.Add(edge);
+                        waitingVertex.RelatedEdges.Add(edge);
+                    }
+                }
+            }
+
+            this.vertices.Add(SourceVertex);
+            this.vertices.Add(DestinationVertex);
+        }
+
+        /// <summary>
         /// Calculate All the shortest paths between sources and destination and return one 
         /// </summary>
-        /// <param name="sourceId">Source vertex Id</param>
+        /// <param name="departureId">Source vertex Id</param>
         /// <param name="destinationId">Destination vertex Id</param>
         /// <returns>Directional paths if found, empty path if not or id of vertex is invalid.</returns>
-        public Path FindTheShortestPath(int sourceId, int destinationId, int maxCombination = int.MaxValue, int kShortestPathQuantity = 10)
+        public Path FindTheShortestPath(int departureId, int destinationId, int maxCombination = int.MaxValue, int kShortestPathQuantity = 10)
         {
             isCaculated = false;
 
             //Parse start and end vertex
-            this.SourceVertex = GetVertex(sourceId);
-            this.DestinationVertex = GetVertex(destinationId);
+            InitSourceDestination(departureId, destinationId);
             this.MaxCombination = maxCombination;
             this.KShortestPathQuantity = kShortestPathQuantity;
 
@@ -90,9 +134,12 @@ namespace Algorithm.KShortestPaths
             return FindNextShortestPath();
         }
 
-        public Vertex GetVertex(int vertexId)
+        public Vertex GetVertex(int departureId, DateTime arrivalTime)
         {
-            return vertices.FirstOrDefault(x => x.Id == vertexId);
+            return vertices.FirstOrDefault(x =>
+                x.GroupId == departureId && 
+                x.ArrivalTime == arrivalTime
+            );
         }
 
         /// <summary>
@@ -149,8 +196,8 @@ namespace Algorithm.KShortestPaths
                 else
                     v = null;
 
-                if(priorityQueue.Count() == 0)
-                    break;
+                //if(priorityQueue.Count() == 0)
+                //    break;
             } while (true);
         }
 
@@ -179,7 +226,7 @@ namespace Algorithm.KShortestPaths
                     //Search sidetrack in current vertex
                     foreach (var edge in currentVertex.RelatedEdges)
                     {
-                        if(edge.IsSideTrackOf(currentVertex) && (edge.Head.EdgeToShortestPath != null))
+                        if(edge.IsSideTrackOf(currentVertex) && (edge.Head.EdgeToShortestPath != null || edge.Head == this.DestinationVertex))
                         {
                             //If found a side track, put it into queue
                             var nextSideTrack = new Path();
@@ -294,7 +341,7 @@ namespace Algorithm.KShortestPaths
         /// <param name="newVertex"></param>
         public void AddVertex(Vertex newVertex)
         {
-            var existedVertex = this.GetVertex(newVertex.Id);
+            var existedVertex = this.GetVertex(newVertex.GroupId, newVertex.ArrivalTime);
             if(existedVertex != null)
             {
                 //Don't allow to add duplicate vertex id
@@ -304,6 +351,34 @@ namespace Algorithm.KShortestPaths
             //Flag graph must rebuild
             isCaculated = false;
             this.vertices.Add(newVertex);
+        }
+
+        public override string ToString()
+        {
+            var result = string.Empty;
+            List<Edge> edges = new List<Edge>();
+            foreach (var vertex in vertices)
+            {
+                foreach (var edge in vertex.RelatedEdges)
+                {
+                    var existed = edges.FirstOrDefault(x => 
+                        x.Tail.Equals(edge.Tail) &&
+                        x.Head.Equals(edge.Head) &&
+                        x.Weight == edge.Weight
+                    );
+                    if(existed == null)
+                    {
+                        edges.Add(edge);
+                    }
+                }
+            }
+
+            foreach (var edge in edges)
+            {
+                result += edge.ToString() + "\n";
+            }
+
+            return result;
         }
     }
 }

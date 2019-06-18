@@ -43,6 +43,19 @@ namespace Algorithm.KShortestPaths.Models
             } 
         }
 
+        public Path Trim()
+        {
+            Path result = new Path();
+            foreach (var edge in this)
+            {
+                if(edge.Type == EdgeType.Traveling)
+                {
+                    result.Add(edge);
+                }
+            }
+            return result;
+        }
+
         public override string ToString()
         {
             var result = string.Empty;
