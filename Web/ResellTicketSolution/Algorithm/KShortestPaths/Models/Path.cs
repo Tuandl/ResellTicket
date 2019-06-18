@@ -43,6 +43,23 @@ namespace Algorithm.KShortestPaths.Models
             } 
         }
 
+        /// <summary>
+        /// Get Ticket quantity in this path (base on edge)
+        /// </summary>
+        public int TicketQuantity
+        {
+            get
+            {
+                int ticketQuantity = 0;
+                foreach (var edge in this)
+                {
+                    if(edge.Type == EdgeType.Traveling) 
+                        ticketQuantity++;
+                }
+                return ticketQuantity;
+            }
+        }
+
         public Path Trim()
         {
             Path result = new Path();

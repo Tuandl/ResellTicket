@@ -176,8 +176,10 @@ namespace Algorithm.KShortestPaths
                 {
                     foreach (var edge in v.RelatedEdges) // Evaluate all incoming edges
                     {
+                        int ticketQuantity = v.TicketQuantity;
+                        if(edge.Type == EdgeType.Traveling) ticketQuantity++;
                         //Excluse negative edges
-                        if(edge.Tail != v && edge.Weight >= 0) 
+                        if(edge.Tail != v && edge.Weight >= 0 && ticketQuantity <= this.MaxCombination) 
                             priorityQueue.Enqueue(new ShortestPath_Node(edge, edge.Weight + v.MinDistance));
                     }
                 }
@@ -191,6 +193,11 @@ namespace Algorithm.KShortestPaths
                 if(v.MinDistance == double.MinValue)  // Vertex distance to endpoint not calculated yet
                 {
                     v.MinDistance = e.Head.MinDistance + e.Weight;
+                    v.TicketQuantity = e.Head.TicketQuantity;
+                    if(e.Type == EdgeType.Traveling)
+                    {
+                        v.TicketQuantity++;
+                    }
                     v.EdgeToShortestPath = e;
                 }
                 else
@@ -216,6 +223,10 @@ namespace Algorithm.KShortestPaths
             while (priorityQueue.Count() > 0 && SideTrackPathsHeap.Count() < KShortestPathQuantity)
             {
                 var currentSideTrack = priorityQueue.Dequeue();
+                if(currentSideTrack.SideTrack.TicketQuantity + currentSideTrack.CurrentVertex.TicketQuantity > this.MaxCombination)
+                {
+                    continue;
+                }
                 SideTrackPathsHeap.Enqueue(currentSideTrack);
                 var currentVertex = currentSideTrack.CurrentVertex;
                 var currentPath = new Path();

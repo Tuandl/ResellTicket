@@ -42,6 +42,11 @@ namespace Algorithm.KShortestPaths.Models
         public double MinDistance { get; set; }
 
         /// <summary>
+        /// Number of tickets from this vertex to destination in the shortest path.
+        /// </summary>
+        public int TicketQuantity { get; set; }
+
+        /// <summary>
         /// Edge belong to shortest path from this vertex to destination
         /// </summary>
         public Edge EdgeToShortestPath { get; set; }

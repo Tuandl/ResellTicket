@@ -14,8 +14,8 @@ namespace AlgorithmTest
             //TestCase2();
             //TestCase3();
             //TestCase4();
-            TestCase5();
-            //TestCase6();
+            //TestCase5();
+            TestCase6();
         }
 
         static void TestCase1()
@@ -339,7 +339,7 @@ namespace AlgorithmTest
                 graph.CreateEdgeFromTicketBaseOnPrice(ticket);
             }
 
-            var shortestPath = graph.FindTheShortestPath(HCM, HN);
+            var shortestPath = graph.FindTheShortestPath(HCM, HN, maxCombination: 2);
             Console.WriteLine(shortestPath.Trim().ToString());
 
             var path = new Path();
@@ -372,6 +372,8 @@ namespace AlgorithmTest
                     Id = 1,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 6, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 15, minute: 0, second: 0),
                     SellingPrice = 1000000,
                 },
                 new Ticket()
@@ -379,6 +381,8 @@ namespace AlgorithmTest
                     Id = 2,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 6, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
                     SellingPrice = 2000000,
                 },
                 new Ticket()
@@ -386,6 +390,8 @@ namespace AlgorithmTest
                     Id = 3,
                     DepartureStationId = HCM,
                     ArrivalStationId = DN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 9, minute: 0, second: 0),
                     SellingPrice = 400000,
                 },
                 new Ticket()
@@ -393,6 +399,8 @@ namespace AlgorithmTest
                     Id = 4,
                     DepartureStationId = DN,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 500000,
                 },
                 new Ticket()
@@ -400,6 +408,8 @@ namespace AlgorithmTest
                     Id = 5,
                     DepartureStationId = DN,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 13, minute: 0, second: 0),
                     SellingPrice = 400000,
                 },
                 new Ticket()
@@ -407,6 +417,8 @@ namespace AlgorithmTest
                     Id = 6,
                     DepartureStationId = HN,
                     ArrivalStationId = DN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 10000,
                 },
                 new Ticket()
@@ -414,6 +426,8 @@ namespace AlgorithmTest
                     Id = 7,
                     DepartureStationId = HCM,
                     ArrivalStationId = DL,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 5, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 6, minute: 0, second: 0),
                     SellingPrice = 200000,
                 },
                 new Ticket()
@@ -421,13 +435,17 @@ namespace AlgorithmTest
                     Id = 8,
                     DepartureStationId = DL,
                     ArrivalStationId = DN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
                     SellingPrice = 200000,
                 },
                 new Ticket()
                 {
                     Id = 9,
                     DepartureStationId = DN,
-                    ArrivalStationId = HCM,
+                    ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 20000,
                 }
             };
@@ -438,7 +456,7 @@ namespace AlgorithmTest
                 graph.CreateEdgeFromTicketBaseOnPrice(ticket);
             }
 
-            var shortestPath = graph.FindTheShortestPath(HCM, HN, kShortestPathQuantity: 50);
+            var shortestPath = graph.FindTheShortestPath(HCM, HN, kShortestPathQuantity: 50, maxCombination: 3);
             Console.WriteLine(shortestPath.Trim().ToString());
 
             var path = new Path();
