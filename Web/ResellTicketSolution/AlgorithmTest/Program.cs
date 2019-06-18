@@ -12,9 +12,9 @@ namespace AlgorithmTest
         {
             //TestCase1();
             //TestCase2();
-            TestCase3();
+            //TestCase3();
             //TestCase4();
-            //TestCase5();
+            TestCase5();
             //TestCase6();
         }
 
@@ -218,6 +218,8 @@ namespace AlgorithmTest
                     Id = 1,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 20, minute: 0, second: 0),
                     SellingPrice = 1000000,
                 },
                 new Ticket()
@@ -225,6 +227,8 @@ namespace AlgorithmTest
                     Id = 2,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 9, minute: 0, second: 0),
                     SellingPrice = 2000000,
                 },
                 new Ticket()
@@ -232,6 +236,8 @@ namespace AlgorithmTest
                     Id = 3,
                     DepartureStationId = HCM,
                     ArrivalStationId = DN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
                     SellingPrice = 400000,
                 },
                 new Ticket()
@@ -239,6 +245,8 @@ namespace AlgorithmTest
                     Id = 4,
                     DepartureStationId = DN,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 9, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 500000,
                 }
             };
@@ -248,9 +256,11 @@ namespace AlgorithmTest
             {
                 graph.CreateEdgeFromTicketBaseOnPrice(ticket);
             }
+            Console.WriteLine("--Graph:");
+            Console.WriteLine(graph.ToString());
 
             var shortestPath = graph.FindTheShortestPath(HCM, HN);
-            Console.WriteLine(shortestPath.ToString());
+            Console.WriteLine(shortestPath.Trim().ToString());
 
             var path = new Path();
             do
@@ -258,9 +268,11 @@ namespace AlgorithmTest
                 path = graph.FindNextShortestPath();
                 if (path.IsValid)
                 {
-                    Console.WriteLine(path.ToString());
+                    Console.WriteLine(path.Trim().ToString());
                 }
             } while (path.IsValid);
+            Console.WriteLine("--Graph:");
+            Console.WriteLine(graph.ToString());
             Console.WriteLine("----------------");
 
         }
@@ -279,6 +291,8 @@ namespace AlgorithmTest
                     Id = 1,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 15, minute: 0, second: 0),
                     SellingPrice = 1000000,
                 },
                 new Ticket()
@@ -286,6 +300,8 @@ namespace AlgorithmTest
                     Id = 2,
                     DepartureStationId = HCM,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 9, minute: 0, second: 0),
                     SellingPrice = 2000000,
                 },
                 new Ticket()
@@ -293,6 +309,8 @@ namespace AlgorithmTest
                     Id = 3,
                     DepartureStationId = HCM,
                     ArrivalStationId = DN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 7, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
                     SellingPrice = 400000,
                 },
                 new Ticket()
@@ -300,6 +318,8 @@ namespace AlgorithmTest
                     Id = 4,
                     DepartureStationId = DN,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 9, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 500000,
                 },
                 new Ticket()
@@ -307,6 +327,8 @@ namespace AlgorithmTest
                     Id = 5,
                     DepartureStationId = DN,
                     ArrivalStationId = HN,
+                    DepartureDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 8, minute: 0, second: 0),
+                    ArrivalDateTime = new DateTime(year: 2019, month: 6, day: 1, hour: 10, minute: 0, second: 0),
                     SellingPrice = 400000,
                 }
             };
@@ -318,7 +340,7 @@ namespace AlgorithmTest
             }
 
             var shortestPath = graph.FindTheShortestPath(HCM, HN);
-            Console.WriteLine(shortestPath.ToString());
+            Console.WriteLine(shortestPath.Trim().ToString());
 
             var path = new Path();
             do
@@ -326,9 +348,11 @@ namespace AlgorithmTest
                 path = graph.FindNextShortestPath();
                 if (path.IsValid)
                 {
-                    Console.WriteLine(path.ToString());
+                    Console.WriteLine(path.Trim().ToString());
                 }
             } while (path.IsValid);
+            Console.WriteLine("--Graph:");
+            Console.WriteLine(graph.ToString());
             Console.WriteLine("----------------");
 
         }
@@ -415,7 +439,7 @@ namespace AlgorithmTest
             }
 
             var shortestPath = graph.FindTheShortestPath(HCM, HN, kShortestPathQuantity: 50);
-            Console.WriteLine(shortestPath.ToString());
+            Console.WriteLine(shortestPath.Trim().ToString());
 
             var path = new Path();
             do
@@ -423,9 +447,11 @@ namespace AlgorithmTest
                 path = graph.FindNextShortestPath();
                 if (path.IsValid)
                 {
-                    Console.WriteLine(path.ToString());
+                    Console.WriteLine(path.Trim().ToString());
                 }
             } while (path.IsValid);
+            Console.WriteLine("--Graph:");
+            Console.WriteLine(graph.ToString());
             Console.WriteLine("----------------");
 
         }
