@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StationRowViewModel>> GetStationByCityId(int cityId)
+        public ActionResult<IEnumerable<StationRowViewModel>> GetStationByCityId(int cityId, string name)
         {
-            var stationRowViewModels = _stationService.GetStationsByCityId(cityId);
+            var stationRowViewModels = _stationService.GetStationsByCityId(cityId, name);
             return stationRowViewModels;
         }
     }

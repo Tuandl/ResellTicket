@@ -21,7 +21,6 @@ export default class PostedTicket extends Component {
     }
 
     componentWillMount() {
-        //this.getCustomerTickets();
         this.getCustomerTickets();
     }
 
@@ -43,11 +42,12 @@ export default class PostedTicket extends Component {
     }
 
     onEndReached = () => {
-        this.setState({
-            page: this.state.page + 1
-        }, () => {
-            this.getCustomerTickets();
-        })
+        // this.setState({
+        //     page: this.state.page + 1
+        // }, () => {
+        //     this.getCustomerTickets();
+        // })
+        // console.log('End Reached')
     }
 
     render() {
@@ -69,17 +69,14 @@ export default class PostedTicket extends Component {
                         </Title>
                     </Body>
                     <Right>
-                        <Button onPress={() => navigate('PostNewTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })}>
+                        <Button onPress={() => navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })}>
                             <Icon name="plus-circle-outline" type="material-community" color="#fff" />
                         </Button>
                     </Right>
                 </Header>
-                <View
-                    style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-                >
+                <Content contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <FlatList onEndReached={this.onEndReached}
-                        initialNumToRender={5}
-                        onEndReachedThreshold={0}
+                        onEndReachedThreshold={0.2}
                         data={postedTickets}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({item}) => (
@@ -89,7 +86,7 @@ export default class PostedTicket extends Component {
                                 refreshPostedTicket={this.refreshPostedTicket} />
                         )}>
                     </FlatList>
-                </View>
+                </Content>
             </Container>
         )
     }
