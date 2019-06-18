@@ -117,12 +117,12 @@ export default class PostEditTicket extends Component {
 
         const { navigate } = this.props.navigation;
 
-        temp === 'transportation' ? this.getTransportions() :
-            temp === 'ticketType' ? this.getTicketTypes() :
-                temp === 'departureCity' ? this.getDepartureCities() :
-                    temp === 'departureStation' ? this.getDepartureStations() :
-                        temp === 'arrivalCity' ? this.getArrivalCities() :
-                            temp === 'arrivalStation' ? this.getArrivalStations() : '';
+        // temp === 'transportation' ? this.getTransportions() :
+            // temp === 'ticketType' ? this.getTicketTypes() :
+            //     temp === 'departureCity' ? this.getDepartureCities() :
+            //         temp === 'departureStation' ? this.getDepartureStations() :
+            //             temp === 'arrivalCity' ? this.getArrivalCities() :
+            //                 temp === 'arrivalStation' ? this.getArrivalStations() : '';
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={{ flex: 1 }}>
@@ -160,8 +160,9 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={transportationName}
                             data={transportations.length === 1 && comp(transportationName, transportations[0].name) ? [] : transportations}
-                            onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
-                            onFocus={this.getTransportions}
+                            // onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
+                            onChangeText={value => this.getTransportions(value)}
+                            onFocus={() => {this.getTransportions('')}}
                             onBlur={() => this.setState({ transportations: [] })}
                             placeholder="Enter Transportation"
                             placeholderTextColor={'grey'}
@@ -182,8 +183,9 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={ticketTypeName}
                             data={ticketTypes.length === 1 && comp(ticketTypeName, ticketTypes[0].name) ? [] : ticketTypes}
-                            onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
-                            onFocus={this.getTicketTypes}
+                            // onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
+                            onChangeText={value => this.getTicketTypes(value)}
+                            onFocus={() => {this.getTicketTypes('')}}
                             onBlur={() => this.setState({ ticketTypes: [] })}
                             placeholder="Enter Ticket Type"
                             placeholderTextColor={'grey'}
@@ -204,8 +206,9 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={departureCityName}
                             data={departureCities.length === 1 && comp(departureCityName, departureCities[0].name) ? [] : departureCities}
-                            onChangeText={value => this.setState({ departureCityName: value, temp: 'departureCity' })}
-                            onFocus={this.getDepartureCities}
+                            // onChangeText={value => this.setState({ departureCityName: value, temp: 'departureCity' })}
+                            onChangeText={value => this.getDepartureCities(value)}
+                            onFocus={() => {this.getDepartureCities('')}}
                             onBlur={() => this.setState({ departureCities: [] })}
                             placeholder="Enter Departure City"
                             placeholderTextColor={'grey'}
@@ -226,8 +229,9 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={departureStationName}
                             data={departureStations.length === 1 && comp(departureStationName, departureStations[0].name) ? [] : departureStations}
-                            onChangeText={value => this.setState({ departureStationName: value, temp: 'departureStation' })}
-                            onFocus={this.getDepartureStations}
+                            // onChangeText={value => this.setState({ departureStationName: value, temp: 'departureStation' })}
+                            onChangeText={value => this.getDepartureStations(value)}
+                            onFocus={() => {this.getDepartureStations('')}}
                             onBlur={() => this.setState({ departureStations: [] })}
                             placeholder="Enter Departure Station"
                             placeholderTextColor={'grey'}
@@ -248,8 +252,9 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={arrivalCityName}
                             data={arrivalCities.length === 1 && comp(arrivalCityName, arrivalCities[0].name) ? [] : arrivalCities}
-                            onChangeText={value => this.setState({ arrivalCityName: value, temp: 'arrivalCity' })}
-                            onFocus={this.getArrivalCities}
+                            // onChangeText={value => this.setState({ arrivalCityName: value, temp: 'arrivalCity' })}
+                            onChangeText={value => this.getArrivalCities(value)}
+                            onFocus={() => this.getArrivalCities()}
                             onBlur={() => this.setState({ arrivalCities: [] })}
                             placeholder="Enter Arrival City"
                             placeholderTextColor={'grey'}
@@ -270,8 +275,8 @@ export default class PostEditTicket extends Component {
                         <Autocomplete
                             defaultValue={arrivalStationName}
                             data={arrivalStations.length === 1 && comp(arrivalStationName, arrivalStations[0].name) ? [] : arrivalStations}
-                            onChangeText={value => this.setState({ arrivalStationName: value, temp: 'arrivalStation' })}
-                            onFocus={this.getArrivalStations}
+                            onChangeText={value => this.getArrivalStations(value)}
+                            onFocus={() => {this.getArrivalStations('')}}
                             onBlur={() => this.setState({ arrivalStations: [] })}
                             placeholder="Enter Arrival Station"
                             placeholderTextColor={'grey'}
@@ -336,7 +341,7 @@ export default class PostEditTicket extends Component {
                         {/* Enter Selling Price */}
                         <Label style={styles.label}>Selling Price:</Label>
                         <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
-                            suffix={' $'}
+                            // suffix={' $'}
                             renderText={value => (
                                 <Input
                                     onChangeText={sellingPrice => this.setState({ sellingPrice })}
@@ -463,8 +468,8 @@ export default class PostEditTicket extends Component {
         })
     }
 
-    getTransportions = async () => {
-        const res = await Api.get('api/transportation?vehicleId=' + this.state.vehicleId + '&transportationName=' + this.state.transportationName);
+    getTransportions = async (searchValue) => {
+        const res = await Api.get('api/transportation?vehicleId=' + this.state.vehicleId + '&transportationName=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 transportations: res.data
@@ -472,8 +477,8 @@ export default class PostEditTicket extends Component {
         }
     }
 
-    getTicketTypes = async () => {
-        const res = await Api.get('api/ticketType?vehicleId=' + this.state.vehicleId + '&ticketTypeName=' + this.state.ticketTypeName);
+    getTicketTypes = async (searchValue) => {
+        const res = await Api.get('api/ticketType?vehicleId=' + this.state.vehicleId + '&ticketTypeName=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 ticketTypes: res.data
@@ -481,8 +486,8 @@ export default class PostEditTicket extends Component {
         }
     }
 
-    getDepartureCities = async () => {
-        const res = await Api.get('api/city?name=' + this.state.departureCityName);
+    getDepartureCities = async (searchValue) => {
+        const res = await Api.get('api/city?name=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 departureCities: res.data
@@ -490,8 +495,8 @@ export default class PostEditTicket extends Component {
         }
     }
 
-    getDepartureStations = async () => {
-        const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + this.state.departureStationName);
+    getDepartureStations = async (searchValue) => {
+        const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 departureStations: res.data
@@ -499,8 +504,8 @@ export default class PostEditTicket extends Component {
         }
     }
 
-    getArrivalCities = async () => {
-        const res = await Api.get('api/city?name=' + this.state.arrivalCityName);
+    getArrivalCities = async (searchValue) => {
+        const res = await Api.get('api/city?name=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 arrivalCities: res.data
@@ -508,8 +513,8 @@ export default class PostEditTicket extends Component {
         }
     }
 
-    getArrivalStations = async () => {
-        const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + this.state.arrivalStationName);
+    getArrivalStations = async (searchValue) => {
+        const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + searchValue);
         if (res.status === 200) {
             this.setState({
                 arrivalStations: res.data
