@@ -187,7 +187,9 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 				alert.style.display = 'block';
 			} else {
 				var responeData = await respone.json();
-				localStorage.setItem('USERNAME', responeData);
+				console.log("responeData: ", responeData.token);
+				localStorage.setItem('USERNAME', responeData.username);
+				localStorage.setItem('TOKEN', responeData.token);
 				window.location.href = 'index.html';
 			}
 		}

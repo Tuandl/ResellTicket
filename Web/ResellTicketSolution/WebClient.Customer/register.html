@@ -168,7 +168,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidUsername() {
 			var txtUsername = document.getElementsByName("txtUsername")[0].value;
-			var patt = /^[a-zA-Z0-9]{10,15}$/;
+			var patt = /^[a-zA-Z0-9]{10,20}$/;
 			var usernameAlert = document.getElementById("username-alert");
 			if (patt.test(txtUsername)) {
 				usernameAlert.style.display = 'none';
@@ -181,7 +181,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidPassword() {
 			var txtPassword = document.getElementsByName("txtPassword")[0].value;
-			var patt = /^[a-zA-Z0-9]{10,15}$/;
+			var patt = /^[a-zA-Z0-9]{10,100}$/;
 			var passwordAlert = document.getElementById("password-alert");
 			if (patt.test(txtPassword)) {
 				passwordAlert.style.display = 'none';
@@ -194,7 +194,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidFullname() {
 			var txtFullname = document.getElementsByName("txtFullname")[0].value;
-			var patt = /^[a-zA-Z]{10,100}$/;
+			var patt = /^[a-zA-Z ]{10,100}$/;
 			var fullnameAlert = document.getElementById("fullname-alert");
 			if (patt.test(txtFullname)) {
 				fullnameAlert.style.display = 'none';
@@ -207,8 +207,10 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidEmail() {
 			var txtEmail = document.getElementsByName("txtEmail")[0].value;
-			var patt = /[A-Z0-9._%+-]+@[A-Z0-9.-]+.[A-Z]{2,4}/igm;
+			console.log("email: ", txtEmail);
+			var patt = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}/;
 			var emailAlert = document.getElementById("email-alert");
+			console.log("is email: ", patt.test(txtEmail));
 			if (patt.test(txtEmail)) {
 				emailAlert.style.display = 'none';
 				return true;
@@ -220,7 +222,8 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidOTP() {
 			var txtOPTCode = document.getElementsByName("txtOPTCode")[0].value;
-			var patt = /^[0-9]{5}$/;
+			console.log("otp nè: ", txtOPTCode);
+			var patt = /^[0-9]{6}$/;
 			var otpAlert = document.getElementById("otp-alert");
 			if (patt.test(txtOPTCode)) {
 				otpAlert.style.display = 'none';
@@ -248,11 +251,8 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 				email: txtEmail,
 				OTPNumber: txtOPTCode,
 			};
-
-			if (!checkValidUsername && !checkValidFullname && !checkConfirmPassword && !checkValidPassword &&
-					!checkValidEmail && !checkValidOTP  ) {
-				alert("Enter all field please!!!")
-			} else {
+			//console.log("fun", checkValidEmail());
+			if (checkValidUsername() && checkValidFullname() && checkValidEmail() && checkValidOTP() && checkValidPassword() && checkConfirmPassword()  ) {
 				var respone = await fetch('http://localhost:59152/api/customer', {
 					method: "POST",
 					headers: {
@@ -265,8 +265,11 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 					alertInvalid.style.display = 'block';
 				} else {
 					alertInvalid.style.display = 'none';
-					window.location.href = 'login.html';
+					console.log("Ok register");
+					//window.location.href = 'login.html';
 				}
+			} else {
+				alert("Enter all field please!!!")
 			}
 		}
 	</script>
@@ -312,7 +315,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 						<div class="clearfix"></div>
 					</div>
 					<div id="otp-alert" style="display: none" class="alert alert-danger" role="alert">
-						OTP number must have 5 digits !!!
+						OTP number must have 6 digits !!!
 					</div>
 					<label>Password:</label>
 					<div class="key">
@@ -321,21 +324,20 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 						<div class="clearfix"></div>
 					</div>
 					<div id="password-alert" style="display: none" class="alert alert-danger" role="alert">
-							Please enter a valid password !!!
-						</div>
+						Please enter a valid password !!!
+					</div>
 					<label>Confirm Password:</label>
 					<div class="key">
 						<i class="fa fa-lock" aria-hidden="true"></i>
-						<input type="password" placeholder="Confirm password" name="txtConfirmPassword"
-							onchange="checkConfirmPassword()">
+						<input type="password" placeholder="Confirm password" name="txtConfirmPassword">
 						<div class="clearfix"></div>
 					</div>
 					<div id="confirmpassword-alert" style="display: none" class="alert alert-danger" role="alert">
 						Password not match !!!
 					</div>
 					<div id="register-alert" style="display: none" class="alert alert-danger" role="alert">
-							Username is existed or OTP number is wrong!!
-						</div>
+						Username is existed or OTP number is wrong!!
+					</div>
 					<button type="button" onclick="checkRegister()"
 						class="btn btn-large btn-block btn-warning">Register</button>
 				</form>
