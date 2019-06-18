@@ -68,6 +68,11 @@ export default {
       icon: 'fa fa-ticket'
     },
     {
+      name: 'InValid Ticket',
+      url: '/invalidTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
       name: 'Bought Ticket',
       url: '/boughtTicket',
       icon: 'fa fa-ticket'

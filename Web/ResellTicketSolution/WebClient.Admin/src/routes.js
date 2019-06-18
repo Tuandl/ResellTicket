@@ -53,6 +53,8 @@ const Stations = React.lazy(() => import('./views/Stations/StationsComponent'));
 const StationView = React.lazy(() => import('./views/Stations/StationViewComponent'));
 const StationCreate = React.lazy(() => import('./views/Stations/StationCreateComponent'));
 const ValidTickets = React.lazy(() => import('./views/Tickets/ValidTickets'));
+const InValidTickets = React.lazy(() => import('./views/Tickets/InValidTickets'));
+
 const RenamedTickets = React.lazy(() => import('./views/Tickets/RenamedTickets'));
 const BoughtTickets = React.lazy(() => import('./views/Tickets/BoughtTickets'));
 const CompletedTickets = React.lazy(() => import('./views/Tickets/CompletedTickets'));
@@ -117,9 +119,10 @@ const routes = [
   { path: '/station/add', exact: true, name: 'Add Station', component: StationCreate },
   {path: '/station/:id', name: 'Station Details', component: StationView},
   {path: '/validTicket', name: 'Valid Tickets', component: ValidTickets},
+  {path: '/invalidTicket', name: 'InValid Tickets', component: InValidTickets},
   {path: '/renamedTicket', name: 'Renamed Tickets', component: RenamedTickets},
   {path: '/boughtTicket', name: 'Bought Tickets', component: BoughtTickets},
-  {path: '/completedTicket', name: 'Completed Tickets', component: CompletedTickets}
+  {path: '/completedTicket', name: 'Completed Tickets', component: CompletedTickets},
 ];
 
 export default routes;

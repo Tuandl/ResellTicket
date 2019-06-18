@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TicketTypeRowViewModel>> GetTicketTypeByVehicleId(int vehicleId)
+        public ActionResult<IEnumerable<TicketTypeRowViewModel>> GetTicketTypeByVehicleId(int vehicleId, string ticketTypeName)
         {
-            var ticketTypeRowVMs = _ticketTypeService.GetTicketTypesByVehicleId(vehicleId);
+            var ticketTypeRowVMs = _ticketTypeService.GetTicketTypesByVehicleId(vehicleId, ticketTypeName);
             return ticketTypeRowVMs;
         }
     }

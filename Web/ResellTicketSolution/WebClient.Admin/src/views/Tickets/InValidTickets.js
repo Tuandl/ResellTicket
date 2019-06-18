@@ -7,9 +7,9 @@ import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup
 function TicketRow(props) {
     const {ticket} = props;
     const getBadge = (status) => {
-      if (status === 2) {
+      if (status === 3) {
           return (
-              <Badge color="success">Valid</Badge>
+              <Badge color="danger">Invalid</Badge>
           )
       }
     }
@@ -17,10 +17,10 @@ function TicketRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureDateTime}</td>
-            <td>{ticket.arrivalDateTime}</td>
+            <td>{ticket.departureDate}</td>
+            <td>{ticket.arrivalDate}</td>
             <td>{ticket.sellerPhone}</td>
-            <td>{ticket.sellingPrice}</td>
+            <td>{ticket.price}</td>
             <td>{ticket.feeAmount}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
@@ -34,7 +34,7 @@ function TicketRow(props) {
     )
 }
 
-class ValidTickets extends Component {
+class InValidTickets extends Component {
 
     constructor(props) {
         super(props);
@@ -56,7 +56,7 @@ class ValidTickets extends Component {
             var decode = jwt(token);
             var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             if (userRole === 'Staff') {
-                this.getValidTickets();
+                this.getInValidTickets();
                 this.setState({
                     userRole: userRole
                 })
@@ -73,8 +73,8 @@ class ValidTickets extends Component {
     //     });
 
     // }
-    getValidTickets = () => {
-      Axios.get('api/ticket/valid').then(res => {
+    getInValidTickets = () => {
+      Axios.get('api/ticket/invalid').then(res => {
           this.setState({
               tickets: res.data
           })
@@ -83,24 +83,13 @@ class ValidTickets extends Component {
 
   }
 
-    onSaveChanges = (id) => {
-      Axios.put('api/ticket/' + id).then(res => {
-          if(res.status === 200) {
-              toastr.success('Update Success', 'Ticket has been valid successfully.');
-              // this.props.history.push('/ticket');
-          } else {
-              toastr.error('Error', 'Error when valid Ticket');
-          }
-      })
-  }
-
   onChange = (event) => {
     var {name, value} = event.target;
     this.setState({
         [name] : value
     })
   }
-  
+
   onSearch = (event) => {
     event.preventDefault();
     //console.log(this.state.searchParam);
@@ -164,4 +153,4 @@ class ValidTickets extends Component {
     }
 }
 
-export default ValidTickets;
+export default InValidTickets;
