@@ -68,8 +68,18 @@ export default {
       icon: 'fa fa-ticket'
     },
     {
+      name: 'Bought Ticket',
+      url: '/boughtTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
       name: 'Renamed Ticket',
       url: '/renamedTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Completed Ticket',
+      url: '/completedTicket',
       icon: 'fa fa-ticket'
     }
     // {

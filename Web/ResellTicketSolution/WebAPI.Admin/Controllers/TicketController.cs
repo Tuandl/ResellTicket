@@ -54,6 +54,20 @@ namespace WebAPI.Admin.Controllers
             return tickets;
         }
 
+        [HttpGet("bought")]
+        public ActionResult<IEnumerable<TicketRowViewModel>> GetBoughtTickets()
+        {
+            var tickets = _ticketService.GetBoughtTickets();
+            return tickets;
+        }
+
+        [HttpGet("completed")]
+        public ActionResult<IEnumerable<TicketRowViewModel>> GetCompletedTickets()
+        {
+            var tickets = _ticketService.GetCompletedTickets();
+            return tickets;
+        }
+
         /// <summary>
         /// Approve Ticket
         /// </summary>

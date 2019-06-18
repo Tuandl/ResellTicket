@@ -21,6 +21,8 @@ namespace Service.Services
         //getTicketsValidStatus
         List<TicketRowViewModel> GetValidTickets();
         List<TicketRowViewModel> GetRenamedTickets();
+        List<TicketRowViewModel> GetBoughtTickets();
+        List<TicketRowViewModel> GetCompletedTickets();
         string ApproveTicket(int id);
         void PostTicket(TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
@@ -91,6 +93,32 @@ namespace Service.Services
         {
             var renamedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Renamed).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetBoughtTickets()
+        {
+            var boughtTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Bought).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetCompletedTickets()
+        {
+            var completedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Completed).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
                 var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);

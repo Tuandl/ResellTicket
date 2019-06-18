@@ -54,6 +54,8 @@ const StationView = React.lazy(() => import('./views/Stations/StationViewCompone
 const StationCreate = React.lazy(() => import('./views/Stations/StationCreateComponent'));
 const ValidTickets = React.lazy(() => import('./views/Tickets/ValidTickets'));
 const RenamedTickets = React.lazy(() => import('./views/Tickets/RenamedTickets'));
+const BoughtTickets = React.lazy(() => import('./views/Tickets/BoughtTickets'));
+const CompletedTickets = React.lazy(() => import('./views/Tickets/CompletedTickets'));
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -115,7 +117,9 @@ const routes = [
   { path: '/station/add', exact: true, name: 'Add Station', component: StationCreate },
   {path: '/station/:id', name: 'Station Details', component: StationView},
   {path: '/validTicket', name: 'Valid Tickets', component: ValidTickets},
-  {path: '/renamedTicket', name: 'Renamed Tickets', component: RenamedTickets}
+  {path: '/renamedTicket', name: 'Renamed Tickets', component: RenamedTickets},
+  {path: '/boughtTicket', name: 'Bought Tickets', component: BoughtTickets},
+  {path: '/completedTicket', name: 'Completed Tickets', component: CompletedTickets}
 ];
 
 export default routes;
