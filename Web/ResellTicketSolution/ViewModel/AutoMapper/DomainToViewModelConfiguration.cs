@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models;
+using ViewModel.ViewModel.Route;
 using ViewModel.ViewModel.Ticket;
 using ViewModel.ViewModel.User;
 
@@ -11,6 +12,10 @@ namespace ViewModel.AutoMapper
         {
             CreateMap<User, UserRowViewModel>();
             CreateMap<Ticket, TicketRowViewModel>();
+
+            CreateMap<Route, RouteDetailViewModel>();
+            CreateMap<RouteTicket, RouteTicketDetailViewModel>();
+
         }
     }
 }

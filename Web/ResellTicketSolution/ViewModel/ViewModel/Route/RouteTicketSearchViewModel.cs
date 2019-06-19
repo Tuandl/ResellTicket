@@ -3,10 +3,16 @@
     public class RouteTicketSearchViewModel
     {
         public int TicketId { get; set; }
-        public int DepartureId { get; set; }
-        public int ArrivalId { get; set; }
-        public string DepartureName { get; set; }
-        public string ArrivalName { get; set; }
+        public int DepartureCityId { get; set; }
+        public string DepartureCityName { get; set; }
+        public int DepartureStationId { get; set; }
+        public string DepartureStationName { get; set; }
+        public int ArrivalCityId { get; set; }
+        public string ArrivalCityName { get; set; }
+        public int ArrivalStationId { get; set; }
+        public string ArrivalStationName { get; set; }
+        public string VehicleName { get; set; }
+        public string TransportationName { get; set; }
         public int Order { get; set; }
     }
 }

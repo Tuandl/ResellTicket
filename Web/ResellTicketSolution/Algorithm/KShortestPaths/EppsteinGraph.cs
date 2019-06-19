@@ -101,6 +101,39 @@ namespace Algorithm.KShortestPaths
         }
 
         /// <summary>
+        /// Calculate graph for getting paths later
+        /// </summary>
+        /// <param name="departureId">Soruce vertex Id</param>
+        /// <param name="destinationId">Destination vertex Id</param>
+        /// <param name="maxCombination">Maximum Travel Edges</param>
+        /// <param name="kshortestPathQuantity">Precalculate only k shotest paths</param>
+        public void BuildKthShortestPaths(int departureId, int destinationId, int maxCombination = int.MaxValue, int kshortestPathQuantity = 10)
+        {
+            isCaculated = false;
+
+            //Parse start and end vertex
+            InitSourceDestination(departureId, destinationId);
+            this.MaxCombination = maxCombination;
+            this.KShortestPathQuantity = kshortestPathQuantity;
+
+            if (SourceVertex == null || DestinationVertex == null)
+            {
+                throw new InvalidOperationException("Invalid Source or destination");
+            }
+
+            // Builds shortest path tree for all vertices to destination, according to Dijkstra,
+            // storing distance to endpoint information on vertices, as described in Eppstein
+            BuildShortestPathTree();
+
+            // Fills a heap with all possible tracks from source to destination, as described in Eppstein
+            // Paths are defined uniquely by sidetrack collections (edges not in shortest paths) 
+            BuildSidetracksHeapV2();
+
+            // Flag to indicate that shortest paths have been calculated
+            isCaculated = true;
+        }
+
+        /// <summary>
         /// Calculate All the shortest paths between sources and destination and return one 
         /// </summary>
         /// <param name="departureId">Source vertex Id</param>

@@ -156,7 +156,7 @@ namespace Service.Services
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
-            ticket.CustomerId = 1;
+            ticket.BuyerId = 1;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
         }

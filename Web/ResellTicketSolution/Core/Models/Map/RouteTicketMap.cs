@@ -13,14 +13,14 @@ namespace Core.Models.Map
                 .HasForeignKey(x => x.TicketId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Departure)
+            builder.HasOne(x => x.DepartureStation)
                 .WithMany(x => x.DepartureRouteTickets)
-                .HasForeignKey(x => x.DepartureId)
+                .HasForeignKey(x => x.DepartureStationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Arrival)
+            builder.HasOne(x => x.ArrivalStation)
                 .WithMany(x => x.ArrivalRouteTickets)
-                .HasForeignKey(x => x.ArrivalId)
+                .HasForeignKey(x => x.ArrivalStationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Route)

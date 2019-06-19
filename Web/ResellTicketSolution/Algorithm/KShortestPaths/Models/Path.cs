@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithm.KShortestPaths.Models
 {
@@ -82,6 +83,27 @@ namespace Algorithm.KShortestPaths.Models
             }
             result += $"Weight = {Weight}; DeltaWeight = {DeltaWeight}";
             return result;
+        }
+
+        /// <summary>
+        /// Get all vertices in this path
+        /// </summary>
+        /// <returns></returns>
+        public List<Vertex> GetAllVertices()
+        {
+            var vertices = new List<Vertex>();
+
+            if(this.Count > 0)
+            {
+                vertices.Add(this.FirstOrDefault().Tail);
+
+                foreach (var edge in this)
+                {
+                    vertices.Add(edge.Head);
+                }
+            }
+
+            return vertices;
         }
     }
 }
