@@ -221,8 +221,6 @@ namespace Service.Services
             //Get raw available tickets in db
             var tickets = _ticketRepository.GetAllQueryable()
                 .Where(x => 
-                    x.DepartureStation.CityId == departureCityId &&
-                    x.ArrivalStation.CityId == arrivalCityId &&
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     x.Deleted == false &&
                     x.DepartureDateTime > DateTime.Now
@@ -248,7 +246,10 @@ namespace Service.Services
             var paths = new List<Path>();
             for(int count = (page - 1) * pageSize; count < page * pageSize; count++)
             {
-                paths.Add(graph.FindNextShortestPath());
+                var path = graph.FindNextShortestPath().Trim();
+                if(!path.IsValid) 
+                    break;
+                paths.Add(path);
             }
 
             var routes = new List<RouteSearchViewModel>();
@@ -257,9 +258,9 @@ namespace Service.Services
                 var routeSearchViewModel = new RouteSearchViewModel();
 
                 int count = 0;
-                foreach (var vertex in path.Trim().GetAllVertices())
+                foreach (var edge in path)
                 {
-                    var ticket = vertex.Data as Ticket;
+                    var ticket = edge.Tail.Data as Ticket;
                     var ticketModel = new RouteTicketSearchViewModel()
                     {
                         TicketId = ticket.Id,
@@ -267,16 +268,18 @@ namespace Service.Services
                         ArrivalCityName = ticket.ArrivalStation.City.Name,
                         ArrivalStationId = ticket.ArrivalStationId,
                         ArrivalStationName = ticket.ArrivalStation.Name,
+                        ArrivalDateTime = ticket.ArrivalDateTime,
                         DepartureCityId = departureCityId,
                         DepartureCityName = ticket.DepartureStation.City.Name,
                         DepartureStationId = ticket.DepartureStationId,
                         DepartureStationName = ticket.DepartureStation.Name,
+                        DepartureDateTime = ticket.DepartureDateTime,
                         TransportationName = ticket.Transportation.Name,
                         VehicleName = ticket.Transportation.Vehicle.Name,
                         Order = count++,
                     };
 
-                    routeSearchViewModel.TotalAmount = ticket.SellingPrice;
+                    routeSearchViewModel.TotalAmount += ticket.SellingPrice;
                     routeSearchViewModel.RouteTickets.Add(ticketModel);
                 }
 

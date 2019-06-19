@@ -11,7 +11,9 @@ namespace ViewModel.AutoMapper
         public DomainToViewModelConfiguration()
         {
             CreateMap<User, UserRowViewModel>();
-            CreateMap<Ticket, TicketRowViewModel>();
+            CreateMap<Ticket, TicketRowViewModel>()
+                .ForMember(dest => dest.CustomerId, option => option.MapFrom(source => source.BuyerId));
+
             CreateMap<Ticket, CustomerTicketViewModel>()
                 .ForMember(dest => dest.DepartureCityName, option => option.MapFrom(source => source.DepartureStation.City.Name))
                 .ForMember(dest => dest.ArrivalCityName, option => option.MapFrom(source => source.ArrivalStation.City.Name))

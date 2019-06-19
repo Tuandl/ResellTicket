@@ -44,7 +44,7 @@ namespace WebAPI.Controllers
             try
             {
                 var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,
-                    maxTicketCombination, page, pageSize
+                    page, pageSize, maxTicketCombination
                 );
 
                 return Ok(routes);

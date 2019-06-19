@@ -15,18 +15,19 @@ namespace Algorithm.KShortestPaths
         public static void CreateEdgeFromTicketBaseOnPrice(this EppsteinGraph graph, Ticket ticket)
         {
             //Get Departure vertex
-            Vertex departureVertex = graph.GetVertex(ticket.DepartureStationId, ticket.DepartureDateTime);
+            //Vertex departureVertex = graph.GetVertex(ticket.DepartureStationId, ticket.DepartureDateTime);
+            Vertex departureVertex = graph.GetVertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
             if(departureVertex == null)
             {
-                departureVertex = new Vertex(ticket.DepartureStationId, ticket.DepartureDateTime, ticket);
+                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime, ticket);
                 graph.AddVertex(departureVertex);
             }
 
             //Get arrival vertex
-            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStationId, ticket.ArrivalDateTime);
+            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
             if(arrivalVertex == null)
             {
-                arrivalVertex = new Vertex(ticket.ArrivalStationId, ticket.ArrivalDateTime, ticket);
+                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime, ticket);
                 graph.AddVertex(arrivalVertex);
             }
 
