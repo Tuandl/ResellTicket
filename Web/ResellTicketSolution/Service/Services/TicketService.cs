@@ -94,7 +94,7 @@ namespace Service.Services
         public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
         {
             var customerTickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.CustomerId == customerId)
+                .Where(x => x.BuyerId == customerId)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt)
                 .Skip((page - 1) * 5).Take(5)
