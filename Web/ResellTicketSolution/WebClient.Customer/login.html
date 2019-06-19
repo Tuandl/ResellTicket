@@ -94,6 +94,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 			max-width: 400px;
 		}
 	</style>
+	<script type="text/javascript" src="constant/BasrUrl.js"></script>
 </head>
 
 <body>
@@ -175,7 +176,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 			}
 
 
-			var respone = await fetch('http://localhost:59152/api/Authentication/customer', {
+			var respone = await fetch(baseUrl() + 'api/Authentication/customer', {
 				method: "POST",
 				headers: {
 					'Accept': 'application/json',
