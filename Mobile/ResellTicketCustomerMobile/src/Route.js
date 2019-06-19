@@ -35,7 +35,7 @@ const MainRoot = createAppContainer(createStackNavigator(
         },
     },
     {
-        initialRouteName: 'Home',
+        initialRouteName: 'Login',
         headerMode: 'none',
         navigationOptions: {
             headerVisible: false,

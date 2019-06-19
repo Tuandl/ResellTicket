@@ -97,7 +97,7 @@ namespace Service.Services
                 .Where(x => x.CustomerId == customerId)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt)
-                .Skip((page - 1) * 5).Take(5)
+                //.Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
             return customerTicketVMs;

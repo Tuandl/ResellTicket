@@ -1,4 +1,4 @@
 export default {
     // baseUrl: 'http://api.resellticket.local/',
-    baseUrl: 'http://1b25458f.ap.ngrok.io/',
+    baseUrl: 'http://a0057286.ngrok.io',
 }

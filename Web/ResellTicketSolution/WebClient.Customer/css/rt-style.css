@@ -1,0 +1,55 @@
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.route {
+    height: 180px;
+    border: 1px solid #B2B2B2;
+    padding: 0 20px;
+    text-align: center;
+}
+.route:hover {
+    box-shadow: 5px 5px 5px 5px #bdbdbd;
+    cursor: pointer;
+}
+
+.routeHeader{
+    height: 25%;
+    width: 100%;
+    border-bottom: 0.5px solid #B2B2B2;
+    box-sizing: border-box;
+    padding-top: 12px;
+    color: #353535
+}
+
+.routeBody {
+    height: 55%;
+    width: 100%;
+    border-bottom: 0.5px solid #B2B2B2;
+    padding-top: 35px
+}
+
+.routeBody span {
+    font-size: 18px
+}
+
+.routeFooter {
+    float: right;
+    padding-top: 10px
+}
+
+.btn-post-ticket {
+    border: 1px solid #fff;
+    display: inline-block;
+    background-color: #FCCD1E;
+    text-align: center;
+    color: brown;
+    width: 130px;
+    height: 40px;
+    padding-top: 10px; 
+    cursor: pointer;
+}
