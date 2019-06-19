@@ -31,6 +31,13 @@ namespace Core.Models.Map
                 .WithMany(x => x.ArrivalTickets)
                 .HasForeignKey(x => x.ArrivalStationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(x => x.CommissionPercent)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Property(x => x.SellingPrice)
+                .HasColumnType("decimal(18,2)");
+
             builder.ToTable("Ticket");
         }
     }
