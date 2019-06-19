@@ -30,6 +30,10 @@ namespace Service.Services
         string RejectTicket(int id);
 
         void PostTicket(TicketPostViewModel model);
+        void EditTicket(TicketEditViewModel model);
+        void DeleteTicket(int ticketId);
+        List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
+        TicketDetailViewModel GetTicketDetail(int ticketId);
     }
     public class TicketService : ITicketService
     {
@@ -39,7 +43,7 @@ namespace Service.Services
         private readonly ICustomerRepository _customerRepository;
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
-                             ITicketRepository ticketRepository, 
+                             ITicketRepository ticketRepository,
                              ICustomerRepository customerRepository
         )
         {
@@ -48,6 +52,7 @@ namespace Service.Services
             _ticketRepository = ticketRepository;
             _customerRepository = customerRepository;
         }
+
         public List<TicketRowViewModel> GetTickets()
         {
             var tickets = _ticketRepository.GetAll().ToList();
@@ -57,10 +62,10 @@ namespace Service.Services
                 var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
                 ticketRow.SellerPhone = customer.PhoneNumber;
             }
-            
+
             return ticketRowViewModels;
         }
-        
+
         public List<TicketRowViewModel> GetPendingTickets()
         {
             var pendingTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Pending).ToList();
@@ -85,6 +90,17 @@ namespace Service.Services
             }
 
             return ticketRowViewModels;
+        }
+        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
+        {
+            var customerTickets = _ticketRepository.GetAllQueryable()
+                .Where(x => x.CustomerId == customerId)
+                .Where(x => x.Deleted == false)
+                .OrderByDescending(x => x.UpdatedAt)
+                .Skip((page - 1) * 5).Take(5)
+                .ToList();
+            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
+            return customerTicketVMs;
         }
 
         public List<TicketRowViewModel> GetTickets(string param)
@@ -151,6 +167,13 @@ namespace Service.Services
 
             return string.Empty;
         }
+        public TicketDetailViewModel GetTicketDetail(int ticketId)
+        {
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
+            var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
+            return ticketDetailVM;
+        }
+
         public void PostTicket(TicketPostViewModel model)
         {
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
@@ -158,6 +181,47 @@ namespace Service.Services
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.BuyerId = 1;
             _ticketRepository.Add(ticket);
+            _unitOfWork.CommitChanges();
+        }
+
+        public void EditTicket(TicketEditViewModel model)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
+            if(model.TransportationId != -1 && model.TransportationId != existedTicket.TransportationId)
+            {
+                existedTicket.TransportationId = model.TransportationId;
+            }
+            if(model.ArrivalStationId != -1 && model.ArrivalStationId != existedTicket.ArrivalStationId)
+            {
+                existedTicket.ArrivalStationId = model.ArrivalStationId;
+            }
+            if(model.DepartureStationId != -1 && model.DepartureStationId != existedTicket.DepartureStationId)
+            {
+                existedTicket.DepartureStationId = model.DepartureStationId;
+            }
+            if(model.TicketTypeId != -1 && model.TicketTypeId != existedTicket.TicketTypeId)
+            {
+                existedTicket.TicketTypeId = model.TicketTypeId;
+            }
+            if(model.DepartureDateTime != existedTicket.DepartureDateTime)
+            {
+                existedTicket.DepartureDateTime = model.DepartureDateTime;
+            }
+            if(model.ArrivalDateTime != existedTicket.ArrivalDateTime)
+            {
+                existedTicket.ArrivalDateTime = model.ArrivalDateTime;
+            }
+            existedTicket.TicketCode = model.TicketCode;
+            existedTicket.SellingPrice = model.SellingPrice;
+            _ticketRepository.Update(existedTicket);
+            _unitOfWork.CommitChanges();
+        }
+
+        public void DeleteTicket(int ticketId)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == ticketId);
+            existedTicket.Deleted = true;
+            _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
     }

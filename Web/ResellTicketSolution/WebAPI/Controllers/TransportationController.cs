@@ -21,9 +21,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TransportationRowViewModel>> GetTransportationByVehicleId(int vehicleId)
+        public ActionResult<IEnumerable<TransportationRowViewModel>> GetTransportationsByVehicleId(int vehicleId, string transportationName)
         {
-            var transportationRowVMs = _transportationService.GetTransportationsByVehicleId(vehicleId);
+            var transportationRowVMs = _transportationService.GetTransportationsByVehicleId(vehicleId, transportationName);
             return transportationRowVMs;
         }
     }

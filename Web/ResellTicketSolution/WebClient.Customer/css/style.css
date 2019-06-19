@@ -435,6 +435,18 @@ ul.multi-column-dropdown h6 {
 	padding-right: 0;
 	padding-left:7px;
 }
+.text-right {
+    text-align: right;
+}
+.l-height {
+    line-height: 1;
+}
+.text-mid{
+    padding-top: 10px;
+}
+.text-color {
+    color: red;
+}
 .row-top {
     margin-top: 1em;
 }
@@ -500,9 +512,10 @@ span.fa.fa-shopping-cart.my-cart-icon {
     background: rgba(255, 255, 255, 0.45);
 }
 .search-form input[type='submit']{
-	    width: 120px;
+	    width: 130px;
     height: 40px;
     outline: none;
+    padding-left: 30px;
     border: 1px solid #fff;
     background: url(../images/can.png) no-repeat 6px 7px #FCCD1E;
     display: inline-block;
@@ -2894,7 +2907,7 @@ img.img-head {
 .search-form input[type='submit'] {
     width: 35px;
     height: 35px;
-    background: url(../images/can.png) no-repeat 4px 3px #FCCD1E;
+    /* background: url(../images/can.png) no-repeat 4px 3px #FCCD1E; */
 }
 .search-form input[type='text'] {
     width: 85%;
@@ -3161,5 +3174,15 @@ h1.t-button {
 
 .grid_3 p, .page-header p {
     font-size: 13px;
+}
+
+.text-left {
+    text-align: left;
+}
+p.title-text-color {
+    color: grey;
+}
+.pad-top {
+    padding-left: 50px; 
 }
 }

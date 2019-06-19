@@ -19,6 +19,12 @@ const MainRoot = createAppContainer(createStackNavigator(
             screen: RegisterScreen,
             path: 'register',
         },
+        ForgotPassword: {
+            screen: ForgotPasswordScreen
+        },
+        ResetPassword: {
+            screen: ResetPasswordScreen
+        },
         ConfirmPhoneNumberRegister: {
             screen: ConfirmPhoneNumberRegisterScreen,
             path: 'confirmPhoneRegister'
@@ -27,19 +33,9 @@ const MainRoot = createAppContainer(createStackNavigator(
             screen: HomeScreen,
             path: 'home',
         },
-        //BEGIN Reset Password
-        ForgotPassword: {
-            screen: ForgotPasswordScreen,
-            path: 'forgotPassword',
-        },
-        ResetPassword: {
-            screen: ResetPasswordScreen,
-            path: 'resetPassword',
-        }, 
-        //END Reset Password
     },
     {
-        initialRouteName: 'Login',
+        initialRouteName: 'Home',
         headerMode: 'none',
         navigationOptions: {
             headerVisible: false,

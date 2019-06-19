@@ -1,20 +1,21 @@
-﻿using System;
+﻿using Core.Enum;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Core.Enum;
 
 namespace ViewModel.ViewModel.Ticket
 {
-    public class TicketRowViewModel
+    public class CustomerTicketViewModel
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string TicketCode { get; set; }
+        public string DepartureCityName { get; set; }
+        public string ArrivalCityName { get; set; }
+        public string Vehicle { get; set; }
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
-        public decimal SellingPrice { get; set; }
         public TicketStatus Status { get; set; }
-        public string SellerPhone { get; set; }
-        public decimal FeeAmount { get; set; }
-        public int CustomerId { get; set; }
+        public decimal SellingPrice { get; set; }
+
     }
 }

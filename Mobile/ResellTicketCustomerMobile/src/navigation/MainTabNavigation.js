@@ -1,5 +1,4 @@
 import React from 'react';
-import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 
@@ -11,25 +10,17 @@ import MeScreen from './../screens/MeScreen';
 import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
 import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
-import PostNewTicketScreen from './../screens/postedTicket/PostNewTicketScreen';
+import PostEditTicketScreen from './../screens/postedTicket/PostEditTicketScreen';
+import DetailTicketScreen from  './../screens/postedTicket/DetailTicketScreen';
 
 const MeStack = createStackNavigator(
   {
-    Me: {
-      screen: MeScreen
-    },
-    PostedTicket: {
-      screen: PostedTicketScreen,
-    },
-    PostNewTicket: {
-      screen: PostNewTicketScreen
-    },
-    ProfileDetail: {
-      screen: ProfileDetailScreen
-    },
-    ChangePassword: {
-      screen: ChangePasswordScreen
-    }
+    Me: MeScreen,
+    PostedTicket: PostedTicketScreen,
+    PostEditTicket: PostEditTicketScreen,
+    DetailTicket: DetailTicketScreen,
+    ProfileDetail: ProfileDetailScreen,
+    ChangePassword: ChangePasswordScreen
   },
   {
     initialRouteName: 'Me',
@@ -68,16 +59,16 @@ export default createBottomTabNavigator(
     },
     Me: {
       screen: MeStack,
-      navigationOptions: {
+      navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Me',
         tabBarIcon: ({ }) => {
           return <Icon name="user-o" type="font-awesome" />
         },
-      }
-    },
+        tabBarVisible: navigation.state.index > 0 ? false: true
+      })
+    }
   },
   {
     initialRouteName: 'Me',
-    
   }
 );

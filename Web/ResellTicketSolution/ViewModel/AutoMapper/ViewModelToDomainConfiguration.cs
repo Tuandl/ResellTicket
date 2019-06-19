@@ -22,6 +22,7 @@ namespace ViewModel.AutoMapper
             CreateMap<CityUpdateViewModel, City>();
             CreateMap<TicketTypeCreateViewModel, TicketType>();
             CreateMap<TicketPostViewModel, Ticket>();
+            CreateMap<TicketEditViewModel, Ticket>();
         }
     }
 }

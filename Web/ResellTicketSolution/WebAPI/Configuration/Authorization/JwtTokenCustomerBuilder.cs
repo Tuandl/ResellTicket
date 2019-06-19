@@ -18,6 +18,8 @@ namespace WebAPI.Configuration.Authorization
                 new Claim(JwtRegisteredClaimNames.Sub, customer.Username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, customer.Id.ToString()),
+                //Add this claim for getting username from User.Identity.Name
+                new Claim(ClaimTypes.Name, customer.Username),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSetting.Secret));
             var crediential = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

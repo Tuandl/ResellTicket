@@ -14,7 +14,7 @@ namespace Service.Services
     {
         bool CreateTransportation(TransportationCreateViewModel transportation);
         List<TransportationRowViewModel> GetTransportations(string param);
-        List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId);
+        List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId, string transportationName);
         TransportationRowViewModel FindTransportationById(int id);
         string UpdateTransportation(TransportationUpdateViewModel model);
         string DeleteTransportation(TransportationUpdateViewModel model);
@@ -47,12 +47,26 @@ namespace Service.Services
             return false;
         }
 
-        public List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId)
+        public List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId, string transportationName)
         {
-            var transportation = _transportationRepository.GetAllQueryable()
-                .Where(x => x.VehicleId == vehicleId).ToList();
+            transportationName = transportationName ?? "";
+            List<Transportation> transportations = null;
+            if (vehicleId == -1)
+            {
+                 transportations = _transportationRepository.GetAllQueryable()
+                    .Where(x => x.Name.ToLower().Contains(transportationName.ToLower()))
+                    .Where(x => x.Deleted == false)
+                    .ToList();
+            } else
+            {
+                transportations = _transportationRepository.GetAllQueryable()
+                .Where(x => x.VehicleId == vehicleId)
+                .Where(x => x.Name.ToLower().Contains(transportationName.ToLower()))
+                .Where(x => x.Deleted == false)
+                .ToList();
+            }
             var transportationRowVMs = _mapper.Map<List<Transportation>,
-                                     List<TransportationRowViewModel>>(transportation);
+                                     List<TransportationRowViewModel>>(transportations);
             return transportationRowVMs;
         }
 
