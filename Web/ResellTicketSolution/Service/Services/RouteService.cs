@@ -49,7 +49,7 @@ namespace Service.Services
         /// <param name="status">optional. Status of routes</param>
         /// <returns>Route data table (route information and tickets in that route</returns>
         RouteDataTable GetRouteDataTable(int page, int pageSize, 
-            RouteStatus? status);
+            RouteStatus? status, string userName);
 
         /// <summary>
         /// Update Route 
@@ -115,8 +115,17 @@ namespace Service.Services
             }
         }
 
-        public RouteDataTable GetRouteDataTable(int page, int pageSize, RouteStatus? status)
+        public RouteDataTable GetRouteDataTable(int page, int pageSize, RouteStatus? status, string userName)
         {
+            var customer = _customerRepository.Get(x => 
+                x.Username == userName &&
+                x.Deleted == false &&
+                x.IsActive == true
+            );
+
+            if(customer == null) 
+                throw new NotFoundException();
+
             //Get route view models
             var routes = _routeRepository.GetAllQueryable()
                 .Where(x => x.Deleted == false)

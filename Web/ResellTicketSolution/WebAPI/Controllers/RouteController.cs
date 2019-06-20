@@ -115,8 +115,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var routeDataTable = _routeService.GetRouteDataTable(page, pageSize, status);
+                var routeDataTable = _routeService.GetRouteDataTable(page, pageSize, status, User.Identity.Name);
                 return Ok(routeDataTable);
+            }
+            catch (NotFoundException)
+            {
+                return BadRequest("Not Found");
             }
             catch (Exception ex)
             {
