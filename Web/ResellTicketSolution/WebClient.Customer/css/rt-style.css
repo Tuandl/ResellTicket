@@ -42,6 +42,7 @@ a:hover {
     padding-top: 10px
 }
 
+/*post, edit ticket*/
 .btn-post-ticket {
     border: 1px solid #fff;
     display: inline-block;
@@ -53,3 +54,70 @@ a:hover {
     padding-top: 10px; 
     cursor: pointer;
 }
+
+.btn-post-now {
+    border: 1px solid #fff;
+    display: inline-block;
+    background-color: #FCCD1E;
+    text-align: center;
+    color: brown;
+    width: 150px;
+    height: 50px;
+    padding-top: 5px; 
+    font-size: 18px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.btn-post-now:hover {
+    box-shadow: 3px 3px 3px 3px #bdbdbd;
+}
+
+.form-post-ticket {
+    width: 100%!important;
+}
+
+.key #select-vehicle {
+    width: 100%;
+    padding: 10px 10px;
+    font-size: 1em;
+    border: none;
+    border-bottom: none;
+    outline: none;
+    color: #999;
+    float: left;
+    background: none;
+}
+
+#sellingPrice {
+    width: 100%; 
+    height: 40px; 
+    border: none;
+    padding-left: 10px
+}
+
+/* custom autocomplete input*/
+.autocomplete-items {
+    position: absolute;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+}
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #e9e9e9; 
+}
+/* custom autocomplete input*/
