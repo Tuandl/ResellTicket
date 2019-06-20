@@ -136,16 +136,25 @@ export default class DetailTicketScreen extends Component {
                                 )}
                             />
                         </Item>
-                        {status == 4 ? <Button rounded block success
+                        {status == 4 ? 
+                        <Container>
+                        <Button rounded block success
                             style={{ margin: 20, marginBottom: 0 }}
                             onPress={this.confirmTicketRenamed}>
                             <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>
-                        </Button> : <Text></Text>}
+                        </Button>
                         <Button rounded block danger
+                            style={{ marginLeft: 60, marginRight: 60, marginTop: 20, marginBottom: 0 }}
+                            onPress={this.RefuseTicket}>
+                            <Text style={styles.buttonText}>Refuse Ticket</Text>
+                        </Button>
+                        </Container>
+                        : <Button rounded block danger
                             style={{ margin: 40, marginBottom: 0 }}
                             onPress={this.deletePostedTicket}>
                             <Text style={styles.buttonText}>Delete</Text>
-                        </Button>
+                        </Button>}
+                        
                     </Content>
                 </ScrollView>
             </Container>
@@ -159,6 +168,19 @@ export default class DetailTicketScreen extends Component {
         if (resConfirmRenamedTicket.status === 200) {
             RNToasty.Success({
                 title: 'Confirm Renamed Ticket Successfully'
+            })
+            navigation.state.params.refreshPostedTicket();
+            navigation.navigate('PostedTicket');
+        }
+    }
+
+    RefuseTicket = async () => {
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const resRefuseTicket = await Api.put('api/ticket/refuse?id=' + ticketId);
+        const { navigation } = this.props;
+        if (resRefuseTicket.status === 200) {
+            RNToasty.Success({
+                title: 'Refuse Ticket Successfully'
             })
             navigation.state.params.refreshPostedTicket();
             navigation.navigate('PostedTicket');

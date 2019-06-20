@@ -115,5 +115,22 @@ namespace WebAPI.Controllers
             }
             return Ok();
         }
+
+        [HttpPut("refuse")]
+        public ActionResult RefuseTicket(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var rejectResult = _ticketService.RejectTicket(id);
+
+            if (!string.IsNullOrEmpty(rejectResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, rejectResult);
+            }
+            return Ok();
+        }
     }
 }
