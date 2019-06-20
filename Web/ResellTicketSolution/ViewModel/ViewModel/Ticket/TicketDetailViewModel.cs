@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.Enum;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,5 +21,6 @@ namespace ViewModel.ViewModel.Ticket
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
         public string TicketTypeName { get; set; }
+        public TicketStatus Status { get; set; }
     }
 }

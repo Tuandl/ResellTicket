@@ -29,7 +29,7 @@ export default class PostedTicket extends Component {
     }
 
     async getCustomerTickets() {
-        const resCustomerTickets = await Api.get('api/ticket?customerId=1&page=' + this.state.page);
+        const resCustomerTickets = await Api.get('api/ticket?customerId=5&page=' + this.state.page);
         if (resCustomerTickets.status === 200) {
             this.setState({
                 postedTickets: resCustomerTickets.data
