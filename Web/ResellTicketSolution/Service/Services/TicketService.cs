@@ -25,6 +25,9 @@ namespace Service.Services
 
         List<TicketRowViewModel> GetTickets(string param);
 
+        List<TicketRowViewModel> GetRenamedTickets();
+        List<TicketRowViewModel> GetBoughtTickets();
+        List<TicketRowViewModel> GetCompletedTickets();
         string ApproveTicket(int id);
 
         string RejectTicket(int id);
@@ -34,6 +37,8 @@ namespace Service.Services
         void DeleteTicket(int ticketId);
         List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
         TicketDetailViewModel GetTicketDetail(int ticketId);
+        string ConfirmRenameTicket(int id);
+        string ValidateRenameTicket(int id, bool renameSuccess);
     }
     public class TicketService : ITicketService
     {
@@ -91,6 +96,46 @@ namespace Service.Services
 
             return ticketRowViewModels;
         }
+
+        public List<TicketRowViewModel> GetRenamedTickets()
+        {
+            var renamedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Renamed).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetBoughtTickets()
+        {
+            var boughtTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Bought).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetCompletedTickets()
+        {
+            var completedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Completed).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                ticketRow.SellerPhone = customer.PhoneNumber;
+            }
+
+            return ticketRowViewModels;
+        }
+
         public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
         {
             var customerTickets = _ticketRepository.GetAllQueryable()
@@ -224,5 +269,65 @@ namespace Service.Services
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
+
+        public string ConfirmRenameTicket(int id)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+
+            existedTicket.Status = Core.Enum.TicketStatus.Renamed;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
+
+        public string ValidateRenameTicket(int id, bool renameSuccess)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+            if (renameSuccess == true)
+            {
+                existedTicket.Status = Core.Enum.TicketStatus.Completed;
+                _ticketRepository.Update(existedTicket);
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            else
+            {
+                existedTicket.Status = Core.Enum.TicketStatus.Bought;
+                _ticketRepository.Update(existedTicket);
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            
+            return string.Empty;
+        }
+
     }
 }

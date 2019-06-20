@@ -5,11 +5,11 @@ import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 
 function TicketRow(props) {
-    const {ticket} = props;
+    const {ticket, parent} = props;
     const getBadge = (status) => {
-      if (status === 2) {
+      if (status == 4) {
           return (
-              <Badge color="success">Valid</Badge>
+              <Badge color="success">Bought</Badge>
           )
       }
     }
@@ -24,9 +24,12 @@ function TicketRow(props) {
             <td>{ticket.feeAmount}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2">
+                {/* <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
+                <Button color="danger" className="mr-2" onClick={() => {parent.onInValidSaveChanges(ticket.id)}}>
+                    <i className="fa fa-edit fa-lg mr-1"></i>Invalid
+                </Button> */}
             </td>
         </tr>
 
@@ -34,7 +37,7 @@ function TicketRow(props) {
     )
 }
 
-class ValidTickets extends Component {
+class BoughtTickets extends Component {
 
     constructor(props) {
         super(props);
@@ -56,7 +59,7 @@ class ValidTickets extends Component {
             var decode = jwt(token);
             var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             if (userRole === 'Staff') {
-                this.getValidTickets();
+                this.getBoughtTickets();
                 this.setState({
                     userRole: userRole
                 })
@@ -73,8 +76,8 @@ class ValidTickets extends Component {
     //     });
 
     // }
-    getValidTickets = () => {
-      Axios.get('api/ticket/valid').then(res => {
+    getBoughtTickets = () => {
+      Axios.get('api/ticket/bought').then(res => {
           this.setState({
               tickets: res.data
           })
@@ -83,10 +86,30 @@ class ValidTickets extends Component {
 
   }
 
-    onSaveChanges = (id) => {
-      Axios.put('api/ticket/' + id).then(res => {
+    onChange(event) {
+      var {name, value} = event.target;
+      this.setState({
+          [name] : value
+      })
+    }
+
+    onSearch(event) {
+      event.preventDefault();
+      //console.log(this.state.searchParam);
+      Axios.get('api/ticket?param=' + this.state.searchParam).then(res => {
+          console.log(res)
+          this.setState({
+              tickets : res.data
+          })
+      });
+  }
+
+    onValidSaveChanges = (id) => {
+      var renamedSuccess = true;
+      Axios.post('api/ticket/validate-rename?id=' + id +'&renameSuccess=' + renamedSuccess).then(res => {
           if(res.status === 200) {
-              toastr.success('Update Success', 'Ticket has been valid successfully.');
+              toastr.success('Valid Success', 'Ticket has been valid successfully.');
+              this.getRenamedTickets();
               // this.props.history.push('/ticket');
           } else {
               toastr.error('Error', 'Error when valid Ticket');
@@ -94,22 +117,17 @@ class ValidTickets extends Component {
       })
   }
 
-  onChange = (event) => {
-    var {name, value} = event.target;
-    this.setState({
-        [name] : value
+  onInValidSaveChanges = (id) => {
+    var renamedSuccess = false;
+    Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+        if(res.status === 200) {
+            toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
+            this.getRenamedTickets();
+            // this.props.history.push('/ticket');
+        } else {
+            toastr.error('Error', 'Error when valid Ticket');
+        }
     })
-  }
-  
-  onSearch = (event) => {
-    event.preventDefault();
-    //console.log(this.state.searchParam);
-    Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
-        console.log(res)
-        this.setState({
-            tickets : res.data
-        })
-    });
   }
 
     render() {
@@ -123,7 +141,7 @@ class ValidTickets extends Component {
                                 <CardHeader>
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
+                                            <Input type="text" className="mr-2" placeholder="Searchcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
                                             <Button color="primary">
                                                 <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
                                                 </Button>
@@ -148,7 +166,7 @@ class ValidTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} />
+                                                <TicketRow key={index} ticket={ticket} index={index} parent={this}/>
                                             )}
                                         </tbody>
                                     </Table>
@@ -164,4 +182,4 @@ class ValidTickets extends Component {
     }
 }
 
-export default ValidTickets;
+export default BoughtTickets;
