@@ -69,6 +69,6 @@ export default createBottomTabNavigator(
     }
   },
   {
-    initialRouteName: 'Me',
+    initialRouteName: 'Route',
   }
 );

@@ -5,27 +5,56 @@ import { Icon } from 'react-native-elements';
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
+import formatConstant from '../constants/formatConstant';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
 export default class RouteViewComponent extends Component {
 
+    constructor(props) {
+        super(props);
+
+        var route = { ...props.route };
+        this.initRouteDetail(route);
+
+        this.state = {
+            route: route,
+        };
+    }
+
+    initRouteDetail(route) {
+        route.routeTickets.sort((a, b) => {
+            return a.order - b.order;
+        });
+
+        route.departureCityName = route.routeTickets[0].departureCityName;
+        route.arrivalCityName = route.routeTickets.last().arrivalCityName;
+        route.departureDate = moment(route.routeTickets[0].departureDateTime).format(formatConstant.DATE);
+        route.departureTime = moment(route.routeTickets[0].departureDateTime).format(formatConstant.TIME);
+        route.arrivalDate = moement(route.routeTickets.last().arrivalDateTime).format(formatConstant.DATE);
+        route.arrivalTime = moement(route.routeTickets.last().arrivalDateTime).format(formatConstant.TIME);
+
+    }
+
     onPress = () => {
     }
 
     render() {
+        var { route } = this.state;
+        let ticketQuantity = route.routeTickets.length;
+
         return (
             <TouchableNativeFeedback onPress={this.onPress}>
                 <View style={styles.wrapper}>
                     <View style={styles.routeHeader}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text>Ho Chi Minh  </Text>
+                            <Text>{route.departureCityName}</Text>
                             <Icon name="long-arrow-right" type="font-awesome" color="grey"/>
-                            <Text>  Hai Phong</Text>
+                            <Text>{route.arrivalCityName}</Text>
                         </View>
                         <View>
-                            <NumberFormat value={200}
+                            <NumberFormat value={route.totalAmount}
                                 displayType={'text'}
                                 thousandSeparator={true}
                                 suffix={' $'}
@@ -42,14 +71,14 @@ export default class RouteViewComponent extends Component {
                             <Text style={{ fontSize: 12, color: 'grey' }}>Arrival</Text>
                         </View>
                         <View style={styles.routeBodyContent}>
-                            <Text style={{ fontSize: 15 }}>3 tickets</Text>
-                            <Text style={{ fontSize: 12 }}>JUN 18 2019</Text>
-                            <Text style={{ fontSize: 12 }}>JUN 19 2019</Text>
+                            <Text style={{ fontSize: 15 }}>{ticketQuantity} tickets</Text>
+                            <Text style={{ fontSize: 12 }}>{route.departureDate}</Text>
+                            <Text style={{ fontSize: 12 }}>{route.arrivalDate}</Text>
                         </View>
                         <View style={styles.routeBodyContent}>
                             <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
-                            <Text style={{ fontSize: 12 }}>11:00</Text>
-                            <Text style={{ fontSize: 12 }}>12:30</Text>
+                            <Text style={{ fontSize: 12 }}>{route.departureTime}</Text>
+                            <Text style={{ fontSize: 12 }}>{route.arrivalTime}</Text>
                         </View>
                     </View>
                     <View style={styles.routeFooter}>
