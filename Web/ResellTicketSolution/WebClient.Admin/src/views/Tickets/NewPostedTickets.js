@@ -3,13 +3,15 @@ import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import moment from 'moment';
+import NumberFormat from 'react-number-format';
 
 function TicketRow(props) {
   const {ticket, parent} = props;
   const getBadge = (status) => {
     if (status === 1) {
         return (
-            <Badge color="danger">Peding</Badge>
+            <Badge color="warning">Peding</Badge>
         )
     }
 }
@@ -26,16 +28,16 @@ function TicketRow(props) {
     //         )
     //     }
     // }
-
     return (
         <tr>
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureDateTime}</td>
-            <td>{ticket.arrivalDateTime}</td>
-            <td>{ticket.sellerPhone}</td>
-            <td>{ticket.sellingPrice}</td>
-            <td>{ticket.feeAmount}</td>
+            <td>{ticket.departureCity}</td>
+            <td>{moment(ticket.departureDateTime).format('MMM DD YYYY')}</td>
+            <td>{ticket.arrivalCity}</td>
+            <td>{moment(ticket.arrivalDateTime).format('MMM DD YYYY')}</td>
+            {/* <td>{ticket.sellerPhone}</td> */}
+            <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
                 <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
@@ -106,7 +108,7 @@ class NewPostedTickets extends Component {
         [name] : value
     })
   }
-  
+
   onSearch = (event) => {
     event.preventDefault();
     //console.log(this.state.searchParam);
@@ -171,12 +173,13 @@ class NewPostedTickets extends Component {
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
-                                                <th>Ticket Code</th>
+                                                <th>Code</th>
                                                 <th>Departure</th>
+                                                <th>Departure Time</th>
                                                 <th>Arrival</th>
-                                                <th>Seller Phone</th>
+                                                <th>Arrival Time</th>
+                                                {/* <th>Seller Phone</th> */}
                                                 <th>Price</th>
-                                                <th>Fee Amount</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>

@@ -9,6 +9,10 @@ namespace ViewModel.ViewModel.Ticket
     {
         public int id { get; set; }
         public string TicketCode { get; set; }
+        public int DepartureStationId { get; set; }
+        public int ArrivalStationId { get; set; }
+        public string DepartureCity { get; set; }
+        public string ArrivalCity { get; set; }
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
         public decimal SellingPrice { get; set; }

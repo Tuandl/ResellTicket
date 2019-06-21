@@ -20,13 +20,15 @@ namespace Service.Services
 
         //getTicketsValidStatus
         List<TicketRowViewModel> GetValidTickets();
-
+        //getTicketsInValidStatus
         List<TicketRowViewModel> GetInValidTickets();
 
         List<TicketRowViewModel> GetTickets(string param);
-
+        //getTicketsRenameddStatus
         List<TicketRowViewModel> GetRenamedTickets();
+        //getTicketsBoughtStatus
         List<TicketRowViewModel> GetBoughtTickets();
+        //getTicketsCompletedStatus
         List<TicketRowViewModel> GetCompletedTickets();
         string ApproveTicket(int id);
 
@@ -46,16 +48,19 @@ namespace Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITicketRepository _ticketRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IStationRepository _stationRepository;
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
                              ITicketRepository ticketRepository,
-                             ICustomerRepository customerRepository
+                             ICustomerRepository customerRepository,
+                             IStationRepository stationRepository
         )
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _ticketRepository = ticketRepository;
             _customerRepository = customerRepository;
+            _stationRepository = stationRepository;
         }
 
         public List<TicketRowViewModel> GetTickets()
@@ -64,8 +69,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -77,8 +86,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(pendingTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -90,8 +103,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(validTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -103,8 +120,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -116,8 +137,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -129,8 +154,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -163,8 +192,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(invalidTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
