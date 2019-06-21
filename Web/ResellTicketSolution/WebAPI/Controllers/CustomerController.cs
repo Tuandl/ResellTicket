@@ -146,5 +146,13 @@ namespace WebAPI.Controllers
             var customerRowViewModel = _customerService.FindCustomerByUsername(usename);
             return customerRowViewModel;
         }
+
+        [HttpGet]
+        [Route("get-id-customer-by-username")]
+        public ActionResult<int> FindCustomerIdByUsename(string usename)
+        {
+            var customerRowViewModel = _customerService.FindCustomerByUsername(usename);
+            return customerRowViewModel.Id;
+        }
     }
 }
