@@ -7,9 +7,9 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 
 function TicketRow(props) {
-    const {ticket, parent} = props;
+    const {ticket} = props;
     const getBadge = (status) => {
-      if (status == 6) {
+      if (status === 6) {
           return (
               <Badge color="success">Completed</Badge>
           )
@@ -157,7 +157,7 @@ class CompletedTickets extends Component {
                                                 {/* <th>Seller Phone</th> */}
                                                 <th>Price</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
+                                                {/* <th>Action</th> */}
                                             </tr>
                                         </thead>
                                         <tbody>

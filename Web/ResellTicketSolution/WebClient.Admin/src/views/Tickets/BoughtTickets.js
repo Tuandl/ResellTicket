@@ -9,7 +9,7 @@ import NumberFormat from 'react-number-format';
 function TicketRow(props) {
     const {ticket, parent} = props;
     const getBadge = (status) => {
-      if (status == 4) {
+      if (status === 4) {
           return (
               <Badge color="success">Bought</Badge>
           )
@@ -29,10 +29,10 @@ function TicketRow(props) {
             <td>
                 {/* <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
-                </Button>
+                </Button> */}
                 <Button color="danger" className="mr-2" onClick={() => {parent.onInValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
-                </Button> */}
+                </Button>
             </td>
         </tr>
 
@@ -107,28 +107,27 @@ class BoughtTickets extends Component {
       });
   }
 
-    onValidSaveChanges = (id) => {
-      var renamedSuccess = true;
-      Axios.post('api/ticket/validate-rename?id=' + id +'&renameSuccess=' + renamedSuccess).then(res => {
-          if(res.status === 200) {
-              toastr.success('Valid Success', 'Ticket has been valid successfully.');
-              this.getRenamedTickets();
-              // this.props.history.push('/ticket');
-          } else {
-              toastr.error('Error', 'Error when valid Ticket');
-          }
-      })
-  }
+  //   onValidSaveChanges = (id) => {
+  //     var renamedSuccess = true;
+  //     Axios.post('api/ticket/validate-rename?id=' + id +'&renameSuccess=' + renamedSuccess).then(res => {
+  //         if(res.status === 200) {
+  //             toastr.success('Valid Success', 'Ticket has been valid successfully.');
+  //             this.getRenamedTickets();
+  //             // this.props.history.push('/ticket');
+  //         } else {
+  //             toastr.error('Error', 'Error when valid Ticket');
+  //         }
+  //     })
+  // }
 
   onInValidSaveChanges = (id) => {
-    var renamedSuccess = false;
-    Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+    Axios.put('api/ticket/reject/' + id).then(res => {
         if(res.status === 200) {
-            toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
-            this.getRenamedTickets();
+            toastr.success('Reject Success', 'Ticket has been rejected.');
             // this.props.history.push('/ticket');
+            this.getBoughtTickets();
         } else {
-            toastr.error('Error', 'Error when valid Ticket');
+            toastr.error('Error', 'Error when reject Ticket');
         }
     })
   }
