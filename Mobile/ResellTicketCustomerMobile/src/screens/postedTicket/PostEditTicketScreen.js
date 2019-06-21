@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Container, Header, Body, Title, Item, Picker, Content, Button, Left, Label, Right } from 'native-base';
 import { Icon, Input } from 'react-native-elements';
 import Api from '../../service/Api';
@@ -14,6 +14,7 @@ export default class PostEditTicket extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
             isEdit: false,
             vehicleId: -1,
             vehicles: [],
@@ -60,6 +61,9 @@ export default class PostEditTicket extends Component {
 
     async getTicketDetail() {
         const ticketId = this.props.navigation.getParam('ticketId');
+        this.setState({
+            isLoading: true
+        })
         const res = await Api.get('api/ticket/detail?ticketId=' + ticketId);
         if (res.status === 200) {
             const ticketDetail = res.data
@@ -74,12 +78,16 @@ export default class PostEditTicket extends Component {
                 departureDateTime: moment(ticketDetail.departureDateTime).format('YYYY-MM-DD HH:mm'),
                 arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
                 ticketCode: ticketDetail.ticketCode,
-                sellingPrice: ticketDetail.sellingPrice
+                sellingPrice: ticketDetail.sellingPrice,
+                isLoading: false
             })
         }
     }
 
     async getVehicles() {
+        this.setState({
+            isLoading: this.state.isEdit ? true : false
+        })
         const resVehicle = await Api.get('api/vehicle');
         if (resVehicle.status === 200) {
             this.setState({
@@ -112,17 +120,17 @@ export default class PostEditTicket extends Component {
             arrivalDateTime,
             ticketCode,
             sellingPrice,
-            temp
+            isLoading
         } = this.state
 
         const { navigate } = this.props.navigation;
 
         // temp === 'transportation' ? this.getTransportions() :
-            // temp === 'ticketType' ? this.getTicketTypes() :
-            //     temp === 'departureCity' ? this.getDepartureCities() :
-            //         temp === 'departureStation' ? this.getDepartureStations() :
-            //             temp === 'arrivalCity' ? this.getArrivalCities() :
-            //                 temp === 'arrivalStation' ? this.getArrivalStations() : '';
+        // temp === 'ticketType' ? this.getTicketTypes() :
+        //     temp === 'departureCity' ? this.getDepartureCities() :
+        //         temp === 'departureStation' ? this.getDepartureStations() :
+        //             temp === 'arrivalCity' ? this.getArrivalCities() :
+        //                 temp === 'arrivalStation' ? this.getArrivalStations() : '';
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={{ flex: 1 }}>
@@ -139,235 +147,237 @@ export default class PostEditTicket extends Component {
                     <Right />
                 </Header>
                 <ScrollView>
-                    <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        {/* Select Vehicle */}
-                        <Label style={styles.label}>Vehicle:</Label>
-                        <Item picker>
-                            <Picker
-                                mode={"dialog"}
-                                style={{ height: 30 }}
-                                selectedValue={vehicleId}
-                                onValueChange={(value) => this.setState({ vehicleId: value })}
-                            >
-                                <Picker.Item label="" value={-1} />
-                                {vehicles.map((vehicle, index) => {
-                                    return (<Picker.Item label={vehicle.name} value={vehicle.id} key={index} />)
-                                })}
-                            </Picker>
-                        </Item>
-                        {/* Select Transportation */}
-                        <Label style={styles.label}>Transportation:</Label>
-                        <Autocomplete
-                            defaultValue={transportationName}
-                            data={transportations.length === 1 && comp(transportationName, transportations[0].name) ? [] : transportations}
-                            // onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
-                            onChangeText={value => this.getTransportions(value)}
-                            onFocus={() => {this.getTransportions('')}}
-                            onBlur={() => this.setState({ transportations: [] })}
-                            placeholder="Enter Transportation"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ transportationName: item.name, transportationId: item.id })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Ticket Type */}
-                        <Label style={styles.label}>Ticket Type:</Label>
-                        <Autocomplete
-                            defaultValue={ticketTypeName}
-                            data={ticketTypes.length === 1 && comp(ticketTypeName, ticketTypes[0].name) ? [] : ticketTypes}
-                            // onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
-                            onChangeText={value => this.getTicketTypes(value)}
-                            onFocus={() => {this.getTicketTypes('')}}
-                            onBlur={() => this.setState({ ticketTypes: [] })}
-                            placeholder="Enter Ticket Type"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ ticketTypeName: item.name, ticketTypeId: item.id })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Departure City */}
-                        <Label style={styles.label}>Departure City:</Label>
-                        <Autocomplete
-                            defaultValue={departureCityName}
-                            data={departureCities.length === 1 && comp(departureCityName, departureCities[0].name) ? [] : departureCities}
-                            // onChangeText={value => this.setState({ departureCityName: value, temp: 'departureCity' })}
-                            onChangeText={value => this.getDepartureCities(value)}
-                            onFocus={() => {this.getDepartureCities('')}}
-                            onBlur={() => this.setState({ departureCities: [] })}
-                            placeholder="Enter Departure City"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ departureCityName: item.name, departureCityId: item.id, departureStationName: '' })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Departure Station */}
-                        <Label style={styles.label}>Departure Station:</Label>
-                        <Autocomplete
-                            defaultValue={departureStationName}
-                            data={departureStations.length === 1 && comp(departureStationName, departureStations[0].name) ? [] : departureStations}
-                            // onChangeText={value => this.setState({ departureStationName: value, temp: 'departureStation' })}
-                            onChangeText={value => this.getDepartureStations(value)}
-                            onFocus={() => {this.getDepartureStations('')}}
-                            onBlur={() => this.setState({ departureStations: [] })}
-                            placeholder="Enter Departure Station"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ departureStationName: item.name, departureStationId: item.id })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Arrival City */}
-                        <Label style={styles.label}>Arrival City:</Label>
-                        <Autocomplete
-                            defaultValue={arrivalCityName}
-                            data={arrivalCities.length === 1 && comp(arrivalCityName, arrivalCities[0].name) ? [] : arrivalCities}
-                            // onChangeText={value => this.setState({ arrivalCityName: value, temp: 'arrivalCity' })}
-                            onChangeText={value => this.getArrivalCities(value)}
-                            onFocus={() => this.getArrivalCities()}
-                            onBlur={() => this.setState({ arrivalCities: [] })}
-                            placeholder="Enter Arrival City"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ arrivalCityName: item.name, arrivalCityId: item.id, arrivalStationName: '' })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Arrival Station */}
-                        <Label style={styles.label}>Arrival Station:</Label>
-                        <Autocomplete
-                            defaultValue={arrivalStationName}
-                            data={arrivalStations.length === 1 && comp(arrivalStationName, arrivalStations[0].name) ? [] : arrivalStations}
-                            onChangeText={value => this.getArrivalStations(value)}
-                            onFocus={() => {this.getArrivalStations('')}}
-                            onBlur={() => this.setState({ arrivalStations: [] })}
-                            placeholder="Enter Arrival Station"
-                            placeholderTextColor={'grey'}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity key={item.id}
-                                    onPress={() => this.setState({ arrivalStationName: item.name, arrivalStationId: item.id })}>
-                                    <Item>
-                                        <Text>
-                                            {item.name}
-                                        </Text>
-                                    </Item>
-                                </TouchableOpacity>
-                            )}
-                        />
-                        {/* Select Departure Datetime */}
-                        <Label style={styles.label}>Departure Date:</Label>
-                        <Item>
-                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
-                                {departureDateTime === '' ? '' : moment(departureDateTime).format('MMM DD YYYY HH:mm')}
-                            </Text>
-                            <DateTimePicker
-                                isVisible={this.state.departureVisible}
-                                onConfirm={this.handleDepartureDateTimePicked}
-                                onCancel={() => this.setState({ departureVisible: false })}
-                                mode={'datetime'}
-                                minimumDate={new Date()}
+                    {isLoading ? <ActivityIndicator size="large" animating /> :
+                        <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
+                            {/* Select Vehicle */}
+                            <Label style={styles.label}>Vehicle:</Label>
+                            <Item picker>
+                                <Picker
+                                    mode={"dialog"}
+                                    style={{ height: 30 }}
+                                    selectedValue={vehicleId}
+                                    onValueChange={(value) => this.setState({ vehicleId: value })}
+                                >
+                                    <Picker.Item label="" value={-1} />
+                                    {vehicles.map((vehicle, index) => {
+                                        return (<Picker.Item label={vehicle.name} value={vehicle.id} key={index} />)
+                                    })}
+                                </Picker>
+                            </Item>
+                            {/* Select Transportation */}
+                            <Label style={styles.label}>Transportation:</Label>
+                            <Autocomplete
+                                defaultValue={transportationName}
+                                data={transportations.length === 1 && comp(transportationName, transportations[0].name) ? [] : transportations}
+                                // onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
+                                onChangeText={value => this.getTransportions(value)}
+                                onFocus={() => { this.getTransportions('') }}
+                                onBlur={() => this.setState({ transportations: [] })}
+                                placeholder="Enter Transportation"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ transportationName: item.name, transportationId: item.id })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
                             />
-                            <Right>
-                                <TouchableNativeFeedback onPress={() => this.setState({ departureVisible: true })}>
-                                    <Icon name="calendar-check" type="material-community" color="grey" />
-                                </TouchableNativeFeedback>
-                            </Right>
-                        </Item>
-                        {/* Select Arrival Datetime */}
-                        <Label style={styles.label}>Arrival Date:</Label>
-                        <Item>
-                            <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
-                                {arrivalDateTime === '' ? '' : moment(arrivalDateTime).format('MMM DD YYYY HH:mm')}
-                            </Text>
-                            <DateTimePicker
-                                isVisible={this.state.arrivalVisible}
-                                onConfirm={this.handleArrivalDateTimePicked}
-                                onCancel={() => this.setState({ arrivalVisible: false })}
-                                mode={'datetime'}
-                                minimumDate={departureDateTime === '' ? new Date() : new Date(moment(departureDateTime).format('YYYY-MM-DD'))}
+                            {/* Select Ticket Type */}
+                            <Label style={styles.label}>Ticket Type:</Label>
+                            <Autocomplete
+                                defaultValue={ticketTypeName}
+                                data={ticketTypes.length === 1 && comp(ticketTypeName, ticketTypes[0].name) ? [] : ticketTypes}
+                                // onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
+                                onChangeText={value => this.getTicketTypes(value)}
+                                onFocus={() => { this.getTicketTypes('') }}
+                                onBlur={() => this.setState({ ticketTypes: [] })}
+                                placeholder="Enter Ticket Type"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ ticketTypeName: item.name, ticketTypeId: item.id })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
                             />
-                            <Right>
-                                <TouchableNativeFeedback onPress={() => this.setState({ arrivalVisible: true })}>
-                                    <Icon name="calendar-check" type="material-community" color="grey" />
-                                </TouchableNativeFeedback>
-                            </Right>
-                        </Item>
-                        {/* Enter Ticket Code */}
-                        <Label style={styles.label}>Ticket Code:</Label>
-                        <Input
-
-                            onChangeText={ticketCode => this.setState({ ticketCode })}
-                            value={ticketCode}
-                            inputStyle={{ fontSize: 15, color: 'black' }}
-                        />
-                        {/* Enter Selling Price */}
-                        <Label style={styles.label}>Selling Price:</Label>
-                        <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
-                            // suffix={' $'}
-                            renderText={value => (
-                                <Input
-                                    onChangeText={sellingPrice => this.setState({ sellingPrice })}
-                                    value={value}
-                                    inputStyle={{ fontSize: 15, color: 'black' }}
-                                    keyboardType="numeric"
+                            {/* Select Departure City */}
+                            <Label style={styles.label}>Departure City:</Label>
+                            <Autocomplete
+                                defaultValue={departureCityName}
+                                data={departureCities.length === 1 && comp(departureCityName, departureCities[0].name) ? [] : departureCities}
+                                // onChangeText={value => this.setState({ departureCityName: value, temp: 'departureCity' })}
+                                onChangeText={value => this.getDepartureCities(value)}
+                                onFocus={() => { this.getDepartureCities('') }}
+                                onBlur={() => this.setState({ departureCities: [] })}
+                                placeholder="Enter Departure City"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ departureCityName: item.name, departureCityId: item.id, departureStationName: '' })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            {/* Select Departure Station */}
+                            <Label style={styles.label}>Departure Station:</Label>
+                            <Autocomplete
+                                defaultValue={departureStationName}
+                                data={departureStations.length === 1 && comp(departureStationName, departureStations[0].name) ? [] : departureStations}
+                                // onChangeText={value => this.setState({ departureStationName: value, temp: 'departureStation' })}
+                                onChangeText={value => this.getDepartureStations(value)}
+                                onFocus={() => { this.getDepartureStations('') }}
+                                onBlur={() => this.setState({ departureStations: [] })}
+                                placeholder="Enter Departure Station"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ departureStationName: item.name, departureStationId: item.id })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            {/* Select Arrival City */}
+                            <Label style={styles.label}>Arrival City:</Label>
+                            <Autocomplete
+                                defaultValue={arrivalCityName}
+                                data={arrivalCities.length === 1 && comp(arrivalCityName, arrivalCities[0].name) ? [] : arrivalCities}
+                                // onChangeText={value => this.setState({ arrivalCityName: value, temp: 'arrivalCity' })}
+                                onChangeText={value => this.getArrivalCities(value)}
+                                onFocus={() => this.getArrivalCities()}
+                                onBlur={() => this.setState({ arrivalCities: [] })}
+                                placeholder="Enter Arrival City"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ arrivalCityName: item.name, arrivalCityId: item.id, arrivalStationName: '' })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            {/* Select Arrival Station */}
+                            <Label style={styles.label}>Arrival Station:</Label>
+                            <Autocomplete
+                                defaultValue={arrivalStationName}
+                                data={arrivalStations.length === 1 && comp(arrivalStationName, arrivalStations[0].name) ? [] : arrivalStations}
+                                onChangeText={value => this.getArrivalStations(value)}
+                                onFocus={() => { this.getArrivalStations('') }}
+                                onBlur={() => this.setState({ arrivalStations: [] })}
+                                placeholder="Enter Arrival Station"
+                                placeholderTextColor={'grey'}
+                                keyExtractor={(item, index) => index.toString()}
+                                renderItem={({ item }) => (
+                                    <TouchableOpacity key={item.id}
+                                        onPress={() => this.setState({ arrivalStationName: item.name, arrivalStationId: item.id })}>
+                                        <Item>
+                                            <Text>
+                                                {item.name}
+                                            </Text>
+                                        </Item>
+                                    </TouchableOpacity>
+                                )}
+                            />
+                            {/* Select Departure Datetime */}
+                            <Label style={styles.label}>Departure Date:</Label>
+                            <Item>
+                                <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
+                                    {departureDateTime === '' ? '' : moment(departureDateTime).format('MMM DD YYYY HH:mm')}
+                                </Text>
+                                <DateTimePicker
+                                    isVisible={this.state.departureVisible}
+                                    onConfirm={this.handleDepartureDateTimePicked}
+                                    onCancel={() => this.setState({ departureVisible: false })}
+                                    mode={'datetime'}
+                                    minimumDate={new Date()}
                                 />
-                            )}
-                        />
-                        {isEdit ?
-                            <Button rounded block primary
-                                style={{ margin: 40, marginBottom: 0 }}
-                                onPress={this.editTicket}>
-                                <Text style={styles.buttonText}>Edit</Text>
-                            </Button> :
-                            <Button rounded block primary
-                                style={{ margin: 40 }}
-                                onPress={this.postTicket}>
-                                <Text style={styles.buttonText}>Post Now</Text>
-                            </Button>}
-                        {isEdit ? <Button rounded block danger
-                            style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
-                            onPress={this.deletePostedTicket}>
-                            <Text style={styles.buttonText}>Delete</Text>
-                        </Button> : <Text></Text>}
-                    </Content>
+                                <Right>
+                                    <TouchableNativeFeedback onPress={() => this.setState({ departureVisible: true })}>
+                                        <Icon name="calendar-check" type="material-community" color="grey" />
+                                    </TouchableNativeFeedback>
+                                </Right>
+                            </Item>
+                            {/* Select Arrival Datetime */}
+                            <Label style={styles.label}>Arrival Date:</Label>
+                            <Item>
+                                <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
+                                    {arrivalDateTime === '' ? '' : moment(arrivalDateTime).format('MMM DD YYYY HH:mm')}
+                                </Text>
+                                <DateTimePicker
+                                    isVisible={this.state.arrivalVisible}
+                                    onConfirm={this.handleArrivalDateTimePicked}
+                                    onCancel={() => this.setState({ arrivalVisible: false })}
+                                    mode={'datetime'}
+                                    minimumDate={departureDateTime === '' ? new Date() : new Date(moment(departureDateTime).format('YYYY-MM-DD'))}
+                                />
+                                <Right>
+                                    <TouchableNativeFeedback onPress={() => this.setState({ arrivalVisible: true })}>
+                                        <Icon name="calendar-check" type="material-community" color="grey" />
+                                    </TouchableNativeFeedback>
+                                </Right>
+                            </Item>
+                            {/* Enter Ticket Code */}
+                            <Label style={styles.label}>Ticket Code:</Label>
+                            <Input
+
+                                onChangeText={ticketCode => this.setState({ ticketCode })}
+                                value={ticketCode}
+                                inputStyle={{ fontSize: 15, color: 'black' }}
+                            />
+                            {/* Enter Selling Price */}
+                            <Label style={styles.label}>Selling Price:</Label>
+                            <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
+                                decimalScale={2} decimalSeparator={'.'}
+                                renderText={value => (
+                                    <Input
+                                        onChangeText={sellingPrice => this.setState({ sellingPrice })}
+                                        value={value}
+                                        inputStyle={{ fontSize: 15, color: 'black' }}
+                                        keyboardType="numeric"
+                                    />
+                                )}
+                            />
+                            {isEdit ?
+                                <Button rounded block primary
+                                    style={{ margin: 40, marginBottom: 0 }}
+                                    onPress={this.editTicket}>
+                                    <Text style={styles.buttonText}>Edit</Text>
+                                </Button> :
+                                <Button rounded block primary
+                                    style={{ margin: 40 }}
+                                    onPress={this.postTicket}>
+                                    <Text style={styles.buttonText}>Post Now</Text>
+                                </Button>}
+                            {isEdit ? <Button rounded block danger
+                                style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
+                                onPress={this.deletePostedTicket}>
+                                <Text style={styles.buttonText}>Delete</Text>
+                            </Button> : <Text></Text>}
+                        </Content>
+                    } 
                 </ScrollView>
             </Container>
         )
