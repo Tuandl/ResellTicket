@@ -29,6 +29,7 @@ namespace Core.Infrastructure
             if(entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
                 (entity as EntityBase).CreatedAt = DateTime.Now;
+                (entity as EntityBase).UpdatedAt = DateTime.Now;
             }
 
             _dbSet.Add(entity);

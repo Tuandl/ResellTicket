@@ -24,6 +24,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public ActionResult PostTicket(TicketPostViewModel model) 
         {
             if (!ModelState.IsValid)
@@ -32,7 +33,8 @@ namespace WebAPI.Controllers
             }
             try
             {
-                _ticketService.PostTicket(model);
+                var username = User.Identity.Name;
+                _ticketService.PostTicket(username, model);
             }
             catch (Exception e)
             {
@@ -43,12 +45,13 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int customerId, int page)
+        [Authorize]
+        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int page)
         {
-
             try
             {
-                var customerTicketVMs = _ticketService.GetCustomerTickets(customerId, page);
+                var username = User.Identity.Name;
+                var customerTicketVMs = _ticketService.GetCustomerTickets(username, page);
                 return Ok(customerTicketVMs);
             } catch(Exception e)
             {
@@ -57,6 +60,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("detail")]
+        [Authorize]
         public ActionResult<TicketDetailViewModel> GetTicketDetail(int ticketId)
         {
             try
@@ -70,6 +74,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public ActionResult UpdateCustomerTicket(TicketEditViewModel model)
         {
             if (!ModelState.IsValid)
@@ -87,6 +92,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public ActionResult DeleteCustomerTicket(int ticketId)
         {
             try
