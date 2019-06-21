@@ -1,12 +1,10 @@
-import { Body, Button, Container, Content, DatePicker, Header, Item, Label, Left, Picker, Right, Text, Title } from 'native-base';
+import { Body, Button, Container, Content, Header, Left, Right, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Autocomplete from 'react-native-autocomplete-input';
+import { Dimensions, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import api from '../../service/Api';
-import RouteViewComponent from '../../components/RouteViewComponent';
 import { RNToasty } from 'react-native-toasty';
+import RouteViewComponent from '../../components/RouteViewComponent';
+import api from '../../service/Api';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -14,6 +12,7 @@ const { height } = Dimensions.get('window');
 export default class RouteSearchResultScreen extends Component {
 
     URL_ROUTE_SEARCH = 'api/route/search';
+    URL_ROUTE_SAVE = 'api/route';
     params = null;
     navigation = null;
 
@@ -49,9 +48,22 @@ export default class RouteSearchResultScreen extends Component {
         }
     }
 
+    async saveRoute(params) {
+        if(params === null || params === undefined) {
+            RNToasty.Error({title: 'Cannot save route'});
+        } else {
+            const response = await api.post(this.URL_ROUTE_SAVE, params);
+            if(response.status === 200) {
+                RNToasty.Success({title: 'Save route successfullt'});
+            } else {
+                RNToasty.Error({title: 'Save Route Failed'});
+            }
+        }
+    }
+
     renderRoutes(routes) {
         return routes.map((route, index) => 
-            <RouteViewComponent route={route} key={index}/>
+            <RouteViewComponent route={route} key={index} onRoutePressed={(params) => this.saveRoute(params)}/>
         );
     }
 

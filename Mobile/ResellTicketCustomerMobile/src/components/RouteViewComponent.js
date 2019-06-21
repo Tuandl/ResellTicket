@@ -21,6 +21,8 @@ export default class RouteViewComponent extends Component {
         this.state = {
             route: route,
         };
+
+        this.onPress = this.onPress.bind(this);
     }
 
     initRouteDetail(route) {
@@ -34,10 +36,11 @@ export default class RouteViewComponent extends Component {
         route.departureTime = moment(route.routeTickets[0].departureDateTime).format(formatConstant.TIME);
         route.arrivalDate = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.DATE);
         route.arrivalTime = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.TIME);
-
+        route.expiredDate = moment(route.routeTickets[0].departureDateTime).format(formatConstant.DATE_TIME);
     }
 
     onPress = () => {
+        this.props.onRoutePressed(this.state.route);
     }
 
     render() {
@@ -82,7 +85,7 @@ export default class RouteViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.routeFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: JUN 17 2019 11:00</Text>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {route.expiredDate}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>
