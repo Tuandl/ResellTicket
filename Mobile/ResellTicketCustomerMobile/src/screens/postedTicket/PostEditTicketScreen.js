@@ -15,6 +15,8 @@ export default class PostEditTicket extends Component {
         super(props);
         this.state = {
             isLoading: false,
+            isPostEditLoading: false,
+            isDeleteLoading: false,
             isEdit: false,
             vehicleId: -1,
             vehicles: [],
@@ -120,7 +122,9 @@ export default class PostEditTicket extends Component {
             arrivalDateTime,
             ticketCode,
             sellingPrice,
-            isLoading
+            isLoading,
+            isPostEditLoading,
+            isDeleteLoading
         } = this.state
 
         const { navigate } = this.props.navigation;
@@ -364,20 +368,24 @@ export default class PostEditTicket extends Component {
                                 <Button rounded block primary
                                     style={{ margin: 40, marginBottom: 0 }}
                                     onPress={this.editTicket}>
-                                    <Text style={styles.buttonText}>Edit</Text>
+                                    {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                        : <Text style={styles.buttonText}>Save</Text>}
                                 </Button> :
                                 <Button rounded block primary
                                     style={{ margin: 40 }}
                                     onPress={this.postTicket}>
-                                    <Text style={styles.buttonText}>Post Now</Text>
+                                    {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                        : <Text style={styles.buttonText}>Post Now</Text>}
+
                                 </Button>}
                             {isEdit ? <Button rounded block danger
                                 style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
                                 onPress={this.deletePostedTicket}>
-                                <Text style={styles.buttonText}>Delete</Text>
+                                {isDeleteLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                    : <Text style={styles.buttonText}>Delete</Text>}
                             </Button> : <Text></Text>}
                         </Content>
-                    } 
+                    }
                 </ScrollView>
             </Container>
         )
@@ -387,7 +395,13 @@ export default class PostEditTicket extends Component {
         const ticketId = this.props.navigation.getParam('ticketId');
         const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
         const { navigation } = this.props;
+        this.setState({
+            isDeleteLoading: true
+        })
         if (resDeleteTicket.status === 200) {
+            this.setState({
+                isDeleteLoading: false
+            })
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'
             })
@@ -416,8 +430,14 @@ export default class PostEditTicket extends Component {
                 arrivalDateTime: arrivalDateTime,
                 ticketTypeId: this.state.ticketTypeId
             }
+            this.setState({
+                isPostEditLoading: true
+            })
             const resEditTicket = await Api.put('api/ticket', ticket);
             if (resEditTicket.status === 200) {
+                this.setState({
+                    isPostEditLoading: false
+                })
                 RNToasty.Success({
                     title: 'Edit Ticket Successfully'
                 })
@@ -448,8 +468,14 @@ export default class PostEditTicket extends Component {
                 arrivalDateTime: arrivalDateTime,
                 ticketTypeId: ticketTypeId
             }
+            this.setState({
+                isPostEditLoading: true
+            })
             const resPostTicket = await Api.post('api/ticket', ticket);
             if (resPostTicket.status === 200) {
+                this.setState({
+                    isPostEditLoading: false
+                })
                 RNToasty.Success({
                     title: 'Post Ticket Successfully'
                 })
