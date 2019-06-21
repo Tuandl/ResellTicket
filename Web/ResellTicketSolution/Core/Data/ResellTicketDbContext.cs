@@ -56,9 +56,12 @@ namespace Core.Data
 
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");
-            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogin");
-            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim");
             modelBuilder.Entity<IdentityRole>().ToTable("Role");
+
+            modelBuilder.Ignore<IdentityUserLogin<string>>();
+            modelBuilder.Ignore<IdentityUserClaim<string>>();
+            modelBuilder.Ignore<IdentityUserToken<string>>();
+            modelBuilder.Ignore<IdentityRoleClaim<string>>();
         }
     }
 }

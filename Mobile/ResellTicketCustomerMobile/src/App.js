@@ -2,12 +2,17 @@ import React, { Component } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
 import MainRoot from './Route';
+import NavigationService from './service/NavigationService';
 
 
 export default class App extends Component {
   render() {
     return (
-        <MainRoot />
+        <MainRoot 
+          ref={navigatorRef => {
+            NavigationService.setTopLevelNavigator(navigatorRef);
+          }}
+        />
     );
   }
 }
