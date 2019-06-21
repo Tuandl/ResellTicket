@@ -104,6 +104,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 			color: #999;
 		}
 	</style>
+	<script type="text/javascript" src="constant/BasrUrl.js"></script>
 </head>
 
 <body>
@@ -183,12 +184,12 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 				phoneNumber: txtPhoneNumber
 			}
 
-			var mobilePattern = /^[0-9]{10}$/;
+			var mobilePattern = /^[0-9]{10,15}$/;
 			if (!mobilePattern.test(txtPhoneNumber)) {
 				alertExisted.style.display = 'none';
 				alertInvalid.style.display = 'block';
 			} else {
-				var respone = await fetch('http://localhost:59152/api/customer/checkPhone', {
+				var respone = await fetch(baseUrl() + 'api/customer/checkPhone', {
 					method: "POST",
 					headers: {
 						'Accept': 'application/json',
@@ -216,7 +217,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 				<h3>Register</h3>
 				<form>
 					<ul id="form-messages">
-						<span>Invalid Phone Number !!!<br> Phone number must have 10 digits!!</span>
+						<span>Invalid Phone Number !!!<br> Phone number must have 10 - 15 digits!!</span>
 					</ul>
 					<ul id="form-messages-exis">
 						<span>This Phone Number is already existed!!</span>

@@ -83,10 +83,11 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
             color: #999;
         }
     </style>
+    <script type="text/javascript" src="constant/BasrUrl.js"></script>
     <script type="text/javascript">
         async function getCustomerProfile() {
             var usernameDefault = localStorage.getItem("USERNAME");
-            var respone = await fetch('http://localhost:59152/api/customer/getCustomerByUsename?usename=' + usernameDefault, {
+            var respone = await fetch(baseUrl() + 'api/customer/getCustomerByUsename?usename=' + usernameDefault, {
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
@@ -107,6 +108,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
             }
         }
     </script>
+    
 </head>
 
 <body onload="checkLoginProfile();getCustomerProfile();checkLogin()">
@@ -204,7 +206,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
         function checkValidFullname() {
             var txtFullname = document.getElementsByName("txtFullname")[0].value;
-            var patt = /^[a-zA-Z ]{10,100}$/;
+            var patt = /^[a-zA-Z ]{6,100}$/;
             var fullnameAlert = document.getElementById("fullname-alert");
             if (patt.test(txtFullname)) {
                 fullnameAlert.style.display = 'none';
@@ -218,7 +220,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
         function checkValidEmail() {
             var txtEmail = document.getElementsByName("txtEmail")[0].value;
             console.log("email: ", txtEmail);
-            var patt = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,4}/;
+            var patt = /^[a-z0-9_\.]{5,32}@[a-z0-9]{2,}.[a-z0-9]{2,}$/;
             var emailAlert = document.getElementById("email-alert");
             console.log("is email: ", patt.test(txtEmail));
             if (patt.test(txtEmail)) {
@@ -244,8 +246,9 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
                 address: txtAddress
             };
             //console.log("fun", checkValidEmail());
+            successAlert.style.display = 'none';
             if (checkValidFullname() && checkValidEmail()) {
-                var respone = await fetch('http://localhost:59152/api/customer', {
+                var respone = await fetch(baseUrl() + 'api/customer', {
                     method: "PUT",
                     headers: {
                         'Accept': 'application/json',
@@ -285,7 +288,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
                         <div class="clearfix"></div>
                     </div>
                     <div id="fullname-alert" style="display: none" class="alert alert-danger" role="alert">
-                        Full name must have 10 - 100 degits!!
+                        Full name must have 6 - 100 digits!!
                     </div>
 
                     <label>Email:</label>
