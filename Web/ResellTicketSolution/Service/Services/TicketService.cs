@@ -67,15 +67,6 @@ namespace Service.Services
         {
             var tickets = _ticketRepository.GetAll().ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
 
             return ticketRowViewModels;
         }
@@ -84,15 +75,15 @@ namespace Service.Services
         {
             var pendingTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Pending).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(pendingTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
+            //foreach (var ticketRow in ticketRowViewModels)
+            //{
+            //    //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+            //    //ticketRow.SellerPhone = customer.PhoneNumber;
+            //    var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+            //    var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+            //    ticketRow.DepartureCity = departureCity;
+            //    ticketRow.ArrivalCity = arrivalCity;
+            //}
 
             return ticketRowViewModels;
         }
@@ -101,15 +92,7 @@ namespace Service.Services
         {
             var validTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Valid).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(validTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
+            
 
             return ticketRowViewModels;
         }
@@ -118,15 +101,6 @@ namespace Service.Services
         {
             var renamedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Renamed).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
 
             return ticketRowViewModels;
         }
@@ -135,15 +109,6 @@ namespace Service.Services
         {
             var boughtTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Bought).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
 
             return ticketRowViewModels;
         }
@@ -152,15 +117,6 @@ namespace Service.Services
         {
             var completedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Completed).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
 
             return ticketRowViewModels;
         }
@@ -190,15 +146,6 @@ namespace Service.Services
         {
             var invalidTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Invalid).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(invalidTickets);
-            foreach (var ticketRow in ticketRowViewModels)
-            {
-                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                //ticketRow.SellerPhone = customer.PhoneNumber;
-                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
-                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
-                ticketRow.DepartureCity = departureCity;
-                ticketRow.ArrivalCity = arrivalCity;
-            }
 
             return ticketRowViewModels;
         }
