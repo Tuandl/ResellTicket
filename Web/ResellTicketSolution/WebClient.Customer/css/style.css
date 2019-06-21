@@ -1789,8 +1789,8 @@ a#myTabDrop1 {
 	padding: 3em ;
 }
 
-.key  input[type="text"] ,.key  input[type="password"]{
-    width: 89%;
+.key input[type="text"] ,.key  input[type="password"]{
+    width: 85%;
     padding: 10px 10px;
     font-size: 1em;
     border: none;

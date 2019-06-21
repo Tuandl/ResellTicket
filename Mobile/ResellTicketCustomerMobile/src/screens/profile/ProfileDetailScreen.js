@@ -11,6 +11,7 @@ import { Container, Button, Header, Body, Title, Left, Right } from 'native-base
 import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from './../../service/Api';
+import keyConstant from '../../constants/keyConstant';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -84,7 +85,7 @@ export default class ProfileDetailScreen extends Component {
     }
 
     async getCustomerProfile() {
-        var usernameDefault = await AsyncStorage.getItem('USERNAME');
+        var usernameDefault = await AsyncStorage.getItem(keyConstant.STORAGE.USERNAME);
         try {
             var customerResponse = await Api.get('api/customer/getCustomerByUsename?usename=' + usernameDefault);
             console.log('repone', customerResponse);

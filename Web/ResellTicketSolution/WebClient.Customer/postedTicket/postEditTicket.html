@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Resell Ticket</title>
+
+    <!-- css -->
+    <link href="../css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="../css/style.css" rel='stylesheet' type='text/css' />
+    <link href="../css/font-awesome.css" rel="stylesheet">
+    <link href="../css/jquery-ui.css" rel="stylesheet">
+    <link href="../css/rt-style.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="../css/bootstrap-datetimepicker.css" />
+
+    <!-- css -->
+
+    <!-- js -->
+    <!-- Load React. -->
+    <script src="../js/react.development.js" crossorigin></script>
+    <script src="../js/react-dom.development.js" crossorigin></script>
+    <script src="../js/babel.min.js"></script>
+    <!-- Load React. -->
+
+    <script src="../js/jstarbox.js" type="text/jQuery"></script>
+    <script src="../js/jquery-1.11.1.min.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/bootstrap.js"></script>
+    <script src="../helper/convertStatus.js"></script>
+    <script src="../js/numeral.min.js"></script>
+    <script src="../js/bootstrap-datetimepicker.min.js"></script>
+    <!-- //js -->
+</head>
+<script src="./postedTicket.js" type="text/babel"></script>
+<script src="../helper/Api.js"></script>
+
+<body onload=getTicketDetail()>
+    <div class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                            marketplace</span></a>
+                </h1>
+            </div>
+
+            <div class="head-t" id="showing-option">
+                <ul class="card">
+                    <li>
+                        <h4>Welcome <span id="welcome-name">Huy0933</span>!!!</h4>
+                    </li>
+                    <li>
+                        <h4><a href="../updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
+                        </h4>
+                    </li>
+                    <li>
+                        <h4><a onclick="logout()" href="index.html"><i class="fa fa-sign-out"
+                                    aria-hidden="true"></i>Logout</a></h4>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="header-ri">
+                <ul class="social-top">
+                    <li><a href="#" class="icon facebook"><i class="fa fa-facebook"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon twitter"><i class="fa fa-twitter"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon pinterest"><i class="fa fa-pinterest-p"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon dribbble"><i class="fa fa-dribbble"
+                                aria-hidden="true"></i><span></span></a></li>
+                </ul>
+            </div>
+
+            <div class="nav-top">
+                <nav class="navbar navbar-default">
+
+                    <div class="navbar-header nav_2">
+                        <button type="button" class="navbar-toggle collapsed navbar-toggle1" data-toggle="collapse"
+                            data-target="#bs-megadropdown-tabs">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
+                        <ul class="nav navbar-nav ">
+                            <li><a href="../updateProfile.html" class="hyper"><span>Profile</span></a></li>
+                            <li class="active"><a href="postedTicket.html" class="hyper"><span>My Tickets</span></a>
+                            </li>
+                            <li><a href="#" class="hyper"><span>My Routes</span></a></li>
+                            <li><a href="#" class="hyper"> <span>My Tours</span></a></li>
+                            <li><a href="#" class="hyper"> <span>Credit Card</span></a></li>
+                            <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+    <!---->
+    <div data-vide-bg="../images/index-background.png">
+        <div class="container">
+            <div class="banner-info">
+                <h3 style="color: #c7ad71">RESELL TICKET</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
+    <script src="../js/jquery.vide.min.js"></script>
+
+    <!--content-->
+    <div class="content-top">
+        <div class="container">
+            <div class="main-agileits form-post-ticket" style="margin-bottom: 100px">
+                <div class="form-w3agile form1">
+                    <h3>Post Ticket</h3>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Vehicle:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <!-- <i class="fa fa-" aria-hidden="true"></i> -->
+                                    <select id="select-vehicle" style="height: 40px">
+                                        <option value="4">
+                                            Plane
+                                        </option>
+                                        <option value="7">
+                                            Bus
+                                        </option>
+                                        <option value="6">
+                                            Train
+                                        </option>
+                                    </select>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Transportation:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Transportattion" id="transportation"
+                                            onkeyup="getTransportation()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Ticket Type:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Ticket Type" id="ticketType"
+                                            onkeyup="getTicketType()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-4">
+                                <label>Departure City:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Departure City" id="departureCity"
+                                            onkeyup="getDepartureCity()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Departure Station:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Departure Station" id="departureStation"
+                                            onkeyup="getDepartureStation()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="temp">
+                                <label>Departure Date:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Departure Date" id="departureDate"
+                                        onblur="setDepartureDate()" />
+                                    <script>
+                                        $(function () {
+                                            $('#departureDate').datetimepicker({
+                                                format: 'MMM DD YYYY HH:mm',
+                                                minDate: new Date()
+                                            })
+                                        });
+                                    </script>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-4">
+                                <label>Arrival City:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Arrival City" id="arrivalCity"
+                                            onblur="setArrivalDate()" onkeyup="getArrivalCity()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Arrival Station:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <div class="autocomplete">
+                                        <input type="text" placeholder="Arrival Station" id="arrivalStation"
+                                            onkeyup="getArrivalStation()">
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Arrival Date:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Arrival Date" id="arrivalDate"
+                                        onblur="setArrivalDate()">
+                                    <script>
+                                        $(function () {
+                                            $('#arrivalDate').datetimepicker({
+                                                format: 'MMM DD YYYY HH:mm',
+                                                minDate: new Date()
+                                            })
+                                        });
+                                    </script>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-4">
+                                <label>Ticket Code:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Ticket Code" id="ticketCode"
+                                        onkeyup="setTicketCode()">
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Selling Price:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Selling Price" id="sellingPrice"
+                                        onkeyup="onKeyUp(this)" onblur="onBlur(this)" value="">
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px; text-align: center" id="btnPostEditDelete">
+                            <!-- <input type="button" value="POST NOW" class="btn-post-now" onclick="postTicket()" /> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--footer-->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                </h2>
+                <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
+                    last-minute deals. Welcome to a world of opportunities.</p>
+                <ul class="social-fo">
+                    <li><a href="#" class=" face"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" twi"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+                </ul>
+                <div class="address">
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
+                                - P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-phone" aria-hidden="true"></i>+840916512300</p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><a href="mailto:info@example.com"><i class="fa fa-envelope-o"
+                                    aria-hidden="true"></i>dark5695@gmail.com</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <div class="copy-right">
+                <p> &copy; 2016 Resell Ticket. All Rights Reserved | Design by <a href="http://w3layouts.com/">
+                        W3layouts</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- //footer-->
+    <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+</body>
+
+</html>

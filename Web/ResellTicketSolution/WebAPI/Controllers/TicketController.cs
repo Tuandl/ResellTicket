@@ -98,5 +98,39 @@ namespace WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
             }
         }
+
+        [HttpPost("confirm-rename")]
+        public ActionResult ConfirmRenameTicket(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var renameResult = _ticketService.ConfirmRenameTicket(id);
+
+            if (!string.IsNullOrEmpty(renameResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, renameResult);
+            }
+            return Ok();
+        }
+
+        [HttpPut("refuse")]
+        public ActionResult RefuseTicket(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var rejectResult = _ticketService.RejectTicket(id);
+
+            if (!string.IsNullOrEmpty(rejectResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, rejectResult);
+            }
+            return Ok();
+        }
     }
 }

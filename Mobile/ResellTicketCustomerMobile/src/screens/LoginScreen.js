@@ -3,6 +3,7 @@ import { Dimensions, ImageBackground, StyleSheet, Text, View, AsyncStorage } fro
 import { Button, Icon, Input } from 'react-native-elements';
 import Api from './../service/Api';
 import { RNToasty } from "react-native-toasty";
+import keyConstant from '../constants/keyConstant';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -52,8 +53,9 @@ export default class LoginScreen extends Component {
                 RNToasty.Success({
                     title: 'Login successfully',
                 });
-                AsyncStorage.setItem('USERNAME', response.data.username);
-                AsyncStorage.setItem('TOKEN', response.data.token);
+                AsyncStorage.setItem(keyConstant.STORAGE.USERNAME, response.data.username);
+                AsyncStorage.setItem(keyConstant.STORAGE.TOKEN, response.data.token);
+                Api.setHeader(keyConstant.HEADER_KEY.AUTHORIZE, `Bearer ${response.data.token}`)
                 // console.log("use : ", response.data.username);
                 // console.log("token : ", response.data.token);
                 this.props.navigation.navigate('Home', {username: username});

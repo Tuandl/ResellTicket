@@ -1,4 +1,6 @@
-﻿namespace Algorithm.KShortestPaths.Models
+﻿using System.Globalization;
+
+namespace Algorithm.KShortestPaths.Models
 {
     /// <summary>
     /// Contain Directional Edge
@@ -11,11 +13,12 @@
         /// <param name="tail"></param>
         /// <param name="head"></param>
         /// <param name="weight"></param>
-        public Edge(Vertex tail, Vertex head, double weight)
+        public Edge(Vertex tail, Vertex head, double weight, EdgeType type)
         {
             this.Tail = tail;
             this.Head = head;
             this.Weight = weight;
+            this.Type = type;
         }
 
         /// <summary>
@@ -32,6 +35,12 @@
         /// Weight of Edge
         /// </summary>
         public double Weight { get; set; }
+
+        /// <summary>
+        /// Type of this Edge
+        /// </summary>
+        /// <remarks>Type can be Waiting edge or Traveling Edge</remarks>
+        public EdgeType Type { get; set; }
 
         /// <summary>
         /// Returns the side track deltaWeight 
@@ -56,7 +65,7 @@
 
         public override string ToString()
         {
-            return Tail.Id + " -> " + Head.Id;
+            return $"{Tail.GroupId} {Tail.ArrivalTime} --> {Head.GroupId} {Head.ArrivalTime} ({Weight.ToString("C0")})";
         }
     }
 }

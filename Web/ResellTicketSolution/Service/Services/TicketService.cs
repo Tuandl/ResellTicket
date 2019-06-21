@@ -20,11 +20,16 @@ namespace Service.Services
 
         //getTicketsValidStatus
         List<TicketRowViewModel> GetValidTickets();
-
+        //getTicketsInValidStatus
         List<TicketRowViewModel> GetInValidTickets();
 
         List<TicketRowViewModel> GetTickets(string param);
-
+        //getTicketsRenameddStatus
+        List<TicketRowViewModel> GetRenamedTickets();
+        //getTicketsBoughtStatus
+        List<TicketRowViewModel> GetBoughtTickets();
+        //getTicketsCompletedStatus
+        List<TicketRowViewModel> GetCompletedTickets();
         string ApproveTicket(int id);
 
         string RejectTicket(int id);
@@ -34,6 +39,8 @@ namespace Service.Services
         void DeleteTicket(int ticketId);
         List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
         TicketDetailViewModel GetTicketDetail(int ticketId);
+        string ConfirmRenameTicket(int id);
+        string ValidateRenameTicket(int id, bool renameSuccess);
     }
     public class TicketService : ITicketService
     {
@@ -41,16 +48,19 @@ namespace Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITicketRepository _ticketRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IStationRepository _stationRepository;
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
                              ITicketRepository ticketRepository,
-                             ICustomerRepository customerRepository
+                             ICustomerRepository customerRepository,
+                             IStationRepository stationRepository
         )
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _ticketRepository = ticketRepository;
             _customerRepository = customerRepository;
+            _stationRepository = stationRepository;
         }
 
         public List<TicketRowViewModel> GetTickets()
@@ -59,8 +69,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -72,8 +86,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(pendingTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -85,19 +103,75 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(validTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
         }
+
+        public List<TicketRowViewModel> GetRenamedTickets()
+        {
+            var renamedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Renamed).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetBoughtTickets()
+        {
+            var boughtTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Bought).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
+            }
+
+            return ticketRowViewModels;
+        }
+
+        public List<TicketRowViewModel> GetCompletedTickets()
+        {
+            var completedTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Completed).ToList();
+            var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
+            foreach (var ticketRow in ticketRowViewModels)
+            {
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
+            }
+
+            return ticketRowViewModels;
+        }
+
         public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
         {
             var customerTickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.CustomerId == customerId)
+                .Where(x => x.BuyerId == customerId)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt)
-                .Skip((page - 1) * 5).Take(5)
+                //.Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
             return customerTicketVMs;
@@ -118,8 +192,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(invalidTickets);
             foreach (var ticketRow in ticketRowViewModels)
             {
-                var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
-                ticketRow.SellerPhone = customer.PhoneNumber;
+                //var customer = _customerRepository.Get(x => x.Id == ticketRow.CustomerId);
+                //ticketRow.SellerPhone = customer.PhoneNumber;
+                var departureCity = _stationRepository.Get(s => s.Id == ticketRow.DepartureStationId).City.Name;
+                var arrivalCity = _stationRepository.Get(s => s.Id == ticketRow.ArrivalStationId).City.Name;
+                ticketRow.DepartureCity = departureCity;
+                ticketRow.ArrivalCity = arrivalCity;
             }
 
             return ticketRowViewModels;
@@ -179,7 +257,7 @@ namespace Service.Services
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
-            ticket.CustomerId = 1;
+            ticket.BuyerId = 1;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
         }
@@ -224,5 +302,65 @@ namespace Service.Services
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
+
+        public string ConfirmRenameTicket(int id)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+
+            existedTicket.Status = Core.Enum.TicketStatus.Renamed;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return string.Empty;
+        }
+
+        public string ValidateRenameTicket(int id, bool renameSuccess)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+            if (renameSuccess == true)
+            {
+                existedTicket.Status = Core.Enum.TicketStatus.Completed;
+                _ticketRepository.Update(existedTicket);
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            else
+            {
+                existedTicket.Status = Core.Enum.TicketStatus.Bought;
+                _ticketRepository.Update(existedTicket);
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            
+            return string.Empty;
+        }
+
     }
 }

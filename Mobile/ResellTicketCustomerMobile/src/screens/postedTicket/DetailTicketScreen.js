@@ -25,6 +25,7 @@ export default class DetailTicketScreen extends Component {
             arrivalDateTime: '',
             ticketCode: '',
             sellingPrice: '',
+            status: ''
         }
     }
 
@@ -48,7 +49,8 @@ export default class DetailTicketScreen extends Component {
                 departureDateTime: moment(ticketDetail.departureDateTime).format('YYYY-MM-DD HH:mm'),
                 arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
                 ticketCode: ticketDetail.ticketCode,
-                sellingPrice: ticketDetail.sellingPrice
+                sellingPrice: ticketDetail.sellingPrice,
+                status: ticketDetail.status
             })
         }
     }
@@ -66,6 +68,7 @@ export default class DetailTicketScreen extends Component {
             arrivalDateTime,
             ticketCode,
             sellingPrice,
+            status
         } = this.state
         const { navigate } = this.props.navigation;
         return (
@@ -133,16 +136,55 @@ export default class DetailTicketScreen extends Component {
                                 )}
                             />
                         </Item>
-
+                        {status == 4 ? 
+                        <Container>
+                        <Button rounded block success
+                            style={{ margin: 20, marginBottom: 0 }}
+                            onPress={this.confirmTicketRenamed}>
+                            <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>
+                        </Button>
                         <Button rounded block danger
+                            style={{ marginLeft: 60, marginRight: 60, marginTop: 20, marginBottom: 0 }}
+                            onPress={this.RefuseTicket}>
+                            <Text style={styles.buttonText}>Refuse Ticket</Text>
+                        </Button>
+                        </Container>
+                        : <Button rounded block danger
                             style={{ margin: 40, marginBottom: 0 }}
                             onPress={this.deletePostedTicket}>
                             <Text style={styles.buttonText}>Delete</Text>
-                        </Button>
+                        </Button>}
+                        
                     </Content>
                 </ScrollView>
             </Container>
         )
+    }
+
+    confirmTicketRenamed = async () => {
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const resConfirmRenamedTicket = await Api.post('api/ticket/confirm-rename?id=' + ticketId);
+        const { navigation } = this.props;
+        if (resConfirmRenamedTicket.status === 200) {
+            RNToasty.Success({
+                title: 'Confirm Renamed Ticket Successfully'
+            })
+            navigation.state.params.refreshPostedTicket();
+            navigation.navigate('PostedTicket');
+        }
+    }
+
+    RefuseTicket = async () => {
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const resRefuseTicket = await Api.put('api/ticket/refuse?id=' + ticketId);
+        const { navigation } = this.props;
+        if (resRefuseTicket.status === 200) {
+            RNToasty.Success({
+                title: 'Refuse Ticket Successfully'
+            })
+            navigation.state.params.refreshPostedTicket();
+            navigation.navigate('PostedTicket');
+        }
     }
 
     deletePostedTicket = async () => {
