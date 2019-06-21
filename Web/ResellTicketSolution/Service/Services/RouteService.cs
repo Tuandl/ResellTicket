@@ -24,8 +24,8 @@ namespace Service.Services
         /// <param name="pageSize">Page Size</param>
         /// <param name="maxCombinationTickets">Max tickets a route has</param>
         /// <returns>List search results.</returns>
-        List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId, 
-            int page, int pageSize, int maxCombinationTickets = 3);
+        List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
+            DateTime departureDate, int page, int pageSize, int maxCombinationTickets = 3);
 
         /// <summary>
         /// Create new Route base on Search result
@@ -224,15 +224,15 @@ namespace Service.Services
             _unitOfWork.CommitTransaction();
         }
 
-        public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId, 
-            int page, int pageSize, int maxCombinationTickets = 3)
+        public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
+            DateTime departureDate, int page, int pageSize, int maxCombinationTickets = 3)
         {
             //Get raw available tickets in db
             var tickets = _ticketRepository.GetAllQueryable()
                 .Where(x => 
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     x.Deleted == false &&
-                    x.DepartureDateTime > DateTime.Now
+                    x.DepartureDateTime > departureDate
                 );
 
 

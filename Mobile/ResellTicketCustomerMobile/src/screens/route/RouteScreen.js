@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { Icon, ButtonGroup } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
-import RouteView from './../components/RouteViewComponent';
-import api from '../service/Api';
+import RouteView from '../../components/RouteViewComponent';
+import api from '../../service/Api';
 import { RNToasty } from 'react-native-toasty';
-import ROUTE_STATUS from './../constants/routeStatus';
+import ROUTE_STATUS from '../../constants/routeStatus';
 
 const {width} = Dimensions.get('window');
 const {height} = Dimensions.get('window');
@@ -79,6 +79,7 @@ export default class RouteScreen extends Component {
 
     render() {
         const { routes, selectedIndex } = this.state;
+        const { navigate } = this.props.navigation;
 
         const buttonHistory = () => <Text>History</Text>
         const buttonBought = () => <Text>Bought</Text>
@@ -90,11 +91,24 @@ export default class RouteScreen extends Component {
         return (
 
             <Container style={{ flex: 1 }}>
+                <Header>
+                    <Left></Left>
+                    <Body>
+                        <Title>Route</Title>
+                    </Body>
+                    <Right>
+                        <Button transparent
+                            onPress={() => navigate('RouteSearchForm')}
+                        >
+                            <Icon name='search' color="#fff" />
+                        </Button>
+                    </Right>
+                </Header>
                 <ButtonGroup
                     onPress={this.updateButtonGroupIndex}
                     selectedIndex={selectedIndex}
                     buttons={buttons}
-                    // containerStyle={{height: 100}}
+                    containerStyle={{borderRadius: 25}}
                 />
                 <Content style={{ flex: 1, backgroundColor: 'white' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>

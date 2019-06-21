@@ -4,7 +4,7 @@ import { Icon } from 'react-native-elements';
 
 
 import NotificationScreen from '../screens/NotificationScreen';
-import RouteScreen from './../screens/RouteScreen';
+import RouteScreen from './../screens/route/RouteScreen';
 import TourScreen from './../screens/TourScreen';
 import MeScreen from './../screens/MeScreen';
 import ProfileDetailScreen from './../screens/profile/ProfileDetailScreen';
@@ -12,6 +12,19 @@ import ChangePasswordScreen from './../screens/profile/ChangePasswordScreen';
 import PostedTicketScreen from './../screens/postedTicket/PostedTicketScreen';
 import PostEditTicketScreen from './../screens/postedTicket/PostEditTicketScreen';
 import DetailTicketScreen from  './../screens/postedTicket/DetailTicketScreen';
+import RouteSearchFormScreen from '../screens/route/RouteSearchFormScreen';
+import RouteSearchResultScreen from '../screens/route/RouteSearchResultScreen';
+
+const RouteStack = createStackNavigator(
+  {
+    Route: RouteScreen,
+    RouteSearchForm: RouteSearchFormScreen,
+    RouteSearchResult: RouteSearchResultScreen,
+  }, {
+    initialRouteName: 'Route',
+    headerMode: 'none',
+  }
+)
 
 const MeStack = createStackNavigator(
   {
@@ -31,7 +44,7 @@ const MeStack = createStackNavigator(
 export default createBottomTabNavigator(
   {
     Route: {
-      screen: RouteScreen,
+      screen: RouteStack,
       navigationOptions: {
         tabBarLabel: 'Route',
         tabBarIcon: ({ tintColor }) => {

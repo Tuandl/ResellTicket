@@ -1,5 +1,5 @@
 export default {
-    DATE_TIME: 'DDD, MMM dd, YYYY HH:mm',
-    DATE: 'DDD, MMM dd, YYYY',
+    DATE_TIME: 'ddd, MMM DD, YYYY HH:mm',
+    DATE: 'ddd, MMM DD, YYYY',
     TIME: 'HH:mm',
 }

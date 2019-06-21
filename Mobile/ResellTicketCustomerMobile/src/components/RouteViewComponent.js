@@ -29,11 +29,11 @@ export default class RouteViewComponent extends Component {
         });
 
         route.departureCityName = route.routeTickets[0].departureCityName;
-        route.arrivalCityName = route.routeTickets.last().arrivalCityName;
+        route.arrivalCityName = route.routeTickets[route.routeTickets.length - 1].arrivalCityName;
         route.departureDate = moment(route.routeTickets[0].departureDateTime).format(formatConstant.DATE);
         route.departureTime = moment(route.routeTickets[0].departureDateTime).format(formatConstant.TIME);
-        route.arrivalDate = moement(route.routeTickets.last().arrivalDateTime).format(formatConstant.DATE);
-        route.arrivalTime = moement(route.routeTickets.last().arrivalDateTime).format(formatConstant.TIME);
+        route.arrivalDate = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.DATE);
+        route.arrivalTime = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.TIME);
 
     }
 
@@ -49,9 +49,9 @@ export default class RouteViewComponent extends Component {
                 <View style={styles.wrapper}>
                     <View style={styles.routeHeader}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text>{route.departureCityName}</Text>
+                            <Text>{route.departureCityName} </Text>
                             <Icon name="long-arrow-right" type="font-awesome" color="grey"/>
-                            <Text>{route.arrivalCityName}</Text>
+                            <Text> {route.arrivalCityName}</Text>
                         </View>
                         <View>
                             <NumberFormat value={route.totalAmount}
