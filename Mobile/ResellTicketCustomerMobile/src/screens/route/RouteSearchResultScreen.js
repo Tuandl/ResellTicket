@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
-import RouteViewComponent from '../../components/RouteViewComponent';
+import RouteViewComponent from '../../components/RouteComponent/RouteSearchViewComponent';
 import api from '../../service/Api';
 
 const { width } = Dimensions.get('window');

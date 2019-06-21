@@ -137,7 +137,11 @@ namespace Service.Services
                     CustomerId = x.CustomerId,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
-                });
+                    TicketQuantity = x.RouteTickets.Count(),
+                    //Check valid or not depen on ticket status
+                    IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
+                })
+                .OrderByDescending(x => x.CreatedAt);
 
             //Filter routes match user's criticals
             var routesFiltered = routes.Where(x => 
@@ -153,6 +157,23 @@ namespace Service.Services
                 Data = routesPaged.ToList(),
                 Total = routesFiltered.Count(),
             };
+
+            //getting more detail information
+            foreach (var route in result.Data)
+            {
+                var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
+                    x.RouteId == route.Id &&
+                    x.Deleted == false
+                ).OrderBy(x => x.Order);
+
+                var firstRouteTicket = routeTickets.FirstOrDefault();
+                route.DepartureCityName = firstRouteTicket.DepartureStation.City.Name;
+                route.DepartureDate = firstRouteTicket.Ticket.DepartureDateTime;
+
+                var lastRouteTicket = routeTickets.LastOrDefault();
+                route.ArrivalCityName = lastRouteTicket.ArrivalStation.City.Name;
+                route.ArrivalDate = lastRouteTicket.Ticket.ArrivalDateTime;
+            }
 
             return result;
         }

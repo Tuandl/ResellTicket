@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
 import { Icon, ButtonGroup } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
-import RouteView from '../../components/RouteViewComponent';
+import RouteHistoryView from '../../components/RouteComponent/RouteHistoryViewComponent';
 import api from '../../service/Api';
 import { RNToasty } from 'react-native-toasty';
 import ROUTE_STATUS from '../../constants/routeStatus';
@@ -58,7 +58,7 @@ export default class RouteScreen extends Component {
 
     renderRoutes(routes) {
         return routes.map((route, index) => 
-            <RouteView route={route} key={index}/>
+            <RouteHistoryView route={route} key={index}/>
         );
     }
 

@@ -5,12 +5,12 @@ import { Icon } from 'react-native-elements';
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
-import formatConstant from '../constants/formatConstant';
+import formatConstant from '../../constants/formatConstant';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
-export default class RouteViewComponent extends Component {
+export default class RouteSearchViewComponent extends Component {
 
     constructor(props) {
         super(props);
