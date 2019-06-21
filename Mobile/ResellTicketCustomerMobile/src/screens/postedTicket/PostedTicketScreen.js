@@ -17,28 +17,39 @@ export default class PostedTicket extends Component {
         this.state = {
             postedTickets: [],
             page: 1,
-            isLoading: false
+            isLoading: false,
+            isStill: false
         }
     }
 
     componentWillMount() {
-        this.getCustomerTickets();
+        
     }
 
     componentDidMount() {
-        
+        this.getCustomerTickets();
     }
 
     async getCustomerTickets() {
         this.setState({
             isLoading: true
         })
-        const resCustomerTickets = await Api.get('api/ticket?customerId=1&page=' + this.state.page);
+        const resCustomerTickets = await Api.get('api/ticket?page=' + this.state.page);
         if (resCustomerTickets.status === 200) {
+            if(resCustomerTickets.data.length === 5) {
+                this.setState({
+                    isStill: true
+                })
+            } else {
+                this.setState({
+                    isStill: false
+                })
+            }
             this.setState({
-                postedTickets: resCustomerTickets.data,
+                postedTickets: [...this.state.postedTickets, ...resCustomerTickets.data],
                 isLoading: false
             })
+            
         }
     }
 
@@ -47,12 +58,13 @@ export default class PostedTicket extends Component {
     }
 
     onEndReached = () => {
-        // this.setState({
-        //     page: this.state.page + 1
-        // }, () => {
-        //     this.getCustomerTickets();
-        // })
-        // console.log('End Reached')
+        if(this.state.isStill) {
+            this.setState({
+                page: this.state.page + 1
+            }, () => {
+                this.getCustomerTickets();
+            })
+        }
     }
 
     render() {

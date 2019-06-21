@@ -7,7 +7,7 @@ namespace ViewModel.ViewModel.Ticket
 {
     public class TicketRowViewModel
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string TicketCode { get; set; }
         public int DepartureStationId { get; set; }
         public int ArrivalStationId { get; set; }
