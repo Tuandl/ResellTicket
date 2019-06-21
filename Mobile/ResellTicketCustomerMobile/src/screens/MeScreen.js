@@ -3,6 +3,7 @@ import { Dimensions, StyleSheet, View, AsyncStorage } from 'react-native';
 import { Container, Text, Content, List, ListItem, Left, Right } from 'native-base';
 import { Icon, Avatar } from 'react-native-elements';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import keyConstant from '../constants/keyConstant';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -20,7 +21,7 @@ export default class MeScreen extends Component {
     }
 
     async getUsename() {
-        var usernameDefault = await AsyncStorage.getItem('USERNAME');
+        var usernameDefault = await AsyncStorage.getItem(keyConstant.STORAGE.USERNAME);
         //var data = JSON.parse(usernameDefault);
         this.setState({
             username: usernameDefault

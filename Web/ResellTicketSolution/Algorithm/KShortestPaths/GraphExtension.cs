@@ -15,22 +15,23 @@ namespace Algorithm.KShortestPaths
         public static void CreateEdgeFromTicketBaseOnPrice(this EppsteinGraph graph, Ticket ticket)
         {
             //Get Departure vertex
-            Vertex departureVertex = graph.GetVertex(ticket.DepartureStationId);
+            //Vertex departureVertex = graph.GetVertex(ticket.DepartureStationId, ticket.DepartureDateTime);
+            Vertex departureVertex = graph.GetVertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
             if(departureVertex == null)
             {
-                departureVertex = new Vertex(ticket.DepartureStationId, ticket);
+                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime, ticket);
                 graph.AddVertex(departureVertex);
             }
 
             //Get arrival vertex
-            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStationId);
+            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
             if(arrivalVertex == null)
             {
-                arrivalVertex = new Vertex(ticket.ArrivalStationId, ticket);
+                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime, ticket);
                 graph.AddVertex(arrivalVertex);
             }
 
-            Edge edge = new Edge(departureVertex, arrivalVertex, Convert.ToDouble(ticket.SellingPrice));
+            Edge edge = new Edge(departureVertex, arrivalVertex, Convert.ToDouble(ticket.SellingPrice), EdgeType.Traveling);
             departureVertex.RelatedEdges.Add(edge);
             if(edge.Head != edge.Tail) // avoid duplicate edge when meet self-pointing edge
             {

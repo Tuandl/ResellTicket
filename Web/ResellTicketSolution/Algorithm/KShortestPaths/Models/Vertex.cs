@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Algorithm.KShortestPaths.Models
 {
@@ -7,9 +8,10 @@ namespace Algorithm.KShortestPaths.Models
     /// </summary>
     public class Vertex
     {
-        public Vertex(int id, object ObjectValue)
+        public Vertex(int groupId, DateTime arrivalTime, object ObjectValue)
         {
-            this.Id = id;
+            this.GroupId = groupId;
+            this.ArrivalTime = arrivalTime;
             this.Data = ObjectValue;
             this.RelatedEdges = new List<Edge>();
         }
@@ -18,11 +20,16 @@ namespace Algorithm.KShortestPaths.Models
         /// Data
         /// </summary>
         public object Data { get; set; }
-        
+
         /// <summary>
-        /// Id of this Vertex
+        /// Group by Departure Id
         /// </summary>
-        public int Id { get; set; }
+        public int GroupId { get; set; }
+
+        /// <summary>
+        /// Arrival time of this vertex
+        /// </summary>
+        public DateTime ArrivalTime { get; set; }
 
         /// <summary>
         /// Related Edges of this Vertex. Available after calculate shortest path.
@@ -33,6 +40,11 @@ namespace Algorithm.KShortestPaths.Models
         /// Min distance to destination. Available after calculate shortest path.
         /// </summary>
         public double MinDistance { get; set; }
+
+        /// <summary>
+        /// Number of tickets from this vertex to destination in the shortest path.
+        /// </summary>
+        public int TicketQuantity { get; set; }
 
         /// <summary>
         /// Edge belong to shortest path from this vertex to destination
@@ -59,7 +71,8 @@ namespace Algorithm.KShortestPaths.Models
         {
             if(obj is Vertex)
             {
-                return this.Id == (obj as Vertex).Id;
+                return this.GroupId == (obj as Vertex).GroupId && 
+                    this.ArrivalTime == (obj as Vertex).ArrivalTime;
             }
             return false;
         }
@@ -70,7 +83,20 @@ namespace Algorithm.KShortestPaths.Models
         /// <returns>Hash Calculated for this object</returns>
         public override int GetHashCode()
         {
-            return Id.GetHashCode();
+            return GroupId.GetHashCode() ^ ArrivalTime.GetHashCode();
         }
+
+
+        /// <summary>
+        /// Check if 2 vertexes are the same group or not
+        /// </summary>
+        /// <param name="anotherVertex"></param>
+        /// <returns>true if 2 groups is the same.</returns>
+        public bool EqualsDestination(Vertex anotherVertex)
+        {
+            return this.GroupId == anotherVertex.GroupId;
+        }
+
+
     }
 }

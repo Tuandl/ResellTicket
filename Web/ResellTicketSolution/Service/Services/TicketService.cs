@@ -168,10 +168,10 @@ namespace Service.Services
         public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
         {
             var customerTickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.CustomerId == customerId)
+                .Where(x => x.BuyerId == customerId)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt)
-                .Skip((page - 1) * 5).Take(5)
+                //.Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
             return customerTicketVMs;
@@ -257,7 +257,7 @@ namespace Service.Services
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
-            ticket.CustomerId = 1;
+            ticket.BuyerId = 1;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
         }

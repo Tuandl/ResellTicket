@@ -4,6 +4,7 @@ import { Container, Button, Header, Body, Title, Left, Right } from 'native-base
 import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from '../../service/Api';
+import keyConstant from '../../constants/keyConstant';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -76,7 +77,7 @@ export default class ChangePasswordScreen extends Component {
     }
 
     async submitResetPassword() {
-        var usernameDefault = await AsyncStorage.getItem('USERNAME');
+        var usernameDefault = await AsyncStorage.getItem(keyConstant.STORAGE.USERNAME);
         const { password, passwordConfirm, oldpassword } = this.state;
 
         if (!this.validateOldPassword(oldpassword) || !this.validatePassword(password) ||

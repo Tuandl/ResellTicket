@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Algorithm.KShortestPaths.Models
 {
@@ -43,6 +44,36 @@ namespace Algorithm.KShortestPaths.Models
             } 
         }
 
+        /// <summary>
+        /// Get Ticket quantity in this path (base on edge)
+        /// </summary>
+        public int TicketQuantity
+        {
+            get
+            {
+                int ticketQuantity = 0;
+                foreach (var edge in this)
+                {
+                    if(edge.Type == EdgeType.Traveling) 
+                        ticketQuantity++;
+                }
+                return ticketQuantity;
+            }
+        }
+
+        public Path Trim()
+        {
+            Path result = new Path();
+            foreach (var edge in this)
+            {
+                if(edge.Type == EdgeType.Traveling)
+                {
+                    result.Add(edge);
+                }
+            }
+            return result;
+        }
+
         public override string ToString()
         {
             var result = string.Empty;
@@ -52,6 +83,27 @@ namespace Algorithm.KShortestPaths.Models
             }
             result += $"Weight = {Weight}; DeltaWeight = {DeltaWeight}";
             return result;
+        }
+
+        /// <summary>
+        /// Get all vertices in this path
+        /// </summary>
+        /// <returns></returns>
+        public List<Vertex> GetAllVertices()
+        {
+            var vertices = new List<Vertex>();
+
+            if(this.Count > 0)
+            {
+                vertices.Add(this.FirstOrDefault().Tail);
+
+                foreach (var edge in this)
+                {
+                    vertices.Add(edge.Head);
+                }
+            }
+
+            return vertices;
         }
     }
 }

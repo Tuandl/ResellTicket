@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, FlatList, View } from 'react-native';
+import { Dimensions, FlatList, ActivityIndicator } from 'react-native';
 import { Container, Header, Body, Title, Button, Content, Left, Right } from 'native-base';
 import { Icon } from 'react-native-elements';
 import TicketView from './../../components/TicketViewComponent';
@@ -16,7 +16,8 @@ export default class PostedTicket extends Component {
         super(props);
         this.state = {
             postedTickets: [],
-            page: 1
+            page: 1,
+            isLoading: false
         }
     }
 
@@ -29,10 +30,14 @@ export default class PostedTicket extends Component {
     }
 
     async getCustomerTickets() {
-        const resCustomerTickets = await Api.get('api/ticket?customerId=5&page=' + this.state.page);
+        this.setState({
+            isLoading: true
+        })
+        const resCustomerTickets = await Api.get('api/ticket?customerId=1&page=' + this.state.page);
         if (resCustomerTickets.status === 200) {
             this.setState({
-                postedTickets: resCustomerTickets.data
+                postedTickets: resCustomerTickets.data,
+                isLoading: false
             })
         }
     }
@@ -51,7 +56,7 @@ export default class PostedTicket extends Component {
     }
 
     render() {
-        const { postedTickets } = this.state
+        const { postedTickets, isLoading } = this.state
         const username = this.props.navigation.getParam('username');
         const { navigate } = this.props.navigation;
         return (
@@ -84,7 +89,8 @@ export default class PostedTicket extends Component {
                                 postedTicket={item}
                                 navigate={navigate}
                                 refreshPostedTicket={this.refreshPostedTicket} />
-                        )}>
+                        )}
+                        ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}>
                     </FlatList>
                 </Content>
             </Container>
