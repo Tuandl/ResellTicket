@@ -81,7 +81,7 @@ export default class RouteHistoryViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{route.arrivalDate}</Text>
                         </View>
                         <View style={styles.routeBodyContent}>
-                            <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
+                            {this.renderIsAvailable(route.isValid)}
                             <Text style={{ fontSize: 12 }}>{route.departureTime}</Text>
                             <Text style={{ fontSize: 12 }}>{route.arrivalTime}</Text>
                         </View>
