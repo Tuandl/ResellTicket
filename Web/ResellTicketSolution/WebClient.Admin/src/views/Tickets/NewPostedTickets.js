@@ -33,9 +33,9 @@ function TicketRow(props) {
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
             <td>{ticket.departureCity}</td>
-            <td>{moment(ticket.departureDateTime).format('MMM DD YYYY')}</td>
+            <td>{moment(ticket.departureDateTime).format('MMM DD YYYY, h:mm:ss')}</td>
             <td>{ticket.arrivalCity}</td>
-            <td>{moment(ticket.arrivalDateTime).format('MMM DD YYYY')}</td>
+            <td>{moment(ticket.arrivalDateTime).format('MMM DD YYYY, h:mm:ss')}</td>
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
