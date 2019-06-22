@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Dimensions } from 'react-native';
-import { Text } from 'native-base';
+import { Text, Button } from 'native-base';
 import { Icon } from 'react-native-elements';
 import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-handler';
 import moment from 'moment';
@@ -11,6 +11,8 @@ const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
 export default class RouteHistoryViewComponent extends Component {
+
+    preventDefault = false;
 
     constructor(props) {
         super(props);
@@ -34,15 +36,16 @@ export default class RouteHistoryViewComponent extends Component {
         route.createdAt = moment(route.createdAt).format(formatConstant.DATE_TIME);
     }
 
-    onPress = () => {
-        this.props.onRoutePressed(this.state.route);
+    onPress() {
+        if(this.preventDefault) return;
+        this.props.onPress(this.state.route);
     }
 
     renderIsAvailable(isValid) {
         if(isValid) {
             return <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
         } else {
-            return <Text styles={{ fontSize: 12, color: '#e05050'}}>Not Available</Text>
+            return <Text styles={{ fontSize: 12, color: 'red'}}>Not Available</Text>
         }
     }
 
@@ -58,15 +61,17 @@ export default class RouteHistoryViewComponent extends Component {
                             <Icon name="long-arrow-right" type="font-awesome" color="grey"/>
                             <Text> {route.arrivalCityName}</Text>
                         </View>
-                        <View>
-                            <NumberFormat value={route.totalAmount}
-                                displayType={'text'}
-                                thousandSeparator={true}
-                                suffix={' $'}
-                                renderText={value => (
-                                    <Text style={{ fontSize: 20, color: '#d32f2f' }}>{value}</Text>
-                                )}
-                            />
+                        <View style={{ flexDirection: 'row' }}>
+                            <View style={{ marginTop: 2, marginRight: 9 }}>
+                                <NumberFormat value={route.totalAmount}
+                                    displayType={'text'}
+                                    thousandSeparator={true}
+                                    suffix={' $'}
+                                    renderText={value => (
+                                        <Text style={{ fontSize: 20, color: '#d32f2f' }}>{value}</Text>
+                                    )}
+                                />
+                            </View>
                         </View>
                     </View>
                     <View style={styles.routeBody}>

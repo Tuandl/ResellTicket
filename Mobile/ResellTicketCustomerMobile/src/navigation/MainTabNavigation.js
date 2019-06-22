@@ -14,12 +14,14 @@ import PostEditTicketScreen from './../screens/postedTicket/PostEditTicketScreen
 import DetailTicketScreen from  './../screens/postedTicket/DetailTicketScreen';
 import RouteSearchFormScreen from '../screens/route/RouteSearchFormScreen';
 import RouteSearchResultScreen from '../screens/route/RouteSearchResultScreen';
+import RouteDetailScreen from '../screens/route/RouteDetailScreen';
 
 const RouteStack = createStackNavigator(
   {
     Route: RouteScreen,
     RouteSearchForm: RouteSearchFormScreen,
     RouteSearchResult: RouteSearchResultScreen,
+    RouteDetail: RouteDetailScreen,
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',
