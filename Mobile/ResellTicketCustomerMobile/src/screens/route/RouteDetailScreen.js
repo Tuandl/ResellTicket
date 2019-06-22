@@ -104,19 +104,9 @@ export default class RouteDetailScreen extends Component {
                 <Content style={{ flex: 1, backgroundColor: 'white' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                     
-                    <View style={{ width: width }}>
-                        <View contentContainerStyle={{ justifyContent: 'center', alignContent: 'center' }}>
-                            <Text style={styles.ticketCode}>{route.code}</Text>
-                        </View>
+                    <View style={{ width: width, padding: 5 }}>
                         <View>
-                            <NumberFormat value={route.totalAmount}
-                                displayType={'text'}
-                                thousandSeparator={true}
-                                suffix={' $'}
-                                renderText={value => (
-                                    <Text style={{ fontSize: 20, color: '#d32f2f' }}>Total Amount: {value}</Text>
-                                )}
-                            />
+                            <Text style={styles.ticketCode}>{route.code}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                             <Text>{route.departureCityName} </Text>
@@ -129,13 +119,28 @@ export default class RouteDetailScreen extends Component {
                         {this.renderTickets(route.routeTickets)}
                     </View>
 
-                    <View style={{ justifyContent: 'center', alignItems: 'center', width: width }}>
-                        <Button success onPress={this.onBtnBuyRoutePressed}>
-                            <Text>Buy Route</Text>
-                        </Button>
-                        <Button danger onPress={this.onBtnDeletePressed}>
-                            <Text>Delete</Text>
-                        </Button>
+                    <View>
+                        <NumberFormat value={route.totalAmount}
+                            displayType={'text'}
+                            thousandSeparator={true}
+                            suffix={' $'}
+                            renderText={value => (
+                                <Text style={{ fontSize: 20, color: '#d32f2f' }}>Total Amount: {value}</Text>
+                            )}
+                        />
+                    </View>
+
+                    <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
+                        <View style={{ padding: 2.5, borderRadius: 10, flex: 0.5 }}>
+                            <Button success onPress={this.onBtnBuyRoutePressed} block>
+                                <Text>Buy Route</Text>
+                            </Button>
+                        </View>
+                        <View style={{ padding: 2.5, borderRadius: 10, flex: 0.5 }}>
+                            <Button danger onPress={this.onBtnDeletePressed} block>
+                                <Text>Delete</Text>
+                            </Button>
+                        </View>
                     </View>
                 </Content>
             </Container>
@@ -148,6 +153,7 @@ const styles = StyleSheet.create({
     ticketCode: {
         fontWeight: 'bold',
         fontSize: 25,
+        textAlign: 'center',
     }
 });
 
