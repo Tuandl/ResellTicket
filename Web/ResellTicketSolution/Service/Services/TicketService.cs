@@ -171,7 +171,7 @@ namespace Service.Services
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
-                .OrderByDescending(x => x.UpdatedAt)
+                .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
                 .Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
