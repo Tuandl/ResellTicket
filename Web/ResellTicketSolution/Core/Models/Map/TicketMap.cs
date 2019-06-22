@@ -10,10 +10,15 @@ namespace Core.Models.Map
             builder.HasKey(x => x.Id);
 
             builder.HasOne(x => x.Buyer)
-                .WithMany(x => x.Tickets)
+                .WithMany(x => x.BoughtTickets)
                 .HasForeignKey(x => x.BuyerId)
                 .OnDelete(DeleteBehavior.Restrict);
-            
+
+            builder.HasOne(x => x.Seller)
+                .WithMany(x => x.SoldTickets)
+                .HasForeignKey(x => x.SellerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasOne(x => x.TicketType)
                 .WithMany(x => x.Tickets)
                 .HasForeignKey(x => x.TicketTypeId)

@@ -20,8 +20,10 @@ namespace Core.Models
         public DateTime ArrivalDateTime { get; set; }
         public int TicketTypeId { get; set; }
         public virtual TicketType TicketType { get; set; }
-        public int BuyerId { get; set; }
+        public int? BuyerId { get; set; }
+        public int SellerId { get; set; }
         public virtual Customer Buyer { get; set; }
+        public virtual Customer Seller { get; set; }
         public virtual Transportation Transportation { get; set; }
         public virtual Station DepartureStation { get; set; }
         public virtual Station ArrivalStation { get; set; }

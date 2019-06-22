@@ -34,10 +34,10 @@ namespace Service.Services
 
         string RejectTicket(int id);
 
-        void PostTicket(TicketPostViewModel model);
+        void PostTicket(string username, TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
         void DeleteTicket(int ticketId);
-        List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page);
+        List<CustomerTicketViewModel> GetCustomerTickets(string username, int page);
         TicketDetailViewModel GetTicketDetail(int ticketId);
         string ConfirmRenameTicket(int id);
         string ValidateRenameTicket(int id, bool renameSuccess);
@@ -165,13 +165,14 @@ namespace Service.Services
             return ticketRowViewModels;
         }
 
-        public List<CustomerTicketViewModel> GetCustomerTickets(int customerId, int page)
+        public List<CustomerTicketViewModel> GetCustomerTickets(string username, int page)
         {
+            var existedCustomer = _customerRepository.Get(x => x.Username == username);
             var customerTickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.BuyerId == customerId)
+                .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
-                .OrderByDescending(x => x.UpdatedAt)
-                //.Skip((page - 1) * 5).Take(5)
+                .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
+                .Skip((page - 1) * 5).Take(5)
                 .ToList();
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
             return customerTicketVMs;
@@ -252,12 +253,13 @@ namespace Service.Services
             return ticketDetailVM;
         }
 
-        public void PostTicket(TicketPostViewModel model)
+        public void PostTicket(string username, TicketPostViewModel model)
         {
+            var customerId = _customerRepository.Get(x => x.Username == username).Id;
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
-            ticket.BuyerId = 1;
+            ticket.SellerId = customerId;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
         }
