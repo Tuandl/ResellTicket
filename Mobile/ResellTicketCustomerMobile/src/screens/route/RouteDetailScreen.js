@@ -33,7 +33,8 @@ export default class RouteDetailScreen extends Component {
         this.onBtnDeletePressed = this.onBtnDeletePressed.bind(this);
         this.onBtnBackPressed = this.onBtnBackPressed.bind(this);
         this.getRouteDetail = this.getRouteDetail.bind(this); 
-        this.initRoute = this.initRoute.bind(this);  
+        this.initRoute = this.initRoute.bind(this);
+        this.deleteRoute = this.deleteRoute.bind(this);
     }
 
     initRoute(route) {
@@ -65,6 +66,20 @@ export default class RouteDetailScreen extends Component {
         }
     }
 
+    async deleteRoute(id) {
+        if(id === null || id === undefined) {
+            RNToasty.Error({title: 'Route Id is invalid'});
+        } else {
+            const response = await api.delete(this.URL_ROUTE_DETAIL + id);
+            if(response.status === 200) {
+                RNToasty.Success({ title: 'Delete Route Successfully' });
+                this.navigation.pop();
+            } else {
+                RNToasty.Error({ title: 'Error when delete route.' });
+            }
+        }
+    }
+
     renderTickets(routeTickets) {
         if(routeTickets === null || routeTickets === undefined) return;
         return routeTickets.map((routeTicket) => 
@@ -77,7 +92,7 @@ export default class RouteDetailScreen extends Component {
     }
 
     onBtnDeletePressed() {
-        alert('Not support yet');
+        this.deleteRoute(this.routeId);
     }
 
     onBtnBackPressed() {

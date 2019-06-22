@@ -6,11 +6,12 @@ import RouteHistoryView from '../../components/RouteComponent/RouteHistoryViewCo
 import api from '../../service/Api';
 import { RNToasty } from 'react-native-toasty';
 import ROUTE_STATUS from '../../constants/routeStatus';
+import { withNavigation } from 'react-navigation';
 
 const {width} = Dimensions.get('window');
 const {height} = Dimensions.get('window');
 
-export default class RouteScreen extends Component {
+class RouteScreen extends Component {
 
     urlRouteDataTable = 'api/route/data-table';
     currentPage = 1;
@@ -34,6 +35,15 @@ export default class RouteScreen extends Component {
 
     componentDidMount() {
         this.getCustomerRoute();
+        const self = this;
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener("didFocus", () => {
+            self.getCustomerRoute.bind(self)();
+        });
+    }
+
+    componentWillUnmount() {
+        this.focusListener.remove();
     }
 
     async getCustomerRoute(selectedIndex) {
@@ -58,8 +68,8 @@ export default class RouteScreen extends Component {
     }
 
     renderRoutes(routes) {
-        return routes.map((route, index) => 
-            <RouteHistoryView route={route} key={index} onPress={this.onHistoryPressed}/>
+        return routes.map((route) =>
+            <RouteHistoryView route={route} key={route.id} onPress={this.onHistoryPressed}/>
         );
     }
 
@@ -124,3 +134,4 @@ export default class RouteScreen extends Component {
     }
 }
 
+export default withNavigation(RouteScreen);
