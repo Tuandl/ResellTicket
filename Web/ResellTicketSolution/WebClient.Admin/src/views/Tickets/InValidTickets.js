@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { toastr } from 'react-redux-toastr';
+// import { toastr } from 'react-redux-toastr';
 import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
@@ -26,11 +26,11 @@ function TicketRow(props) {
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
-            <td>
+            {/* <td>
                 <Button color="success" className="mr-2">
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
-            </td>
+            </td> */}
         </tr>
 
 
@@ -136,7 +136,7 @@ class InValidTickets extends Component {
                                                 {/* <th>Seller Phone</th> */}
                                                 <th>Price</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
+                                                {/* <th>Action</th> */}
                                             </tr>
                                         </thead>
                                         <tbody>

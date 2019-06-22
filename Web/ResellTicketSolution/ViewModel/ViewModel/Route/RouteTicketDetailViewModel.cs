@@ -5,6 +5,7 @@ namespace ViewModel.ViewModel.Route
 {
     public class RouteTicketDetailViewModel
     {
+        public int Id { get; set; }
         public string TicketCode { get; set; }
         public int TransportationId { get; set; }
         public string TransportationName { get; set; }
@@ -22,5 +23,7 @@ namespace ViewModel.ViewModel.Route
         public DateTime ArrivalDateTime { get; set; }
         public int TicketTypeId { get; set; }
         public string TicketTypeName { get; set; }
+        public string VehicleName { get; set; }
+        public int Order { get; set; }
     }
 }

@@ -29,8 +29,19 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name));
 
             CreateMap<Route, RouteDetailViewModel>();
-            CreateMap<RouteTicket, RouteTicketDetailViewModel>();
-
+            CreateMap<RouteTicket, RouteTicketDetailViewModel>()
+                .ForMember(dest => dest.ArrivalCityName, otp => otp.MapFrom(src => src.ArrivalStation.City.Name))
+                .ForMember(dest => dest.ArrivalDateTime, otp => otp.MapFrom(src => src.Ticket.ArrivalDateTime))
+                .ForMember(dest => dest.ArrivalStationName, otp => otp.MapFrom(src => src.ArrivalStation.Name))
+                .ForMember(dest => dest.DepartureCityName, otp => otp.MapFrom(src => src.DepartureStation.City.Name))
+                .ForMember(dest => dest.DepartureDateTime, otp => otp.MapFrom(src => src.Ticket.DepartureDateTime))
+                .ForMember(dest => dest.DepartureStationName, otp => otp.MapFrom(src => src.DepartureStation.Name))
+                .ForMember(dest => dest.SellingPrice, otp => otp.MapFrom(src => src.Ticket.SellingPrice))
+                .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Ticket.Status))
+                .ForMember(dest => dest.TicketCode, otp => otp.MapFrom(src => src.Ticket.TicketCode))
+                .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType))
+                .ForMember(dest => dest.TransportationName, otp => otp.MapFrom(src => src.Ticket.Transportation.Name))
+                .ForMember(dest => dest.VehicleName, otp => otp.MapFrom(src => src.Ticket.Transportation.Vehicle.Name));
         }
     }
 }

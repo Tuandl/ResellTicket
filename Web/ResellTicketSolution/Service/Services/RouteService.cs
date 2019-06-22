@@ -197,10 +197,6 @@ namespace Service.Services
             foreach (var routeTicket in route.RouteTickets)
             {
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
-                routeTicketViewModel.ArrivalStationName = routeTicket.ArrivalStation.Name;
-                routeTicketViewModel.ArrivalCityName = routeTicket.ArrivalStation.City.Name;
-                routeTicketViewModel.DepartureStationName = routeTicket.DepartureStation.Name;
-                routeTicketViewModel.DepartureCityName = routeTicket.DepartureStation.City.Name;
 
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }
@@ -253,13 +249,13 @@ namespace Service.Services
                 .Where(x => 
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     x.Deleted == false &&
-                    x.DepartureDateTime > departureDate
+                    x.DepartureDateTime >= departureDate
                 );
 
 
             //create graph base on available tickets
             var graph = new EppsteinGraph();
-            foreach (var ticket in tickets.ToList())
+            foreach (var ticket in tickets)
             {
                 graph.CreateEdgeFromTicketBaseOnPrice(ticket);
             }

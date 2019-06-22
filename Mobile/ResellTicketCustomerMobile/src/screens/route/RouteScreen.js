@@ -29,6 +29,7 @@ export default class RouteScreen extends Component {
             selectedIndex: this.buttonIndexes.history,
         };
         this.updateButtonGroupIndex = this.updateButtonGroupIndex.bind(this);
+        this.onHistoryPressed = this.onHistoryPressed.bind(this);
     }
 
     componentDidMount() {
@@ -58,8 +59,12 @@ export default class RouteScreen extends Component {
 
     renderRoutes(routes) {
         return routes.map((route, index) => 
-            <RouteHistoryView route={route} key={index}/>
+            <RouteHistoryView route={route} key={index} onPress={this.onHistoryPressed}/>
         );
+    }
+
+    onHistoryPressed(route) {
+        this.props.navigation.navigate('RouteDetail', {routeId: route.id});
     }
 
     updateButtonGroupIndex(selectedIndex) {
