@@ -1,18 +1,17 @@
+import { Body, Button, Container, Content, Header, Left, Right, Text, Title } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, StyleSheet, View } from 'react-native';
-import { Icon, ButtonGroup } from 'react-native-elements'
-import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
-import RouteHistoryView from '../../components/RouteComponent/RouteHistoryViewComponent';
-import api from '../../service/Api';
+import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
-import ROUTE_STATUS from '../../constants/routeStatus';
-import RouteTicketViewComponent from '../../components/RouteComponent/RouteTicketViewComponent';
 import NumberFormat from 'react-number-format';
+import RouteTicketViewComponent from '../../components/RouteComponent/RouteTicketViewComponent';
+import api from '../../service/Api';
+import { withNavigationFocus } from 'react-navigation';
 
 const {width} = Dimensions.get('window');
 const {height} = Dimensions.get('window');
 
-export default class RouteDetailScreen extends Component {
+class RouteDetailScreen extends Component {
 
     URL_ROUTE_DETAIL = 'api/route/';
 
@@ -35,6 +34,7 @@ export default class RouteDetailScreen extends Component {
         this.getRouteDetail = this.getRouteDetail.bind(this); 
         this.initRoute = this.initRoute.bind(this);
         this.deleteRoute = this.deleteRoute.bind(this);
+        this.onRouteTicketPressed = this.onRouteTicketPressed.bind(this);
     }
 
     initRoute(route) {
@@ -47,6 +47,14 @@ export default class RouteDetailScreen extends Component {
 
     componentDidMount() {
         this.getRouteDetail(this.routeId);
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.isFocused !== this.props.isFocused) {
+            if(this.props.isFocused === true) {
+                this.getRouteDetail(this.routeId);
+            }
+        }
     }
 
     async getRouteDetail(id) {
@@ -80,10 +88,19 @@ export default class RouteDetailScreen extends Component {
         }
     }
 
+    onRouteTicketPressed(routeTicket) {
+        const navigationData = {
+            route: this.state.route,
+            selectedRouteTicketId: routeTicket.id,
+        };
+
+        this.props.navigation.navigate('RouteTicketUpdate', {data: navigationData});
+    }
+
     renderTickets(routeTickets) {
         if(routeTickets === null || routeTickets === undefined) return;
         return routeTickets.map((routeTicket) => 
-            <RouteTicketViewComponent routeTicket={routeTicket} key={routeTicket.id}/>
+            <RouteTicketViewComponent onPress={this.onRouteTicketPressed} routeTicket={routeTicket} key={routeTicket.id}/>
         );
     }
 
@@ -146,12 +163,12 @@ export default class RouteDetailScreen extends Component {
                     </View>
 
                     <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
-                        <View style={{ padding: 2.5, borderRadius: 10, flex: 0.5 }}>
+                        <View style={{ paddingTop: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
                             <Button success onPress={this.onBtnBuyRoutePressed} block>
                                 <Text>Buy Route</Text>
                             </Button>
                         </View>
-                        <View style={{ padding: 2.5, borderRadius: 10, flex: 0.5 }}>
+                        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
                             <Button danger onPress={this.onBtnDeletePressed} block>
                                 <Text>Delete</Text>
                             </Button>
@@ -172,3 +189,4 @@ const styles = StyleSheet.create({
     }
 });
 
+export default withNavigationFocus(RouteDetailScreen);

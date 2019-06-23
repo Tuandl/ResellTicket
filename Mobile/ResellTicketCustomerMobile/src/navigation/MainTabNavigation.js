@@ -15,6 +15,7 @@ import DetailTicketScreen from  './../screens/postedTicket/DetailTicketScreen';
 import RouteSearchFormScreen from '../screens/route/RouteSearchFormScreen';
 import RouteSearchResultScreen from '../screens/route/RouteSearchResultScreen';
 import RouteDetailScreen from '../screens/route/RouteDetailScreen';
+import RouteTicketUpdateScreen from '../screens/route/RouteTicketUpdateScreen';
 
 const RouteStack = createStackNavigator(
   {
@@ -22,6 +23,7 @@ const RouteStack = createStackNavigator(
     RouteSearchForm: RouteSearchFormScreen,
     RouteSearchResult: RouteSearchResultScreen,
     RouteDetail: RouteDetailScreen,
+    RouteTicketUpdate: RouteTicketUpdateScreen,
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',
