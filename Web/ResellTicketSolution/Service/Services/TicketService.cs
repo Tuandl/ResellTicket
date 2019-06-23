@@ -364,7 +364,8 @@ namespace Service.Services
                     (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
                     (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
                     x.DepartureStation.CityId == departureCityId &&
-                    x.ArrivalStation.CityId == arrivalCityId
+                    x.ArrivalStation.CityId == arrivalCityId &&
+                    x.Id != routeTicket.TicketId
                 );
 
             var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());

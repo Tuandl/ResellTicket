@@ -62,6 +62,12 @@ namespace Service.Services
         /// </summary>
         /// <param name="routeId"></param>
         void DeleteRoute(int routeId);
+
+        /// <summary>
+        /// Update Route Ticket with a new Ticket
+        /// </summary>
+        /// <param name="paramsModel">Update Params</param>
+        void UpdateRouteTicket(RouteTicketUpdateParams paramsModel);
     }
 
     public class RouteService : IRouteService
@@ -340,6 +346,83 @@ namespace Service.Services
             routeCount = (routeCount % MAX_ROUTE_COUNT) + 1;
 
             return $"RTC-{routeCount.ToString("D6")}";
+        }
+
+        public void UpdateRouteTicket(RouteTicketUpdateParams paramsModel)
+        {
+            var currentRouteTicket = _routeTicketRepository.Get(x => 
+                x.Deleted == false &&
+                x.Id == paramsModel.RouteTicketId
+            );
+
+            if(currentRouteTicket == null) throw new NotFoundException();
+
+            var newTicket = _ticketRepository.Get(x =>
+                x.Deleted == false &&
+                x.Status == TicketStatus.Valid &&
+                x.Id == paramsModel.NewTicketId &&
+                x.Id != currentRouteTicket.TicketId
+            );
+
+            if(newTicket == null) throw new NotFoundException();
+
+            if(CheckBeforeUpdateRouteTicket(currentRouteTicket, newTicket) == false)
+                throw new InvalidOperationException();
+            
+            currentRouteTicket.TicketId = newTicket.Id;
+            currentRouteTicket.DepartureStationId = newTicket.DepartureStationId;
+            currentRouteTicket.ArrivalStationId = newTicket.ArrivalStationId;
+
+
+            //Update total amount for route
+            var route = _routeRepository.Get(x => x.Deleted == false && x.Id == currentRouteTicket.RouteId);
+            if(route == null) throw new NotFoundException();
+
+            //Begin update into database
+            _unitOfWork.StartTransaction();
+            _routeTicketRepository.Update(currentRouteTicket);
+            _unitOfWork.CommitChanges();
+
+            route.TotalAmount = _routeTicketRepository.GetAllQueryable()
+                .Where(x => x.Deleted == false &&
+                    x.RouteId == route.Id
+                )
+                .Sum(x => x.Ticket.SellingPrice);
+            _routeRepository.Update(route);
+
+            _unitOfWork.CommitTransaction();
+        }
+
+        /// <summary>
+        /// Check departure time and arrival time critical for new Ticket
+        /// </summary>
+        /// <param name="currentRouteTicket">Old Route Ticket</param>
+        /// <param name="newTicket">New Ticket</param>
+        /// <returns></returns>
+        public bool CheckBeforeUpdateRouteTicket(RouteTicket currentRouteTicket, Ticket newTicket)
+        {
+            var previousRouteTicket = _routeTicketRepository.Get(x =>
+                x.Deleted == false &&
+                x.RouteId == currentRouteTicket.RouteId &&
+                x.Order == currentRouteTicket.Order - 1
+            );
+
+            var nextRouteTicket = _routeTicketRepository.Get(x =>
+                x.Deleted == false &&
+                x.RouteId == currentRouteTicket.RouteId &&
+                x.Order == currentRouteTicket.Order + 1
+            );
+
+            DateTime? minDepartureDate = previousRouteTicket?.Ticket?.ArrivalDateTime;
+            DateTime? maxArrivalDate = nextRouteTicket?.Ticket?.DepartureDateTime;
+
+            if ((minDepartureDate != null && minDepartureDate > newTicket.DepartureDateTime) ||
+                (maxArrivalDate != null && maxArrivalDate < newTicket.ArrivalDateTime))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
