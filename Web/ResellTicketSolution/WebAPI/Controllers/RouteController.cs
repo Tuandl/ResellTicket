@@ -1,4 +1,5 @@
 ﻿using Core.Enum;
+using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
@@ -25,7 +26,6 @@ namespace WebAPI.Controllers
             _routeService = routeService;
             _ticketService = ticketService;
         }
-
 
         /// <summary>
         /// Search Route by some criterials
@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
                 var routeId = _routeService.AddRoute(routeSearchViewModel, userName);
                 return Ok(routeId);
             }
-            catch(NotFoundException)
+            catch (NotFoundException)
             {
                 return BadRequest("Cannot Create Route for this customer");
             }
@@ -203,6 +203,25 @@ namespace WebAPI.Controllers
             {
                 var tickets = _ticketService.GetTicketAvailableForRouteTicket(routeTicketId);
                 return Ok(tickets);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GetRootException().Message);
+            }
+        }
+
+        [HttpPost("buy-route")]
+        public ActionResult BuyRoute(BuyRouteParams model)
+        {
+            var username = User.Identity.Name;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+            try
+            {
+                _routeService.BuyRoute(model, username);
+                return Ok();
             }
             catch (Exception ex)
             {
