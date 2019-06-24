@@ -30,6 +30,7 @@ namespace ViewModel.AutoMapper
             CreateMap<RouteDetailViewModel, Route>();
             CreateMap<RouteTicketDetailViewModel, RouteTicket>();
             CreateMap<RouteTicketSearchViewModel, RouteTicket>();
+            CreateMap<BuyRouteParams, RouteTicket>();
         }
     }
 }

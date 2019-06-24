@@ -57,6 +57,10 @@ export default class RouteScreen extends Component {
         }
     }
 
+    refreshRoute = () => {
+        this.getCustomerRoute();
+    }
+
     renderRoutes(routes) {
         return routes.map((route, index) => 
             <RouteHistoryView route={route} key={index} onPress={this.onHistoryPressed}/>
@@ -64,7 +68,7 @@ export default class RouteScreen extends Component {
     }
 
     onHistoryPressed(route) {
-        this.props.navigation.navigate('RouteDetail', {routeId: route.id});
+        this.props.navigation.navigate('RouteDetail', {refreshRoute: this.refreshRoute, routeId: route.id});
     }
 
     updateButtonGroupIndex(selectedIndex) {

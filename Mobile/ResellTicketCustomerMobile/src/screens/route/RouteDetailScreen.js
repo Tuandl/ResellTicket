@@ -47,7 +47,7 @@ export default class RouteDetailScreen extends Component {
     componentDidMount() {
         this.getRouteDetail(this.routeId);
     }
-
+    
     async getRouteDetail(id) {
         if(id === null || id === undefined) {
             this.navigation.navigate('Route');
@@ -72,8 +72,24 @@ export default class RouteDetailScreen extends Component {
         );
     }
 
-    onBtnBuyRoutePressed() {
-        alert('Not support yet');
+    
+    async onBtnBuyRoutePressed () {
+        const routeId = this.routeId;
+        var params = { routeId: routeId };
+        const resBuyRoute = await api.post('api/route/buy-route', params);
+        const { navigation } = this.props;
+        if (resBuyRoute.status === 200) {
+            RNToasty.Success({
+                title: 'Buy route Successfully'
+            })
+            navigation.state.params.refreshRoute();
+            navigation.navigate('Route');
+        }
+        else {
+            RNToasty.Error({
+                title: 'Buy route Fail, All tickets in route must be valid!'
+            })
+        }
     }
 
     onBtnDeletePressed() {

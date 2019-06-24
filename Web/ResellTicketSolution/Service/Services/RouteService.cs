@@ -62,6 +62,8 @@ namespace Service.Services
         /// </summary>
         /// <param name="routeId"></param>
         void DeleteRoute(int routeId);
+
+        string BuyRoute(BuyRouteParams model, string username);
     }
 
     public class RouteService : IRouteService
@@ -340,6 +342,66 @@ namespace Service.Services
             routeCount = (routeCount % MAX_ROUTE_COUNT) + 1;
 
             return $"RTC-{routeCount.ToString("D6")}";
+        }
+
+        public string BuyRoute(BuyRouteParams model, string username)
+        {
+            var existedRoute = _routeRepository.Get(x => x.Id == model.RouteId);
+            if (existedRoute == null)
+            {
+                return "Not found route";
+            }
+            if(existedRoute.Status == RouteStatus.New)
+            {
+                var routeTickets = _routeTicketRepository.GetAllQueryable()
+                .Where(t => t.RouteId == existedRoute.Id).ToList();
+                var tickets = new List<Ticket>();
+                var ticketList = _ticketRepository.GetAll();
+                foreach (var routeTicket in routeTickets)
+                {
+                    foreach(var ticket in ticketList)
+                    {
+                        if(ticket.Id == routeTicket.TicketId)
+                        {
+                            tickets.Add(ticket);
+                        }
+                    }
+                }
+                
+                var count = 0;
+                foreach (var ticket in tickets)
+                {
+                    if (ticket.Status == TicketStatus.Valid)
+                    {
+                        count++;
+                    }
+                }
+                if (count == tickets.Count())
+                {
+                    existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username)).Id;
+                    foreach (var ticket in tickets)
+                    {
+                        ticket.BuyerId = existedRoute.CustomerId;
+                        ticket.Status = TicketStatus.Bought;
+                        _ticketRepository.Update(ticket);
+                    }
+                    existedRoute.Status = RouteStatus.Bought;
+                    _routeRepository.Update(existedRoute);
+                } 
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+                try
+                {
+                    _unitOfWork.CommitChanges();
+                }
+                catch (Exception ex)
+                {
+                    return ex.Message;
+                }
+            }
+            return string.Empty;
         }
     }
 }
