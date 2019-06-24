@@ -21,6 +21,7 @@ namespace ViewModel.ViewModel.Route
         public decimal CommissionPercent { get; set; }
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
+        public int TicketId { get; set; }
         public int TicketTypeId { get; set; }
         public string TicketTypeName { get; set; }
         public string VehicleName { get; set; }

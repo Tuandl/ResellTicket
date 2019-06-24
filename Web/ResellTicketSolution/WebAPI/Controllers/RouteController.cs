@@ -15,12 +15,15 @@ namespace WebAPI.Controllers
     public class RouteController : ControllerBase
     {
         private readonly IRouteService _routeService;
+        private readonly ITicketService _ticketService;
 
         public RouteController(
-                IRouteService routeService
+                IRouteService routeService,
+                ITicketService ticketService
             )
         {
             _routeService = routeService;
+            _ticketService = ticketService;
         }
 
 
@@ -69,8 +72,8 @@ namespace WebAPI.Controllers
             try
             {
                 var userName = User.Identity.Name;
-                _routeService.AddRoute(routeSearchViewModel, userName);
-                return Ok();
+                var routeId = _routeService.AddRoute(routeSearchViewModel, userName);
+                return Ok(routeId);
             }
             catch(NotFoundException)
             {
@@ -162,6 +165,44 @@ namespace WebAPI.Controllers
             {
                 _routeService.DeleteRoute(routeId);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GetRootException().Message);
+            }
+        }
+
+        /// <summary>
+        /// replace new Ticket for existed route ticket
+        /// </summary>
+        /// <param name="paramsModel">Params</param>
+        /// <returns></returns>
+        [HttpPut("route-ticket")]
+        public IActionResult UpdateRouteTicket(RouteTicketUpdateParams paramsModel)
+        {
+            try
+            {
+                _routeService.UpdateRouteTicket(paramsModel);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GetRootException().Message);
+            }
+        }
+
+        /// <summary>
+        /// Get Updateable ticket for this route ticket
+        /// </summary>
+        /// <param name="routeTicketId">Route Ticket Id</param>
+        /// <returns></returns>
+        [HttpGet("route-ticket/{routeTicketId}/ticket")]
+        public IActionResult GetAvailableTicketForRouteTicket(int routeTicketId)
+        {
+            try
+            {
+                var tickets = _ticketService.GetTicketAvailableForRouteTicket(routeTicketId);
+                return Ok(tickets);
             }
             catch (Exception ex)
             {

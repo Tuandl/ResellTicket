@@ -21,10 +21,13 @@ export default class RouteSearchResultScreen extends Component {
 
         this.params = this.props.navigation.getParam('params');
         console.log('route search params here', this.params);
-        this.navigate = this.props.navigation;
+        this.navigation = this.props.navigation;
         this.state = {
             routes: [],
         };
+
+        this.onRoutePressed = this.onRoutePressed.bind(this);
+        this.saveRoute = this.saveRoute.bind(this);
     }
 
     componentDidMount() {
@@ -55,15 +58,25 @@ export default class RouteSearchResultScreen extends Component {
             const response = await api.post(this.URL_ROUTE_SAVE, params);
             if(response.status === 200) {
                 RNToasty.Success({title: 'Save route successfullt'});
+                params.id = response.data;
+                this.navigation.navigate('RouteDetail', {routeId: params.id});
             } else {
                 RNToasty.Error({title: 'Save Route Failed'});
             }
         }
     }
 
+    onRoutePressed(route) {
+        if(route.id === null || route.id === undefined || route.id <= 0) {
+            this.saveRoute(route);
+        } else {
+            this.navigation.navigate('RouteDetail', {routeId: route.id});
+        }
+    }
+
     renderRoutes(routes) {
         return routes.map((route, index) => 
-            <RouteViewComponent route={route} key={index} onRoutePressed={(params) => this.saveRoute(params)}/>
+            <RouteViewComponent route={route} key={index} onRoutePressed={(route) => this.onRoutePressed(route)}/>
         );
     }
 

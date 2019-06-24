@@ -17,6 +17,7 @@ import RouteSearchResultScreen from '../screens/route/RouteSearchResultScreen';
 import CreditCardViewListScreen from '../screens/creditCard/CreditCardViewListScreen';
 import CreditCardCreateScreen from '../screens/creditCard/CreditCardCreateScreen';
 import RouteDetailScreen from '../screens/route/RouteDetailScreen';
+import RouteTicketUpdateScreen from '../screens/route/RouteTicketUpdateScreen';
 
 const RouteStack = createStackNavigator(
   {
@@ -24,6 +25,7 @@ const RouteStack = createStackNavigator(
     RouteSearchForm: RouteSearchFormScreen,
     RouteSearchResult: RouteSearchResultScreen,
     RouteDetail: RouteDetailScreen,
+    RouteTicketUpdate: RouteTicketUpdateScreen,
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',

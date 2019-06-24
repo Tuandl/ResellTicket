@@ -1,30 +1,30 @@
-import moment from 'moment';
-import { Text } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { StyleSheet, View, Dimensions } from 'react-native';
+import { Text } from 'native-base';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-elements';
+import moment from 'moment';
 import NumberFormat from 'react-number-format';
-import formatConstant from '../../constants/formatConstant';
 import convertTicketStatus from './../../helper/convertTicketStatus';
+import formatConstant from '../../constants/formatConstant';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
-export default class RouteTicketViewComponent extends Component {
+export default class RouteTicketUpdateComponent extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             statusColor: '',
-            routeTicket: props.routeTicket,
-        };
+            ticket: props.ticket,
+        }
 
         this.onPress = this.onPress.bind(this);
     }
 
     onPress() {
-        this.props.onPress(this.state.routeTicket); 
+        this.props.onPress(this.state.ticket);
     }
 
     render() {
@@ -34,8 +34,10 @@ export default class RouteTicketViewComponent extends Component {
             departureDateTime,
             arrivalDateTime,
             status,
-            vehicleName,
-            ticketCode } = this.state.routeTicket;
+            vehicle,
+            ticketCode,
+            isSelected
+        } = this.state.ticket;
 
         {   //check hết hạn vé
             status === 1 ? this.state.statusColor = 'orange' 
@@ -45,12 +47,12 @@ export default class RouteTicketViewComponent extends Component {
 
         return (
             <TouchableNativeFeedback onPress={this.onPress}>
-                <View style={styles.wrapper}>
+                <View style={isSelected === true ? styles.wrapper_selected : styles.wrapper}>
                     <View style={styles.ticketHeader}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text>{departureCityName}  </Text>
-                            {vehicleName === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
-                                : vehicleName === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
+                            {vehicle === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
+                                : vehicle === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
                                     : <Icon name='train' type="material-community" color="grey" />
                             }
                             <Text>  {arrivalCityName}</Text>
@@ -97,6 +99,20 @@ const styles = StyleSheet.create({
         height: height / 4.5,
         width: width / 1.1,
         backgroundColor: "#fff",
+        borderRadius: 10,
+        borderTopWidth: 0.5,
+        borderLeftWidth: 0.5,
+        borderRightWidth: 2,
+        borderBottomWidth: 2,
+        borderColor: 'grey',
+        margin: 10,
+        paddingLeft: 10,
+        paddingRight: 10
+    },
+    wrapper_selected: {
+        height: height / 4.5,
+        width: width / 1.1,
+        backgroundColor: "#aee7e8",
         borderRadius: 10,
         borderTopWidth: 0.5,
         borderLeftWidth: 0.5,
