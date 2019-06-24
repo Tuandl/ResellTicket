@@ -16,6 +16,7 @@ namespace ViewModel.ViewModel.Ticket
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
         public int TicketTypeId { get; set; }
-
+        public string PassengerName { get; set; }
+        public string EmailBooking { get; set; }
     }
 }

@@ -44,7 +44,9 @@ export default class PostEditTicket extends Component {
             arrivalDateTime: '',
             ticketCode: '',
             sellingPrice: '',
-            temp: ''
+            passengerName: '',
+            emailBooking: '',
+            emailValid: true
         }
     }
 
@@ -81,6 +83,8 @@ export default class PostEditTicket extends Component {
                 arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
                 ticketCode: ticketDetail.ticketCode,
                 sellingPrice: ticketDetail.sellingPrice,
+                passengerName: ticketDetail.passengerName,
+                emailBooking: ticketDetail.emailBooking,
                 isLoading: false
             })
         }
@@ -122,19 +126,14 @@ export default class PostEditTicket extends Component {
             arrivalDateTime,
             ticketCode,
             sellingPrice,
+            passengerName,
+            emailBooking,
             isLoading,
             isPostEditLoading,
-            isDeleteLoading
+            isDeleteLoading,
+            emailValid
         } = this.state
-
         const { navigate } = this.props.navigation;
-
-        // temp === 'transportation' ? this.getTransportions() :
-        // temp === 'ticketType' ? this.getTicketTypes() :
-        //     temp === 'departureCity' ? this.getDepartureCities() :
-        //         temp === 'departureStation' ? this.getDepartureStations() :
-        //             temp === 'arrivalCity' ? this.getArrivalCities() :
-        //                 temp === 'arrivalStation' ? this.getArrivalStations() : '';
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={{ flex: 1 }}>
@@ -172,17 +171,15 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Transportation:</Label>
                             <Autocomplete
                                 defaultValue={transportationName}
-                                data={transportations.length === 1 && comp(transportationName, transportations[0].name) ? [] : transportations}
+                                data={transportations}
                                 // onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
                                 onChangeText={value => this.getTransportions(value)}
-                                onFocus={() => { this.getTransportions('') }}
-                                onBlur={() => this.setState({ transportations: [] })}
                                 placeholder="Enter Transportation"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ transportationName: item.name, transportationId: item.id })}>
+                                        onPress={() => this.setState({ transportations: [], transportationName: item.name, transportationId: item.id })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -195,17 +192,15 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Ticket Type:</Label>
                             <Autocomplete
                                 defaultValue={ticketTypeName}
-                                data={ticketTypes.length === 1 && comp(ticketTypeName, ticketTypes[0].name) ? [] : ticketTypes}
+                                data={ticketTypes}
                                 // onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
                                 onChangeText={value => this.getTicketTypes(value)}
-                                onFocus={() => { this.getTicketTypes('') }}
-                                onBlur={() => this.setState({ ticketTypes: [] })}
                                 placeholder="Enter Ticket Type"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ ticketTypeName: item.name, ticketTypeId: item.id })}>
+                                        onPress={() => this.setState({ ticketTypes: [], ticketTypeName: item.name, ticketTypeId: item.id })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -218,17 +213,20 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Departure City:</Label>
                             <Autocomplete
                                 defaultValue={departureCityName}
-                                data={departureCities.length === 1 && comp(departureCityName, departureCities[0].name) ? [] : departureCities}
-                                // onChangeText={value => this.setState({ departureCityName: value, temp: 'departureCity' })}
+                                data={departureCities}
                                 onChangeText={value => this.getDepartureCities(value)}
-                                onFocus={() => { this.getDepartureCities('') }}
-                                onBlur={() => this.setState({ departureCities: [] })}
                                 placeholder="Enter Departure City"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ departureCityName: item.name, departureCityId: item.id, departureStationName: '' })}>
+                                        onPress={() => this.setState({
+                                            departureCityName: item.name,
+                                            departureCities: [],
+                                            departureCityId: item.id,
+                                            departureStationId: item.id === this.state.departureCityId ? this.state.departureStationId : -1,
+                                            departureStationName: item.id === this.state.departureCityId ? departureStationName : ''
+                                        })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -241,17 +239,20 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Departure Station:</Label>
                             <Autocomplete
                                 defaultValue={departureStationName}
-                                data={departureStations.length === 1 && comp(departureStationName, departureStations[0].name) ? [] : departureStations}
-                                // onChangeText={value => this.setState({ departureStationName: value, temp: 'departureStation' })}
+                                data={departureStations}
                                 onChangeText={value => this.getDepartureStations(value)}
-                                onFocus={() => { this.getDepartureStations('') }}
-                                onBlur={() => this.setState({ departureStations: [] })}
                                 placeholder="Enter Departure Station"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ departureStationName: item.name, departureStationId: item.id })}>
+                                        onPress={() => this.setState({
+                                            departureStations: [],
+                                            departureStationName: item.name,
+                                            departureStationId: item.id,
+                                            departureCityId: item.cityId,
+                                            departureCityName: item.cityName
+                                        })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -264,17 +265,20 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Arrival City:</Label>
                             <Autocomplete
                                 defaultValue={arrivalCityName}
-                                data={arrivalCities.length === 1 && comp(arrivalCityName, arrivalCities[0].name) ? [] : arrivalCities}
-                                // onChangeText={value => this.setState({ arrivalCityName: value, temp: 'arrivalCity' })}
+                                data={arrivalCities}
                                 onChangeText={value => this.getArrivalCities(value)}
-                                onFocus={() => this.getArrivalCities()}
-                                onBlur={() => this.setState({ arrivalCities: [] })}
                                 placeholder="Enter Arrival City"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ arrivalCityName: item.name, arrivalCityId: item.id, arrivalStationName: '' })}>
+                                        onPress={() => this.setState({
+                                            arrivalCityName: item.name,
+                                            arrivalCities: [],
+                                            arrivalCityId: item.id,
+                                            arrivalStationId: item.id === this.state.arrivalCityId ? this.state.arrivalStationId : -1,
+                                            arrivalStationName: item.id === this.state.arrivalCityId ? arrivalStationName : ''
+                                        })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -287,16 +291,20 @@ export default class PostEditTicket extends Component {
                             <Label style={styles.label}>Arrival Station:</Label>
                             <Autocomplete
                                 defaultValue={arrivalStationName}
-                                data={arrivalStations.length === 1 && comp(arrivalStationName, arrivalStations[0].name) ? [] : arrivalStations}
+                                data={arrivalStations}
                                 onChangeText={value => this.getArrivalStations(value)}
-                                onFocus={() => { this.getArrivalStations('') }}
-                                onBlur={() => this.setState({ arrivalStations: [] })}
                                 placeholder="Enter Arrival Station"
                                 placeholderTextColor={'grey'}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ arrivalStationName: item.name, arrivalStationId: item.id })}>
+                                        onPress={() => this.setState({
+                                            arrivalStations: [],
+                                            arrivalStationName: item.name,
+                                            arrivalStationId: item.id,
+                                            arrivalCityId: item.cityId,
+                                            arrivalCityName: item.cityName
+                                        })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -351,6 +359,24 @@ export default class PostEditTicket extends Component {
                                 value={ticketCode}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
                             />
+                            {/* Enter Passenger Name */}
+                            <Label style={styles.label}>Passenger Name:</Label>
+                            <Input
+                                onChangeText={passengerName => this.setState({ passengerName })}
+                                value={passengerName}
+                                inputStyle={{ fontSize: 15, color: 'black' }}
+                            />
+                            {/* Enter Email Booking */}
+                            <Label style={styles.label}>Email Booking:</Label>
+                            <Input
+                                onChangeText={emailBooking => this.setState({ emailBooking })}
+                                value={emailBooking}
+                                inputStyle={{ fontSize: 15, color: 'black' }}
+                                errorStyle={{ textAlign: 'center', fontSize: 12, color: 'red' }}
+                                errorMessage={
+                                    emailValid ? null : 'Please enter a valid email'
+                                }
+                            />
                             {/* Enter Selling Price */}
                             <Label style={styles.label}>Selling Price:</Label>
                             <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
@@ -376,7 +402,6 @@ export default class PostEditTicket extends Component {
                                     onPress={this.postTicket}>
                                     {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Post Now</Text>}
-
                                 </Button>}
                             {isEdit ? <Button rounded block danger
                                 style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
@@ -392,12 +417,13 @@ export default class PostEditTicket extends Component {
     }
 
     deletePostedTicket = async () => {
-        const ticketId = this.props.navigation.getParam('ticketId');
-        const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
-        const { navigation } = this.props;
         this.setState({
             isDeleteLoading: true
         })
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const index = this.props.navigation.getParam('index');
+        const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
+        const { navigation } = this.props;
         if (resDeleteTicket.status === 200) {
             this.setState({
                 isDeleteLoading: false
@@ -405,18 +431,20 @@ export default class PostEditTicket extends Component {
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'
             })
-            navigation.state.params.refreshPostedTicket();
+            navigation.state.params.refreshPostedTicket(null, index);
             navigation.navigate('PostedTicket');
         }
     }
 
     editTicket = async () => {
         const { transportationName, ticketTypeName, departureStationName, arrivalStationName,
-            ticketCode, sellingPrice, departureDateTime, arrivalDateTime } = this.state;
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking } = this.state;
         const { navigation } = this.props;
         const ticketId = this.props.navigation.getParam('ticketId');
+        const index = this.props.navigation.getParam('index');
 
-        if (transportationName !== '' && ticketTypeName !== '' && departureStationName !== '' && arrivalStationName !== ''
+        if (transportationName !== '' && ticketTypeName !== '' && departureStationName !== ''
+            && arrivalStationName !== '' && passengerName != '' && emailBooking != ''
             && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== '' && arrivalDateTime !== '') {
             var ticket = {
                 id: ticketId,
@@ -428,7 +456,9 @@ export default class PostEditTicket extends Component {
                 description: '',
                 departureDateTime: departureDateTime,
                 arrivalDateTime: arrivalDateTime,
-                ticketTypeId: this.state.ticketTypeId
+                ticketTypeId: this.state.ticketTypeId,
+                emailBooking: emailBooking,
+                passengerName: passengerName
             }
             this.setState({
                 isPostEditLoading: true
@@ -441,7 +471,14 @@ export default class PostEditTicket extends Component {
                 RNToasty.Success({
                     title: 'Edit Ticket Successfully'
                 })
-                navigation.state.params.refreshPostedTicket();
+                ticket = {
+                    ...ticket,
+                    departureCityName: this.state.departureCityName,
+                    arrivalCityName: this.state.arrivalCityName,
+                    vehicle: this.state.vehicles.find(x => x.id === this.state.vehicleId).name,
+                    status: 1
+                }
+                navigation.state.params.refreshPostedTicket(ticket, index);
                 navigation.navigate('PostedTicket');
             }
         } else {
@@ -453,10 +490,11 @@ export default class PostEditTicket extends Component {
 
     postTicket = async () => {
         var { transportationId, ticketTypeId, departureStationId, arrivalStationId,
-            ticketCode, sellingPrice, departureDateTime, arrivalDateTime } = this.state;
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking } = this.state;
         var { navigation } = this.props;
         if (transportationId !== -1 && ticketTypeId !== -1 && departureStationId !== -1 && arrivalStationId !== -1
-            && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== '' && arrivalDateTime !== '') {
+            && ticketCode !== '' && sellingPrice !== '' && departureDateTime !== ''
+            && arrivalDateTime !== '' && passengerName !== '' && emailBooking !== '') {
             var ticket = {
                 ticketCode: ticketCode,
                 transportationId: transportationId,
@@ -466,7 +504,9 @@ export default class PostEditTicket extends Component {
                 description: '',
                 departureDateTime: departureDateTime,
                 arrivalDateTime: arrivalDateTime,
-                ticketTypeId: ticketTypeId
+                ticketTypeId: ticketTypeId,
+                passengerName: passengerName,
+                emailBooking: emailBooking
             }
             this.setState({
                 isPostEditLoading: true
@@ -479,7 +519,15 @@ export default class PostEditTicket extends Component {
                 RNToasty.Success({
                     title: 'Post Ticket Successfully'
                 })
-                navigation.state.params.refreshPostedTicket();
+                ticket = {
+                    ...ticket,
+                    ticketId: resPostTicket.data,
+                    departureCityName: this.state.departureCityName,
+                    arrivalCityName: this.state.arrivalCityName,
+                    vehicle: this.state.vehicles.find(x => x.id === this.state.vehicleId).name,
+                    status: 1
+                }
+                navigation.state.params.refreshPostedTicket(ticket, -1);
                 navigation.navigate('PostedTicket');
             }
         } else {
@@ -523,8 +571,17 @@ export default class PostEditTicket extends Component {
     }
 
     getDepartureCities = async (searchValue) => {
+        this.setState({
+            departureCityName: searchValue
+        })
         const res = await Api.get('api/city?name=' + searchValue);
         if (res.status === 200) {
+            for(var i = 0;i < res.data.length; i++) {
+                if(res.data[i].id === this.state.arrivalCityId) {
+                    res.data.splice(i, 1)
+                    break;
+                }
+            }
             this.setState({
                 departureCities: res.data
             })
@@ -532,8 +589,17 @@ export default class PostEditTicket extends Component {
     }
 
     getDepartureStations = async (searchValue) => {
+        this.setState({
+            departureStationName: searchValue
+        })
         const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + searchValue);
         if (res.status === 200) {
+            for(var i = 0;i < res.data.length; i++) {
+                if(res.data[i].id === this.state.departureStationId) {
+                    res.data.splice(i, 1)
+                    break;
+                }
+            }
             this.setState({
                 departureStations: res.data
             })
@@ -541,8 +607,17 @@ export default class PostEditTicket extends Component {
     }
 
     getArrivalCities = async (searchValue) => {
+        this.setState({
+            arrivalCityName: searchValue
+        })
         const res = await Api.get('api/city?name=' + searchValue);
         if (res.status === 200) {
+            for(var i = 0;i < res.data.length; i++) {
+                if(res.data[i].id === this.state.departureCityId) {
+                    res.data.splice(i, 1)
+                    break;
+                }
+            }
             this.setState({
                 arrivalCities: res.data
             })
@@ -550,8 +625,17 @@ export default class PostEditTicket extends Component {
     }
 
     getArrivalStations = async (searchValue) => {
+        this.setState({
+            arrivalStationName: searchValue
+        })
         const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + searchValue);
         if (res.status === 200) {
+            for(var i = 0;i < res.data.length; i++) {
+                if(res.data[i].id === this.state.departureStationId) {
+                    res.data.splice(i, 1)
+                    break;
+                }
+            }
             this.setState({
                 arrivalStations: res.data
             })

@@ -4,11 +4,6 @@ import { Container, Header, Body, Title, Button, Content, Left, Right } from 'na
 import { Icon } from 'react-native-elements';
 import TicketView from './../../components/TicketViewComponent';
 import Api from './../../service/Api';
-// import { FlatList } from 'react-native-gesture-handler';
-import { RNToasty } from 'react-native-toasty';
-
-const { width } = Dimensions.get('window');
-const { height } = Dimensions.get('window');
 
 export default class PostedTicket extends Component {
 
@@ -23,7 +18,7 @@ export default class PostedTicket extends Component {
     }
 
     componentWillMount() {
-        
+
     }
 
     componentDidMount() {
@@ -36,7 +31,7 @@ export default class PostedTicket extends Component {
         })
         const resCustomerTickets = await Api.get('api/ticket?page=' + this.state.page);
         if (resCustomerTickets.status === 200) {
-            if(resCustomerTickets.data.length === 5) {
+            if (resCustomerTickets.data.length === 5) {
                 this.setState({
                     isStill: true
                 })
@@ -49,16 +44,27 @@ export default class PostedTicket extends Component {
                 postedTickets: [...this.state.postedTickets, ...resCustomerTickets.data],
                 isLoading: false
             })
-            
+
         }
     }
 
-    refreshPostedTicket = () => {
-        this.getCustomerTickets();
+    refreshPostedTicket = (ticket, index) => {
+        if(index >= 0) {
+            this.state.postedTickets.splice(index, 1)
+        }
+        if(ticket !== null) {
+            this.setState({
+                postedTickets: [ticket, ...this.state.postedTickets]
+            })
+        } else {
+            this.setState({
+                postedTickets: this.state.postedTickets
+            })
+        }
     }
 
     onEndReached = () => {
-        if(this.state.isStill) {
+        if (this.state.isStill) {
             this.setState({
                 page: this.state.page + 1
             }, () => {
@@ -91,13 +97,14 @@ export default class PostedTicket extends Component {
                         </Button>
                     </Right>
                 </Header>
-                <Content contentContainerStyle={{flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Content contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                     <FlatList onEndReached={this.onEndReached}
                         onEndReachedThreshold={0.2}
                         data={postedTickets}
                         keyExtractor={(item, index) => index.toString()}
-                        renderItem={({item}) => (
-                            <TicketView 
+                        renderItem={({ item, index }) => (
+                            <TicketView
+                                index={index}
                                 postedTicket={item}
                                 navigate={navigate}
                                 refreshPostedTicket={this.refreshPostedTicket} />
