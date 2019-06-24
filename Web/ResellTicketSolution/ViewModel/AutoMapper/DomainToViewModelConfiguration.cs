@@ -40,11 +40,10 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.SellingPrice, otp => otp.MapFrom(src => src.Ticket.SellingPrice))
                 .ForMember(dest => dest.Status, otp => otp.MapFrom(src => src.Ticket.Status))
                 .ForMember(dest => dest.TicketCode, otp => otp.MapFrom(src => src.Ticket.TicketCode))
-                .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType))
                 .ForMember(dest => dest.TransportationName, otp => otp.MapFrom(src => src.Ticket.Transportation.Name))
                 .ForMember(dest => dest.TicketId, otp => otp.MapFrom(src => src.TicketId))
                 .ForMember(dest => dest.TicketTypeId, otp => otp.MapFrom(src => src.Ticket.TicketTypeId))
-                .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType.Name));
+                .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType.Name))
                 .ForMember(dest => dest.VehicleName, otp => otp.MapFrom(src => src.Ticket.Transportation.Vehicle.Name));
 
             CreateMap<Station, StationRowViewModel>()
