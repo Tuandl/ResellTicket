@@ -13,8 +13,7 @@ const {height} = Dimensions.get('window');
 
 export default class RouteTicketUpdateScreen extends Component {
 
-    URL_TICKET_DETAIL = 'api/ticket/detail';
-    URL_ROUTE_TICEKT = 'api/route/route-ticket/';
+    URL_ROUTE_TICKET = 'api/route/route-ticket/';
 
     navigation = null;
 
@@ -47,7 +46,7 @@ export default class RouteTicketUpdateScreen extends Component {
         if(routeTicketId === null || routeTicketId === undefined) {
             RNToasty.Error({ title: 'Invalid Ticket Id' });
         } else {
-            const response = await api.get(`api/route/route-ticket/${routeTicketId}/ticket`);
+            const response = await api.get(`${this.URL_ROUTE_TICKET}${routeTicketId}/ticket`);
             if(response.status === 200) {
                 this.setState({
                     ...this.state,
@@ -97,8 +96,28 @@ export default class RouteTicketUpdateScreen extends Component {
         );
     }
 
-    onUpdatePressed() {
-        alert('Not Supported');
+    async onUpdatePressed() {
+        const selectedTicket = this.state.tickets.find(ticket => 
+            ticket.isSelected === true
+        );
+        
+        if(selectedTicket === undefined) {
+            RNToasty.Error({title: 'Please selected a new ticket!'});
+            return;
+        }
+        
+        const params = {
+            routeTicketId: this.state.selectedRouteTicketId,
+            newTicketId: selectedTicket.id,
+        };
+
+        const response = await api.put(`${this.URL_ROUTE_TICKET}`, params);
+        if(response.status === 200) {
+            RNToasty.Success({title: 'Update Route Ticket successfully'});
+            this.navigation.pop();
+        } else {
+            RNToasty.Error({ title: 'Update Route Ticket Failed!' });
+        }
     }
 
     render() {

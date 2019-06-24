@@ -100,7 +100,7 @@ class RouteDetailScreen extends Component {
     renderTickets(routeTickets) {
         if(routeTickets === null || routeTickets === undefined) return;
         return routeTickets.map((routeTicket) => 
-            <RouteTicketViewComponent onPress={this.onRouteTicketPressed} routeTicket={routeTicket} key={routeTicket.id}/>
+            <RouteTicketViewComponent onPress={this.onRouteTicketPressed} routeTicket={routeTicket} key={routeTicket.ticketId}/>
         );
     }
 

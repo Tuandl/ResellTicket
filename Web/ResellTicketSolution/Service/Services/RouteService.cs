@@ -32,7 +32,8 @@ namespace Service.Services
         /// </summary>
         /// <param name="route">Route Search View Model</param>
         /// <param name="customerUserName">Created By this user</param>
-        void AddRoute(RouteSearchViewModel route, string customerUserName);
+        /// <returns>Return Route Id</returns>
+        int AddRoute(RouteSearchViewModel route, string customerUserName);
 
         /// <summary>
         /// Get route detail
@@ -210,7 +211,7 @@ namespace Service.Services
             return routeViewModel;
         }
 
-        public void AddRoute(RouteSearchViewModel model, string customerUserName)
+        public int AddRoute(RouteSearchViewModel model, string customerUserName)
         {
             var customer = _customerRepository.Get(x => 
                 x.Username == customerUserName &&
@@ -245,6 +246,8 @@ namespace Service.Services
             }
 
             _unitOfWork.CommitTransaction();
+
+            return route.Id;
         }
 
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,

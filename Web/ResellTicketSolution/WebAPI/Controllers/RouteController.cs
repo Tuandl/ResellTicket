@@ -72,8 +72,8 @@ namespace WebAPI.Controllers
             try
             {
                 var userName = User.Identity.Name;
-                _routeService.AddRoute(routeSearchViewModel, userName);
-                return Ok();
+                var routeId = _routeService.AddRoute(routeSearchViewModel, userName);
+                return Ok(routeId);
             }
             catch(NotFoundException)
             {
