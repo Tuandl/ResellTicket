@@ -521,7 +521,7 @@ export default class PostEditTicket extends Component {
                 })
                 ticket = {
                     ...ticket,
-                    ticketId: resPostTicket.data,
+                    id: resPostTicket.data,
                     departureCityName: this.state.departureCityName,
                     arrivalCityName: this.state.arrivalCityName,
                     vehicle: this.state.vehicles.find(x => x.id === this.state.vehicleId).name,
