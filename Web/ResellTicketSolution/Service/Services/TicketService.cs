@@ -90,7 +90,7 @@ namespace Service.Services
         {
             var validTickets = _ticketRepository.GetAllQueryable().Where(t => t.Status == Core.Enum.TicketStatus.Valid).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(validTickets);
-            
+
 
             return ticketRowViewModels;
         }
@@ -205,35 +205,35 @@ namespace Service.Services
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.SellerId = customerId;
-            var returnTicket = _ticketRepository.Add(ticket);
+            _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
-            return returnTicket.Id;
+            return ticket.Id;
         }
 
         public void EditTicket(TicketEditViewModel model)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
-            if(model.TransportationId != -1 && model.TransportationId != existedTicket.TransportationId)
+            if (model.TransportationId != -1 && model.TransportationId != existedTicket.TransportationId)
             {
                 existedTicket.TransportationId = model.TransportationId;
             }
-            if(model.ArrivalStationId != -1 && model.ArrivalStationId != existedTicket.ArrivalStationId)
+            if (model.ArrivalStationId != -1 && model.ArrivalStationId != existedTicket.ArrivalStationId)
             {
                 existedTicket.ArrivalStationId = model.ArrivalStationId;
             }
-            if(model.DepartureStationId != -1 && model.DepartureStationId != existedTicket.DepartureStationId)
+            if (model.DepartureStationId != -1 && model.DepartureStationId != existedTicket.DepartureStationId)
             {
                 existedTicket.DepartureStationId = model.DepartureStationId;
             }
-            if(model.TicketTypeId != -1 && model.TicketTypeId != existedTicket.TicketTypeId)
+            if (model.TicketTypeId != -1 && model.TicketTypeId != existedTicket.TicketTypeId)
             {
                 existedTicket.TicketTypeId = model.TicketTypeId;
             }
-            if(model.DepartureDateTime != existedTicket.DepartureDateTime)
+            if (model.DepartureDateTime != existedTicket.DepartureDateTime)
             {
                 existedTicket.DepartureDateTime = model.DepartureDateTime;
             }
-            if(model.ArrivalDateTime != existedTicket.ArrivalDateTime)
+            if (model.ArrivalDateTime != existedTicket.ArrivalDateTime)
             {
                 existedTicket.ArrivalDateTime = model.ArrivalDateTime;
             }
@@ -306,7 +306,7 @@ namespace Service.Services
                     return ex.Message;
                 }
             }
-            
+
             return string.Empty;
         }
 
