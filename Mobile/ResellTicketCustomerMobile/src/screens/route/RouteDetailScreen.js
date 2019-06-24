@@ -114,7 +114,6 @@ class RouteDetailScreen extends Component {
             RNToasty.Success({
                 title: 'Buy route Successfully'
             })
-            navigation.state.params.refreshRoute();
             navigation.navigate('Route');
         }
         else {
