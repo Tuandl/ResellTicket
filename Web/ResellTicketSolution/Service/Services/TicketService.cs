@@ -31,10 +31,8 @@ namespace Service.Services
         //getTicketsCompletedStatus
         List<TicketRowViewModel> GetCompletedTickets();
         string ApproveTicket(int id);
-
         string RejectTicket(int id);
-
-        void PostTicket(string username, TicketPostViewModel model);
+        int PostTicket(string username, TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
         void DeleteTicket(int ticketId);
         List<CustomerTicketViewModel> GetCustomerTickets(string username, int page);
@@ -200,15 +198,16 @@ namespace Service.Services
             return ticketDetailVM;
         }
 
-        public void PostTicket(string username, TicketPostViewModel model)
+        public int PostTicket(string username, TicketPostViewModel model)
         {
             var customerId = _customerRepository.Get(x => x.Username == username).Id;
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.SellerId = customerId;
-            _ticketRepository.Add(ticket);
+            var returnTicket = _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
+            return returnTicket.Id;
         }
 
         public void EditTicket(TicketEditViewModel model)

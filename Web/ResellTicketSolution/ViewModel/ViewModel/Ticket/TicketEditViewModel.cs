@@ -34,5 +34,7 @@ namespace ViewModel.ViewModel.Ticket
 
         [Required]
         public int TicketTypeId { get; set; }
+        public string PassengerName { get; set; }
+        public string EmailBooking { get; set; }
     }
 }

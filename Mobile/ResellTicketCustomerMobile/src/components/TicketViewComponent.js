@@ -20,11 +20,11 @@ export default class TicketViewComponent extends Component {
     }
 
     editTicketOrViewTicketDetails = () => {
-        const { postedTicket, navigate, refreshPostedTicket } = this.props;
+        const { postedTicket, navigate, refreshPostedTicket, index } = this.props;
         if(postedTicket.status !== 1 && postedTicket.status !== 3) {
-            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
+            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id, index: index})
         } else {
-            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
+            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id, index: index})
         }
         
     }

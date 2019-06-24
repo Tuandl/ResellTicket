@@ -7,7 +7,7 @@ namespace Core.Infrastructure
 {
     public interface IRepository<T> where T : class
     {
-        void Add(T entity);
+        T Add(T entity);
 
         /// <summary>
         /// Update Entity which get from db

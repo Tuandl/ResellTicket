@@ -24,7 +24,7 @@ namespace Core.Infrastructure
             _dbSet = DbContext.Set<T>();
         }
 
-        public void Add(T entity)
+        public T Add(T entity)
         {
             if(entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
@@ -32,6 +32,7 @@ namespace Core.Infrastructure
             }
 
             _dbSet.Add(entity);
+            return entity;
         }
 
         public void Delete(T entity)

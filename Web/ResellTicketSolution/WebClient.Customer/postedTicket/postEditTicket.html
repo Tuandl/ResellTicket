@@ -11,7 +11,23 @@
     <link href="../css/jquery-ui.css" rel="stylesheet">
     <link href="../css/rt-style.css" rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href="../css/bootstrap-datetimepicker.css" />
+    <style>
+        ::placeholder {
+            color: #999;
+            opacity: 1;
+            /* Firefox */
+        }
 
+        :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #999;
+        }
+
+        ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #999;
+        }
+    </style>
     <!-- css -->
 
     <!-- js -->
@@ -52,7 +68,7 @@
                         </h4>
                     </li>
                     <li>
-                        <h4><a onclick="logout()" href="index.html"><i class="fa fa-sign-out"
+                        <h4><a onclick="logout()" href="../index.html"><i class="fa fa-sign-out"
                                     aria-hidden="true"></i>Logout</a></h4>
                     </li>
                 </ul>
@@ -119,23 +135,28 @@
         <div class="container">
             <div class="main-agileits form-post-ticket" style="margin-bottom: 100px">
                 <div class="form-w3agile form1">
-                    <h3>Post Ticket</h3>
-                    <form>
+                    <h3 id="title"></h3>
+                    <form autocomplete="off">
                         <div class="row">
                             <div class="col-md-4">
                                 <label>Vehicle:</label>
                                 <div class="key" style="margin-bottom: 0">
                                     <!-- <i class="fa fa-" aria-hidden="true"></i> -->
                                     <select id="select-vehicle" style="height: 40px">
-                                        <option value="4">
-                                            Plane
-                                        </option>
-                                        <option value="7">
-                                            Bus
-                                        </option>
-                                        <option value="6">
-                                            Train
-                                        </option>
+                                        <script>
+                                            const selectVehicle = document.getElementById('select-vehicle')
+                                            Get('api/vehicle')
+                                                .then((res) => res.json())
+                                                .then((data) => {
+                                                    console.log(data)
+                                                    for (var i = 0; i < data.length; i++) {
+                                                        var option = document.createElement('OPTION');
+                                                        option.setAttribute('value', data[i].id);
+                                                        option.innerHTML = data[i].name;
+                                                        selectVehicle.appendChild(option);
+                                                    }
+                                                })
+                                        </script>
                                     </select>
                                     <div class="clearfix"></div>
                                 </div>
@@ -144,7 +165,7 @@
                                 <label>Transportation:</label>
                                 <div class="key" style="margin-bottom: 0">
                                     <div class="autocomplete">
-                                        <input type="text" placeholder="Transportattion" id="transportation"
+                                        <input type="text" placeholder="Transportation" id="transportation"
                                             onkeyup="getTransportation()">
                                     </div>
                                     <div class="clearfix"></div>
@@ -238,24 +259,43 @@
                             </div>
                         </div>
                         <div class="row" style="margin-top: 30px">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <label>Ticket Code:</label>
                                 <div class="key" style="margin-bottom: 0">
                                     <input type="text" placeholder="Ticket Code" id="ticketCode"
-                                        onkeyup="setTicketCode()">
+                                        onkeyup="setTicketCode()" />
                                     <div class="clearfix"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
+                                <label>Passenger Name:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Passenger Name" id="passengerName"
+                                        onkeyup="setPassengerName()" />
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label>Email Booking:</label>
+                                <div class="key" style="margin-bottom: 0">
+                                    <input type="text" placeholder="Email Booking" id="emailBooking"
+                                        onkeyup="setEmailBooking()" />
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
                                 <label>Selling Price:</label>
                                 <div class="key" style="margin-bottom: 0">
                                     <input type="text" placeholder="Selling Price" id="sellingPrice"
-                                        onkeyup="onKeyUp(this)" onblur="onBlur(this)" value="">
+                                        onkeyup="onKeyUp(this)" onblur="onBlur(this)" />
                                     <div class="clearfix"></div>
+                                    <!-- onkeypress="onKeyPress(event, this)" -->
                                 </div>
                             </div>
+
                         </div>
                         <div class="row" style="margin-top: 30px; text-align: center" id="btnPostEditDelete">
+
                             <!-- <input type="button" value="POST NOW" class="btn-post-now" onclick="postTicket()" /> -->
                         </div>
                     </form>

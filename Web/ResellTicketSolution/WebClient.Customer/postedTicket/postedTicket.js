@@ -1,4 +1,8 @@
 
+function logout() {
+    localStorage.clear()
+    window.location.href='../index.html'
+}
 
 function getPostedTicket() {
     ReactDOM.render(
@@ -114,12 +118,15 @@ var ticketInfo = {
     arrivalStationId: -1,
     departureDateTime: '',
     arrivalDateTime: '',
+    passengerName: '',
+    emailBooking: '',
     sellingPrice: ''
 }
 
 async function getTicketDetail() {
     var divBtn = document.getElementById('btnPostEditDelete');
     if (ticketId === '') {
+        document.getElementById('title').innerHTML = "POST TICKET"
         var btnPost = document.createElement('INPUT');
         btnPost.setAttribute('type', 'button');
         btnPost.setAttribute('value', 'POST NOW');
@@ -131,7 +138,31 @@ async function getTicketDetail() {
     const res = await Get('api/ticket/detail?ticketId=' + ticketId);
     if (res.status === 200) {
         const data = await res.json();
-        console.log(data)
+        var status = data.status;
+        if (status === 1 || status === 3) {
+            document.getElementById('title').innerHTML = "EDIT TICKET";
+            var btnEdit = document.createElement('INPUT');
+            btnEdit.setAttribute('type', 'button');
+            btnEdit.setAttribute('value', 'SAVE');
+            btnEdit.setAttribute('class', 'btn-post-now');
+            btnEdit.setAttribute('onclick', 'editTicket()');
+            divBtn.appendChild(btnEdit);
+        } else {
+            document.getElementById('title').innerHTML = "TICKET DETAIL"
+            document.getElementById('select-vehicle').setAttribute('disabled', '')
+            document.getElementById('transportation').setAttribute('readonly', '');
+            document.getElementById('ticketType').setAttribute('readonly', '');
+            document.getElementById('departureCity').setAttribute('readonly', '');
+            document.getElementById('departureStation').setAttribute('readonly', '');
+            document.getElementById('departureDate').setAttribute('readonly', '');
+            document.getElementById('arrivalCity').setAttribute('readonly', '');
+            document.getElementById('arrivalStation').setAttribute('readonly', '');
+            document.getElementById('arrivalDate').setAttribute('readonly', '');
+            document.getElementById('ticketCode').setAttribute('readonly', '');
+            document.getElementById('sellingPrice').setAttribute('readonly', '');
+            document.getElementById('passengerName').setAttribute('readonly', '');
+            document.getElementById('emailBooking').setAttribute('readonly', '');
+        }
         document.getElementById('select-vehicle').value = data.vehicleId;
         document.getElementById('transportation').value = data.transportationName;
         document.getElementById('ticketType').value = data.ticketTypeName;
@@ -143,20 +174,17 @@ async function getTicketDetail() {
         document.getElementById('arrivalDate').value = moment(data.arrivalDateTime).format('MMM DD YYYY HH:mm');
         document.getElementById('ticketCode').value = data.ticketCode;
         document.getElementById('sellingPrice').value = numeral(data.sellingPrice).format('$0,0.00');
+        document.getElementById('passengerName').value = data.passengerName
+        document.getElementById('emailBooking').value = data.emailBooking
 
+        var btnDelete = document.createElement('INPUT');
+        btnDelete.setAttribute('type', 'button');
+        btnDelete.setAttribute('value', 'DELETE');
+        btnDelete.setAttribute('class', 'btn-post-now');
+        btnDelete.setAttribute('onclick', 'deleteTicket()');
+
+        divBtn.appendChild(btnDelete);
     }
-    var btnEdit = document.createElement('INPUT');
-    btnEdit.setAttribute('type', 'button');
-    btnEdit.setAttribute('value', 'SAVE');
-    btnEdit.setAttribute('class', 'btn-post-now');
-    btnEdit.setAttribute('onclick', 'editTicket()');
-    var btnDelete = document.createElement('INPUT');
-    btnDelete.setAttribute('type', 'button');
-    btnDelete.setAttribute('value', 'DELETE');
-    btnDelete.setAttribute('class', 'btn-post-now');
-    btnDelete.setAttribute('onclick', 'deleteTicket()');
-    divBtn.appendChild(btnEdit);
-    divBtn.appendChild(btnDelete);
 }
 
 async function postTicket() {
@@ -168,9 +196,14 @@ async function postTicket() {
         departureDateTime: ticketInfo.departureDateTime,
         arrivalStationId: ticketInfo.arrivalStationId,
         arrivalDateTime: ticketInfo.arrivalDateTime,
-        sellingPrice: ticketInfo.sellingPrice
+        sellingPrice: ticketInfo.sellingPrice,
+        passengerName: ticketInfo.passengerName,
+        emailBooking: ticketInfo.emailBooking
     }
     const res = await Post('api/ticket', ticket);
+    if (res.status === 200) {
+        window.location.href = "poastedTicket.html";
+    }
 }
 
 async function editTicket() {
@@ -184,14 +217,21 @@ async function editTicket() {
         arrivalStationId: ticketInfo.arrivalStationId,
         arrivalDateTime: moment(document.getElementById('arrivalDate').value).format('YYYY-MM-DD HH:mm'),
         sellingPrice: document.getElementById('sellingPrice').value.replace(/,/g, '').replace('$', ''),
-        description: ''
+        description: '',
+        passengerName: document.getElementById('passengerName').value,
+        emailBooking: document.getElementById('emailBooking').value,
     }
     const res = await Put('api/ticket', ticket);
-
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
 }
 
 async function deleteTicket() {
     const res = await Delete('api/ticket?ticketId=' + ticketId);
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
 }
 
 async function getTransportation() {
@@ -262,14 +302,38 @@ function setArrivalDate() {
 
 function setTicketCode() {
     var ticketCode = document.getElementById('ticketCode');
-    ticketCode.value = ticketCode.value.toUpperCase();
+    //ticketCode.value = ticketCode.value.toUpperCase();
     ticketInfo.ticketCode = ticketCode.value;
+}
+
+function setPassengerName() {
+    ticketInfo.passengerName = document.getElementById('passengerName').value;
+}
+
+function setEmailBooking() {
+    ticketInfo.passengerName = document.getElementById('emailBooking').value;
 }
 
 /* start format currency */
 function onKeyUp(input) {
     formatCurrency(input);
 }
+
+// function onKeyPress(event, input) {
+//     console.log(String.fromCharCode(event.keyCode))
+//     var value = input.value;
+//     if(value.indexOf('.') != -1) {
+//         if(value.substr(value.indexOf('.')).length === 3) {
+//             input.value = value;
+//         } else {
+//             input.value += String.fromCharCode(event.keyCode)
+//         }
+//     } else {
+//         input.value += String.fromCharCode(event.keyCode)
+//     }
+//     formatCurrency(input);   
+//     return;
+// }
 
 function onBlur(input) {
     formatCurrency(input, "blur");
@@ -343,6 +407,24 @@ function autocomplete(input, array, inputType) {
                 }
             }
         }
+    } else if (inputType === 'departureStation') {
+        var arrivalStationId = ticketInfo.arrivalStationId;
+        if (arrivalStationId !== -1) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].id == arrivalStationId) {
+                    array.splice(i, 1);
+                }
+            }
+        }
+    } else if (inputType === 'arrivalStation') {
+        var departureStationId = ticketInfo.departureStationId;
+        if (departureStationId !== -1) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].id == departureStationId) {
+                    array.splice(i, 1);
+                }
+            }
+        }
     }
     var currentFocus;
     var divItems, divItemMatch, i, val = input.value;
@@ -362,46 +444,57 @@ function autocomplete(input, array, inputType) {
         if (array[i].name.toUpperCase().indexOf(val.toUpperCase()) != -1) {
             /*create a DIV element for each matching element:*/
             divItemMatch = document.createElement("DIV");
-            /*make the matching letters bold:*/
-            // divItemMatch.innerHTML = "<strong>" + array[i].name.substr(0, val.length) + "</strong>";
-            // divItemMatch.innerHTML += array[i].name.substr(val.length);
 
             divItemMatch.innerHTML = array[i].name;
             /*insert a input field that will hold the current array item's value:*/
             divItemMatch.innerHTML += "<input type='hidden' value='" + array[i].name + "' data-id='" + array[i].id + "'>";
             /*execute a function when someone clicks on the item value (DIV element):*/
-            divItemMatch.addEventListener("click", function (e) {
-                /*insert the value for the autocomplete text field:*/
-                input.value = this.getElementsByTagName("input")[0].value;
-                var ticketInfoId = this.getElementsByTagName("input")[0].getAttribute('data-id');
-                setTicketInfo(ticketInfoId);
-                /*close the list of autocompleted values,
-                (or any other open lists of autocompleted values:*/
-                closeAllLists();
-            });
+            divItemMatch.addEventListener("click", function (data) {
+                return function () {
+                    /*insert the value for the autocomplete text field:*/
+                    input.value = data.name;
+                    setTicketInfo(data);
+
+                    /*close the list of autocompleted values,
+                    (or any other open lists of autocompleted values:*/
+                    closeAllLists();
+                }
+            }(array[i]));
             divItems.appendChild(divItemMatch);
         }
     }
 
-    function setTicketInfo(ticketInfoId) {
+    function setTicketInfo(data) {
         switch (inputType) {
             case 'transportation':
-                ticketInfo.transportationId = ticketInfoId;
+                ticketInfo.transportationId = data.id;
                 return;
             case 'ticketType':
-                ticketInfo.ticketTypeId = ticketInfoId;
+                ticketInfo.ticketTypeId = data.id;
                 return;
             case 'departureCity':
-                ticketInfo.departureCityId = ticketInfoId;
+                ticketInfo.departureCityId = data.id;
+                if (data.id !== ticketInfo.departureCityId) {
+                    ticketInfo.departureStationId = -1;
+                    document.getElementById('departureStation').value = '';
+                }
                 return;
             case 'departureStation':
-                ticketInfo.departureStationId = ticketInfoId;
+                ticketInfo.departureStationId = data.id;
+                ticketInfo.departureCityId = data.cityId;
+                document.getElementById('departureCity').value = data.cityName;
                 return;
             case 'arrivalCity':
-                ticketInfo.arrivalCityId = ticketInfoId;
+                ticketInfo.arrivalCityId = data.id;
+                if (data.id !== ticketInfo.arrivalCityId) {
+                    ticketInfo.arrivalStationId = -1;
+                    document.getElementById('arrivalStation').value = '';
+                }
                 return;
             case 'arrivalStation':
-                ticketInfo.arrivalStationId = ticketInfoId;
+                ticketInfo.arrivalStationId = data.id;
+                ticketInfo.arrivalCityId = data.cityId;
+                document.getElementById('arrivalCity').value = data.cityName;
                 return;
             default:
                 return;

@@ -34,14 +34,13 @@ namespace WebAPI.Controllers
             try
             {
                 var username = User.Identity.Name;
-                _ticketService.PostTicket(username, model);
+                int Id = _ticketService.PostTicket(username, model);
+                return Ok(Id);
             }
             catch (Exception e)
             {
                 return StatusCode((int) HttpStatusCode.NotAcceptable, e.Message);
             }
-            
-            return Ok();
         }
 
         [HttpGet]

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.Models;
 using ViewModel.ViewModel.Route;
+using ViewModel.ViewModel.Station;
 using ViewModel.ViewModel.Ticket;
 using ViewModel.ViewModel.User;
 
@@ -42,6 +43,10 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType))
                 .ForMember(dest => dest.TransportationName, otp => otp.MapFrom(src => src.Ticket.Transportation.Name))
                 .ForMember(dest => dest.VehicleName, otp => otp.MapFrom(src => src.Ticket.Transportation.Vehicle.Name));
+
+            CreateMap<Station, StationRowViewModel>()
+                .ForMember(dest => dest.CityId, option => option.MapFrom(src => src.CityId))
+                .ForMember(dest => dest.CityName, option => option.MapFrom(src => src.City.Name));
         }
     }
 }

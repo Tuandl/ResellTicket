@@ -22,6 +22,8 @@ namespace Core.Models
         public virtual TicketType TicketType { get; set; }
         public int? BuyerId { get; set; }
         public int SellerId { get; set; }
+        public string PassengerName { get; set; }
+        public string EmailBooking { get; set; }
         public virtual Customer Buyer { get; set; }
         public virtual Customer Seller { get; set; }
         public virtual Transportation Transportation { get; set; }
