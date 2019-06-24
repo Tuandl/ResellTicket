@@ -50,7 +50,7 @@ export default class MeScreen extends Component {
                                     </Right>
                                 </ListItem>
                             </TouchableNativeFeedback>
-                            <TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => navigate('CreditCardViewList')}  >
                                 <ListItem style={{borderBottomWidth: 0.5}}>
                                     <Left>
                                         <Text>Credit Card</Text>

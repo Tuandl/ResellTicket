@@ -14,6 +14,8 @@ import PostEditTicketScreen from './../screens/postedTicket/PostEditTicketScreen
 import DetailTicketScreen from  './../screens/postedTicket/DetailTicketScreen';
 import RouteSearchFormScreen from '../screens/route/RouteSearchFormScreen';
 import RouteSearchResultScreen from '../screens/route/RouteSearchResultScreen';
+import CreditCardViewListScreen from '../screens/creditCard/CreditCardViewListScreen';
+import CreditCardCreateScreen from '../screens/creditCard/CreditCardCreateScreen';
 import RouteDetailScreen from '../screens/route/RouteDetailScreen';
 
 const RouteStack = createStackNavigator(
@@ -35,7 +37,9 @@ const MeStack = createStackNavigator(
     PostEditTicket: PostEditTicketScreen,
     DetailTicket: DetailTicketScreen,
     ProfileDetail: ProfileDetailScreen,
-    ChangePassword: ChangePasswordScreen
+    ChangePassword: ChangePasswordScreen,
+    CreditCardViewList: CreditCardViewListScreen,
+    CreditCardCreate: CreditCardCreateScreen,
   },
   {
     initialRouteName: 'Me',

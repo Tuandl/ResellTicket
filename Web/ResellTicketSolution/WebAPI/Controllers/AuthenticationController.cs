@@ -71,6 +71,7 @@ namespace WebAPI.Controllers
             LoginReturnViewModel loginReturn = new LoginReturnViewModel();
             loginReturn.PhoneNumber = customer.PhoneNumber;
             loginReturn.Username = customer.Username;
+            loginReturn.Id = customer.Id;
             loginReturn.Token = token;
 
             return Ok(loginReturn);
