@@ -12,7 +12,12 @@ import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from '../../service/Api';
 import keyConstant from '../../constants/keyConstant';
+import StripeConstant from '../../constants/StripeConstant';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
+import Stripe from 'react-native-stripe-api';
+
+//var StripeNative = require('react-native-stripe');
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
@@ -24,6 +29,7 @@ export default class CreditCardCreateScreen extends Component {
 
         this.state = {
             name: '',
+            cardId: '',
             name_valid: true,
             nameOnCard: '',
             nameOnCard_valid: '',
@@ -96,12 +102,12 @@ export default class CreditCardCreateScreen extends Component {
     };
 
     async createCreditCard() {
-        const { isCreate, name, name_valid, number, nameOnCard, nameOnCard_valid, postalCode, postalCode_valid, expiredMonthHash,
-            expiredMonthHash_valid, expiredYearHash, brand, cvc, cvc_valid, customerId } = this.state;
+        const { isCreate, name, name_valid, last4DigitsHash, last4DigitsHash_valid, nameOnCard, nameOnCard_valid, postalCode, postalCode_valid, expiredMonthHash,
+            expiredMonthHash_valid, expiredYearHash, brand, cvc, cvc_valid, customerId, cardId } = this.state;
 
-            const { navigate } = this.props.navigation;
+        const { navigate } = this.props.navigation;
         console.log("isss", isCreate);
-            if(isCreate) {
+        if (isCreate) {
             this.setState({
                 showLoading: true,
             });
@@ -112,14 +118,35 @@ export default class CreditCardCreateScreen extends Component {
                 nameOnCard: nameOnCard,
                 cvc: cvc,
                 postalCode: postalCode,
-                last4DigitsHash: number,
+                last4DigitsHash: last4DigitsHash,
                 expiredYearHash: expiredYearHash,
                 expiredMonthHash: expiredMonthHash,
                 customerId: customerIdDefault
             }
+
+
+
+
+
+
             try {
-                var creditCardResponse = await Api.post('/api/credit-card', data);
-                console.log('repone', creditCardResponse);
+                const client = new Stripe('pk_test_D0BLH7S0dIaPbxYxUJTFYa0T00ekNdTcE3');
+                const stripeResponse = await client.createToken({
+                    number: data.last4DigitsHash,
+                    exp_month: data.expiredMonthHash,
+                    exp_year: data.expiredYearHash,
+                    cvc: data.cvc,
+                    address_zip: data.postalCode
+                });
+
+                const dataCreditCard = {
+                    cardId: stripeResponse.card.id,
+                    brand: brand,
+                    name: name,
+                    nameOnCard: nameOnCard,
+                    customerId: customerIdDefault
+                }
+                var creditCardResponse = await Api.post('/api/credit-card', dataCreditCard);
                 if (creditCardResponse.status === 200) {
                     RNToasty.Success({
                         title: 'Create Credit Card successfully',
@@ -140,7 +167,11 @@ export default class CreditCardCreateScreen extends Component {
                 });
             }
         } else {
-
+            if (last4DigitsHash_valid !== "valid") {
+                RNToasty.Error({
+                    title: 'Number is invalid',
+                });
+            }
             if (nameOnCard_valid !== "valid") {
                 RNToasty.Error({
                     title: 'Name on your card is invalid',

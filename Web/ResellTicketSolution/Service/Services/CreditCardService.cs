@@ -37,7 +37,7 @@ namespace Service.Services
         public bool CreateCreditCard(CreaditCardCreateViewModel model)
         {
             var creditCard = _mapper.Map<CreaditCardCreateViewModel, CreditCard>(model);
-            creditCard.CardId = Guid.NewGuid().ToString();
+            //creditCard.CardId = Guid.NewGuid().ToString();
             _creditCardRepository.Add(creditCard);
             _unitOfWork.CommitChanges();
             return true;

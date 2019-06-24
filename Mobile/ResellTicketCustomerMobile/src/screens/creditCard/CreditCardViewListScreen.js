@@ -52,7 +52,6 @@ export default class CreditCardViewListScreen extends Component {
 
         try {
             var creditCardResponse = await Api.put('api/credit-card?id=' + id);
-            console.log('repone', creditCardResponse);
             this.componentDidMount();
         } catch (error) {
             toastr.error('Error', 'Error Delete Credit Data');
