@@ -32,6 +32,10 @@ export default class CreditCardViewListScreen extends Component {
     }
 
     componentDidMount() {
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener("didFocus", () => {
+            this.getCreditCardListByCustomerId();
+        });
         this.getCreditCardListByCustomerId();
     }
 
@@ -65,8 +69,8 @@ export default class CreditCardViewListScreen extends Component {
                 <Body>
                     <Image style={[s.icon]}
                         source={Icons[item.brand]} />
-                    <Text maxLength={10}>{item.name} - {item.nameOnCard}</Text>
-                    <Button onPress={()=> this.deleteCreditCard(item.id)}  style={[s.buton]} >
+                    <Text maxLength={10}>{item.last4DigitsHash}</Text>
+                    <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
                         <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
                     </Button>
                 </Body>

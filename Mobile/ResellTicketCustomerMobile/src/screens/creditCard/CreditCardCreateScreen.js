@@ -102,7 +102,7 @@ export default class CreditCardCreateScreen extends Component {
     };
 
     async createCreditCard() {
-        const { isCreate, name, name_valid, last4DigitsHash, last4DigitsHash_valid, nameOnCard, nameOnCard_valid, postalCode, postalCode_valid, expiredMonthHash,
+        const { isCreate, last4DigitsHash, last4DigitsHash_valid, nameOnCard, nameOnCard_valid, postalCode, postalCode_valid, expiredMonthHash,
             expiredMonthHash_valid, expiredYearHash, brand, cvc, cvc_valid, customerId, cardId } = this.state;
 
         const { navigate } = this.props.navigation;
@@ -114,7 +114,6 @@ export default class CreditCardCreateScreen extends Component {
             var customerIdDefault = await AsyncStorage.getItem(keyConstant.STORAGE.ID);
             const data = {
                 brand: brand,
-                name: name,
                 nameOnCard: nameOnCard,
                 cvc: cvc,
                 postalCode: postalCode,
@@ -139,10 +138,11 @@ export default class CreditCardCreateScreen extends Component {
                     address_zip: data.postalCode
                 });
 
+                var numberBlind = data.last4DigitsHash.replace(/^.{14}/g, '**** **** ****');
                 const dataCreditCard = {
-                    cardId: stripeResponse.card.id,
+                    cardId: stripeResponse.id,
                     brand: brand,
-                    name: name,
+                    last4DigitsHash: numberBlind,
                     nameOnCard: nameOnCard,
                     customerId: customerIdDefault
                 }
@@ -192,30 +192,9 @@ export default class CreditCardCreateScreen extends Component {
                     title: 'CVC is invalid',
                 });
             }
-            if (name.length <= 3) {
-                RNToasty.Error({
-                    title: 'Name is invalid',
-                });
-            }
         }
     }
 
-    validateName(name) {
-        let isValid = 'valid';
-        console.log("name1: ", name);
-        if (!name || name.length == 0) {
-            console.log("name2: ", name);
-            isValid = '';
-        }
-        console.log("isvalid: ", isValid);
-        this.setState({
-            name: name,
-            name_valid: isValid,
-            //isEditting: isValid,
-
-        });
-        return isValid;
-    }
 
     _onFocus = field => {
         /* eslint no-console: 0 */
@@ -223,7 +202,7 @@ export default class CreditCardCreateScreen extends Component {
     };
 
     render() {
-        const { showLoading, name, name_valid } = this.state;
+        const { showLoading } = this.state;
         return (
 
             <Container style={{ flex: 1 }}>
@@ -259,37 +238,6 @@ export default class CreditCardCreateScreen extends Component {
 
                             onFocus={this._onFocus}
                             onChange={this._onChange} />
-                        <Input
-                            leftIcon={
-                                <Icon
-                                    name="user-o"
-                                    type="font-awesome"
-                                    color="black"
-                                    size={25}
-                                />
-                            }
-                            containerStyle={{ marginVertical: 10 }}
-                            onChangeText={name => { this.setState({ name: name }) }}
-                            value={name}
-                            inputStyle={{ marginLeft: 10, color: 'black' }}
-                            keyboardAppearance="light"
-                            placeholder="Your name given to Credit Card"
-                            autoFocus={false}
-                            autoCapitalize="words"
-                            autoCorrect={false}
-                            keyboardType="default"
-                            returnKeyType="next"
-                            ref={input => (this.nameInput = input)}
-                            onSubmitEditing={() => {
-                                this.validateName(name);
-                            }}
-                            blurOnSubmit={false}
-                            placeholderTextColor="gray"
-                            errorStyle={{ textAlign: 'center', fontSize: 12 }}
-                            errorMessage={
-                                name_valid ? null : 'Please enter a valid name'
-                            }
-                        />
                         <Button rounded block primary
                             //activeOpacity={1}
                             underlayColor="transparent"
