@@ -1,3 +1,8 @@
+function isLogedin() {
+    var username = localStorage.getItem('USERNAME');
+    return username !== null;
+}
+
 function checkLogin(){
     var username = localStorage.getItem('USERNAME');
     var isLoggin = document.getElementById("isLoggin");
@@ -12,6 +17,7 @@ function checkLogin(){
         showingOption.style.display = 'none';
     }
 }
+
 function checkLoginProfile(){
     var username = localStorage.getItem('USERNAME');
     if(username === null){
@@ -26,7 +32,8 @@ function logout(){
 const authenticationService = {
     checkLogin,
     checkLoginProfile,
-    logout
+    logout,
+    isLogedin: isLogedin,
 }
 
 export {

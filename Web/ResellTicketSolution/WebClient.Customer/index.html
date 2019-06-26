@@ -22,9 +22,11 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<!-- css -->
 
 	<!-- js -->
+	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/jstarbox.js"></script>
 	<script type="text/javascript" src="js/authen.js"></script>
-	<script src="js/jquery-1.11.1.min.js"></script>
+	<script type="text/javascript" src="./js/moment.js"></script>
+	<script type="module" src="./index.js"></script>
 	<!-- //js -->
 </head>
 
@@ -118,123 +120,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
 	<script src="js/jquery.vide.min.js"></script>
 
+	<div class="text-center margin-top-20" id="btnStatuses">
+		
+	</div>
+
 	<!--content-->
-	<div class="content-top">
-		<div class="container">
-			<div class="row">
-				<h3 style="color: #fab005">
-					<span>Ho Chi Minh</span>
-					<i class="fa fa-long-arrow-right"></i>
-					<span>Ha Noi</span>
-				</h3>
-			</div>
-			</br>
-			<div class="row">
-				<div class="col-md-12 route">
-					<div class="routeHeader">
-						<div class="col-md-2">
-							<h4><b>Route</b></h4>
-						</div>
-						<div class="col-md-2">
-							<h4><b>Departure</b></h4>
-						</div>
-						<div class="col-md-2">
-							<h4><b>Arrival</b></h4>
-						</div>
-						<div class="col-md-2">
-							<h4><b>Amount</b></h4>
-						</div>
-						<div class="col-md-2">
-							<h4><b>Status</b></h4>
-						</div>
-						<div class="col-md-2">
-							<h4><b>Price</b></h4>
-						</div>
-					</div>
-					<div class="routeBody" style="color: #b8891d">
-						<div class="col-md-2"><span><b>00001234</b></span></div>
-						<div class="col-md-2">
-							<span>JUN 06 2019 10:00</span>
-						</div>
-						<div class="col-md-2">
-							<span>JUN 06 2019 10:00</span>
-						</div>
-						<div class="col-md-2"><span>3 tickets</span></div>
-						<div class="col-md-2"><span class="label label-warning">Pending</span></div>
-						<div class="col-md-2"><h3>200 $</h3></div>
-					</div>
-					<div class="routeFooter">
-						<span style="color: red">Expired Date: June/16/2019 22:00</span>
-					</div>
-				</div>
-				<!-- <div class="col-md-4">
-						<div class="route">
-							<div class="col-m">
-								<div class="card-header text-left">
-									<h4>Ho Chi Minh&nbsp;<i class="fa fa-bus"></i>&nbsp;Ha Noi&nbsp;1,250,000 đ</h4>
-								</div></br>
-								<div class="card-body text-left">
-									<div class="row">
-										<h6><label class="col-md-4">Ticket</label><label
-												class="col-md-4">Departure</label><label
-												class="col-md-4">Arrival</label>
-										</h6>
-									</div>
-									<div class="card-text">
-										<div class="row">
-											<div class="col-md-4">
-												RT096</br><span style="color: chocolate">Pending</span>
-											</div>
-											<div class="col-md-4">
-												June/15/2019</br>18:30
-											</div>
-											<div class="col-md-4">
-												June/15/2019</br>21:30
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="card-footer text-right text-color">
-									<span style="color: red">Expired Date: June/16/2019 22:00</span>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-4">
-						<div class="route">
-							<div class="col-m">
-								<div class="card-header text-left">
-									<h4>Ho Chi Minh&nbsp;<i class="fa fa-plane"></i>&nbsp;Da Nang&nbsp;2,000,000 đ</h4>
-								</div></br>
-								<div class="card-body text-left">
-									<div class="row">
-										<h6><label class="col-md-4">Ticket</label>
-											<label class="col-md-4">Departure</label><label
-												class="col-md-4">Arrival</label>
-										</h6>
-									</div>
-									<div class="card-text">
-										<div class="row">
-											<div class="col-md-4">
-												BFS095</br><span style="color: chocolate">Pending</span>
-											</div>
-											<div class="col-md-4">
-												June/15/2019</br>19:30
-											</div>
-											<div class="col-md-4">
-												June/15/2019</br>21:30
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="card-footer text-right text-color">
-									<span style="color: red">Expired Date: June/16/2019 20:00</span>
-								</div>
-							</div>
-						</div>
-					</div> -->
-			</div>
-		</div>
+	<div class="content-top" id="route-container">
 	</div>
 
 	<!--content-->

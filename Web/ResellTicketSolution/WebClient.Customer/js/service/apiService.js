@@ -1,10 +1,18 @@
-import {appConfig} from './../../constant/appConfig.js';
+import { appConfig } from './../../constant/appConfig.js';
+import toastService from './toastService.js';
 
 const token = localStorage.getItem('TOKEN');
 
-function Get(url) {
+function getQueryString(paramObject) {
+    let query = Object.keys(paramObject)
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramObject[k]))
+        .join('&');
+    return query;
+}
+
+function Get(url, params) {
     return new Promise((resolve, reject) => {
-        fetch(appConfig.apiBaseUrl + url, {
+        fetch(appConfig.apiBaseUrl + url + '?' + getQueryString(params), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -12,9 +20,17 @@ function Get(url) {
                 'Authorization': `Bearer ${token}`,
             }
         }).then((response) => {
-            resolve(response);
+            if (response.status === 401) {
+                window.location.replace(appConfig.url.login);
+                reject(response);
+            }
+            if(response.status === 200) {
+                response.json().then(data => resolve(data));
+            } else {
+                reject(response);
+            }
         }).catch(() => {
-            window.location.replace(appConfig.url.login);
+            toastService.error('Error');
         })
     });
 }
@@ -30,9 +46,17 @@ function Post(url, data) {
             },
             body: JSON.stringify(data)
         }).then((response) => {
-            resolve(response);
+            if (response.status === 401) {
+                window.location.replace(appConfig.url.login);
+                reject(response);
+            }
+            if(response.status === 200) {
+                response.json().then(data => resolve(data));
+            } else {
+                reject(response);
+            }
         }).catch((error) => {
-            window.location.replace(appConfig.url.login);
+            toastService.error('Error');
         })
     });
 }
@@ -48,9 +72,17 @@ function Put(url, data) {
             },
             body: JSON.stringify(data)
         }).then((response) => {
-            resolve(response);
+            if (response.status === 401) {
+                window.location.replace(appConfig.url.login);
+                reject(response);
+            }
+            if(response.status === 200) {
+                response.json().then(data => resolve(data));
+            } else {
+                reject(response);
+            }
         }).catch((error) => {
-            window.location.replace(appConfig.url.login);
+            toastService.error('Error');
         })
     });
 }
@@ -65,9 +97,17 @@ function Delete(url) {
                 'Authorization': `Bearer ${token}`,
             }
         }).then((response) => {
-            resolve(response);
+            if (response.status === 401) {
+                window.location.replace(appConfig.url.login);
+                reject(response);
+            }
+            if(response.status === 200) {
+                response.json().then(data => resolve(data));
+            } else {
+                reject(response);
+            }
         }).catch((error) => {
-            window.location.replace(appConfig.url.login);
+            toastService.error('Error');
         })
     });
 }
@@ -79,4 +119,4 @@ const apiService = {
     delete: Delete,
 }
 
-export {apiService}
+export default apiService;

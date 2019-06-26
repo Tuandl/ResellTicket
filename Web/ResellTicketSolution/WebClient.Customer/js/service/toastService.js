@@ -6,7 +6,8 @@ function error(message) {
     var element = document.createElement('div');
     element.innerHTML = message;
     element.classList.add('snackbar');
-    element.classList.add('snackbar-error');
+    element.classList.add('alert');
+    element.classList.add('alert-danger');
     body.appendChild(element);
 
     element.classList.add('show');
@@ -22,7 +23,8 @@ function success(message) {
     var element = document.createElement('div');
     element.innerHTML = message;
     element.classList.add('snackbar');
-    element.classList.add('snackbar-success');
+    element.classList.add('alert');
+    element.classList.add('alert-success');
     body.appendChild(element);
 
     element.classList.add('show');
@@ -38,4 +40,4 @@ const toastService = {
     toastTimeOut: TOAST_TIME_OUT,
 }
 
-export { toastService }
+export default toastService;

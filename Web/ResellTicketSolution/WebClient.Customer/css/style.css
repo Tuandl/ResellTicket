@@ -3791,7 +3791,7 @@ span.last {
     visibility: hidden;
     min-width: 250px;
     margin-left: -125px;
-    color: #fff;
+    /* color: #fff; */
     text-align: center;
     border-radius: 2px;
     padding: 16px;
@@ -3859,4 +3859,12 @@ span.last {
         bottom: 0;
         opacity: 0;
     }
+}
+
+.margin-bottom-20 {
+    margin-bottom: 20px;
+}
+
+.margin-top-20 {
+    margin-top: 20px;
 }
