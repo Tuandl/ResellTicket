@@ -3,6 +3,7 @@ using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.Extensions.Options;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using ViewModel.AppSetting;
 using ViewModel.ViewModel.CreditCard;
 
 namespace Service.Services
@@ -26,14 +28,16 @@ namespace Service.Services
         private readonly ICustomerService _customerService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IOptions<CrediCardSetting> SETTING;
 
         public CreditCardService(ICreditCardRepository creditCardRepository, ICustomerService customerService,
-                                IMapper mapper, IUnitOfWork unitOfWork)
+                                IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options)
         {
             _creditCardRepository = creditCardRepository;
             _customerService = customerService;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            SETTING = options;
         }
 
         [Obsolete]
@@ -68,7 +72,7 @@ namespace Service.Services
 
         public string encrypt(string encryptString)
         {
-            string EncryptionKey = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string EncryptionKey = SETTING.Value.Secret;
             byte[] clearBytes = Encoding.Unicode.GetBytes(encryptString);
             using (Aes encryptor = Aes.Create())
             {
@@ -91,7 +95,7 @@ namespace Service.Services
         }
         public string Decrypt(string cipherText)
         {
-            string EncryptionKey = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            string EncryptionKey = SETTING.Value.Secret;
             cipherText = cipherText.Replace(" ", "+");
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
             using (Aes encryptor = Aes.Create())
