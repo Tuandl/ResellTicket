@@ -4,6 +4,7 @@ import { Button, Icon, Input } from 'react-native-elements';
 import Api from './../service/Api';
 import { RNToasty } from "react-native-toasty";
 import keyConstant from '../constants/keyConstant';
+import OneSignal from 'react-native-onesignal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -20,12 +21,29 @@ export default class LoginScreen extends Component {
             password: '',
             login_failed: false,
             showLoading: false,
+            deviceId: ''
         };
+    }
+
+    componentWillMount() {
+        OneSignal.addEventListener('ids', this.onIds);
+        OneSignal.configure()
+    }
+
+    componentWillUnmount() {
+        OneSignal.removeEventListener('ids', this.onIds);
+    }
+
+    onIds = (device) => {
+        console.log('Device info: ', device);
+        this.setState({
+            deviceId: device.userId
+        })
     }
 
     validateUsername(username) {
         let valid = true
-        if(!username || username.length == 0) {
+        if (!username || username.length == 0) {
             valid = false;
         }
         this.setState({
@@ -36,7 +54,7 @@ export default class LoginScreen extends Component {
     }
 
     async submitLoginCredentials() {
-        const { username, password } = this.state;
+        const { username, password, deviceId } = this.state;
 
         this.setState({
             showLoading: true,
@@ -45,11 +63,13 @@ export default class LoginScreen extends Component {
         const data = {
             username: username,
             password: password,
+            deviceId: deviceId,
+            deviceType: 1
         };
 
         try {
             const response = await Api.post('api/Authentication/customer', data);
-            if(response.status === 200) {
+            if (response.status === 200) {
                 RNToasty.Success({
                     title: 'Login successfully',
                 });
@@ -59,13 +79,13 @@ export default class LoginScreen extends Component {
                 Api.setHeader(keyConstant.HEADER_KEY.AUTHORIZE, `Bearer ${response.data.token}`)
                 console.log("use :", response.data.id.toString());
                 // console.log("token : ", response.data.token);
-                this.props.navigation.navigate('Home', {username: username});
+                this.props.navigation.navigate('Home', { username: username });
             } else {
                 RNToasty.Error({
                     title: 'Invalid Username or Password',
                 });
             }
-        } catch(err) {
+        } catch (err) {
             console.error('login error', err);
         } finally {
             this.setState({

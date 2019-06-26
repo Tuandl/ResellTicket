@@ -5,6 +5,7 @@ using Core.Enum;
 using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
+using Service.NotificationService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,7 @@ namespace Service.Services
         private readonly ICityRepository _cityRepository;
         private readonly ITicketRepository _ticketRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IOneSignalService _oneSignalService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -90,7 +92,8 @@ namespace Service.Services
                 ICityRepository cityRepository,
                 ICustomerRepository customerRepository,
                 IUnitOfWork unitOfWork,
-                IMapper mapper
+                IMapper mapper,
+                IOneSignalService oneSignalService
             )
         {
             _routeRepository = routeRepository;
@@ -100,6 +103,7 @@ namespace Service.Services
             _customerRepository = customerRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _oneSignalService = oneSignalService;
         }
 
         public void DeleteRoute(int routeId)
@@ -481,6 +485,20 @@ namespace Service.Services
                 try
                 {
                     _unitOfWork.CommitChanges();
+
+                    //push noti for seller customer
+                    foreach(var ticket in tickets)
+                    {
+                        var customerDevices = ticket.Seller.CustomerDevices
+                            .Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList();
+                        List<string> deviceIds = new List<string>();
+                        foreach (var cusDev in customerDevices)
+                        {
+                            deviceIds.Add(cusDev.DeviceId);
+                        }
+                        var message = "Ticket " + ticket.TicketCode + " has been bought";
+                        _oneSignalService.PushNotification(message, deviceIds);
+                    }
                 }
                 catch (Exception ex)
                 {
