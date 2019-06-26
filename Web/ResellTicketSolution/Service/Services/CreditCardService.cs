@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.CreditCard;
+using ViewModel.ViewModel.Customer;
 
 namespace Service.Services
 {
@@ -20,21 +21,24 @@ namespace Service.Services
     {
         bool CreateCreditCard(CreaditCardCreateViewModel model);
         List<CreditCardRowViewModel> GetCreditCards(int Id);
+        string SetDefaultCard(int id, int customerId);
         string DeleteCreditCard(int id);
     }
     public class CreditCardService : ICreditCardService
     {
         private readonly ICreditCardRepository _creditCardRepository;
+        private readonly ICustomerRepository _customerRepository;
         private readonly ICustomerService _customerService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOptions<CrediCardSetting> SETTING;
 
-        public CreditCardService(ICreditCardRepository creditCardRepository, ICustomerService customerService,
+        public CreditCardService(ICreditCardRepository creditCardRepository, ICustomerService customerService, ICustomerRepository customerRepository,
                                 IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options)
         {
             _creditCardRepository = creditCardRepository;
             _customerService = customerService;
+            _customerRepository = customerRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             SETTING = options;
@@ -45,26 +49,36 @@ namespace Service.Services
         {
             StripeConfiguration.SetApiKey("sk_test_qGUMkKnqGEznTP75HVwvRKcd00wFcYnqjH");
 
-            var options = new CustomerCreateOptions
+
+            var customerTMP = _customerRepository.Get(x => x.Id == model.CustomerId);
+
+            if (customerTMP.StripeId == null || customerTMP.StripeId == "")
             {
-                Description = "Customer for jenny.rosen@example.com",
-                SourceToken = model.CardId
-            };
-
-            var service = new Stripe.CustomerService();
-            Stripe.Customer customer = service.Create(options);
-
-            //var optionsCard = new CardCreateOptions
-            //{
-            //    SourceToken = "tok_visa"
-            //};
-            //var serviceCard = new Stripe.CardService();
-            //var card = serviceCard.Create(customer.Id, optionsCard);
-
-            model.CardId = customer.DefaultSourceId;
+                var options = new CustomerCreateOptions
+                {
+                    Email = customerTMP.Email,
+                    Description = "Customer for " + customerTMP.FullName + " " + customerTMP.Email,
+                    SourceToken = model.CardId
+                };
+                var service = new Stripe.CustomerService();
+                Stripe.Customer customer = service.Create(options);
+                customerTMP.StripeId = customer.Id;
+                _customerRepository.Update(customerTMP);
+                model.CardId = customer.DefaultSourceId;
+                model.Isdefault = true;
+            }
+            else
+            {
+                var optionsCard = new CardCreateOptions
+                {
+                    SourceToken = model.CardId
+                };
+                var serviceCard = new Stripe.CardService();
+                var card = serviceCard.Create(customerTMP.StripeId, optionsCard);
+                model.CardId = card.Id;
+            }
             model.Last4DigitsHash = encrypt(model.Last4DigitsHash);
             var creditCard = _mapper.Map<CreaditCardCreateViewModel, CreditCard>(model);
-            //creditCard.CardId = Guid.NewGuid().ToString();
             _creditCardRepository.Add(creditCard);
             _unitOfWork.CommitChanges();
             return true;
@@ -133,7 +147,8 @@ namespace Service.Services
             if (existedCreditCard == null)
             {
                 return "Not found Credit Card";
-            } else
+            }
+            else
             {
                 existedCreditCard.Deleted = true;
                 _creditCardRepository.Update(existedCreditCard);
@@ -141,6 +156,25 @@ namespace Service.Services
             }
 
 
+            return "";
+        }
+
+        public string SetDefaultCard(int id, int customerId)
+        {
+            var creditCardToSetDefault = _creditCardRepository.Get(x => x.Id == id);
+            var creditCardToSetNOTDefault = _creditCardRepository.Get(x => x.CustomerId == customerId && x.Isdefault == true);
+            if (creditCardToSetDefault == null)
+            {
+                return "Not found Credit Card";
+            }
+            else
+            {
+                creditCardToSetNOTDefault.Isdefault = false;
+                creditCardToSetDefault.Isdefault = true;
+                _creditCardRepository.Update(creditCardToSetNOTDefault);
+                _creditCardRepository.Update(creditCardToSetDefault);
+                _unitOfWork.CommitChanges();
+            }
             return "";
         }
     }

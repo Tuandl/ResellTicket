@@ -4,12 +4,13 @@ import {
     View,
     ImageBackground,
     Image,
-
+    TouchableOpacity,
     StyleSheet,
     Platform,
     AsyncStorage,
     FlatList
 } from "react-native";
+import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 import { Text, ListItem, Left, Body, Right, Title } from "native-base";
 import { Container, Header, Button, Content } from 'native-base';
 import defaultIcons from "./Icons";
@@ -62,18 +63,36 @@ export default class CreditCardViewListScreen extends Component {
         }
     }
 
+    async setDefaultCard(id, customerId) {
+
+        try {
+            var creditCardResponse = await Api.put('api/credit-card/set-default-card?Id=' + id + '&CustomerId=' + customerId);
+            this.componentDidMount();
+        } catch (error) {
+            toastr.error('Error', 'Error Delete Credit Data');
+        }
+    }
+
+    
+
     renderItem = ({ item }) => {
         const Icons = { ...defaultIcons };
         return (
-            <ListItem style={{ marginLeft: 10 }}>
-                <Body>
-                    <Image style={[s.icon]}
-                        source={Icons[item.brand]} />
-                    <Text maxLength={10}>{item.last4DigitsHash}</Text>
-                    <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
-                        <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
-                    </Button>
-                </Body>
+            <ListItem style={{ marginLeft: 10 }} >
+                <TouchableOpacity onPress={() => this.setDefaultCard(item.id, item.customerId)}>
+                    <Body>
+                        <Image style={[s.icon]}
+                            source={Icons[item.brand]} />
+                        {console.log("qa:", item.isdefault)}
+                        <Text maxLength={10}>{item.last4DigitsHash} </Text>
+                        <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
+                            <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
+                        </Button>
+                        {item.isdefault === true ? <Button style={[s.butonCheck]} >
+                            <Icon name="check-circle-outline" type="material-community" color="#fff" />
+                        </Button> : null}
+                    </Body>
+                </TouchableOpacity>
             </ListItem>
         );
 
@@ -105,7 +124,7 @@ export default class CreditCardViewListScreen extends Component {
                 <FlatList
                     data={creditCard}
                     renderItem={this.renderItem}
-                    keyExtractor={item => item.name}
+                    keyExtractor={item => item.id}
                     stickyHeaderIndices={this.state.stickyHeaderIndices}
                 />
                 {/* </Content> */}
@@ -122,24 +141,38 @@ const s = StyleSheet.create({
     cardFace: {},
     icon: {
         position: "absolute",
-        top: -2,
+        top: -4,
         bottom: 10,
-        right: 50,
+        right: -150,
         width: 70,
         height: 30,
         resizeMode: "contain",
     },
     buton: {
         position: "absolute",
-        top: -2,
+        top: -4,
         textAlign: "center",
-        right: 5,
+        right: -180,
         width: 30,
         height: 30,
         resizeMode: "cover",
     },
+    butonCheck: {
+        backgroundColor: "green",
+        position: "absolute",
+        top: -2,
+        //textAlign: "center",
+        right: -30,
+        width: 25,
+        height: 25,
+        //resizeMode: "cover",
+    },
     smallIcon: {
-        textAlign: "center"
+
+        position: "absolute",
+        textAlign: "center",
+        width: 28,
+        height: 28
     },
     baseText: {
         color: "rgba(255, 255, 255, 0.8)",
