@@ -57,7 +57,6 @@ export default class LoginScreen extends Component {
                 AsyncStorage.setItem(keyConstant.STORAGE.TOKEN, response.data.token);
                 AsyncStorage.setItem(keyConstant.STORAGE.ID, response.data.id.toString());
                 Api.setHeader(keyConstant.HEADER_KEY.AUTHORIZE, `Bearer ${response.data.token}`)
-                console.log("use :", response.data.id.toString());
                 // console.log("token : ", response.data.token);
                 this.props.navigation.navigate('Home', {username: username});
             } else {
