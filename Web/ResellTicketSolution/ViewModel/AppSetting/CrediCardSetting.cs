@@ -7,5 +7,6 @@ namespace ViewModel.AppSetting
     public class CrediCardSetting
     {
         public string Secret { get; set; }
+        public string SecretStripe { get; set; }
     }
 }

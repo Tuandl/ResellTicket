@@ -8,6 +8,7 @@ using ViewModel.ViewModel.Ticket;
 using ViewModel.ViewModel.TicketType;
 using ViewModel.ViewModel.CreditCard;
 using ViewModel.ViewModel.Route;
+using ViewModel.ViewModel.Payment;
 
 namespace ViewModel.AutoMapper
 {
@@ -31,6 +32,8 @@ namespace ViewModel.AutoMapper
             CreateMap<RouteTicketDetailViewModel, RouteTicket>();
             CreateMap<RouteTicketSearchViewModel, RouteTicket>();
             CreateMap<BuyRouteParams, RouteTicket>();
+
+            CreateMap<PaymentCreateViewModel, Payment>();
         }
     }
 }
