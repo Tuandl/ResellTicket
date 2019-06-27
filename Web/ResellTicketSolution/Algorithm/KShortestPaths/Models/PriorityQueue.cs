@@ -12,7 +12,7 @@ namespace Algorithm.KShortestPaths.Models
     /// <remarks>Searching Complexity: O(log N)</remarks>
     public class PriorityQueue <T> where T : IComparable
     {
-        private List<T> data;
+        public List<T> data;
 
         public PriorityQueue()
         {

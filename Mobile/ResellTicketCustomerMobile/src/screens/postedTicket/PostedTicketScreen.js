@@ -48,19 +48,27 @@ export default class PostedTicket extends Component {
         }
     }
 
-    refreshPostedTicket = (ticket, index) => {
-        if(index >= 0) {
-            this.state.postedTickets.splice(index, 1)
-        }
-        if(ticket !== null) {
-            this.setState({
-                postedTickets: [ticket, ...this.state.postedTickets]
-            })
-        } else {
-            this.setState({
-                postedTickets: this.state.postedTickets
-            })
-        }
+    refreshPostedTicket = () => {
+        // if(index >= 0) {
+        //     this.state.postedTickets.splice(index, 1)
+        // }
+        // if(ticket !== null) {
+        //     this.setState({
+        //         postedTickets: [ticket, ...this.state.postedTickets]
+        //     })
+        // } else {
+        //     this.setState({
+        //         postedTickets: this.state.postedTickets
+        //     })
+        // }
+        console.log('huy')
+        this.setState({
+            postedTickets: [],
+            page : 1 
+        }, () => {
+            this.getCustomerTickets();
+        })
+        
     }
 
     onEndReached = () => {
@@ -104,7 +112,6 @@ export default class PostedTicket extends Component {
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item, index }) => (
                             <TicketView
-                                index={index}
                                 postedTicket={item}
                                 navigate={navigate}
                                 refreshPostedTicket={this.refreshPostedTicket} />

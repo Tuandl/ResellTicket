@@ -15,6 +15,7 @@ namespace Core.Models
         public string Last4DigitsHash { get; set; }
         public string ExpiredYearHash { get; set; }
         public string ExpiredMonthHash { get; set; }
+        public bool Isdefault { get; set; }
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Payout> Payouts { get; set; }

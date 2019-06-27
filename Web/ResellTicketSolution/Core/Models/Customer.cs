@@ -13,11 +13,12 @@ namespace Core.Models
         public string Address { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }
-        public int StripeId { get; set; }
+        public string StripeId { get; set; }
         public virtual ICollection<Ticket> SoldTickets { get; set; }
         public virtual ICollection<Ticket> BoughtTickets { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<CreditCard> CreditCards { get; set; }
         public virtual ICollection<Route> Routes { get; set; }
+        public virtual ICollection<CustomerDevice> CustomerDevices { get; set; }
     }
 }

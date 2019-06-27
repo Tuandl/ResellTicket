@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Services;
+using System;
 using System.Net;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;
@@ -32,7 +33,7 @@ namespace WebAPI.Controllers
         [HttpPost]
         public ActionResult RequestToken(LoginViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
@@ -48,7 +49,7 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("customer")]
-        public IActionResult CheckCustomerLogin(LoginViewModel loginViewModel)
+        public ActionResult CheckCustomerLogin(LoginViewModel loginViewModel)
         {
             if (!ModelState.IsValid)
             {
@@ -56,25 +57,30 @@ namespace WebAPI.Controllers
             }
 
             //Call Service asynchronous to check login
-            var customer = _authenticationService.CheckCustomerLogin(loginViewModel);
-
-            if (customer == null)
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
+                var customer = _authenticationService.CheckCustomerLogin(loginViewModel);
+                if (customer == null)
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
+                }
+
+                customer.PasswordHash = null;
+
+                //Get Value from appSetting.json
+                var token = customer.BuildToken(AUTH_SETTING.Value);
+                //return value to client ( username, phone, token)
+                LoginReturnViewModel loginReturn = new LoginReturnViewModel();
+                loginReturn.PhoneNumber = customer.PhoneNumber;
+                loginReturn.Username = customer.Username;
+                loginReturn.Id = customer.Id;
+                loginReturn.Token = token;
+                return Ok(loginReturn);
             }
-
-            customer.PasswordHash = null;
-
-            //Get Value from appSetting.json
-            var token = customer.BuildToken(AUTH_SETTING.Value);
-            //return value to client ( username, phone, token)
-            LoginReturnViewModel loginReturn = new LoginReturnViewModel();
-            loginReturn.PhoneNumber = customer.PhoneNumber;
-            loginReturn.Username = customer.Username;
-            loginReturn.Id = customer.Id;
-            loginReturn.Token = token;
-
-            return Ok(loginReturn);
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
         }
     }
 }

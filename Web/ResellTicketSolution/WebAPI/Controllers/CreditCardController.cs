@@ -56,6 +56,24 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        [Route("set-default-card")]
+        public ActionResult SetDefaultCard(int Id, int CustomerId)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest("Invalid Request");
+            //}
+
+            var updateResult = _creditCardService.SetDefaultCard(Id, CustomerId);
+
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+            return Ok();
+        }
+
         [HttpGet]
         [Route("")]
         public ActionResult<List<CreditCardRowViewModel>> GetCreditCardByCustomerId(int id)
