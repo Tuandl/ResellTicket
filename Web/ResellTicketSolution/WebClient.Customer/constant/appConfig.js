@@ -18,6 +18,7 @@ const appConfig = {
         datetime: 'ddd, MMM DD, YYYY HH:mm',
         date: 'ddd, MMM DD, YYYY',
         time: 'HH:mm',
+        datetimeISO: 'YYYY-MM-DD HH:mm',
     },
     MAX_RANDOM_ID: 9999999,
 }

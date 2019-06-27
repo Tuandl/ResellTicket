@@ -38,12 +38,18 @@ function getQueryString(paramObject) {
     return query;
 }
 
+function getQueryParam(key) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(key);
+}
+
 const commonService = {
     generateRandomId: generateRandomId,
     removeAllChildren: removeAllChildren,
     htmlToElement,
     htmlToElements,
     getQueryString,
+    getQueryParam,
 };
 
 export default commonService
