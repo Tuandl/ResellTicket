@@ -29,6 +29,7 @@ namespace Core.Data
         public virtual DbSet<Refund> Refunds { get; set; }
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Route> Routes { get; set; }
+        public virtual DbSet<CustomerDevice> CustomerDevices { get; set; }
 
         /// <summary>
         /// Config Models using Fluent API
@@ -52,6 +53,7 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new PaymentMap());
             modelBuilder.ApplyConfiguration(new RouteMap());
             modelBuilder.ApplyConfiguration(new TicketTypeMap());
+            modelBuilder.ApplyConfiguration(new CustomerDeviceMap());
 
 
             modelBuilder.Entity<User>().ToTable("User");

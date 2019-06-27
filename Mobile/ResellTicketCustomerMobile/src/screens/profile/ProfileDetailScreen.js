@@ -88,7 +88,6 @@ export default class ProfileDetailScreen extends Component {
         var usernameDefault = await AsyncStorage.getItem(keyConstant.STORAGE.USERNAME);
         try {
             var customerResponse = await Api.get('api/customer/getCustomerByUsename?usename=' + usernameDefault);
-            console.log('repone', customerResponse);
             this.setState({
                 username: usernameDefault,
                 fullName: customerResponse.data.fullName,
@@ -172,10 +171,10 @@ export default class ProfileDetailScreen extends Component {
                                         size={25}
                                     />
                                 }
-                                containerStyle={{ marginVertical: 10 }}
+                                containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2  }}
                                 onChangeText={username => { this.setState({ username: username }) }}
                                 value={username}
-                                inputStyle={{ marginLeft: 10, color: 'black' }}
+                                inputStyle={{ marginLeft: 20, color: 'grey' }}
                                 keyboardAppearance="light"
                                 placeholder="Username"
                                 autoFocus={false}
@@ -191,47 +190,41 @@ export default class ProfileDetailScreen extends Component {
                             <Input
                                 leftIcon={
                                     <Icon
-                                        name="user-o"
+                                        name="mobile"
                                         type="font-awesome"
                                         color="black"
                                         size={25}
                                     />
                                 }
-                                containerStyle={{ marginVertical: 10 }}
-                                onChangeText={fullName => { this.setState({ fullName: fullName }) }}
-                                value={fullName}
-                                inputStyle={{ marginLeft: 10, color: 'black' }}
+                                containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2  }}
+                                onChangeText={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
+                                value={phoneNumber}
+                                inputStyle={{ marginLeft: 30, color: 'grey' }}
                                 keyboardAppearance="light"
-                                placeholder="Full Name"
+                                placeholder="Phone Number"
                                 autoFocus={false}
-                                autoCapitalize="words"
+                                autoCapitalize="none"
                                 autoCorrect={false}
-                                keyboardType="default"
+                                keyboardType="email-address"
                                 returnKeyType="next"
-                                ref={input => (this.fullNameInput = input)}
-                                onSubmitEditing={() => {
-                                    this.validateFullName(fullName);
-                                }}
+                                ref={input => (this.phoneNumberInput = input)}
                                 blurOnSubmit={false}
                                 placeholderTextColor="black"
-                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
-                                errorMessage={
-                                    fullName_valid ? null : 'Please enter a valid full name'
-                                }
+                                editable={false}
                             />
                             <Input
                                 leftIcon={
                                     <Icon
-                                        name="user-o"
+                                        name="envelope-o"
                                         type="font-awesome"
                                         color="black"
                                         size={25}
                                     />
                                 }
-                                containerStyle={{ marginVertical: 10 }}
+                                containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2 }}
                                 onChangeText={email => { this.setState({ email: email }) }}
                                 value={email}
-                                inputStyle={{ marginLeft: 10, color: 'black' }}
+                                inputStyle={{ marginLeft: 20, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Email Address"
                                 autoFocus={false}
@@ -256,10 +249,42 @@ export default class ProfileDetailScreen extends Component {
                                         size={25}
                                     />
                                 }
-                                containerStyle={{ marginVertical: 10 }}
+                                containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2  }}
+                                onChangeText={fullName => { this.setState({ fullName: fullName }) }}
+                                value={fullName}
+                                inputStyle={{ marginLeft: 25, color: 'black' }}
+                                keyboardAppearance="light"
+                                placeholder="Full Name"
+                                autoFocus={false}
+                                autoCapitalize="words"
+                                autoCorrect={false}
+                                keyboardType="default"
+                                returnKeyType="next"
+                                ref={input => (this.fullNameInput = input)}
+                                onSubmitEditing={() => {
+                                    this.validateFullName(fullName);
+                                }}
+                                blurOnSubmit={false}
+                                placeholderTextColor="black"
+                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
+                                errorMessage={
+                                    fullName_valid ? null : 'Please enter a valid full name'
+                                }
+                            />
+                            
+                            <Input
+                                leftIcon={
+                                    <Icon
+                                        name="address-book-o"
+                                        type="font-awesome"
+                                        color="black"
+                                        size={25}
+                                    />
+                                }
+                                containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2  }}
                                 onChangeText={address => { this.setState({ address: address }) }}
                                 value={address}
-                                inputStyle={{ marginLeft: 10, color: 'black' }}
+                                inputStyle={{ marginLeft: 25, color: 'black' }}
                                 keyboardAppearance="light"
                                 placeholder="Address"
                                 autoFocus={false}
@@ -275,31 +300,7 @@ export default class ProfileDetailScreen extends Component {
                                     address_valid ? null : 'Please enter a valid Address'
                                 }
                             />
-                            <Input
-                                leftIcon={
-                                    <Icon
-                                        name="user-o"
-                                        type="font-awesome"
-                                        color="black"
-                                        size={25}
-                                    />
-                                }
-                                containerStyle={{ marginVertical: 10 }}
-                                onChangeText={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
-                                value={phoneNumber}
-                                inputStyle={{ marginLeft: 10, color: 'black' }}
-                                keyboardAppearance="light"
-                                placeholder="Phone Number"
-                                autoFocus={false}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                keyboardType="email-address"
-                                returnKeyType="next"
-                                ref={input => (this.phoneNumberInput = input)}
-                                blurOnSubmit={false}
-                                placeholderTextColor="black"
-                                editable={false}
-                            />
+                            
                         </View>
                         <Button rounded block primary
                             //activeOpacity={1}
@@ -308,11 +309,11 @@ export default class ProfileDetailScreen extends Component {
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: '#fff' }}
                             style={{
-                                marginTop:10 
+                                marginTop: 10
                             }}
                             titleStyle={{ fontSize: 20, color: '#fff' }}
-                        ><Text style={{ color: '#fff', fontSize: 20 }}>Upate Profile</Text></Button>
-                         
+                        ><Text style={{ color: '#fff', fontSize: 20 }}>Update Profile</Text></Button>
+
                         <Button rounded block primary
                             //activeOpacity={1}
                             underlayColor="transparent"
@@ -320,7 +321,7 @@ export default class ProfileDetailScreen extends Component {
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: '#fff' }}
                             style={{
-                                marginTop:10 
+                                marginTop: 10
                             }}
                         >
                             <Text style={{ color: '#fff', fontSize: 20 }}>Change Password</Text>

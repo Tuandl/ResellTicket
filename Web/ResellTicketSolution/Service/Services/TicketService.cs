@@ -9,6 +9,12 @@ using Core.Repository;
 using Microsoft.AspNetCore.Identity;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Ticket;
+using System.IO;
+using System.Net;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Options;
+using ViewModel.AppSetting;
+using Service.NotificationService;
 
 namespace Service.Services
 {
@@ -56,13 +62,17 @@ namespace Service.Services
         private readonly ICustomerRepository _customerRepository;
         private readonly IStationRepository _stationRepository;
         private readonly IRouteTicketRepository _routeTicketRepository;
+        private readonly IOneSignalService _oneSignalService;
 
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
                              ITicketRepository ticketRepository,
                              ICustomerRepository customerRepository,
                              IStationRepository stationRepository,
-                             IRouteTicketRepository routeTicketRepository
+                             IRouteTicketRepository routeTicketRepository,
+                             IOptions<OneSignalSetting> options,
+                             ICustomerDeviceRepository customerDeviceRepository,
+                             IOneSignalService oneSignalService
         )
         {
             _mapper = mapper;
@@ -71,6 +81,7 @@ namespace Service.Services
             _customerRepository = customerRepository;
             _stationRepository = stationRepository;
             _routeTicketRepository = routeTicketRepository;
+            _oneSignalService = oneSignalService;
         }
 
         public List<TicketRowViewModel> GetTickets()
@@ -179,7 +190,10 @@ namespace Service.Services
             {
                 return ex.Message;
             }
-
+            List<string> deviceIds = getCustomerDeviceIds(existedTicket, true);
+            var message = "Ticket " + existedTicket.TicketCode + " is valid";
+            _oneSignalService.PushNotification(message, deviceIds);
+            
             return string.Empty;
         }
         public string RejectTicket(int id)
@@ -200,6 +214,9 @@ namespace Service.Services
             {
                 return ex.Message;
             }
+            List<string> deviceIds = getCustomerDeviceIds(existedTicket, true);
+            var message = "Ticket " + existedTicket.TicketCode + " is invalid";
+            _oneSignalService.PushNotification(message, deviceIds);
 
             return string.Empty;
         }
@@ -304,6 +321,16 @@ namespace Service.Services
                 {
                     return ex.Message;
                 }
+
+                //noti to seller
+                List<string> sellerDeviceIds = getCustomerDeviceIds(existedTicket, true);
+                var message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Money will be tranfered in a few minutes";
+                _oneSignalService.PushNotification(message, sellerDeviceIds);
+
+                //noti to buyer
+                List<string> buỷerDeviceIds = getCustomerDeviceIds(existedTicket, false);
+                message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
+                _oneSignalService.PushNotification(message, buỷerDeviceIds);
             }
             else
             {
@@ -317,6 +344,9 @@ namespace Service.Services
                 {
                     return ex.Message;
                 }
+                List<string> sellerDeviceIds = getCustomerDeviceIds(existedTicket, true);
+                var message = "Ticket " + existedTicket.TicketCode + " renamed fail. Please check and rename again.";
+                _oneSignalService.PushNotification(message, sellerDeviceIds);
             }
 
             return string.Empty;
@@ -324,20 +354,20 @@ namespace Service.Services
 
         public List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
         {
-            var routeTicket = _routeTicketRepository.Get(x => 
-                x.Id == routeTicketId && 
+            var routeTicket = _routeTicketRepository.Get(x =>
+                x.Id == routeTicketId &&
                 x.Deleted == false
             );
 
-            if(routeTicket == null) throw new NotFoundException();
+            if (routeTicket == null) throw new NotFoundException();
 
             DateTime? departureFromDate = null;
             DateTime? arrivalToDate = null;
             int departureCityId = routeTicket.DepartureStation.CityId;
             int arrivalCityId = routeTicket.ArrivalStation.CityId;
 
-            var previousRouteTicket = _routeTicketRepository.Get(x => 
-                x.RouteId == routeTicket.RouteId && 
+            var previousRouteTicket = _routeTicketRepository.Get(x =>
+                x.RouteId == routeTicket.RouteId &&
                 x.Deleted == false &&
                 x.Order == routeTicket.Order - 1
             );
@@ -370,6 +400,20 @@ namespace Service.Services
             var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());
 
             return result;
+        }
+
+        public List<string> getCustomerDeviceIds(Ticket ticket, bool isSeller)
+        {
+            var customerDevices = isSeller 
+                ? ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList() 
+                : ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList();
+            List<string> deviceIds = new List<string>();
+
+            foreach (var sellerDevice in customerDevices)
+            {
+                deviceIds.Add(sellerDevice.DeviceId);
+            }
+            return deviceIds;
         }
     }
 }

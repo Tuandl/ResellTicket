@@ -9,5 +9,7 @@ namespace ViewModel.ViewModel.Authentication
 
         [Required]
         public string Password { get; set; }
+        public string DeviceId { get; set; }
+        public int DeviceType { get; set; }
     }
 }

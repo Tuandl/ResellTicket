@@ -22,9 +22,9 @@ export default class TicketViewComponent extends Component {
     editTicketOrViewTicketDetails = () => {
         const { postedTicket, navigate, refreshPostedTicket, index } = this.props;
         if(postedTicket.status !== 1 && postedTicket.status !== 3) {
-            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id, index: index})
+            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
         } else {
-            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id, index: index})
+            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
         }
         
     }
@@ -86,7 +86,7 @@ export default class TicketViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: 15-6-2019 21:00</Text>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(departureDateTime).format('MMM DD YYYY HH:mm')}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>

@@ -92,16 +92,21 @@ export default class PostEditTicket extends Component {
 
     async getVehicles() {
         this.setState({
-            isLoading: this.state.isEdit ? true : false
+            isLoading: true
         })
         const resVehicle = await Api.get('api/vehicle');
         if (resVehicle.status === 200) {
             this.setState({
-                vehicles: resVehicle.data
+                vehicles: resVehicle.data,
+                vehicleId: resVehicle.data[0].id,
             })
         }
         if (this.state.isEdit) {
             this.getTicketDetail();
+        } else {
+            this.setState({
+                isLoading: false
+            })
         }
     }
 
@@ -159,9 +164,14 @@ export default class PostEditTicket extends Component {
                                     mode={"dialog"}
                                     style={{ height: 30 }}
                                     selectedValue={vehicleId}
-                                    onValueChange={(value) => this.setState({ vehicleId: value })}
+                                    onValueChange={(value) => this.setState({ 
+                                        vehicleId: value,
+                                        transportationId: value === vehicleId ? this.state.transportationId : -1,
+                                        transportationName:  value === vehicleId ? transportationName : '',
+                                        ticketId: value === vehicleId ? this.state.ticketTypeId : -1,
+                                        ticketTypeName: value === vehicleId ? ticketTypeName : ''
+                                    })}
                                 >
-                                    <Picker.Item label="" value={-1} />
                                     {vehicles.map((vehicle, index) => {
                                         return (<Picker.Item label={vehicle.name} value={vehicle.id} key={index} />)
                                     })}
@@ -179,7 +189,11 @@ export default class PostEditTicket extends Component {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ transportations: [], transportationName: item.name, transportationId: item.id })}>
+                                        onPress={() => this.setState({ 
+                                            transportations: [], 
+                                            transportationName: item.name, 
+                                            transportationId: item.id
+                                        })}>
                                         <Item>
                                             <Text>
                                                 {item.name}
@@ -380,7 +394,7 @@ export default class PostEditTicket extends Component {
                             {/* Enter Selling Price */}
                             <Label style={styles.label}>Selling Price:</Label>
                             <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
-                                decimalScale={2} decimalSeparator={'.'}
+                                decimalScale={2} decimalSeparator={'.'} allowNegative={false}
                                 renderText={value => (
                                     <Input
                                         onChangeText={sellingPrice => this.setState({ sellingPrice })}
@@ -431,7 +445,7 @@ export default class PostEditTicket extends Component {
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'
             })
-            navigation.state.params.refreshPostedTicket(null, index);
+            navigation.state.params.refreshPostedTicket();
             navigation.navigate('PostedTicket');
         }
     }
@@ -471,14 +485,7 @@ export default class PostEditTicket extends Component {
                 RNToasty.Success({
                     title: 'Edit Ticket Successfully'
                 })
-                ticket = {
-                    ...ticket,
-                    departureCityName: this.state.departureCityName,
-                    arrivalCityName: this.state.arrivalCityName,
-                    vehicle: this.state.vehicles.find(x => x.id === this.state.vehicleId).name,
-                    status: 1
-                }
-                navigation.state.params.refreshPostedTicket(ticket, index);
+                navigation.state.params.refreshPostedTicket();
                 navigation.navigate('PostedTicket');
             }
         } else {
@@ -518,16 +525,8 @@ export default class PostEditTicket extends Component {
                 })
                 RNToasty.Success({
                     title: 'Post Ticket Successfully'
-                })
-                ticket = {
-                    ...ticket,
-                    id: resPostTicket.data,
-                    departureCityName: this.state.departureCityName,
-                    arrivalCityName: this.state.arrivalCityName,
-                    vehicle: this.state.vehicles.find(x => x.id === this.state.vehicleId).name,
-                    status: 1
-                }
-                navigation.state.params.refreshPostedTicket(ticket, -1);
+                }) 
+                navigation.state.params.refreshPostedTicket();
                 navigation.navigate('PostedTicket');
             }
         } else {
@@ -553,6 +552,9 @@ export default class PostEditTicket extends Component {
     }
 
     getTransportions = async (searchValue) => {
+        this.setState({
+            transportationName: searchValue
+        })
         const res = await Api.get('api/transportation?vehicleId=' + this.state.vehicleId + '&transportationName=' + searchValue);
         if (res.status === 200) {
             this.setState({
@@ -562,6 +564,9 @@ export default class PostEditTicket extends Component {
     }
 
     getTicketTypes = async (searchValue) => {
+        this.setState({
+            ticketTypeName: searchValue
+        })
         const res = await Api.get('api/ticketType?vehicleId=' + this.state.vehicleId + '&ticketTypeName=' + searchValue);
         if (res.status === 200) {
             this.setState({
