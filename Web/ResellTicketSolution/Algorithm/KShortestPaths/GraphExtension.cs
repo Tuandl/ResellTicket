@@ -19,7 +19,7 @@ namespace Algorithm.KShortestPaths
             Vertex departureVertex = graph.GetVertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
             if(departureVertex == null)
             {
-                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime, ticket);
+                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
                 graph.AddVertex(departureVertex);
             }
 
@@ -27,11 +27,11 @@ namespace Algorithm.KShortestPaths
             Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
             if(arrivalVertex == null)
             {
-                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime, ticket);
+                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
                 graph.AddVertex(arrivalVertex);
             }
 
-            Edge edge = new Edge(departureVertex, arrivalVertex, Convert.ToDouble(ticket.SellingPrice), EdgeType.Traveling);
+            Edge edge = new Edge(departureVertex, arrivalVertex, Convert.ToDouble(ticket.SellingPrice), EdgeType.Traveling, ticket);
             departureVertex.RelatedEdges.Add(edge);
             if(edge.Head != edge.Tail) // avoid duplicate edge when meet self-pointing edge
             {

@@ -301,16 +301,16 @@ namespace Service.Services
                 int count = 0;
                 foreach (var edge in path)
                 {
-                    var ticket = edge.Tail.Data as Ticket;
+                    var ticket = edge.Data as Ticket;
                     var ticketModel = new RouteTicketSearchViewModel()
                     {
                         TicketId = ticket.Id,
-                        ArrivalCityId = arrivalCityId,
+                        ArrivalCityId = ticket.ArrivalStation.CityId,
                         ArrivalCityName = ticket.ArrivalStation.City.Name,
                         ArrivalStationId = ticket.ArrivalStationId,
                         ArrivalStationName = ticket.ArrivalStation.Name,
                         ArrivalDateTime = ticket.ArrivalDateTime,
-                        DepartureCityId = departureCityId,
+                        DepartureCityId = ticket.DepartureStation.CityId,
                         DepartureCityName = ticket.DepartureStation.City.Name,
                         DepartureStationId = ticket.DepartureStationId,
                         DepartureStationName = ticket.DepartureStation.Name,
