@@ -14,7 +14,7 @@ namespace Algorithm.KShortestPaths
         /// <summary>
         /// List of vertices in this graph
         /// </summary>
-        private readonly List<Vertex> vertices;
+        private List<Vertex> vertices;
 
         /// <summary>
         /// Flag to indicate if shortest paths have been calculated
@@ -62,37 +62,39 @@ namespace Algorithm.KShortestPaths
         /// <param name="destinationId"></param>
         private void InitSourceDestination(int departureId, int destinationId)
         {
-            SourceVertex = new Vertex(departureId, DateTime.MinValue, null);
-            DestinationVertex = new Vertex(destinationId, DateTime.MaxValue, null);
+            SourceVertex = new Vertex(departureId, DateTime.MinValue);
+            DestinationVertex = new Vertex(destinationId, DateTime.MaxValue);
+
+            this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTime).ToList();
+
             foreach (var vertex in vertices)
             {
                 if(vertex.GroupId == departureId)
                 {
                     //connect to source vertex
-                    var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting);
+                    var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting, null);
                     SourceVertex.RelatedEdges.Add(edge);
                     vertex.RelatedEdges.Add(edge);
                 }
                 else if(vertex.GroupId == destinationId)
                 {
                     //connect to destination vertex
-                    var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting);
+                    var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting, null);
                     vertex.RelatedEdges.Add(edge);
                     DestinationVertex.RelatedEdges.Add(edge);
                 }
-                else
+            }
+
+            //Connect the vertices in a group
+            for(int i = 0; i < vertices.Count() - 1; i++)
+            {
+                var currentVertex = vertices[i];
+                var nextVertex = vertices[i+1];
+                if(currentVertex.GroupId == nextVertex.GroupId)
                 {
-                    //connect to other vertex in the same group
-                    var verticesToConnect = vertices.Where(x =>
-                        x.GroupId == vertex.GroupId &&
-                        x.ArrivalTime > vertex.ArrivalTime
-                    );
-                    foreach (var waitingVertex in verticesToConnect)
-                    {
-                        var edge = new Edge(vertex, waitingVertex, 0, EdgeType.Waiting);
-                        vertex.RelatedEdges.Add(edge);
-                        waitingVertex.RelatedEdges.Add(edge);
-                    }
+                    var edge = new Edge(currentVertex, nextVertex, 0, EdgeType.Waiting, null);
+                    currentVertex.RelatedEdges.Add(edge);
+                    nextVertex.RelatedEdges.Add(edge);
                 }
             }
 
@@ -260,7 +262,25 @@ namespace Algorithm.KShortestPaths
                 {
                     continue;
                 }
-                SideTrackPathsHeap.Enqueue(currentSideTrack);
+                
+                //Check duplicate path result
+                bool isExisted = false;
+                var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
+                foreach (var node in SideTrackPathsHeap.data)
+                {
+                    var nodeFullPath = RebuildPath(node.SideTrack).Trim();
+                    if(currentFullPath.ToString() == nodeFullPath.ToString())
+                    {
+                        isExisted = true;
+                        break;
+                    }
+                }
+
+                if(!isExisted)
+                {
+                    SideTrackPathsHeap.Enqueue(currentSideTrack);
+                }
+
                 var currentVertex = currentSideTrack.CurrentVertex;
                 var currentPath = new Path();
                 currentPath.AddRange(currentSideTrack.SideTrack);

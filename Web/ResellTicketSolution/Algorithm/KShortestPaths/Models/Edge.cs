@@ -13,13 +13,20 @@ namespace Algorithm.KShortestPaths.Models
         /// <param name="tail"></param>
         /// <param name="head"></param>
         /// <param name="weight"></param>
-        public Edge(Vertex tail, Vertex head, double weight, EdgeType type)
+        /// <param name="data"></param>
+        public Edge(Vertex tail, Vertex head, double weight, EdgeType type, object data)
         {
             this.Tail = tail;
             this.Head = head;
             this.Weight = weight;
             this.Type = type;
+            this.Data = data;
         }
+
+        /// <summary>
+        /// Ticket
+        /// </summary>
+        public object Data { get; set; }
 
         /// <summary>
         /// Public Getter for Tail Vertex
