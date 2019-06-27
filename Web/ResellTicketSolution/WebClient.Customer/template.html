@@ -12,25 +12,26 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		w3layouts</title>
 
 	<!-- css -->
-	<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
-	<link href="css/style.css" rel='stylesheet' type='text/css' />
-	<link href="css/font-awesome.css" rel="stylesheet">
+	<link href="./../css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<link href="./../css/style.css" rel='stylesheet' type='text/css' />
+	<link href="./../css/font-awesome.css" rel="stylesheet">
 	<!-- <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-	<link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'> -->
+		<link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'> -->
 	<!-- <link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" /> -->
-	<link href="css/rt-style.css" rel='stylesheet' type='text/css' />
+	<link href="./../css/rt-style.css" rel='stylesheet' type='text/css' />
 	<!-- css -->
 
 	<!-- js -->
-	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/jstarbox.js"></script>
-	<script type="text/javascript" src="js/authen.js"></script>
-	<script type="text/javascript" src="./js/moment.js"></script>
-	<script type="module" src="./index.js"></script>
+	<script src="./../js/jquery-1.11.1.min.js"></script>
+	<script src="./../js/jstarbox.js"></script>
+	<script type="text/javascript" src="./../js/authen.js"></script>
+	<script type="text/javascript" src="./../js/moment.js"></script>
+	<script type="module" src="./searchRouteForm.js"></script>
 	<!-- //js -->
 </head>
 
 <body onload="checkLogin()">
+
 	<div class="header">
 		<div class="container">
 			<div class="logo">
@@ -103,34 +104,22 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</div>
 	</div>
 	<!---->
-	<div data-vide-bg="images/index-background.png">
+	<!--banner-->
+	<div class="banner-top">
 		<div class="container">
-			<div class="banner-info">
-				<h3 style="color: #c7ad71">It is a long established fact that a reader will be distracted by
-					the readable </h3>
-				<div class="search-form">
-					<input type="submit" value="Search Route" style="color: brown" id="btnSearchRoute">
-				</div>
-			</div>
+			<h3>Search Route</h3>
+			<h4><a href="./../index.html">Home</a><label>/</label>Search Route</h4>
+			<div class="clearfix"> </div>
 		</div>
 	</div>
 
-	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
-	<script src="js/jquery.vide.min.js"></script>
+	<!-- faqs -->
+	<div class="about-w3 ">
 
-	<div class="text-center margin-top-20" id="btnStatuses">
-		
-	</div>
 
-	<!--content-->
-	<div class="content-top" id="route-container">
-	</div>
 
-	<!--content-->
-	<div class="content-mid">
-		<div class="container">
-		</div>
 	</div>
+	<!-- // Terms of use -->
 
 	<!--footer-->
 	<div class="footer">
@@ -170,7 +159,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	</div>
 	<!-- //footer-->
 	<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
-	<script src="js/bootstrap.js"></script>
+	<script src="./../js/bootstrap.js"></script>
+
 </body>
 
 </html>
