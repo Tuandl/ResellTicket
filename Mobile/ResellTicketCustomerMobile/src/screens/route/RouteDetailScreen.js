@@ -22,7 +22,6 @@ class RouteDetailScreen extends Component {
     constructor(props) {
         super(props);
         this.navigation = props.navigation;
-
         this.routeId = this.navigation.getParam('routeId');
         this.state = {
             route: {},
@@ -105,23 +104,31 @@ class RouteDetailScreen extends Component {
     }
 
     
-    async onBtnBuyRoutePressed () {
-        const routeId = this.routeId;
-        var params = { routeId: routeId };
-        const resBuyRoute = await api.post('api/route/buy-route', params);
-        const { navigation } = this.props;
-        if (resBuyRoute.status === 200) {
-            RNToasty.Success({
-                title: 'Buy route Successfully'
-            })
-            navigation.navigate('Route');
-        }
-        else {
-            RNToasty.Error({
-                title: 'Buy route Fail, All tickets in route must be valid!'
-            })
-        }
+    onBtnBuyRoutePressed () {
+        var params = {
+            routeId: this.routeId
+        //     departureDate: moment(this.state.departureDate).format('YYYY-MM-DD 00:00:00'),
+        };
+        
+        this.props.navigation.navigate('RouteBuyerInfo', {params: params});
     }
+    // async onBtnBuyRoutePressed () {
+    //     const routeId = this.routeId;
+    //     var params = { routeId: routeId };
+    //     const resBuyRoute = await api.post('api/route/buy-route', params);
+    //     const { navigation } = this.props;
+    //     if (resBuyRoute.status === 200) {
+    //         RNToasty.Success({
+    //             title: 'Buy route Successfully'
+    //         })
+    //         navigation.navigate('Route');
+    //     }
+    //     else {
+    //         RNToasty.Error({
+    //             title: 'Buy route Fail, All tickets in route must be valid!'
+    //         })
+    //     }
+    // }
 
     onBtnDeletePressed() {
         this.deleteRoute(this.routeId);
