@@ -5,12 +5,13 @@ import routeStatus from '../enum/routeStatus.js';
 
 class RouteComponent {
 
-    id = commonService.generateRandomId();
-
-    constructor(route) {
+    constructor(route, onClicked) {
         this.route = route;
         this.html = document.createElement('div');
-        this.html.id = this.id;
+        this.html.id = route.id || commonService.generateRandomId();
+        this.event = {
+            onClicked
+        };
     }
 
     renderStatus(status) {
@@ -68,7 +69,7 @@ class RouteComponent {
                         </div>
                         <div class="col-md-2"><span>${this.route.ticketQuantity} tickets</span></div>
                         <div class="col-md-2">${this.renderStatus(this.route.status)}</div>
-                        <div class="col-md-2"><h3>${this.route.totalAmount} $</h3></div>
+                        <div class="col-md-2"><h3>${numeral(this.route.totalAmount).format('$0,0.00')} $</h3></div>
                     </div>
                     <div class="routeFooter">
                         <span style="color: red">Expired Date: ${moment(this.route.departureDate).format(appConfig.format.datetime)}</span>
@@ -76,6 +77,13 @@ class RouteComponent {
                 </div>
             </div>
         </div>`;
+
+        const self = this;
+        this.html.addEventListener('click', function(e) {
+            if(self.event.onClicked) {
+                self.event.onClicked(self.route);
+            }
+        });
     }
 
     get domElement() {
