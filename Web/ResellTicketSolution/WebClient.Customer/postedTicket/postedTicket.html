@@ -30,6 +30,25 @@
     <script src="../js/bootstrap.js"></script>
     <script src="../helper/convertStatus.js"></script>
     <script src="../js/numeral.min.js"></script>
+    <link rel="manifest" href="/manifest.json">
+	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+	<script type="module">
+		import {appConfig} from './constant/appConfig.js';
+		var OneSignal = window.OneSignal || [];
+		OneSignal.push(function () {
+			OneSignal.init({
+				appId: appConfig.OneSignalAppId,
+				subdomainName: appConfig.SubdomainName,
+				notifyButton: {
+					enable: true,
+				}
+			});
+			OneSignal.on('notificationDisplay', function (event) {
+				alert(event.content);
+				//console.log(event);
+			});
+		});
+	</script>
     <!-- //js -->
 </head>
 <script src="./postedTicket.js" type="text/babel"></script>

@@ -129,7 +129,7 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid Request");
             }
 
-            var rejectResult = _ticketService.RejectTicket(id);
+            var rejectResult = _ticketService.RefuseTicket(id);
 
             if (!string.IsNullOrEmpty(rejectResult))
             {

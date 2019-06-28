@@ -150,18 +150,10 @@ async function getTicketDetail() {
         } else {
             document.getElementById('title').innerHTML = "TICKET DETAIL"
             document.getElementById('select-vehicle').setAttribute('disabled', '')
-            document.getElementById('transportation').setAttribute('readonly', '');
-            document.getElementById('ticketType').setAttribute('readonly', '');
-            document.getElementById('departureCity').setAttribute('readonly', '');
-            document.getElementById('departureStation').setAttribute('readonly', '');
-            document.getElementById('departureDate').setAttribute('readonly', '');
-            document.getElementById('arrivalCity').setAttribute('readonly', '');
-            document.getElementById('arrivalStation').setAttribute('readonly', '');
-            document.getElementById('arrivalDate').setAttribute('readonly', '');
-            document.getElementById('ticketCode').setAttribute('readonly', '');
-            document.getElementById('sellingPrice').setAttribute('readonly', '');
-            document.getElementById('passengerName').setAttribute('readonly', '');
-            document.getElementById('emailBooking').setAttribute('readonly', '');
+            var inputTags =document.getElementsByTagName('input');
+            for(var i = 0; i < inputTags.length; i++) {
+                inputTags[i].setAttribute('readonly', '');
+            }
         }
         document.getElementById('select-vehicle').value = data.vehicleId;
         document.getElementById('transportation').value = data.transportationName;
@@ -182,7 +174,7 @@ async function getTicketDetail() {
         btnDelete.setAttribute('value', 'DELETE');
         btnDelete.setAttribute('class', 'btn-post-now');
         btnDelete.setAttribute('onclick', 'deleteTicket()');
-
+        //var btnDelete = commonService.htmlToElement('<input type="button" value="DELETE" class="btn-post-now" onclick=deleteTicket()/>')
         divBtn.appendChild(btnDelete);
     }
 }
@@ -202,7 +194,7 @@ async function postTicket() {
     }
     const res = await Post('api/ticket', ticket);
     if (res.status === 200) {
-        window.location.href = "poastedTicket.html";
+        window.location.href = "postedTicket.html";
     }
 }
 

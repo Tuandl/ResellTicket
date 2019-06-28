@@ -7,13 +7,13 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 
 function TicketRow(props) {
-    const {ticket, parent} = props;
+    const { ticket, parent } = props;
     const getBadge = (status) => {
-      if (status === 5) {
-          return (
-              <Badge color="success">Renamed</Badge>
-          )
-      }
+        if (status === 5) {
+            return (
+                <Badge color="success">Renamed</Badge>
+            )
+        }
     }
     return (
         <tr>
@@ -27,10 +27,10 @@ function TicketRow(props) {
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
+                <Button color="success" className="mr-2" onClick={() => { parent.onValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
-                <Button color="danger" className="mr-2" onClick={() => {parent.onInValidSaveChanges(ticket.id)}}>
+                <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
                 </Button>
             </td>
@@ -53,6 +53,13 @@ class RenamedTickets extends Component {
     }
 
     componentWillMount() {
+        var OneSignal = window.OneSignal || [];
+        var self = this
+        OneSignal.on('notificationDisplay', function (event) {
+            if(event.content.indexOf('renamed') !== -1) {
+                self.getRenamedTickets();
+            }
+        });
         var token = localStorage.getItem('userToken');
         if (token) {
             this.setState({
@@ -80,58 +87,58 @@ class RenamedTickets extends Component {
 
     // }
     getRenamedTickets = () => {
-      Axios.get('api/ticket/renamed').then(res => {
-          this.setState({
-              tickets: res.data
-          })
-          // console.log(this.state.tickets);
-      });
+        Axios.get('api/ticket/renamed').then(res => {
+            this.setState({
+                tickets: res.data
+            })
+            // console.log(this.state.tickets);
+        });
 
-  }
+    }
 
     onChange(event) {
-      var {name, value} = event.target;
-      this.setState({
-          [name] : value
-      })
+        var { name, value } = event.target;
+        this.setState({
+            [name]: value
+        })
     }
 
     onSearch(event) {
-      event.preventDefault();
-      //console.log(this.state.searchParam);
-      Axios.get('api/ticket?param=' + this.state.searchParam).then(res => {
-          console.log(res)
-          this.setState({
-              tickets : res.data
-          })
-      });
-  }
+        event.preventDefault();
+        //console.log(this.state.searchParam);
+        Axios.get('api/ticket?param=' + this.state.searchParam).then(res => {
+            console.log(res)
+            this.setState({
+                tickets: res.data
+            })
+        });
+    }
 
     onValidSaveChanges = (id) => {
-      var renamedSuccess = true;
-      Axios.post('api/ticket/validate-rename?id=' + id +'&renameSuccess=' + renamedSuccess).then(res => {
-          if(res.status === 200) {
-              toastr.success('Valid Success', 'Ticket has been valid successfully.');
-              this.getRenamedTickets();
-              // this.props.history.push('/ticket');
-          } else {
-              toastr.error('Error', 'Error when valid Ticket');
-          }
-      })
-  }
+        var renamedSuccess = true;
+        Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+            if (res.status === 200) {
+                toastr.success('Valid Success', 'Ticket has been valid successfully.');
+                this.getRenamedTickets();
+                // this.props.history.push('/ticket');
+            } else {
+                toastr.error('Error', 'Error when valid Ticket');
+            }
+        })
+    }
 
-  onInValidSaveChanges = (id) => {
-    var renamedSuccess = false;
-    Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
-        if(res.status === 200) {
-            toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
-            this.getRenamedTickets();
-            // this.props.history.push('/ticket');
-        } else {
-            toastr.error('Error', 'Error when valid Ticket');
-        }
-    })
-  }
+    onInValidSaveChanges = (id) => {
+        var renamedSuccess = false;
+        Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+            if (res.status === 200) {
+                toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
+                this.getRenamedTickets();
+                // this.props.history.push('/ticket');
+            } else {
+                toastr.error('Error', 'Error when valid Ticket');
+            }
+        })
+    }
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -144,7 +151,7 @@ class RenamedTickets extends Component {
                                 <CardHeader>
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Searchcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
+                                            <Input type="text" className="mr-2" placeholder="Searchcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange} />
                                             <Button color="primary">
                                                 <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
                                                 </Button>
@@ -170,7 +177,7 @@ class RenamedTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} parent={this}/>
+                                                <TicketRow key={index} ticket={ticket} index={index} parent={this} />
                                             )}
                                         </tbody>
                                     </Table>

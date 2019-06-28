@@ -16,6 +16,7 @@ namespace WebAPI
         private const string CONFIG_TWILIO_SETTING = "TwilioSetting";
         private const string CONFIG_STRINGEE_SETTING = "StringeeSetting";
         private const string CONFIG_CREDITCARD_SETTING = "CrediCardSetting";
+        private const string CONFIG_ONESIGNAL_SETTING = "OneSignalSetting";
 
         public Startup(IConfiguration configuration)
         {
@@ -32,6 +33,7 @@ namespace WebAPI
             services.Configure<TwilioSetting>(Configuration.GetSection(CONFIG_TWILIO_SETTING));
             services.Configure<StringeeSetting>(Configuration.GetSection(CONFIG_STRINGEE_SETTING));
             services.Configure<CrediCardSetting>(Configuration.GetSection(CONFIG_CREDITCARD_SETTING));
+            services.Configure<OneSignalSetting>(Configuration.GetSection(CONFIG_ONESIGNAL_SETTING));
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
 
             //Add EntityFramework Configuration
