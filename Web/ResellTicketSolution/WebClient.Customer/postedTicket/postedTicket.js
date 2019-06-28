@@ -147,7 +147,24 @@ async function getTicketDetail() {
             btnEdit.setAttribute('class', 'btn-post-now');
             btnEdit.setAttribute('onclick', 'editTicket()');
             divBtn.appendChild(btnEdit);
-        } else {
+        }
+        else if (status === 4) {
+            document.getElementById('title').innerHTML = "CONFIRM TICKET RENAME";
+            var btnConfirm = document.createElement('INPUT');
+            btnConfirm.setAttribute('type', 'button');
+            btnConfirm.setAttribute('value', 'CONFIRM');
+            btnConfirm.setAttribute('class', 'btn-post-now');
+            btnConfirm.setAttribute('onclick', 'confirmTicketRename()', window.alert("Confirm rename successfully!"));
+            divBtn.appendChild(btnConfirm);
+
+            var btnRefuse = document.createElement('INPUT');
+            btnRefuse.setAttribute('type', 'button');
+            btnRefuse.setAttribute('value', 'REFUSE');
+            btnRefuse.setAttribute('class', 'btn-post-now');
+            btnRefuse.setAttribute('onclick', 'refuseTicketRename()');
+            divBtn.appendChild(btnRefuse);
+        }
+         else {
             document.getElementById('title').innerHTML = "TICKET DETAIL"
             document.getElementById('select-vehicle').setAttribute('disabled', '')
             document.getElementById('transportation').setAttribute('readonly', '');
@@ -162,6 +179,14 @@ async function getTicketDetail() {
             document.getElementById('sellingPrice').setAttribute('readonly', '');
             document.getElementById('passengerName').setAttribute('readonly', '');
             document.getElementById('emailBooking').setAttribute('readonly', '');
+
+            var btnDelete = document.createElement('INPUT');
+            btnDelete.setAttribute('type', 'button');
+            btnDelete.setAttribute('value', 'DELETE');
+            btnDelete.setAttribute('class', 'btn-post-now');
+            btnDelete.setAttribute('onclick', 'deleteTicket()');
+
+            divBtn.appendChild(btnDelete);
         }
         document.getElementById('select-vehicle').value = data.vehicleId;
         document.getElementById('transportation').value = data.transportationName;
@@ -176,14 +201,7 @@ async function getTicketDetail() {
         document.getElementById('sellingPrice').value = numeral(data.sellingPrice).format('$0,0.00');
         document.getElementById('passengerName').value = data.passengerName
         document.getElementById('emailBooking').value = data.emailBooking
-
-        var btnDelete = document.createElement('INPUT');
-        btnDelete.setAttribute('type', 'button');
-        btnDelete.setAttribute('value', 'DELETE');
-        btnDelete.setAttribute('class', 'btn-post-now');
-        btnDelete.setAttribute('onclick', 'deleteTicket()');
-
-        divBtn.appendChild(btnDelete);
+        
     }
 }
 
@@ -222,6 +240,20 @@ async function editTicket() {
         emailBooking: document.getElementById('emailBooking').value,
     }
     const res = await Put('api/ticket', ticket);
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
+}
+
+async function confirmTicketRename() {
+    const res = await Post('api/ticket/confirm-rename?id=' + ticketId);
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
+}
+
+async function refuseTicketRename() {
+    const res = await Put('api/ticket/refuse?id=' + ticketId);
     if (res.status === 200) {
         window.location.href = "postedTicket.html";
     }
