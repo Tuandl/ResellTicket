@@ -1,5 +1,5 @@
 const appConfig = {
-    apiBaseUrl: 'http://localhost:59152/',
+    apiBaseUrl: 'http://api.resellticket.local/',
     apiUrl: {
         route: 'api/route/',
     },
