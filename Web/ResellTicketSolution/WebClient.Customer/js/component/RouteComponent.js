@@ -5,12 +5,10 @@ import routeStatus from '../enum/routeStatus.js';
 
 class RouteComponent {
 
-    id = commonService.generateRandomId();
-
     constructor(route) {
         this.route = route;
         this.html = document.createElement('div');
-        this.html.id = this.id;
+        this.html.id = route.id || commonService.generateRandomId();
     }
 
     renderStatus(status) {

@@ -3926,3 +3926,7 @@ span.last {
 .width-full {
     width: 100% !important;
 }
+
+.padding-15 {
+    padding: 15px !important;
+}

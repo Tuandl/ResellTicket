@@ -32,6 +32,8 @@ function htmlToElements(html) {
 }
 
 function getQueryString(paramObject) {
+    if(paramObject === null || paramObject === undefined) 
+        return '';
     let query = Object.keys(paramObject)
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramObject[k]))
         .join('&');
