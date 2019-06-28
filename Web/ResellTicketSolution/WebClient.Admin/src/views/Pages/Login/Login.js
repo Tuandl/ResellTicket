@@ -12,6 +12,7 @@ class Login extends Component {
             txtPassword: '',
             isRedirect: false,
             userRole: '',
+            deviceId: ''
         };
     }
 
@@ -29,46 +30,59 @@ class Login extends Component {
         let data = {
             username: this.state.txtUsername,
             password: this.state.txtPassword,
+            deviceId: this.state.deviceId
         };
         try {
             let loginResponse = await Axios.post('api/token/checklogin', data);
-            localStorage.setItem('userToken', loginResponse.data);
-            Axios.defaults.headers.common['Authorization'] = `bearer ${loginResponse.data}`;
-            var jwt = require('jwt-decode');
-            var decode = jwt(loginResponse.data);
-            this.setState({
-                isRedirect: true,
-                userRole : decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
-            });
-        } catch(ex) {
+            if (loginResponse.status === 200) {
+                localStorage.setItem('userToken', loginResponse.data);
+                Axios.defaults.headers.common['Authorization'] = `bearer ${loginResponse.data}`;
+                var jwt = require('jwt-decode');
+                var decode = jwt(loginResponse.data);
+                this.setState({
+                    isRedirect: true,
+                    userRole: decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+                });
+
+            } else {
+                toastr.error('Login Failed', 'Incorrect Username or Password!');
+            }
+        } catch (ex) {
             toastr.error('Login Failed', 'Incorrect Username or Password!');
         }
     }
 
-    componentWillMount() {
+    async componentWillMount() {
+        const self = this;
+        var OneSignal = window.OneSignal || [];
+        await OneSignal.getUserId(function (userId) {
+            self.setState({
+                deviceId: userId
+            })
+        });
         var token = localStorage.getItem('userToken');
-        if(token !== null && token !== '') {
+        if (token !== null && token !== '') {
             var jwt = require('jwt-decode');
             var decode = jwt(token);
             this.setState({
                 isRedirect: true,
-                userRole : decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+                userRole: decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
             });
         }
     }
 
     render() {
-        if(this.state.isRedirect && this.state.userRole === 'Manager') {
-            return <Redirect to="/user"/>
-        } else if(this.state.isRedirect && this.state.userRole === 'Staff') {
-            return <Redirect to="/newPostedTicket"/>
+        if (this.state.isRedirect && this.state.userRole === 'Manager') {
+            return <Redirect to="/user" />
+        } else if (this.state.isRedirect && this.state.userRole === 'Staff') {
+            return <Redirect to="/newPostedTicket" />
         }
 
         const { txtUsername, txtPassword } = this.state;
 
         return (
             <div className="app flex-row align-items-center">
-                <Container> 
+                <Container>
                     <Row className="justify-content-center">
                         <Col md="6">
                             <CardGroup>
@@ -83,7 +97,7 @@ class Login extends Component {
                                                         <i className="icon-user"></i>
                                                     </InputGroupText>
                                                 </InputGroupAddon>
-                                                <Input type="text" placeholder="Username" name="txtUsername" value={txtUsername} onChange={this.handleChange}/>
+                                                <Input type="text" placeholder="Username" name="txtUsername" value={txtUsername} onChange={this.handleChange} />
                                             </InputGroup>
                                             <InputGroup className="mb-4">
                                                 <InputGroupAddon addonType="prepend">

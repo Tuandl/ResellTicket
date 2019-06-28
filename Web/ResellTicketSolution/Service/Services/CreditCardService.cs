@@ -21,6 +21,7 @@ namespace Service.Services
     {
         bool CreateCreditCard(CreaditCardCreateViewModel model);
         List<CreditCardRowViewModel> GetCreditCards(int Id);
+        CreditCardMakeChargeMoneyViewModel GetCardToPayment(int CustomerId);
         string SetDefaultCard(int id, int customerId);
         string DeleteCreditCard(int id);
     }
@@ -47,7 +48,7 @@ namespace Service.Services
         [Obsolete]
         public bool CreateCreditCard(CreaditCardCreateViewModel model)
         {
-            StripeConfiguration.SetApiKey("sk_test_qGUMkKnqGEznTP75HVwvRKcd00wFcYnqjH");
+            StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
 
             var customerTMP = _customerRepository.Get(x => x.Id == model.CustomerId);
@@ -176,6 +177,13 @@ namespace Service.Services
                 _unitOfWork.CommitChanges();
             }
             return "";
+        }
+
+        public CreditCardMakeChargeMoneyViewModel GetCardToPayment(int CustomerId)
+        {
+            var creditCardToMakePayment = _creditCardRepository.Get(x => x.CustomerId == CustomerId && x.Isdefault == true);
+            var creditCardMakeChargeMoneyViewModel = _mapper.Map<CreditCard, CreditCardMakeChargeMoneyViewModel>(creditCardToMakePayment);
+            return creditCardMakeChargeMoneyViewModel;
         }
     }
 }

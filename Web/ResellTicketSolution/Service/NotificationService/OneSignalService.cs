@@ -11,7 +11,8 @@ namespace Service.NotificationService
 {
     public interface IOneSignalService
     {
-        void PushNotification(string message, List<string> deviceIds);
+        void PushNotificationCustomer(string message, List<string> deviceIds);
+        void PushNotificationAdmin(string message, List<string> deviceIds);
     }
     public class OneSignalService : IOneSignalService
     {
@@ -23,18 +24,35 @@ namespace Service.NotificationService
             SETTING = options;
         }
 
-        public void PushNotification(string message, List<string> deviceIds)
+        public void PushNotificationCustomer(string message, List<string> deviceIds)
+        {
+            var obj = new
+            {
+                app_id = SETTING.Value.CustomerAppId,
+                contents = new { en = message },
+                include_player_ids = deviceIds
+            };
+            Push(obj);
+        }
+
+        public void PushNotificationAdmin(string message, List<string> deviceIds)
+        {
+            var obj = new
+            {
+                app_id = SETTING.Value.AdminAppId,
+                contents = new { en = message },
+                include_player_ids = deviceIds
+            };
+            Push(obj);
+        }
+
+        public void Push(object obj)
         {
             var request = WebRequest.Create(API_URL) as HttpWebRequest;
             request.KeepAlive = true;
             request.Method = "POST";
             request.ContentType = "application/json; charset=utf-8";
-            var obj = new
-            {
-                app_id = SETTING.Value.appId,
-                contents = new { en = message },
-                include_player_ids = deviceIds
-            };
+
             var param = JsonConvert.SerializeObject(obj);
             byte[] byteArray = Encoding.UTF8.GetBytes(param);
             string responseContent = null;
@@ -54,8 +72,8 @@ namespace Service.NotificationService
             }
             catch (WebException ex)
             {
-                //System.Diagnostics.Debug.WriteLine(ex.Message);
-                //System.Diagnostics.Debug.WriteLine(new StreamReader(ex.Response.GetResponseStream()).ReadToEnd());
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                System.Diagnostics.Debug.WriteLine(new StreamReader(ex.Response.GetResponseStream()).ReadToEnd());
             }
             //System.Diagnostics.Debug.WriteLine(responseContent);
         }

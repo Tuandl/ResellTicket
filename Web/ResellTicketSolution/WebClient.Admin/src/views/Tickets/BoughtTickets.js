@@ -53,6 +53,13 @@ class BoughtTickets extends Component {
     }
 
     componentWillMount() {
+        var OneSignal = window.OneSignal || [];
+        var self = this
+        OneSignal.on('notificationDisplay', function (event) {
+            if(event.content.indexOf('renamed') !== -1) {
+                self.getBoughtTickets();
+            }
+        });
         var token = localStorage.getItem('userToken');
         if (token) {
             this.setState({

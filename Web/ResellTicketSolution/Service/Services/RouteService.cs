@@ -471,6 +471,8 @@ namespace Service.Services
                     existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username)).Id;
                     foreach (var ticket in tickets)
                     {
+                        ticket.PassengerName = model.PassengerName;
+                        ticket.EmailBooking = model.EmailBooking;
                         ticket.BuyerId = existedRoute.CustomerId;
                         ticket.Status = TicketStatus.Bought;
                         _ticketRepository.Update(ticket);
@@ -489,15 +491,14 @@ namespace Service.Services
                     //push noti for seller customer
                     foreach(var ticket in tickets)
                     {
-                        var customerDevices = ticket.Seller.CustomerDevices
-                            .Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList();
+                        var message = "Ticket " + ticket.TicketCode + " has been bought";
+                        var customerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList();
                         List<string> deviceIds = new List<string>();
                         foreach (var cusDev in customerDevices)
                         {
                             deviceIds.Add(cusDev.DeviceId);
                         }
-                        var message = "Ticket " + ticket.TicketCode + " has been bought";
-                        _oneSignalService.PushNotification(message, deviceIds);
+                        _oneSignalService.PushNotificationCustomer(message, deviceIds);
                     }
                 }
                 catch (Exception ex)

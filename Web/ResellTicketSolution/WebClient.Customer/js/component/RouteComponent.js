@@ -59,7 +59,7 @@ class RouteComponent {
                         </div>
                     </div>
                     <div class="routeBody" style="color: #b8891d">
-                        <div class="col-md-2"><span><b>${this.route.code}</b></span></div>
+                        <div class="col-md-2"><span><b>${this.route.code || ''}</b></span></div>
                         <div class="col-md-2">
                             <span>${moment(this.route.departureDate).format(appConfig.format.datetime)}</span>
                         </div>
