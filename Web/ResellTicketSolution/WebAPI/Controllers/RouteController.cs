@@ -17,14 +17,17 @@ namespace WebAPI.Controllers
     {
         private readonly IRouteService _routeService;
         private readonly ITicketService _ticketService;
+        private readonly IPaymentService _paymentService;
 
         public RouteController(
                 IRouteService routeService,
-                ITicketService ticketService
+                ITicketService ticketService,
+                IPaymentService paymentService
             )
         {
             _routeService = routeService;
             _ticketService = ticketService;
+            _paymentService = paymentService;
         }
 
         /// <summary>
@@ -221,6 +224,7 @@ namespace WebAPI.Controllers
             try
             {
                 _routeService.BuyRoute(model, username);
+                _paymentService.MakePayment(model.RouteId);
                 return Ok();
             }
             catch (Exception ex)
