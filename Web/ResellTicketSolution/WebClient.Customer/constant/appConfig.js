@@ -12,6 +12,7 @@ const appConfig = {
         route: {
             searchForm: '/route/searchRouteForm.html',
             searchResult: '/route/searchResult.html',
+            detail: '/route/routeDetail.html',
         }
     },
     format: {

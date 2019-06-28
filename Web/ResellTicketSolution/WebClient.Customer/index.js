@@ -53,7 +53,7 @@ function indexController() {
         commonService.removeAllChildren(containerElement);
 
         response.data.forEach(route => {
-            const routeComponent = new RouteComponent(route);
+            const routeComponent = new RouteComponent(route, onRouteClicked);
             model.routeComponents.push(routeComponent);
 
             routeComponent.render();
@@ -66,6 +66,10 @@ function indexController() {
         btnSearchRoute.addEventListener('click', function() {
             window.location.href = appConfig.url.route.searchForm;
         });
+    }
+
+    function onRouteClicked(route) {
+        window.location.href = appConfig.url.route.detail + '?routeId=' + route.id;
     }
 }
 

@@ -3930,3 +3930,17 @@ span.last {
 .padding-15 {
     padding: 15px !important;
 }
+
+.ticket-component__stationName {
+    font-size: 17px;
+    color: #8a8a8a;
+}
+
+.ticket-component__iconVehicle {
+    font-size: 50px !important;
+    color: #555;
+}
+
+.bold {
+    font-size: bold !important;
+}

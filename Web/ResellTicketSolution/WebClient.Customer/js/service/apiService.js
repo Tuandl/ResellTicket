@@ -96,7 +96,7 @@ function Delete(url) {
                 reject(response);
             }
             if(response.status === 200) {
-                response.json().then(data => resolve(data));
+                resolve(response);
             } else {
                 reject(response);
             }
