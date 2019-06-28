@@ -16,6 +16,7 @@ namespace Service.Services
     public interface IPaymentService
     {
         string MakePayment(int RouteId);
+        PaymentRowViewModel GetPaymentDetailByRouteId(int RouteId);
 
     }
     public class PaymentService : IPaymentService
@@ -38,6 +39,14 @@ namespace Service.Services
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             SETTING = options;
+        }
+
+        public PaymentRowViewModel GetPaymentDetailByRouteId(int RouteId)
+        {
+            var payment = _paymentRepository.Get(x => x.RouteId == RouteId);
+            var paymentRowViewModel = _mapper.Map<Payment, PaymentRowViewModel>(payment);
+
+            return paymentRowViewModel;
         }
 
         public string MakePayment(int RouteId)
@@ -69,7 +78,7 @@ namespace Service.Services
             model.CreditCartId = creditCardToMakePayment.Id;
             model.Amount = routeToMakePayment.TotalAmount;
             model.Status = PaymentStatus.Success;
-            //model.StripeChargeId = 
+            model.StripeChargeId = charge.Id;
             model.FeeAmount = Convert.ToDecimal(charge.BalanceTransaction.Fee)/100;
             var payment = _mapper.Map<PaymentCreateViewModel, Payment>(model); //map từ ViewModel qua Model
             _paymentRepository.Add(payment);

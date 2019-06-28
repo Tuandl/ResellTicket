@@ -17,10 +17,12 @@ namespace WebAPI.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;
+        private readonly IRefundService _refundService;
 
-        public TicketController(ITicketService ticketService)
+        public TicketController(ITicketService ticketService, IRefundService refundService)
         {
             _ticketService = ticketService;
+            _refundService = refundService;
         }
 
         [HttpPost]
@@ -129,12 +131,23 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid Request");
             }
 
+            var refundResult = _refundService.RefundMoneyToCustomer(id);
+
+            if (!string.IsNullOrEmpty(refundResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
+            }
+
             var rejectResult = _ticketService.RejectTicket(id);
 
             if (!string.IsNullOrEmpty(rejectResult))
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, rejectResult);
             }
+
+            
+
+            
             return Ok();
         }
     }

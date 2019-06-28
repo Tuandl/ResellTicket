@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using Microsoft.Extensions.Options;
 using ViewModel.AppSetting;
 using Service.NotificationService;
+using Core.Enum;
 
 namespace Service.Services
 {
@@ -204,15 +205,30 @@ namespace Service.Services
                 return "Not found ticket";
             }
 
-            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
-            _ticketRepository.Update(existedTicket);
-            try
+            //
+            var routeTicket = _routeTicketRepository.Get(x => x.TicketId == existedTicket.Id & x.Deleted == false);
+            List<RouteTicket> routeTickets = _routeTicketRepository.GetAllQueryable().Where(x => x.RouteId == routeTicket.RouteId).ToList();
+            //set lại status cho ticket
+            foreach (var routeticket in routeTickets)
             {
+                if(routeticket.Ticket.Id == existedTicket.Id)
+                {
+                    routeticket.Ticket.Status = TicketStatus.Pending;
+                }
+                if (routeticket.Ticket.Id != existedTicket.Id && routeticket.Ticket.Status == TicketStatus.Bought)
+                {
+                    routeticket.Ticket.Status = TicketStatus.Valid;
+                }
+                
+                _ticketRepository.Update(routeticket.Ticket);
                 _unitOfWork.CommitChanges();
             }
-            catch (Exception ex)
+            //xóa tikcetId đó khỏi Route
+            foreach (var routeticket in routeTickets)
             {
-                return ex.Message;
+                routeticket.Deleted = true;
+                _routeTicketRepository.Update(routeticket);
+                _unitOfWork.CommitChanges();
             }
             List<string> deviceIds = getCustomerDeviceIds(existedTicket, true);
             var message = "Ticket " + existedTicket.TicketCode + " is invalid";
