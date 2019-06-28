@@ -3868,3 +3868,61 @@ span.last {
 .margin-top-20 {
     margin-top: 20px;
 }
+
+/*the container must be positioned relative:*/
+.autocomplete-container {
+    position: relative;
+    display: inline-block;
+}
+
+.autocomplete-container input {
+    /* border: 1px solid transparent;
+    background-color: #f1f1f1; */
+    padding: 10px;
+    font-size: 16px;
+}
+
+.autocomplete-container input[type=text] {
+    /* background-color: #f1f1f1; */
+    width: 100%;
+}
+
+.autocomplete-container input[type=submit] {
+    background-color: DodgerBlue;
+    color: #fff;
+    cursor: pointer;
+}
+
+.autocomplete-container .autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-container .autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #fff; 
+    border-bottom: 1px solid #d4d4d4; 
+}
+
+/*when hovering an item:*/
+.autocomplete-container .autocomplete-items div:hover {
+    background-color: #e9e9e9; 
+}
+
+/*when navigating through the items using the arrow keys:*/
+.autocomplete-container .autocomplete-active {
+    background-color: DodgerBlue !important; 
+    color: #ffffff; 
+}
+
+.width-full {
+    width: 100% !important;
+}

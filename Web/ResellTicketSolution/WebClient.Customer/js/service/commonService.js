@@ -31,11 +31,25 @@ function htmlToElements(html) {
     return template.content.childNodes;
 }
 
+function getQueryString(paramObject) {
+    let query = Object.keys(paramObject)
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramObject[k]))
+        .join('&');
+    return query;
+}
+
+function getQueryParam(key) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(key);
+}
+
 const commonService = {
     generateRandomId: generateRandomId,
     removeAllChildren: removeAllChildren,
     htmlToElement,
-    htmlToElements
+    htmlToElements,
+    getQueryString,
+    getQueryParam,
 };
 
 export default commonService
