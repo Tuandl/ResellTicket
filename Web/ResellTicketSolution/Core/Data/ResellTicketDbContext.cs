@@ -30,7 +30,7 @@ namespace Core.Data
         public virtual DbSet<Payment> Payments { get; set; }
         public virtual DbSet<Route> Routes { get; set; }
         public virtual DbSet<CustomerDevice> CustomerDevices { get; set; }
-
+        public virtual DbSet<AdminDevice> AdminDevices { get; set; }
         /// <summary>
         /// Config Models using Fluent API
         /// </summary>
@@ -54,7 +54,7 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new RouteMap());
             modelBuilder.ApplyConfiguration(new TicketTypeMap());
             modelBuilder.ApplyConfiguration(new CustomerDeviceMap());
-
+            modelBuilder.ApplyConfiguration(new AdminDeviceMap());
 
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");

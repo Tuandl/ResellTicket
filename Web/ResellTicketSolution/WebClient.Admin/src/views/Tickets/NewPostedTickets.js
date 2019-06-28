@@ -6,15 +6,16 @@ import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 
+
 function TicketRow(props) {
-  const {ticket, parent} = props;
-  const getBadge = (status) => {
-    if (status === 1) {
-        return (
-            <Badge color="warning">Peding</Badge>
-        )
+    const { ticket, parent } = props;
+    const getBadge = (status) => {
+        if (status === 1) {
+            return (
+                <Badge color="warning">Peding</Badge>
+            )
+        }
     }
-}
     //const userLink = `/user/${user.id}`
 
     // const getBadge = (isActive) => {
@@ -40,10 +41,10 @@ function TicketRow(props) {
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
+                <Button color="success" className="mr-2" onClick={() => { parent.onValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button>
-                <Button color="danger" className="mr-2" onClick={() => {parent.onInValidSaveChanges(ticket.id)}}>
+                <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
                 </Button>
             </td>
@@ -62,9 +63,17 @@ class NewPostedTickets extends Component {
             isLogin: false,
             userRole: '',
         }
+        
     }
 
     componentWillMount() {
+        var OneSignal = window.OneSignal || [];
+        var self = this
+        OneSignal.on('notificationDisplay', function (event) {
+            if(event.content.indexOf('posted')) {
+                self.getPendingTickets();
+            }
+        });
         var token = localStorage.getItem('userToken');
         if (token) {
             this.setState({
@@ -93,56 +102,56 @@ class NewPostedTickets extends Component {
     // }
 
     getPendingTickets = () => {
-      Axios.get('api/ticket/pending').then(res => {
-          this.setState({
-              tickets: res.data
-          })
-          //console.log(this.state.tickets);
-      });
+        Axios.get('api/ticket/pending').then(res => {
+            this.setState({
+                tickets: res.data
+            })
+            //console.log(this.state.tickets);
+        });
 
-  }
+    }
 
-  onChange = (event) => {
-    var {name, value} = event.target;
-    this.setState({
-        [name] : value
-    })
-  }
-
-  onSearch = (event) => {
-    event.preventDefault();
-    //console.log(this.state.searchParam);
-    Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
-        console.log(res)
+    onChange = (event) => {
+        var { name, value } = event.target;
         this.setState({
-            tickets : res.data
+            [name]: value
         })
-    });
-  }
+    }
+
+    onSearch = (event) => {
+        event.preventDefault();
+        //console.log(this.state.searchParam);
+        Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
+            console.log(res)
+            this.setState({
+                tickets: res.data
+            })
+        });
+    }
 
     onValidSaveChanges = (id) => {
-      Axios.put('api/ticket/approve/' + id).then(res => {
-          if(res.status === 200) {
-              toastr.success('Update Success', 'Ticket has been valid successfully.');
-              // this.props.history.push('/ticket');
-              this.getPendingTickets();
-          } else {
-              toastr.error('Error', 'Error when valid Ticket');
-          }
-      })
-  }
+        Axios.put('api/ticket/approve/' + id).then(res => {
+            if (res.status === 200) {
+                toastr.success('Update Success', 'Ticket has been valid successfully.');
+                // this.props.history.push('/ticket');
+                this.getPendingTickets();
+            } else {
+                toastr.error('Error', 'Error when valid Ticket');
+            }
+        })
+    }
 
-  onInValidSaveChanges = (id) => {
-    Axios.put('api/ticket/reject/' + id).then(res => {
-        if(res.status === 200) {
-            toastr.success('Reject Success', 'Ticket has been rejected.');
-            // this.props.history.push('/ticket');
-            this.getPendingTickets();
-        } else {
-            toastr.error('Error', 'Error when reject Ticket');
-        }
-    })
-}
+    onInValidSaveChanges = (id) => {
+        Axios.put('api/ticket/reject/' + id).then(res => {
+            if (res.status === 200) {
+                toastr.success('Reject Success', 'Ticket has been rejected.');
+                // this.props.history.push('/ticket');
+                this.getPendingTickets();
+            } else {
+                toastr.error('Error', 'Error when reject Ticket');
+            }
+        })
+    }
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -160,7 +169,7 @@ class NewPostedTickets extends Component {
                                 </Link> */}
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
+                                            <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange} />
                                             <Button color="primary">
                                                 <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
                                                 </Button>
@@ -186,7 +195,7 @@ class NewPostedTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} parent={this}/>
+                                                <TicketRow key={index} ticket={ticket} index={index} parent={this} />
                                             )}
                                         </tbody>
                                     </Table>

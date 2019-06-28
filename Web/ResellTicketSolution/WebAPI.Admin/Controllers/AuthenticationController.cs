@@ -25,16 +25,19 @@ namespace WebAPI.Admin.Controllers
         private readonly IOptions<AuthSetting> AUTH_SETTING;
         private readonly IAuthenticationService _authenticationService;
         private readonly UserManager<User> _userManager;
+        private readonly IAdminDeviceService _adminDeviceService;
 
         public AuthenticationController(
             IOptions<AuthSetting> options,
             IAuthenticationService authenticationService,
-            UserManager<User> userManager
+            UserManager<User> userManager,
+            IAdminDeviceService adminDeviceService
         )
         {
             AUTH_SETTING = options;
             _authenticationService = authenticationService;
             _userManager = userManager;
+            _adminDeviceService = adminDeviceService;
         }
 
         /// <summary>
@@ -61,7 +64,7 @@ namespace WebAPI.Admin.Controllers
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
             }
-
+            _adminDeviceService.AddAdminDevice(user.Id, model.DeviceId);
             var roles = _userManager.GetRolesAsync(user);
             //Get Value from appSetting.json
             var token = user.BuildToken(AUTH_SETTING.Value, roles.Result); 

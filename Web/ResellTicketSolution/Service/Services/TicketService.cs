@@ -46,6 +46,7 @@ namespace Service.Services
         TicketDetailViewModel GetTicketDetail(int ticketId);
         string ConfirmRenameTicket(int id);
         string ValidateRenameTicket(int id, bool renameSuccess);
+        string RefuseTicket(int id);
 
         /// <summary>
         /// Get Tickets available for editing a route ticket
@@ -63,6 +64,8 @@ namespace Service.Services
         private readonly IStationRepository _stationRepository;
         private readonly IRouteTicketRepository _routeTicketRepository;
         private readonly IOneSignalService _oneSignalService;
+        private readonly UserManager<User> _userManager;
+        private readonly IAdminDeviceRepository _adminDeviceRepository;
 
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
@@ -70,9 +73,10 @@ namespace Service.Services
                              ICustomerRepository customerRepository,
                              IStationRepository stationRepository,
                              IRouteTicketRepository routeTicketRepository,
-                             IOptions<OneSignalSetting> options,
                              ICustomerDeviceRepository customerDeviceRepository,
-                             IOneSignalService oneSignalService
+                             IOneSignalService oneSignalService,
+                             UserManager<User> userManager,
+                             IAdminDeviceRepository adminDeviceRepository
         )
         {
             _mapper = mapper;
@@ -82,6 +86,8 @@ namespace Service.Services
             _stationRepository = stationRepository;
             _routeTicketRepository = routeTicketRepository;
             _oneSignalService = oneSignalService;
+            _userManager = userManager;
+            _adminDeviceRepository = adminDeviceRepository;
         }
 
         public List<TicketRowViewModel> GetTickets()
@@ -90,6 +96,12 @@ namespace Service.Services
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
 
             return ticketRowViewModels;
+        }
+        public TicketDetailViewModel GetTicketDetail(int ticketId)
+        {
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
+            var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
+            return ticketDetailVM;
         }
 
         public List<TicketRowViewModel> GetPendingTickets()
@@ -172,6 +184,58 @@ namespace Service.Services
             return ticketRowViewModels;
         }
 
+        public List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
+        {
+            var routeTicket = _routeTicketRepository.Get(x =>
+                x.Id == routeTicketId &&
+                x.Deleted == false
+            );
+
+            if (routeTicket == null) throw new NotFoundException();
+
+            DateTime? departureFromDate = null;
+            DateTime? arrivalToDate = null;
+            int departureCityId = routeTicket.DepartureStation.CityId;
+            int arrivalCityId = routeTicket.ArrivalStation.CityId;
+
+            var previousRouteTicket = _routeTicketRepository.Get(x =>
+                x.RouteId == routeTicket.RouteId &&
+                x.Deleted == false &&
+                x.Order == routeTicket.Order - 1
+            );
+
+            var nextRouteTicket = _routeTicketRepository.Get(x =>
+                x.RouteId == routeTicket.RouteId &&
+                x.Deleted == false &&
+                x.Order == routeTicket.Order + 1
+            );
+
+            if (previousRouteTicket != null)
+                //TODO: Add waiting time amount
+                departureFromDate = previousRouteTicket.Ticket.ArrivalDateTime;
+
+            if (nextRouteTicket != null)
+                //TODO: Add waiting time amount
+                arrivalToDate = nextRouteTicket.Ticket.DepartureDateTime;
+
+            //Get Tickets base on fromDate and toDate
+            var tickets = _ticketRepository.GetAllQueryable()
+                .Where(x => x.Deleted == false &&
+                    x.Status == Core.Enum.TicketStatus.Valid &&
+                    (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
+                    (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
+                    x.DepartureStation.CityId == departureCityId &&
+                    x.ArrivalStation.CityId == arrivalCityId &&
+                    x.Id != routeTicket.TicketId
+                );
+
+            var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());
+
+            return result;
+        }
+        //Get
+
+        
         public string ApproveTicket(int id)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == id);
@@ -190,10 +254,10 @@ namespace Service.Services
             {
                 return ex.Message;
             }
-            List<string> deviceIds = getCustomerDeviceIds(existedTicket, true);
             var message = "Ticket " + existedTicket.TicketCode + " is valid";
-            _oneSignalService.PushNotification(message, deviceIds);
-            
+            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+
             return string.Empty;
         }
         public string RejectTicket(int id)
@@ -214,17 +278,11 @@ namespace Service.Services
             {
                 return ex.Message;
             }
-            List<string> deviceIds = getCustomerDeviceIds(existedTicket, true);
             var message = "Ticket " + existedTicket.TicketCode + " is invalid";
-            _oneSignalService.PushNotification(message, deviceIds);
+            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
             return string.Empty;
-        }
-        public TicketDetailViewModel GetTicketDetail(int ticketId)
-        {
-            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
-            var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
-            return ticketDetailVM;
         }
 
         public int PostTicket(string username, TicketPostViewModel model)
@@ -236,6 +294,11 @@ namespace Service.Services
             ticket.SellerId = customerId;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
+
+            // noti to staff
+            List<string> adminDeviceIds = GetAdminDeviceIds();
+            var message = "A new ticket is posted";
+            _oneSignalService.PushNotificationAdmin(message, adminDeviceIds);
             return ticket.Id;
         }
 
@@ -298,6 +361,10 @@ namespace Service.Services
             {
                 return ex.Message;
             }
+            //noti to staff
+            List<string> adminDeviceIds = GetAdminDeviceIds();
+            var message = "A ticket is renamed";
+            _oneSignalService.PushNotificationAdmin(message, adminDeviceIds);
 
             return string.Empty;
         }
@@ -323,14 +390,14 @@ namespace Service.Services
                 }
 
                 //noti to seller
-                List<string> sellerDeviceIds = getCustomerDeviceIds(existedTicket, true);
+                List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
                 var message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Money will be tranfered in a few minutes";
-                _oneSignalService.PushNotification(message, sellerDeviceIds);
+                _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
                 //noti to buyer
-                List<string> buỷerDeviceIds = getCustomerDeviceIds(existedTicket, false);
+                List<string> buỷerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
                 message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
-                _oneSignalService.PushNotification(message, buỷerDeviceIds);
+                _oneSignalService.PushNotificationCustomer(message, buỷerDeviceIds);
             }
             else
             {
@@ -344,69 +411,37 @@ namespace Service.Services
                 {
                     return ex.Message;
                 }
-                List<string> sellerDeviceIds = getCustomerDeviceIds(existedTicket, true);
+                List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
                 var message = "Ticket " + existedTicket.TicketCode + " renamed fail. Please check and rename again.";
-                _oneSignalService.PushNotification(message, sellerDeviceIds);
+                _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
             }
 
             return string.Empty;
         }
 
-        public List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
+        
+        public string RefuseTicket(int id)
         {
-            var routeTicket = _routeTicketRepository.Get(x =>
-                x.Id == routeTicketId &&
-                x.Deleted == false
-            );
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
 
-            if (routeTicket == null) throw new NotFoundException();
-
-            DateTime? departureFromDate = null;
-            DateTime? arrivalToDate = null;
-            int departureCityId = routeTicket.DepartureStation.CityId;
-            int arrivalCityId = routeTicket.ArrivalStation.CityId;
-
-            var previousRouteTicket = _routeTicketRepository.Get(x =>
-                x.RouteId == routeTicket.RouteId &&
-                x.Deleted == false &&
-                x.Order == routeTicket.Order - 1
-            );
-
-            var nextRouteTicket = _routeTicketRepository.Get(x =>
-                x.RouteId == routeTicket.RouteId &&
-                x.Deleted == false &&
-                x.Order == routeTicket.Order + 1
-            );
-
-            if (previousRouteTicket != null)
-                //TODO: Add waiting time amount
-                departureFromDate = previousRouteTicket.Ticket.ArrivalDateTime;
-
-            if (nextRouteTicket != null)
-                //TODO: Add waiting time amount
-                arrivalToDate = nextRouteTicket.Ticket.DepartureDateTime;
-
-            //Get Tickets base on fromDate and toDate
-            var tickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.Deleted == false &&
-                    x.Status == Core.Enum.TicketStatus.Valid &&
-                    (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
-                    (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
-                    x.DepartureStation.CityId == departureCityId &&
-                    x.ArrivalStation.CityId == arrivalCityId &&
-                    x.Id != routeTicket.TicketId
-                );
-
-            var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());
-
-            return result;
+            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+            _ticketRepository.Update(existedTicket);
+            _unitOfWork.CommitChanges();
+            var message = "Ticket " + existedTicket.TicketCode + " has been refused";
+            List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
+            _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+            return string.Empty;
         }
 
-        public List<string> getCustomerDeviceIds(Ticket ticket, bool isSeller)
+        public List<string> GetCustomerDeviceIds(Ticket ticket, bool isSeller)
         {
-            var customerDevices = isSeller 
-                ? ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList() 
-                : ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false && x.DeviceType == Core.Enum.DeviceType.Mobile).ToList();
+            var customerDevices = isSeller
+                ? ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList()
+                : ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false).ToList();
             List<string> deviceIds = new List<string>();
 
             foreach (var sellerDevice in customerDevices)
@@ -414,6 +449,22 @@ namespace Service.Services
                 deviceIds.Add(sellerDevice.DeviceId);
             }
             return deviceIds;
+        }
+
+        public List<string> GetAdminDeviceIds()
+        {
+            var staffs = _userManager.GetUsersInRoleAsync("STAFF").Result;
+            List<string> adminDeviceIds = new List<string>();
+            List<AdminDevice> adminDevices = new List<AdminDevice>();
+            foreach (var staff in staffs)
+            {
+                adminDevices.AddRange(_adminDeviceRepository.GetAllQueryable().Where(x => x.UserId == staff.Id).ToList());  
+            }
+            foreach(var device in adminDevices)
+            {
+                adminDeviceIds.Add(device.DeviceId);
+            }
+            return adminDeviceIds;
         }
     }
 }
