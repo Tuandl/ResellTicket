@@ -2,6 +2,7 @@ const appConfig = {
     apiBaseUrl: 'http://api.resellticket.local/',
     apiUrl: {
         route: 'api/route/',
+        routeTicket: 'api/route/route-ticket/',
         city: 'api/city/'
     },
     url: {
