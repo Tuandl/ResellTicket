@@ -1,15 +1,15 @@
 ﻿using Core.Enum;
-using Core.Infrastructure;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Core.Models
+namespace ViewModel.ViewModel.Refund
 {
-    public class Refund : EntityBase
+    public class RefundCreateViewModel
     {
         public int PaymentId { get; set; }
         public decimal Amount { get; set; }
         public string StripeRefundId { get; set; }
         public RefundStatus Status { get; set; }
-        public virtual  Payment Payment { get; set; }
-
     }
 }
