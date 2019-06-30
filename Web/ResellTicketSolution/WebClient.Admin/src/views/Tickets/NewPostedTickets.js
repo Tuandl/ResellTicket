@@ -1,14 +1,14 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { toastr } from 'react-redux-toastr';
-import { Redirect } from 'react-router-dom';
+// import { toastr } from 'react-redux-toastr';
+import { Redirect, Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 
 
 function TicketRow(props) {
-    const { ticket, parent } = props;
+    const { ticket} = props;
     const getBadge = (status) => {
         if (status === 1) {
             return (
@@ -16,7 +16,7 @@ function TicketRow(props) {
             )
         }
     }
-    //const userLink = `/user/${user.id}`
+    const ticketLink = `/newPostedTicket/${ticket.id}`
 
     // const getBadge = (isActive) => {
     //     if (isActive === true) {
@@ -34,19 +34,24 @@ function TicketRow(props) {
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
             <td>{ticket.departureCity}</td>
-            <td>{moment(ticket.departureDateTime).format('MMM DD YYYY, h:mm:ss')}</td>
+            <td>{moment(ticket.departureDateTime).format('MMM DD YYYY, HH:mm')}</td>
             <td>{ticket.arrivalCity}</td>
-            <td>{moment(ticket.arrivalDateTime).format('MMM DD YYYY, h:mm:ss')}</td>
+            <td>{moment(ticket.arrivalDateTime).format('MMM DD YYYY, HH:mm')}</td>
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                <Button color="success" className="mr-2" onClick={() => { parent.onValidSaveChanges(ticket.id) }}>
+                {/* <Button color="success" className="mr-2" onClick={() => { parent.onValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
-                </Button>
-                <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
+                </Button> */}
+                <Link to={ticketLink}>
+                    <Button color="success" className="mr-2">
+                        <i className="fa fa-edit fa-lg mr-1"></i>Valid
+                    </Button>
+                </Link>
+                {/* <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
-                </Button>
+                </Button> */}
             </td>
         </tr>
 
@@ -63,14 +68,14 @@ class NewPostedTickets extends Component {
             isLogin: false,
             userRole: '',
         }
-        
+
     }
 
     componentWillMount() {
         var OneSignal = window.OneSignal || [];
         var self = this
         OneSignal.on('notificationDisplay', function (event) {
-            if(event.content.indexOf('posted')) {
+            if (event.content.indexOf('posted')) {
                 self.getPendingTickets();
             }
         });
@@ -106,7 +111,6 @@ class NewPostedTickets extends Component {
             this.setState({
                 tickets: res.data
             })
-            //console.log(this.state.tickets);
         });
 
     }
@@ -120,38 +124,35 @@ class NewPostedTickets extends Component {
 
     onSearch = (event) => {
         event.preventDefault();
-        //console.log(this.state.searchParam);
         Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
-            console.log(res)
             this.setState({
                 tickets: res.data
             })
         });
     }
 
-    onValidSaveChanges = (id) => {
-        Axios.put('api/ticket/approve/' + id).then(res => {
-            if (res.status === 200) {
-                toastr.success('Update Success', 'Ticket has been valid successfully.');
-                // this.props.history.push('/ticket');
-                this.getPendingTickets();
-            } else {
-                toastr.error('Error', 'Error when valid Ticket');
-            }
-        })
-    }
+    // onValidSaveChanges = (id) => {
+    //     Axios.put('api/ticket/approve/' + id).then(res => {
+    //         if (res.status === 200) {
+    //             toastr.success('Update Success', 'Ticket has been valid successfully.');
+    //             this.getPendingTickets();
+    //         } else {
+    //             toastr.error('Error', 'Error when valid Ticket');
+    //         }
+    //     })
+    // }
 
-    onInValidSaveChanges = (id) => {
-        Axios.put('api/ticket/reject/' + id).then(res => {
-            if (res.status === 200) {
-                toastr.success('Reject Success', 'Ticket has been rejected.');
-                // this.props.history.push('/ticket');
-                this.getPendingTickets();
-            } else {
-                toastr.error('Error', 'Error when reject Ticket');
-            }
-        })
-    }
+    // onInValidSaveChanges = (id) => {
+    //     Axios.put('api/ticket/reject/' + id).then(res => {
+    //         if (res.status === 200) {
+    //             toastr.success('Reject Success', 'Ticket has been rejected.');
+    //             // this.props.history.push('/ticket');
+    //             this.getPendingTickets();
+    //         } else {
+    //             toastr.error('Error', 'Error when reject Ticket');
+    //         }
+    //     })
+    // }
 
     render() {
         var { tickets, isLogin, userRole } = this.state
@@ -162,11 +163,6 @@ class NewPostedTickets extends Component {
                         <Col xl={12}>
                             <Card>
                                 <CardHeader>
-                                    {/* <Link to='/user/add'>
-                                    <Button className="text-right" color="primary">
-                                        <i className="fa fa-plus fa-lg mr-1"></i>Create User
-                                        </Button>
-                                </Link> */}
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
                                             <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange} />

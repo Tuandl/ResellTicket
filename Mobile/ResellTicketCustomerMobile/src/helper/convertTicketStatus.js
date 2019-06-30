@@ -25,7 +25,7 @@ function toString(status) {
         case TicketStatus.REFUSED:
             return 'Refused';
         default:
-            return '';
+            return 'Expired';
     }
 }
 

@@ -35,6 +35,7 @@ export default class TicketViewComponent extends Component {
             sellingPrice,
             departureDateTime,
             arrivalDateTime,
+            expiredDateTime,
             status,
             vehicle,
             ticketCode } = this.props.postedTicket;
@@ -42,7 +43,11 @@ export default class TicketViewComponent extends Component {
         {   //check hết hạn vé
             status === 1 ? this.state.statusColor = 'orange' 
             : status === 3 ? this.state.statusColor = 'red' 
-            : this.state.statusColor = '#28a745'
+            : this.state.statusColor = '#28a745';
+            if(moment(new Date()).isAfter(moment(expiredDateTime))) {
+                this.state.statusColor = 'lightgrey'
+                status = 0;
+            }
         } 
 
         return (
@@ -76,8 +81,8 @@ export default class TicketViewComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             <Text>{ticketCode}</Text>
-                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('MMM DD YYYY')}</Text>
-                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('MMM DD YYYY')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('ddd, MMM DD YYYY')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('ddd, MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
                             <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toString(status)}</Text>
@@ -86,7 +91,7 @@ export default class TicketViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(departureDateTime).format('MMM DD YYYY HH:mm')}</Text>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>

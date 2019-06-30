@@ -18,6 +18,7 @@ namespace Core.Models
         public decimal CommissionPercent { get; set; }
         public DateTime DepartureDateTime { get; set; }
         public DateTime ArrivalDateTime { get; set; }
+        public DateTime? ExpiredDateTime { get; set; }
         public int TicketTypeId { get; set; }
         public virtual TicketType TicketType { get; set; }
         public int? BuyerId { get; set; }

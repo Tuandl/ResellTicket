@@ -82,19 +82,34 @@ namespace WebAPI.Admin.Controllers
             return ticketRowViewModels;
         }
 
+        [HttpGet("detail")]
+        [Authorize]
+        public ActionResult<TicketDetailViewModel> GetTicketDetail(int ticketId)
+        {
+            try
+            {
+                var ticketDetailVM = _ticketService.GetTicketDetail(ticketId);
+                return Ok(ticketDetailVM);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
         /// <summary>
         /// Approve Ticket
         /// </summary>
         /// <returns></returns>
         [HttpPut("approve/{id}")]
-        public ActionResult ApproveTicket(int id)
+        public ActionResult ApproveTicket(int id, decimal commissionFee, DateTime expiredDateTime)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var approveResult = _ticketService.ApproveTicket(id);
+            var approveResult = _ticketService.ApproveTicket(id, commissionFee, expiredDateTime);
 
             if (!string.IsNullOrEmpty(approveResult))
             {
@@ -108,14 +123,14 @@ namespace WebAPI.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("reject/{id}")]
-        public ActionResult RejectTicket(int id)
+        public ActionResult RejectTicket(int id, string invalidField)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var rejectResult = _ticketService.RejectTicket(id);
+            var rejectResult = _ticketService.RejectTicket(id, invalidField);
 
             if (!string.IsNullOrEmpty(rejectResult))
             {

@@ -48,7 +48,13 @@ class TicketList extends React.Component {
         return (
             tickets.map((item, index) => {
                 //console.log(item.Id)
-                var labelStatus = item.status === 1 ? 'label label-warning' : item.status === 3 ? 'label label-danger' : 'label label-success'
+                var labelStatus = item.status === 1 ? 'label label-warning' 
+                                : item.status === 3 ? 'label label-danger' 
+                                : 'label label-success';
+                if(moment(new Date()).isAfter(moment(item.expiredDateTime))) {
+                    labelStatus = 'label label-default';
+                    item.status = 0;
+                }                
                 return (
                     <div className="row" key={index} style={{ marginBottom: 50 }}>
                         <h3 style={{ color: '#fab005' }}>
@@ -82,10 +88,10 @@ class TicketList extends React.Component {
                             <div className="routeBody" style={{ color: '#b8891d' }}>
                                 <div className="col-md-2"><span><b>{item.ticketCode}</b></span></div>
                                 <div className="col-md-2">
-                                    <span>{moment(item.departureDateTime).format('MMM DD YYYY HH:mm')}</span>
+                                    <span>{moment(item.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
                                 </div>
                                 <div className="col-md-2">
-                                    <span>{moment(item.arrivalDateTime).format('MMM DD YYYY HH:mm')}</span>
+                                    <span>{moment(item.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
                                 </div>
                                 <div className="col-md-2"><span>{item.vehicle}</span></div>
                                 <div className="col-md-2"><span className={labelStatus}>{convertStatusForSeller(item.status)}</span></div>
@@ -95,7 +101,9 @@ class TicketList extends React.Component {
                                 </div>
                             </div>
                             <div className="routeFooter">
-                                <span style={{ color: 'red' }}>Expired Date: June/16/2019 22:00</span>
+                                <span style={{ color: 'red' }}>
+                                    Expired Date: {moment(item.expiredDateTime).format('ddd, MMM DD YYYY, HH:mm')}
+                                </span>
                             </div>
                         </div>
                     </div>

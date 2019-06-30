@@ -37,8 +37,8 @@ namespace Service.Services
         List<TicketRowViewModel> GetBoughtTickets();
         //getTicketsCompletedStatus
         List<TicketRowViewModel> GetCompletedTickets();
-        string ApproveTicket(int id);
-        string RejectTicket(int id);
+        string ApproveTicket(int id, decimal commissionFee, DateTime expiredDatetime);
+        string RejectTicket(int id, string invalidField);
         int PostTicket(string username, TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
         void DeleteTicket(int ticketId);
@@ -235,56 +235,6 @@ namespace Service.Services
         }
         //Get
 
-        
-        public string ApproveTicket(int id)
-        {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
-            if (existedTicket == null)
-            {
-                return "Not found ticket";
-            }
-
-            existedTicket.Status = Core.Enum.TicketStatus.Valid;
-            _ticketRepository.Update(existedTicket);
-            try
-            {
-                _unitOfWork.CommitChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            var message = "Ticket " + existedTicket.TicketCode + " is valid";
-            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
-            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
-
-            return string.Empty;
-        }
-        public string RejectTicket(int id)
-        {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
-            if (existedTicket == null)
-            {
-                return "Not found ticket";
-            }
-
-            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
-            _ticketRepository.Update(existedTicket);
-            try
-            {
-                _unitOfWork.CommitChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-            var message = "Ticket " + existedTicket.TicketCode + " is invalid";
-            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
-            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
-
-            return string.Empty;
-        }
-
         public int PostTicket(string username, TicketPostViewModel model)
         {
             var customerId = _customerRepository.Get(x => x.Username == username).Id;
@@ -292,6 +242,7 @@ namespace Service.Services
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.SellerId = customerId;
+            ticket.ExpiredDateTime = model.DepartureDateTime;
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
 
@@ -341,6 +292,58 @@ namespace Service.Services
             existedTicket.Deleted = true;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
+        }
+
+        public string ApproveTicket(int id, decimal commissionFee, DateTime expiredDateTime)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+
+            existedTicket.Status = Core.Enum.TicketStatus.Valid;
+            existedTicket.CommissionPercent = commissionFee;
+            existedTicket.ExpiredDateTime = expiredDateTime;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            var message = "Ticket " + existedTicket.TicketCode + " is valid";
+            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+
+            return string.Empty;
+        }
+
+        public string RejectTicket(int id, string invalidField)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if (existedTicket == null)
+            {
+                return "Not found ticket";
+            }
+
+            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+            _ticketRepository.Update(existedTicket);
+            try
+            {
+                _unitOfWork.CommitChanges();
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            var message = "Ticket " + existedTicket.TicketCode + " is invalid. " + invalidField + " are incorrect.";
+            List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+
+            return string.Empty;
         }
 
         public string ConfirmRenameTicket(int id)
