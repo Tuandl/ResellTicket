@@ -131,7 +131,33 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</div>
 	</div>
 
-	
+    <!-- Modal -->
+    <div class="modal fade" id="update-route-modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Change Ticket</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="padding-15">
+                        <div id="tickets-container" class="padding-5">
+						</div>
+						<div id="tickets-empty-container">
+							<h3 class="text-center text-info">Sorry. We cannot find any replaceable ticket for you.</h3>
+						</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnUpdateRoute" class="btn btn-info" data-dismiss="modal">Update</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 	<!--footer-->
 	<div class="footer">

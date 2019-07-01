@@ -52,7 +52,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="routeId"></param>
         /// <returns></returns>
-        List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
+        List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
     }
     public class TicketService : ITicketService
     {
@@ -352,7 +352,7 @@ namespace Service.Services
             return string.Empty;
         }
 
-        public List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
+        public List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
         {
             var routeTicket = _routeTicketRepository.Get(x =>
                 x.Id == routeTicketId &&
@@ -397,7 +397,7 @@ namespace Service.Services
                     x.Id != routeTicket.TicketId
                 );
 
-            var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());
+            var result = _mapper.Map<List<Ticket>, List<AvailableTicketViewModel>>(tickets.ToList());
 
             return result;
         }

@@ -32,7 +32,7 @@ function htmlToElements(html) {
 }
 
 function getQueryString(paramObject) {
-    if(paramObject === null || paramObject === undefined) 
+    if (paramObject === null || paramObject === undefined)
         return '';
     let query = Object.keys(paramObject)
         .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramObject[k]))
@@ -45,6 +45,17 @@ function getQueryParam(key) {
     return urlParams.get(key);
 }
 
+function createWatch(object, onObjChanged) {
+    const handler = {
+        set(target, key, value) {
+            target[key] = value;
+            if(onObjChanged) onObjChanged(key);
+            return true;
+        },
+    };
+    return new Proxy(object, handler);
+}
+
 const commonService = {
     generateRandomId: generateRandomId,
     removeAllChildren: removeAllChildren,
@@ -52,6 +63,7 @@ const commonService = {
     htmlToElements,
     getQueryString,
     getQueryParam,
+    createWatch,
 };
 
 export default commonService

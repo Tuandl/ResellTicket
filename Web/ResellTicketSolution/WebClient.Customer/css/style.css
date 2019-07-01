@@ -3944,3 +3944,7 @@ span.last {
 .bold {
     font-size: bold !important;
 }
+
+.ticket-available__active .route {
+    background-color: #ffda1e13 !important
+}
