@@ -23,8 +23,9 @@ function Get(url, params) {
             } else {
                 reject(response);
             }
-        }).catch(() => {
+        }).catch((error) => {
             toastService.error('Error');
+            reject(error);
         })
     });
 }
@@ -45,12 +46,13 @@ function Post(url, data) {
                 reject(response);
             }
             if(response.status === 200) {
-                response.json().then(data => resolve(data));
+                resolve(response);
             } else {
                 reject(response);
             }
         }).catch((error) => {
             toastService.error('Error');
+            reject(error);
         })
     });
 }
@@ -71,12 +73,13 @@ function Put(url, data) {
                 reject(response);
             }
             if(response.status === 200) {
-                response.json().then(data => resolve(data));
+                resolve(response);
             } else {
                 reject(response);
             }
         }).catch((error) => {
             toastService.error('Error');
+            reject(error);
         })
     });
 }
@@ -102,6 +105,7 @@ function Delete(url) {
             }
         }).catch((error) => {
             toastService.error('Error');
+            reject(error);
         })
     });
 }

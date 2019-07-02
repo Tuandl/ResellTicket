@@ -3,13 +3,16 @@ import commonService from '../service/commonService.js';
 import ticketStatus from '../enum/ticketStatus.js';
 import vehicleNameEnum from '../enum/vehicleNameEnum.js';
 
-
 class TicketComponent {
 
-    constructor(ticket) {
+    constructor(ticket, onClicked) {
         this.ticket = ticket;
+        this.events = {
+            onClicked,
+        }
         this.html = document.createElement('div');
         this.html.id = ticket.id || commonService.generateRandomId();
+        this.id = this.html.id;
     }
 
     renderStatus(status) {
@@ -41,7 +44,6 @@ class TicketComponent {
     }
 
     render() {
-
         const ticket = this.ticket;
 
         this.html.innerHTML =
@@ -107,11 +109,23 @@ class TicketComponent {
                 </div>
             </div>`;
 
+        this.bindEvents();
+
         return this.html;
     }
 
     get domElement() {
         return this.html;
+    }
+
+    bindEvents() {
+        const self = this;
+
+        if(this.events.onClicked) {
+            this.html.addEventListener('click', function() {
+                self.events.onClicked(self);
+            });
+        }
     }
 }
 

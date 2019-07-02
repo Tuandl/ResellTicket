@@ -54,7 +54,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="routeId"></param>
         /// <returns></returns>
-        List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
+        List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
     }
     public class TicketService : ITicketService
     {
@@ -435,7 +435,56 @@ namespace Service.Services
             return string.Empty;
         }
 
-        
+        public List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
+        {
+            var routeTicket = _routeTicketRepository.Get(x =>
+                x.Id == routeTicketId &&
+                x.Deleted == false
+            );
+
+            if (routeTicket == null) throw new NotFoundException();
+
+            DateTime? departureFromDate = null;
+            DateTime? arrivalToDate = null;
+            int departureCityId = routeTicket.DepartureStation.CityId;
+            int arrivalCityId = routeTicket.ArrivalStation.CityId;
+
+            var previousRouteTicket = _routeTicketRepository.Get(x =>
+                x.RouteId == routeTicket.RouteId &&
+                x.Deleted == false &&
+                x.Order == routeTicket.Order - 1
+            );
+
+            var nextRouteTicket = _routeTicketRepository.Get(x =>
+                x.RouteId == routeTicket.RouteId &&
+                x.Deleted == false &&
+                x.Order == routeTicket.Order + 1
+            );
+
+            if (previousRouteTicket != null)
+                //TODO: Add waiting time amount
+                departureFromDate = previousRouteTicket.Ticket.ArrivalDateTime;
+
+            if (nextRouteTicket != null)
+                //TODO: Add waiting time amount
+                arrivalToDate = nextRouteTicket.Ticket.DepartureDateTime;
+
+            //Get Tickets base on fromDate and toDate
+            var tickets = _ticketRepository.GetAllQueryable()
+                .Where(x => x.Deleted == false &&
+                    x.Status == Core.Enum.TicketStatus.Valid &&
+                    (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
+                    (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
+                    x.DepartureStation.CityId == departureCityId &&
+                    x.ArrivalStation.CityId == arrivalCityId &&
+                    x.Id != routeTicket.TicketId
+                );
+
+            var result = _mapper.Map<List<Ticket>, List<AvailableTicketViewModel>>(tickets.ToList());
+
+            return result;
+        }
+
         public string RefuseTicket(int id)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == id);
