@@ -157,6 +157,7 @@
             <div class="main-agileits form-post-ticket" style="margin-bottom: 100px">
                 <div class="form-w3agile form1">
                     <h3 id="title"></h3>
+                    <span id="invalidField"></span>
                     <form autocomplete="off">
                         <div class="row">
                             <div class="col-md-4">
@@ -169,7 +170,6 @@
                                             Get('api/vehicle')
                                                 .then((res) => res.json())
                                                 .then((data) => {
-                                                    console.log(data)
                                                     for (var i = 0; i < data.length; i++) {
                                                         var option = document.createElement('OPTION');
                                                         option.setAttribute('value', data[i].id);

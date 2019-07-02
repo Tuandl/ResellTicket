@@ -25,8 +25,10 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.TransportationName, option => option.MapFrom(source => source.Transportation.Name))
                 .ForMember(dest => dest.TicketTypeName, option => option.MapFrom(source => source.TicketType.Name))
                 .ForMember(dest => dest.DepartureCityName, option => option.MapFrom(source => source.DepartureStation.City.Name))
+                .ForMember(dest => dest.DepartureCityId, option => option.MapFrom(source => source.DepartureStation.CityId))
                 .ForMember(dest => dest.DepartureStationName, option => option.MapFrom(source => source.DepartureStation.Name))
                 .ForMember(dest => dest.ArrivalCityName, option => option.MapFrom(source => source.ArrivalStation.City.Name))
+                .ForMember(dest => dest.ArrivalCityId, option => option.MapFrom(source => source.ArrivalStation.CityId))
                 .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name));
 
             CreateMap<Route, RouteDetailViewModel>();

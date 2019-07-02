@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.AspNetCore.Identity;
+using Service.NotificationService;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Ticket;
-using System.IO;
-using System.Net;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Options;
-using ViewModel.AppSetting;
-using Service.NotificationService;
 
 namespace Service.Services
 {
@@ -29,7 +23,6 @@ namespace Service.Services
         List<TicketRowViewModel> GetValidTickets();
         //getTicketsInValidStatus
         List<TicketRowViewModel> GetInValidTickets();
-
         List<TicketRowViewModel> GetTickets(string param);
         //getTicketsRenameddStatus
         List<TicketRowViewModel> GetRenamedTickets();
@@ -256,32 +249,15 @@ namespace Service.Services
         public void EditTicket(TicketEditViewModel model)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
-            if (model.TransportationId != -1 && model.TransportationId != existedTicket.TransportationId)
+            //int countEditInValid = 
+            EditInfoAndInvalidField(existedTicket, model);
+            if(CheckInvalidFieldRemain(existedTicket))
             {
-                existedTicket.TransportationId = model.TransportationId;
-            }
-            if (model.ArrivalStationId != -1 && model.ArrivalStationId != existedTicket.ArrivalStationId)
+                existedTicket.Status = Core.Enum.TicketStatus.Pending;
+            } else
             {
-                existedTicket.ArrivalStationId = model.ArrivalStationId;
+                existedTicket.Status = Core.Enum.TicketStatus.Invalid;
             }
-            if (model.DepartureStationId != -1 && model.DepartureStationId != existedTicket.DepartureStationId)
-            {
-                existedTicket.DepartureStationId = model.DepartureStationId;
-            }
-            if (model.TicketTypeId != -1 && model.TicketTypeId != existedTicket.TicketTypeId)
-            {
-                existedTicket.TicketTypeId = model.TicketTypeId;
-            }
-            if (model.DepartureDateTime != existedTicket.DepartureDateTime)
-            {
-                existedTicket.DepartureDateTime = model.DepartureDateTime;
-            }
-            if (model.ArrivalDateTime != existedTicket.ArrivalDateTime)
-            {
-                existedTicket.ArrivalDateTime = model.ArrivalDateTime;
-            }
-            existedTicket.TicketCode = model.TicketCode;
-            existedTicket.SellingPrice = model.SellingPrice;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
@@ -305,6 +281,14 @@ namespace Service.Services
             existedTicket.Status = Core.Enum.TicketStatus.Valid;
             existedTicket.CommissionPercent = commissionFee;
             existedTicket.ExpiredDateTime = expiredDateTime;
+            existedTicket.IsTicketCodeValid = true;
+            existedTicket.IsVehicleValid = true;
+            existedTicket.IsTransportationValid = true;
+            existedTicket.IsTicketTypeValid = true;
+            existedTicket.IsDepartureValid = true;
+            existedTicket.IsArrivalValid = true;
+            existedTicket.IsPassengerNameValid = true;
+            existedTicket.IsEmailBookingValid = true;
             _ticketRepository.Update(existedTicket);
             try
             {
@@ -331,6 +315,14 @@ namespace Service.Services
 
             existedTicket.Status = Core.Enum.TicketStatus.Invalid;
             _ticketRepository.Update(existedTicket);
+            existedTicket.IsTicketCodeValid = invalidField.ToLower().Contains("ticket code") ? false : true;
+            existedTicket.IsVehicleValid = invalidField.ToLower().Contains("vehicle") ? false : true;
+            existedTicket.IsTransportationValid = invalidField.ToLower().Contains("transportation") ? false : true;
+            existedTicket.IsTicketTypeValid = invalidField.ToLower().Contains("ticket type") ? false : true;
+            existedTicket.IsDepartureValid = invalidField.ToLower().Contains("departure") ? false : true;
+            existedTicket.IsArrivalValid = invalidField.ToLower().Contains("arrival") ? false : true;
+            existedTicket.IsPassengerNameValid = invalidField.ToLower().Contains("passenger") ? false : true;
+            existedTicket.IsEmailBookingValid = invalidField.ToLower().Contains("email") ? false : true;
             try
             {
                 _unitOfWork.CommitChanges();
@@ -422,7 +414,7 @@ namespace Service.Services
             return string.Empty;
         }
 
-        
+
         public string RefuseTicket(int id)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == id);
@@ -461,13 +453,88 @@ namespace Service.Services
             List<AdminDevice> adminDevices = new List<AdminDevice>();
             foreach (var staff in staffs)
             {
-                adminDevices.AddRange(_adminDeviceRepository.GetAllQueryable().Where(x => x.UserId == staff.Id).ToList());  
+                adminDevices.AddRange(_adminDeviceRepository.GetAllQueryable().Where(x => x.UserId == staff.Id).ToList());
             }
-            foreach(var device in adminDevices)
+            foreach (var device in adminDevices)
             {
                 adminDeviceIds.Add(device.DeviceId);
             }
             return adminDeviceIds;
+        }
+
+        public void EditInfoAndInvalidField(Ticket existedTicket, TicketEditViewModel model)
+        {
+            if(model.VehicleId != existedTicket.Transportation.VehicleId)
+            {
+                existedTicket.IsVehicleValid = null;
+            }
+            if (model.TransportationId != existedTicket.TransportationId)
+            {
+                existedTicket.TransportationId = model.TransportationId;
+                existedTicket.IsTransportationValid = null;
+            }
+            if (model.TicketTypeId != existedTicket.TicketTypeId)
+            {
+                existedTicket.TicketTypeId = model.TicketTypeId;
+                existedTicket.IsTicketTypeValid = null;
+            }
+            if (model.DepartureCityId != existedTicket.DepartureStation.CityId)
+            {
+                existedTicket.IsDepartureValid = null;
+            }
+            if (model.DepartureStationId != existedTicket.DepartureStationId)
+            {
+                existedTicket.DepartureStationId = model.DepartureStationId;
+                existedTicket.IsDepartureValid = null;
+            }
+            if (model.DepartureDateTime != existedTicket.DepartureDateTime)
+            {
+                existedTicket.DepartureDateTime = model.DepartureDateTime;
+                existedTicket.IsDepartureValid = null;
+            }
+            if (model.ArrivalCityId != existedTicket.ArrivalStation.CityId)
+            {
+                existedTicket.IsArrivalValid = null;
+            }
+            if (model.ArrivalStationId != existedTicket.ArrivalStationId)
+            {
+                existedTicket.ArrivalStationId = model.ArrivalStationId;
+                existedTicket.IsArrivalValid = null;
+            }
+            if (model.ArrivalDateTime != existedTicket.ArrivalDateTime)
+            {
+                existedTicket.ArrivalDateTime = model.ArrivalDateTime;
+                existedTicket.IsArrivalValid = null;
+            }
+            if(existedTicket.TicketCode != model.TicketCode)
+            {
+                existedTicket.TicketCode = model.TicketCode;
+                existedTicket.IsTicketCodeValid = null;
+            }
+            if (existedTicket.PassengerName != model.PassengerName)
+            {
+                existedTicket.PassengerName = model.PassengerName;
+                existedTicket.IsPassengerNameValid = null;
+            }
+            if (existedTicket.EmailBooking != model.EmailBooking)
+            {
+                existedTicket.EmailBooking = model.EmailBooking;
+                existedTicket.IsEmailBookingValid = null;
+            }
+            existedTicket.SellingPrice = model.SellingPrice;
+        }
+
+        public bool CheckInvalidFieldRemain(Ticket existedTicket)
+        {
+            if(existedTicket.IsTicketCodeValid == false) return false;
+            if (existedTicket.IsVehicleValid == false) return false;
+            if (existedTicket.IsTransportationValid == false) return false;
+            if (existedTicket.IsTicketTypeValid == false) return false;
+            if (existedTicket.IsDepartureValid == false) return false;
+            if (existedTicket.IsArrivalValid == false) return false;
+            if (existedTicket.IsPassengerNameValid == false) return false;
+            if (existedTicket.IsEmailBookingValid == false) return false;
+            return true;
         }
     }
 }

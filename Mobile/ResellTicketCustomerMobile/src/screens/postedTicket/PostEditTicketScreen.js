@@ -46,7 +46,18 @@ export default class PostEditTicket extends Component {
             sellingPrice: '',
             passengerName: '',
             emailBooking: '',
-            emailValid: true
+            emailValid: true,
+
+            invalidField: {
+                isTicketCodeValid: true,
+                isVehicleValid: true,
+                isTransportationValid: true,
+                isTicketTypeValid: true,
+                isDepatureValid: true,
+                isArrivalValid: true,
+                isPassengerNameValid: true,
+                isEmailBookingValid: true
+            }
         }
     }
 
@@ -73,11 +84,17 @@ export default class PostEditTicket extends Component {
             const ticketDetail = res.data
             this.setState({
                 vehicleId: ticketDetail.vehicleId,
+                transportationId: ticketDetail.transportationId,
                 transportationName: ticketDetail.transportationName,
+                ticketTypeId: ticketDetail.ticketTypeId,
                 ticketTypeName: ticketDetail.ticketTypeName,
+                departureCityId: ticketDetail.departureCityId,
                 departureCityName: ticketDetail.departureCityName,
+                departureStationId: ticketDetail.departureStationId,
                 departureStationName: ticketDetail.departureStationName,
+                arrivalCityId: ticketDetail.arrivalCityId,
                 arrivalCityName: ticketDetail.arrivalCityName,
+                arrivalStationId: ticketDetail.arrivalStationId,
                 arrivalStationName: ticketDetail.arrivalStationName,
                 departureDateTime: moment(ticketDetail.departureDateTime).format('YYYY-MM-DD HH:mm'),
                 arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
@@ -85,7 +102,18 @@ export default class PostEditTicket extends Component {
                 sellingPrice: ticketDetail.sellingPrice,
                 passengerName: ticketDetail.passengerName,
                 emailBooking: ticketDetail.emailBooking,
-                isLoading: false
+                isLoading: false,
+                status: ticketDetail.status,
+                invalidField: {
+                    isTicketCodeValid: ticketDetail.isTicketCodeValid,
+                    isVehicleValid: ticketDetail.isVehicleValid,
+                    isTransportationValid: ticketDetail.isTransportationValid,
+                    isTicketTypeValid: ticketDetail.isTicketTypeValid,
+                    isDepartureValid: ticketDetail.isDepartureValid,
+                    isArrivalValid: ticketDetail.isArrivalValid,
+                    isPassengerNameValid: ticketDetail.isPassengerNameValid,
+                    isEmailBookingValid: ticketDetail.isEmailBookingValid
+                }
             })
         }
     }
@@ -136,10 +164,13 @@ export default class PostEditTicket extends Component {
             isLoading,
             isPostEditLoading,
             isDeleteLoading,
-            emailValid
+            emailValid, //check regular
+            status,
+            invalidField
         } = this.state
         const { navigate } = this.props.navigation;
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
+        console.log(invalidField)
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
@@ -157,8 +188,12 @@ export default class PostEditTicket extends Component {
                 <ScrollView>
                     {isLoading ? <ActivityIndicator size="large" animating /> :
                         <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
+                            {status === 3 ? 
+                            <Text style={{color: 'red', marginBottom: 10, marginTop: 10}}>
+                                There are some information of your ticket are invalid(red label). Please check and edit them.
+                            </Text> : null}
                             {/* Select Vehicle */}
-                            <Label style={styles.label}>Vehicle:</Label>
+                            <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle:</Label>
                             <Item picker>
                                 <Picker
                                     mode={"dialog"}
@@ -178,7 +213,7 @@ export default class PostEditTicket extends Component {
                                 </Picker>
                             </Item>
                             {/* Select Transportation */}
-                            <Label style={styles.label}>Transportation:</Label>
+                            <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation:</Label>
                             <Autocomplete
                                 defaultValue={transportationName}
                                 data={transportations}
@@ -203,7 +238,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Ticket Type */}
-                            <Label style={styles.label}>Ticket Type:</Label>
+                            <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type:</Label>
                             <Autocomplete
                                 defaultValue={ticketTypeName}
                                 data={ticketTypes}
@@ -224,7 +259,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Departure City */}
-                            <Label style={styles.label}>Departure City:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City:</Label>
                             <Autocomplete
                                 defaultValue={departureCityName}
                                 data={departureCities}
@@ -250,7 +285,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Departure Station */}
-                            <Label style={styles.label}>Departure Station:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station:</Label>
                             <Autocomplete
                                 defaultValue={departureStationName}
                                 data={departureStations}
@@ -276,7 +311,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Arrival City */}
-                            <Label style={styles.label}>Arrival City:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City:</Label>
                             <Autocomplete
                                 defaultValue={arrivalCityName}
                                 data={arrivalCities}
@@ -302,7 +337,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Arrival Station */}
-                            <Label style={styles.label}>Arrival Station:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station:</Label>
                             <Autocomplete
                                 defaultValue={arrivalStationName}
                                 data={arrivalStations}
@@ -328,7 +363,7 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {/* Select Departure Datetime */}
-                            <Label style={styles.label}>Departure Date:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date:</Label>
                             <Item>
                                 <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
                                     {departureDateTime === '' ? '' : moment(departureDateTime).format('MMM DD YYYY HH:mm')}
@@ -347,7 +382,7 @@ export default class PostEditTicket extends Component {
                                 </Right>
                             </Item>
                             {/* Select Arrival Datetime */}
-                            <Label style={styles.label}>Arrival Date:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date:</Label>
                             <Item>
                                 <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
                                     {arrivalDateTime === '' ? '' : moment(arrivalDateTime).format('MMM DD YYYY HH:mm')}
@@ -366,22 +401,21 @@ export default class PostEditTicket extends Component {
                                 </Right>
                             </Item>
                             {/* Enter Ticket Code */}
-                            <Label style={styles.label}>Ticket Code:</Label>
+                            <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code:</Label>
                             <Input
-
                                 onChangeText={ticketCode => this.setState({ ticketCode })}
                                 value={ticketCode}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
                             />
                             {/* Enter Passenger Name */}
-                            <Label style={styles.label}>Passenger Name:</Label>
+                            <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name:</Label>
                             <Input
                                 onChangeText={passengerName => this.setState({ passengerName })}
                                 value={passengerName}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
                             />
                             {/* Enter Email Booking */}
-                            <Label style={styles.label}>Email Booking:</Label>
+                            <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>Email Booking:</Label>
                             <Input
                                 onChangeText={emailBooking => this.setState({ emailBooking })}
                                 value={emailBooking}
@@ -452,7 +486,8 @@ export default class PostEditTicket extends Component {
 
     editTicket = async () => {
         const { transportationName, ticketTypeName, departureStationName, arrivalStationName,
-            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking } = this.state;
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking,
+            vehicleId, transportationId,ticketTypeId, departureCityId, departureStationId, arrivalCityId, arrivalStationId } = this.state;
         const { navigation } = this.props;
         const ticketId = this.props.navigation.getParam('ticketId');
         const index = this.props.navigation.getParam('index');
@@ -463,14 +498,17 @@ export default class PostEditTicket extends Component {
             var ticket = {
                 id: ticketId,
                 ticketCode: ticketCode,
-                transportationId: this.state.transportationId,
-                departureStationId: this.state.departureStationId,
-                arrivalStationId: this.state.arrivalStationId,
+                vehicleId: vehicleId,
+                transportationId: transportationId,
+                ticketTypeId: ticketTypeId,
+                departureCityId: departureCityId,
+                departureStationId: departureStationId,
+                departureDateTime: departureDateTime,
+                arrivalCityId: arrivalCityId,
+                arrivalStationId: arrivalStationId,
+                arrivalDateTime: arrivalDateTime,
                 sellingPrice: sellingPrice,
                 description: '',
-                departureDateTime: departureDateTime,
-                arrivalDateTime: arrivalDateTime,
-                ticketTypeId: this.state.ticketTypeId,
                 emailBooking: emailBooking,
                 passengerName: passengerName
             }
@@ -660,7 +698,12 @@ const styles = StyleSheet.create({
     },
     label: {
         paddingTop: 10,
-        fontSize: 10
+        fontSize: 10,
+    },
+    invalidLabel: {
+        paddingTop: 10,
+        fontSize: 10,
+        color: 'red'
     },
     buttonText: {
         color: '#fff',
