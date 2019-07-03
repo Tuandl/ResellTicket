@@ -3,10 +3,17 @@ using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Security.Cryptography;
+using System.Text;
+using ViewModel.AppSetting;
 using ViewModel.ViewModel.Customer;
 
 namespace Service.Services
@@ -14,6 +21,8 @@ namespace Service.Services
     public interface ICustomerService
     {
         bool CreateCustomer(CustomerRegisterViewModel model);
+        string ViewAccountConnect(string username);
+        string AddAccountStripeToReceiveMoney(string usename, string accountId);
         string HashPassword(string password, byte[] salt);
         List<CustomerRowViewModel> GetCutomers(string param);
         CustomerRowViewModel FindCustomerById(int id);
@@ -21,6 +30,7 @@ namespace Service.Services
         //update profile phía client
         string UpdateCustomerPofile(CustomerRowViewModel model);
         bool CheckIsExistedPhoneNumber(string phoneNumber);
+        bool CheckIsExistedConnectBankAccount(string username);
         CustomerRowViewModel FindCustomerByUsername(string usename);
 
         /// <summary>
@@ -41,38 +51,42 @@ namespace Service.Services
 
     public class CustomerService : ICustomerService
     {
+        private const string API_URL = "https://connect.stripe.com/oauth/token";
         public const string ERROR_NOT_FOUND_CUSTOMER = "Not found customer.";
         public const string ERROR_INVALID_OTP = "Invalid OTP.";
         public const string ERROR_INVALID_PASSWORD = "Invalid Password.";
+        public const string ERROR_EXISTED_ACCOUNT_BANK = "Customer have already account bank.";
 
         private readonly ICustomerRepository _customerRepository;
         private readonly IOTPRepository _oTPRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
-
+        private readonly IOptions<CrediCardSetting> SETTING;
         private readonly IOTPService _oTPService;
 
 
-        public CustomerService(ICustomerRepository customerRepository, 
-            IOTPRepository oTPRepository, 
-            IMapper mapper, 
+        public CustomerService(ICustomerRepository customerRepository,
+            IOTPRepository oTPRepository,
+            IMapper mapper,
             IUnitOfWork unitOfWork,
-            IOTPService oTPService)
+            IOTPService oTPService,
+            IOptions<CrediCardSetting> options)
         {
             _customerRepository = customerRepository;
             _oTPRepository = oTPRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _oTPService = oTPService;
+            SETTING = options;
         }
 
         public bool CreateCustomer(CustomerRegisterViewModel model)
         {
-            var customer = _mapper.Map<CustomerRegisterViewModel, Customer>(model); //map từ ViewModel qua Model
+            var customer = _mapper.Map<CustomerRegisterViewModel, Core.Models.Customer>(model); //map từ ViewModel qua Model
 
             if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
-                    _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && 
-                    x.Code.Equals(model.OTPNumber) && x.ExpiredAt > DateTime.UtcNow) != null )
+                    _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) &&
+                    x.Code.Equals(model.OTPNumber) && x.ExpiredAt > DateTime.UtcNow) != null)
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -114,14 +128,14 @@ namespace Service.Services
                             || x.FullName.ToLower().Contains(param.ToLower())
                             || x.Email.ToLower().Contains(param.ToLower())
                             || x.PhoneNumber.Contains(param)).ToList();
-            var customerRowViewModels = _mapper.Map<List<Customer>, List<CustomerRowViewModel>>(customers);
+            var customerRowViewModels = _mapper.Map<List<Core.Models.Customer>, List<CustomerRowViewModel>>(customers);
             return customerRowViewModels;
         }
 
         public CustomerRowViewModel FindCustomerById(int id)
         {
             var customer = _customerRepository.Get(x => x.Id == id);
-            var customerRowViewModel = _mapper.Map<Customer, CustomerRowViewModel>(customer);
+            var customerRowViewModel = _mapper.Map<Core.Models.Customer, CustomerRowViewModel>(customer);
             return customerRowViewModel;
         }
 
@@ -149,7 +163,7 @@ namespace Service.Services
 
         public bool CheckIsExistedPhoneNumber(string phoneNumber)
         {
-            if(_customerRepository.Get(x => x.PhoneNumber.Equals(phoneNumber)) == null)
+            if (_customerRepository.Get(x => x.PhoneNumber.Equals(phoneNumber)) == null)
             {
                 return true;
             }
@@ -159,30 +173,30 @@ namespace Service.Services
 
         public string SendOTPForgotPassword(CustomerForgotPasswordViewModel model)
         {
-            var existedCustomer = _customerRepository.Get(x => 
+            var existedCustomer = _customerRepository.Get(x =>
                 x.Deleted == false &&
                 x.PhoneNumber == model.PhoneNumber
             );
 
-            if(existedCustomer == null)
+            if (existedCustomer == null)
             {
                 return ERROR_NOT_FOUND_CUSTOMER;
             }
             _oTPService.CreatOTPWithEachPhone(model.PhoneNumber);
-            
+
             return string.Empty;
         }
 
         public string ChangePasswordWithOTPConfirm(CustomerChangePasswordWithOTPConfirm model)
         {
-            var validOtp = _oTPRepository.Get(x => 
+            var validOtp = _oTPRepository.Get(x =>
                 x.Deleted == false &&
                 x.Code == model.OTP &&
-                x.ExpiredAt > DateTime.Now && 
+                x.ExpiredAt > DateTime.Now &&
                 x.PhoneNo == model.PhoneNumber
             );
 
-            if(validOtp == null)
+            if (validOtp == null)
             {
                 return ERROR_INVALID_OTP;
             }
@@ -193,7 +207,7 @@ namespace Service.Services
                 x.PhoneNumber == model.PhoneNumber
             );
 
-            if(existedCustomer == null)
+            if (existedCustomer == null)
             {
                 return ERROR_NOT_FOUND_CUSTOMER;
             }
@@ -250,14 +264,14 @@ namespace Service.Services
         public CustomerRowViewModel FindCustomerByUsername(string usename)
         {
             var customer = _customerRepository.Get(x => x.Username.Equals(usename, StringComparison.Ordinal));
-            var customerRowViewModel = _mapper.Map<Customer, CustomerRowViewModel>(customer);
+            var customerRowViewModel = _mapper.Map<Core.Models.Customer, CustomerRowViewModel>(customer);
             return customerRowViewModel;
         }
 
         public string ChangePasswordWithNoOTPConfirm(CustomerChangePasswordViewModel model)
         {
-            var existedCustomer = _customerRepository.Get(x => 
-               x.Username.Equals(model.Username) && 
+            var existedCustomer = _customerRepository.Get(x =>
+               x.Username.Equals(model.Username) &&
                x.PasswordHash.Equals(HashPassword(model.PasswordHash, Convert.FromBase64String(x.SaltPasswordHash))));
 
             if (existedCustomer == null)
@@ -277,6 +291,91 @@ namespace Service.Services
             _unitOfWork.CommitChanges();
 
             return string.Empty;
+        }
+
+        public string AddAccountStripeToReceiveMoney(string usename, string accountId)
+        {
+            var existedCustomer = _customerRepository.Get(x => x.Username == usename);
+            if (existedCustomer == null)
+            {
+                return ERROR_NOT_FOUND_CUSTOMER;
+            }
+
+            try
+            {
+
+                var data = new
+                {
+                    client_secret = SETTING.Value.SecretStripe,
+                    code = accountId,
+                    grant_type = "authorization_code"
+                };
+                var dataJson = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+
+                using (var client = new HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("Authorization", "Bearer " + SETTING.Value.SecretStripe);
+
+                    var response = client.PostAsync(
+                        API_URL,
+                        new StringContent(dataJson, Encoding.UTF8, "application/json")
+                    ).Result;
+                    //read content
+                    JObject dataRes = (JObject)JsonConvert.DeserializeObject(response.Content.ReadAsStringAsync().GetAwaiter().GetResult());
+
+                    string res = dataRes["stripe_user_id"].Value<string>();
+
+                    accountId = res;
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+
+            existedCustomer.StripeConnectAccountId = accountId;
+            _customerRepository.Update(existedCustomer);
+            _unitOfWork.CommitChanges();
+
+            return "";
+
+        }
+
+        public bool CheckIsExistedConnectBankAccount(string username)
+        {
+            var existedCustomer = _customerRepository.Get(x => x.Username == username);
+
+            if (existedCustomer.StripeConnectAccountId == null)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public string ViewAccountConnect(string username)
+        {
+            var existedCustomer = _customerRepository.Get(x => x.Username == username);
+            if (existedCustomer == null)
+            {
+                return ERROR_NOT_FOUND_CUSTOMER;
+            }
+            string linkResponse = null;
+            try
+            {
+                StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
+
+                var service = new LoginLinkService();
+                var link = service.Create(existedCustomer.StripeConnectAccountId);
+                linkResponse = link.Url;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+
+            return linkResponse;
         }
     }
 }

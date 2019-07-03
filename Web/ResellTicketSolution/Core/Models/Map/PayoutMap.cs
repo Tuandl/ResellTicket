@@ -13,9 +13,14 @@ namespace Core.Models.Map
                 .HasForeignKey(x => x.TicketId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.CreditCard)
+            //builder.HasOne(x => x.CreditCard)
+            //    .WithMany(x => x.Payouts)
+            //    .HasForeignKey(x => x.CreditCardId)
+            //    .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.Payment)
                 .WithMany(x => x.Payouts)
-                .HasForeignKey(x => x.CreditCardId)
+                .HasForeignKey(x => x.PaymentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(x => x.Amount)

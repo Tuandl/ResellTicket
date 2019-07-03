@@ -17,10 +17,12 @@ namespace WebAPI.Admin.Controllers
     public class TicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;
+        private readonly IPayoutService _payoutService;
 
-        public TicketController(ITicketService ticketService)
+        public TicketController(ITicketService ticketService, IPayoutService payoutService)
         {
             _ticketService = ticketService;
+            _payoutService = payoutService;
         }
 
         /// <summary>
@@ -132,12 +134,19 @@ namespace WebAPI.Admin.Controllers
                 return BadRequest("Invalid Request");
             }
 
-            var validResult = _ticketService.ValidateRenameTicket(id, renameSuccess);
+            var payoutResult = _payoutService.MakePayoutToCustomer(id);
 
-            if (!string.IsNullOrEmpty(validResult))
+            if (!string.IsNullOrEmpty(payoutResult))
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
+                return StatusCode((int)HttpStatusCode.NotAcceptable, payoutResult);
             }
+
+            //var validResult = _ticketService.ValidateRenameTicket(id, renameSuccess);
+
+            //if (!string.IsNullOrEmpty(validResult))
+            //{
+            //    return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
+            //}
             return Ok();
         }
     }

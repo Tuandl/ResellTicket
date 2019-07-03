@@ -14,6 +14,7 @@ namespace Core.Models
         public string Email { get; set; }
         public bool IsActive { get; set; }
         public string StripeId { get; set; }
+        public string StripeConnectAccountId { get; set; }
         public virtual ICollection<Ticket> SoldTickets { get; set; }
         public virtual ICollection<Ticket> BoughtTickets { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }

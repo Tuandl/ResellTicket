@@ -66,6 +66,7 @@ namespace Service.Services
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
             refundCreate.Amount = paymentDetail.Amount;
+            refundCreate.Status = RefundStatus.Success;
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
             _refundRepository.Add(refundAddIntoData);
             _unitOfWork.CommitChanges();

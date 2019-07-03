@@ -17,5 +17,6 @@ namespace Core.Models
         public virtual Route Route { get; set; }
         public virtual CreditCard CreditCard { get; set; }
         public virtual ICollection<Refund> Refunds { get; set; }
+        public virtual ICollection<Payout> Payouts { get; set; }
     }
 }
