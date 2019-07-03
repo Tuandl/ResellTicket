@@ -18,6 +18,8 @@ import CreditCardViewListScreen from '../screens/creditCard/CreditCardViewListSc
 import CreditCardCreateScreen from '../screens/creditCard/CreditCardCreateScreen';
 import RouteDetailScreen from '../screens/route/RouteDetailScreen';
 import RouteTicketUpdateScreen from '../screens/route/RouteTicketUpdateScreen';
+import CreateBankAccountToReceiveMoneyScreen from '../screens/bank/CreateBankAccountToReceiveMoneyScreen';
+import AccountConnectDetailScreen from '../screens/bank/AccountConnectDetailScreen';
 import RouteBuyerInfoScreen from '../screens/route/RouteBuyerInfoScreen';
 
 const RouteStack = createStackNavigator(
@@ -44,6 +46,8 @@ const MeStack = createStackNavigator(
     ChangePassword: ChangePasswordScreen,
     CreditCardViewList: CreditCardViewListScreen,
     CreditCardCreate: CreditCardCreateScreen,
+    CreateBankAccountToReceiveMoney: CreateBankAccountToReceiveMoneyScreen,
+    AccountConnectDetail: AccountConnectDetailScreen,
   },
   {
     initialRouteName: 'Me',

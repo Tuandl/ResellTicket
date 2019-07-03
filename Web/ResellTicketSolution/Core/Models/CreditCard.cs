@@ -18,7 +18,7 @@ namespace Core.Models
         public bool Isdefault { get; set; }
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
-        public virtual ICollection<Payout> Payouts { get; set; }
+        //public virtual ICollection<Payout> Payouts { get; set; }
         public virtual ICollection<Payment> Payments { get; set; }
     }
 }

@@ -154,5 +154,64 @@ namespace WebAPI.Controllers
             var customerRowViewModel = _customerService.FindCustomerByUsername(usename);
             return customerRowViewModel.Id;
         }
+
+
+        [HttpPut]
+        [Route("add-bank-connect-account")]
+        public IActionResult AddBankAccount(string code)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var username = User.Identity.Name;
+            var updateResult = _customerService.AddAccountStripeToReceiveMoney(username, code);
+
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+            return Ok();
+
+        }
+
+        [HttpGet]
+        [Route("check-existed-connect-bank-account")]
+        public IActionResult CheckIsExistedConnectAccount()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+            var username = User.Identity.Name;
+            var customer = _customerService.CheckIsExistedConnectBankAccount(username);
+
+            if (customer == false)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
+            }
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("view-connect-account")]
+        public IActionResult ViewBankAccountConnect()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+            var username = User.Identity.Name;
+            var customer = _customerService.ViewAccountConnect(username);
+
+            if (customer == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, customer);
+            }
+
+            return Ok(customer);
+        }
     }
 }
