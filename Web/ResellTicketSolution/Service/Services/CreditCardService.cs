@@ -162,7 +162,7 @@ namespace Service.Services
 
         public string SetDefaultCard(int id, int customerId)
         {
-            var creditCardToSetDefault = _creditCardRepository.Get(x => x.Id == id);
+            var creditCardToSetDefault = _creditCardRepository.Get(x => x.Id == id & x.CustomerId == customerId);
             var creditCardToSetNOTDefault = _creditCardRepository.Get(x => x.CustomerId == customerId && x.Isdefault == true);
             if (creditCardToSetDefault == null)
             {

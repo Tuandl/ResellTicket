@@ -329,6 +329,8 @@ namespace Service.Services
             {
                 existedTicket.Status = Core.Enum.TicketStatus.Completed;
                 _ticketRepository.Update(existedTicket);
+
+
                 try
                 {
                     _unitOfWork.CommitChanges();
