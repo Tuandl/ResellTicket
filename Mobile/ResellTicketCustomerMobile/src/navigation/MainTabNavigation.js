@@ -20,6 +20,7 @@ import RouteDetailScreen from '../screens/route/RouteDetailScreen';
 import RouteTicketUpdateScreen from '../screens/route/RouteTicketUpdateScreen';
 import CreateBankAccountToReceiveMoneyScreen from '../screens/bank/CreateBankAccountToReceiveMoneyScreen';
 import AccountConnectDetailScreen from '../screens/bank/AccountConnectDetailScreen';
+import RouteBuyerInfoScreen from '../screens/route/RouteBuyerInfoScreen';
 
 const RouteStack = createStackNavigator(
   {
@@ -28,6 +29,7 @@ const RouteStack = createStackNavigator(
     RouteSearchResult: RouteSearchResultScreen,
     RouteDetail: RouteDetailScreen,
     RouteTicketUpdate: RouteTicketUpdateScreen,
+    RouteBuyerInfo: RouteBuyerInfoScreen
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',

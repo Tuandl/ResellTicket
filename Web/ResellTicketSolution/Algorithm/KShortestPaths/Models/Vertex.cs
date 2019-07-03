@@ -8,18 +8,12 @@ namespace Algorithm.KShortestPaths.Models
     /// </summary>
     public class Vertex
     {
-        public Vertex(int groupId, DateTime arrivalTime, object ObjectValue)
+        public Vertex(int groupId, DateTime arrivalTime)
         {
             this.GroupId = groupId;
             this.ArrivalTime = arrivalTime;
-            this.Data = ObjectValue;
             this.RelatedEdges = new List<Edge>();
         }
-
-        /// <summary>
-        /// Data
-        /// </summary>
-        public object Data { get; set; }
 
         /// <summary>
         /// Group by Departure Id

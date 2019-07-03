@@ -58,17 +58,11 @@ namespace Service.Services
                     DeviceId = loginViewModel.DeviceId,
                     IsLogout = false
                 };
-                if (loginViewModel.DeviceType == 1)
-                {
-                    customerDevice.DeviceType = Core.Enum.DeviceType.Mobile;
-                } else
-                {
-                    customerDevice.DeviceType = Core.Enum.DeviceType.Web;
-                }
                 _customerDeviceRepository.Add(customerDevice);
             } else
             {
                 customerDevice.IsLogout = false;
+                customerDevice.CustomerId = customer.Id;
                 _customerDeviceRepository.Update(customerDevice);
 
             }

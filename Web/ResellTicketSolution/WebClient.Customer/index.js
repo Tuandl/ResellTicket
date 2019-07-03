@@ -10,6 +10,7 @@ function indexController() {
     const id = {
         routeContainer: 'route-container',
         btnStatuses: 'btnStatuses',
+        btnSearchRoute: 'btnSearchRoute',
     }
 
     const model = {
@@ -23,7 +24,9 @@ function indexController() {
     if (authenticationService.isLogedin()) {
         renderBtnStatuses();
         renderRoutes();
+        
     }
+    bindEvent();
 
     function onStatusChanged(newStatus) {
         model.searchStatus = newStatus;
@@ -50,12 +53,23 @@ function indexController() {
         commonService.removeAllChildren(containerElement);
 
         response.data.forEach(route => {
-            const routeComponent = new RouteComponent(route);
+            const routeComponent = new RouteComponent(route, onRouteClicked);
             model.routeComponents.push(routeComponent);
 
             routeComponent.render();
             containerElement.appendChild(routeComponent.domElement);
         });
+    }
+
+    function bindEvent() {
+        var btnSearchRoute = document.getElementById(id.btnSearchRoute);
+        btnSearchRoute.addEventListener('click', function() {
+            window.location.href = appConfig.url.route.searchForm;
+        });
+    }
+
+    function onRouteClicked(route) {
+        window.location.href = appConfig.url.route.detail + '?routeId=' + route.id;
     }
 }
 

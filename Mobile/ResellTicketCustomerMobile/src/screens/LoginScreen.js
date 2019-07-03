@@ -63,8 +63,7 @@ export default class LoginScreen extends Component {
         const data = {
             username: username,
             password: password,
-            deviceId: deviceId,
-            deviceType: 1
+            deviceId: deviceId
         };
 
         try {

@@ -147,21 +147,39 @@ async function getTicketDetail() {
             btnEdit.setAttribute('class', 'btn-post-now');
             btnEdit.setAttribute('onclick', 'editTicket()');
             divBtn.appendChild(btnEdit);
-        } else {
+        }
+        else if (status === 4) {
+            document.getElementById('title').innerHTML = "CONFIRM TICKET RENAME";
+            var btnConfirm = document.createElement('INPUT');
+            btnConfirm.setAttribute('type', 'button');
+            btnConfirm.setAttribute('value', 'CONFIRM');
+            btnConfirm.setAttribute('class', 'btn-post-now');
+            btnConfirm.setAttribute('onclick', 'confirmTicketRename()', window.alert("Confirm rename successfully!"));
+            divBtn.appendChild(btnConfirm);
+
+            var btnRefuse = document.createElement('INPUT');
+            btnRefuse.setAttribute('type', 'button');
+            btnRefuse.setAttribute('value', 'REFUSE');
+            btnRefuse.setAttribute('class', 'btn-post-now');
+            btnRefuse.setAttribute('onclick', 'refuseTicketRename()');
+            divBtn.appendChild(btnRefuse);
+        }
+         else {
             document.getElementById('title').innerHTML = "TICKET DETAIL"
             document.getElementById('select-vehicle').setAttribute('disabled', '')
-            document.getElementById('transportation').setAttribute('readonly', '');
-            document.getElementById('ticketType').setAttribute('readonly', '');
-            document.getElementById('departureCity').setAttribute('readonly', '');
-            document.getElementById('departureStation').setAttribute('readonly', '');
-            document.getElementById('departureDate').setAttribute('readonly', '');
-            document.getElementById('arrivalCity').setAttribute('readonly', '');
-            document.getElementById('arrivalStation').setAttribute('readonly', '');
-            document.getElementById('arrivalDate').setAttribute('readonly', '');
-            document.getElementById('ticketCode').setAttribute('readonly', '');
-            document.getElementById('sellingPrice').setAttribute('readonly', '');
-            document.getElementById('passengerName').setAttribute('readonly', '');
-            document.getElementById('emailBooking').setAttribute('readonly', '');
+
+            var btnDelete = document.createElement('INPUT');
+            btnDelete.setAttribute('type', 'button');
+            btnDelete.setAttribute('value', 'DELETE');
+            btnDelete.setAttribute('class', 'btn-post-now');
+            btnDelete.setAttribute('onclick', 'deleteTicket()');
+
+            divBtn.appendChild(btnDelete);
+           
+            var inputTags =document.getElementsByTagName('input');
+            for(var i = 0; i < inputTags.length; i++) {
+                inputTags[i].setAttribute('readonly', '');
+            }
         }
         document.getElementById('select-vehicle').value = data.vehicleId;
         document.getElementById('transportation').value = data.transportationName;
@@ -182,7 +200,7 @@ async function getTicketDetail() {
         btnDelete.setAttribute('value', 'DELETE');
         btnDelete.setAttribute('class', 'btn-post-now');
         btnDelete.setAttribute('onclick', 'deleteTicket()');
-
+        //var btnDelete = commonService.htmlToElement('<input type="button" value="DELETE" class="btn-post-now" onclick=deleteTicket()/>')
         divBtn.appendChild(btnDelete);
     }
 }
@@ -202,7 +220,7 @@ async function postTicket() {
     }
     const res = await Post('api/ticket', ticket);
     if (res.status === 200) {
-        window.location.href = "poastedTicket.html";
+        window.location.href = "postedTicket.html";
     }
 }
 
@@ -222,6 +240,20 @@ async function editTicket() {
         emailBooking: document.getElementById('emailBooking').value,
     }
     const res = await Put('api/ticket', ticket);
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
+}
+
+async function confirmTicketRename() {
+    const res = await Post('api/ticket/confirm-rename?id=' + ticketId);
+    if (res.status === 200) {
+        window.location.href = "postedTicket.html";
+    }
+}
+
+async function refuseTicketRename() {
+    const res = await Put('api/ticket/refuse?id=' + ticketId);
     if (res.status === 200) {
         window.location.href = "postedTicket.html";
     }

@@ -1,18 +1,12 @@
 import { appConfig } from './../../constant/appConfig.js';
 import toastService from './toastService.js';
+import commonService from './commonService.js';
 
 const token = localStorage.getItem('TOKEN');
 
-function getQueryString(paramObject) {
-    let query = Object.keys(paramObject)
-        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(paramObject[k]))
-        .join('&');
-    return query;
-}
-
 function Get(url, params) {
     return new Promise((resolve, reject) => {
-        fetch(appConfig.apiBaseUrl + url + '?' + getQueryString(params), {
+        fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
             method: 'GET',
             headers: {
                 'Accept': 'application/json',
@@ -37,7 +31,7 @@ function Get(url, params) {
 
 function Post(url, data) {
     return new Promise((resolve, reject) => {
-        fetch(baseUrl + url, {
+        fetch(appConfig.apiBaseUrl + url, {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -63,7 +57,7 @@ function Post(url, data) {
 
 function Put(url, data) {
     return new Promise((resolve, reject) => {
-        fetch(baseUrl + url, {
+        fetch(appConfig.apiBaseUrl + url, {
             method: 'PUT',
             headers: {
                 'Accept': 'application/json',
@@ -89,7 +83,7 @@ function Put(url, data) {
 
 function Delete(url) {
     return new Promise((resolve, reject) => {
-        fetch(baseUrl + url, {
+        fetch(appConfig.apiBaseUrl + url, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
@@ -102,7 +96,7 @@ function Delete(url) {
                 reject(response);
             }
             if(response.status === 200) {
-                response.json().then(data => resolve(data));
+                resolve(response);
             } else {
                 reject(response);
             }

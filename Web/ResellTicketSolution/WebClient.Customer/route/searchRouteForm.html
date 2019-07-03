@@ -12,45 +12,27 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		w3layouts</title>
 
 	<!-- css -->
-	<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
-	<link href="css/style.css" rel='stylesheet' type='text/css' />
-	<link href="css/font-awesome.css" rel="stylesheet">
-	<link href="css/rt-style.css" rel='stylesheet' type='text/css' />
-	<link rel="manifest" href="/manifest.json">
+	<link href="./../css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<link href="./../css/style.css" rel='stylesheet' type='text/css' />
+	<link href="./../css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="./../css/bootstrap-datetimepicker.css" />
+	<!-- <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+		<link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'> -->
+	<!-- <link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" /> -->
 	<!-- css -->
 
 	<!-- js -->
-	<script src="js/jquery-1.11.1.min.js"></script>
-	<script src="js/jstarbox.js"></script>
-	<script type="text/javascript" src="js/authen.js"></script>
-	<script src="js/jquery-1.11.1.min.js"></script>
-
-	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-	<script type="module">
-		import { appConfig } from './constant/appConfig.js';
-		var OneSignal = window.OneSignal || [];
-		OneSignal.push(function () {
-			OneSignal.init({
-				appId: appConfig.OneSignalAppId,
-				subdomainName: appConfig.SubdomainName,
-				notifyButton: {
-					enable: true,
-				}
-			});
-			OneSignal.on('notificationDisplay', function (event) {
-				alert(event.content);
-				//console.log(event);
-			});
-			OneSignal.setSubscription(true);
-		});
-	</script>
-	<script type="text/javascript" src="./js/moment.js"></script>
-    <script src="./js/numeral.min.js"></script>
-	<script type="module" src="./index.js"></script>
+	<script src="./../js/jquery-1.11.1.min.js"></script>
+	<script src="./../js/jstarbox.js"></script>
+	<script type="text/javascript" src="./../js/authen.js"></script>
+	<script type="text/javascript" src="./../js/moment.js"></script>
+	<script type="module" src="./searchRouteForm.js"></script>
+    <script src="./../js/bootstrap-datetimepicker.min.js"></script>
 	<!-- //js -->
 </head>
 
 <body onload="checkLogin()">
+
 	<div class="header">
 		<div class="container">
 			<div class="logo">
@@ -123,34 +105,79 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 		</div>
 	</div>
 	<!---->
-	<div data-vide-bg="images/index-background.png">
+	<!--banner-->
+	<div class="banner-top">
 		<div class="container">
-			<div class="banner-info">
-				<h3 style="color: #c7ad71">It is a long established fact that a reader will be distracted by
-					the readable </h3>
-				<div class="search-form">
-					<input type="submit" value="Search Route" style="color: brown" id="btnSearchRoute">
+			<h3>Search Route</h3>
+			<h4><a href="./../index.html">Home</a><label>/</label>Search Route</h4>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+
+	<div class="content-top">
+        <div class="container">
+            <div class="main-agileits width-full" style="margin-bottom: 100px">
+                <div class="form-w3agile form1">
+                    <h3 id="title">Search Route</h3>
+                    <form autocomplete="off" class="form-horizontal">
+                        <div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-sm-3">Departure</label>
+									<div class="col-sm-9" id="departureCityAutoSuggestContainer"></div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-sm-3">Arrival</label>
+									<div class="col-sm-9" id="arrivalCityAutoSuggestContainer"></div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-sm-3">Departure Date</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="Departure Date" id="departureDate"/>
+									</div>	
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-sm-3">Max Tickets</label>
+									<div class="col-sm-9">
+										<select class="form-control" id="maxTicketSelect">
+											<option value="1">Only 1 ticket</option>
+											<option value="2">Maximum 2 tickets</option>
+											<option value="3" selected>Maximum 3 tickets</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<!-- <div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label col-sm-3">Arrival Date</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control" placeholder="Arrival Date" id="arrivalDate"/>
+									</div>	
+								</div>
+							</div> -->
+						</div>
+
+
+						<div class="row">
+							<div class="col-sm-12 text-center">
+								<button class="btn btn-group btn-lg" id="btnSearch">Search</button>
+							</div>
+						</div>
+					</form>	
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
-	<script src="js/jquery.vide.min.js"></script>
-
-	<div class="text-center margin-top-20" id="btnStatuses">
-
-	</div>
-
-	<!--content-->
-	<div class="content-top" id="route-container">
-	</div>
-
-	<!--content-->
-	<div class="content-mid">
-		<div class="container">
-		</div>
-	</div>
+			
 
 	<!--footer-->
 	<div class="footer">
@@ -190,7 +217,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	</div>
 	<!-- //footer-->
 	<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
-	<script src="js/bootstrap.js"></script>
+	<script src="./../js/bootstrap.js"></script>
+
 </body>
 
 </html>
