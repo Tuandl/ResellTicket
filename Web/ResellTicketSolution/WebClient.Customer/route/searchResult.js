@@ -89,7 +89,8 @@ function searchResult() {
     }
 
     async function saveRoute(route) {
-        const routeId = await apiService.post(appConfig.apiUrl.route, route.rawData);
+        const response = await apiService.post(appConfig.apiUrl.route, route.rawData);
+        const routeId = await response.json();
         const newRoute = await apiService.get(appConfig.apiUrl.route + routeId);
         // toastService.success('Saved');
         return newRoute;
