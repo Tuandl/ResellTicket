@@ -48,7 +48,11 @@ namespace Service.Services
         public string RefundMoneyToCustomer(int TicketId)
         {
             // lấy route ứng vs ticketId 
-            var routeTicket = _routeTicketRepository.Get(x => x.TicketId == TicketId & x.Deleted == false);
+            var routeTicket = _routeTicketRepository.Get(x => 
+                x.TicketId == TicketId &
+                x.Deleted == false & 
+                x.Route.Status == RouteStatus.Bought
+            );
             
             //lấy Lịch sử chagre tiền
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeTicket.RouteId);
