@@ -15,8 +15,8 @@ export default class ValidTicketDetail extends Component {
             validCount: 0,
             invalidCount: 0,
             invalidField: '',
-            commissionFee: 0,
-            beforeTime: '0',
+            commissionFee: 10,
+            expiredBefore: '0', //hours
             expiredDateTime: ''
         }
 
@@ -41,6 +41,7 @@ export default class ValidTicketDetail extends Component {
                     { name: "Passenger Name", value: res.data.passengerName },
                     { name: "Email Booking", value: res.data.emailBooking },
                 ],
+                expiredBefore: res.data.expiredBefore,
                 expiredDateTime: moment(res.data.departureDateTime)
             })
         }
@@ -52,10 +53,9 @@ export default class ValidTicketDetail extends Component {
         this.setState({
             validCount: validCount + 1,
             invalidCount: radioName.indexOf(name) !== -1 ? invalidCount - 1 : invalidCount,
-            
         }, ()=> {
             this.setState({
-                radioName: radioName.indexOf(name) !== -1 ? radioName : radioName + name
+                radioName: radioName.indexOf(name) !== -1 ? radioName : radioName + name,
             })
         })
     }
@@ -77,7 +77,7 @@ export default class ValidTicketDetail extends Component {
     expiredDateTimeChange = (event) => {
         var { value } = event.target;
         this.setState({
-            beforeTime: value,
+            expiredBefore: value,
         })
     }
 
@@ -90,9 +90,9 @@ export default class ValidTicketDetail extends Component {
 
     onConfirm = async () => {
         const ticketId = this.props.match.params.id;
-        var { validCount, commissionFee, beforeTime, expiredDateTime, invalidField } = this.state;
+        var { validCount, commissionFee, expiredBefore, expiredDateTime, invalidField } = this.state;
 
-        expiredDateTime.subtract({hours: beforeTime})
+        expiredDateTime.subtract({hours: expiredBefore})
         expiredDateTime = moment(expiredDateTime._d).format('YYYY-MM-DD HH:mm')
         if (validCount === 8) {
             var res = await Axios.put('api/ticket/approve/' + ticketId + "?commissionFee=" + commissionFee + "&expiredDateTime=" + expiredDateTime);
@@ -120,7 +120,7 @@ export default class ValidTicketDetail extends Component {
             validCount,
             invalidCount,
             commissionFee,
-            beforeTime
+            expiredBefore
         } = this.state;
         return (
 
@@ -167,7 +167,7 @@ export default class ValidTicketDetail extends Component {
                                     </Row>)
                                 })}
                                 <hr />
-                                <Row style={{ marginBottom: 10 }}>
+                                <Row style={{ marginBottom: 10, display: validCount !== 8 ? 'none' : 'block' }}>
                                     <Col md="6" xs="12">
                                         <FormGroup>
                                             <Label htmlFor="commissionPercent">Commission Fee (%)</Label>
@@ -181,13 +181,12 @@ export default class ValidTicketDetail extends Component {
                                     <Col md="6" xs="12">
                                     </Col>
                                 </Row>
-                                <Row style={{ marginBottom: 10 }}>
+                                <Row style={{ marginBottom: 10, display: validCount !== 8 ? 'none' : 'block' }}>
                                     <Col md="6" xs="12">
                                         <FormGroup>
                                             <Label htmlFor="expiredDateTime">Expire before departure date (hours)</Label>
                                             <Input type="number" name="expiredDateTime"
-                                                value={beforeTime} min={0}
-                                                
+                                                value={expiredBefore} min={0}
                                                 onChange={this.expiredDateTimeChange}
                                                 disabled={validCount !== 8}
                                             />

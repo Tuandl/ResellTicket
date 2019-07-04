@@ -26,7 +26,17 @@ export default class DetailTicketScreen extends Component {
             emailBooking: '',
             sellingPrice: '',
             status: '',
-            isLoading: false
+            isLoading: false,
+            invalidField: {
+                isTicketCodeValid: true,
+                isVehicleValid: true,
+                isTransportationValid: true,
+                isTicketTypeValid: true,
+                isDepatureValid: true,
+                isArrivalValid: true,
+                isPassengerNameValid: true,
+                isEmailBookingValid: true
+            }
         }
     }
 
@@ -53,7 +63,17 @@ export default class DetailTicketScreen extends Component {
                 passengerName: ticketDetail.passengerName,
                 emailBooking: ticketDetail.emailBooking,
                 sellingPrice: ticketDetail.sellingPrice,
-                status: ticketDetail.status
+                status: ticketDetail.status,
+                invalidField: {
+                    isTicketCodeValid: ticketDetail.isTicketCodeValid,
+                    isVehicleValid: ticketDetail.isVehicleValid,
+                    isTransportationValid: ticketDetail.isTransportationValid,
+                    isTicketTypeValid: ticketDetail.isTicketTypeValid,
+                    isDepartureValid: ticketDetail.isDepartureValid,
+                    isArrivalValid: ticketDetail.isArrivalValid,
+                    isPassengerNameValid: ticketDetail.isPassengerNameValid,
+                    isEmailBookingValid: ticketDetail.isEmailBookingValid
+                }
             })
         }
     }
@@ -74,7 +94,8 @@ export default class DetailTicketScreen extends Component {
             emailBooking,
             sellingPrice,
             status,
-            isLoading
+            isLoading,
+            invalidField
         } = this.state
         const { navigate } = this.props.navigation;
         return (
@@ -93,51 +114,55 @@ export default class DetailTicketScreen extends Component {
                 </Header>
                 <ScrollView>
                     <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        <Label style={styles.label}>Vehicle:</Label>
+                        {status === 3 ?
+                            <Text style={{ color: 'red', marginBottom: 10, marginTop: 10 }}>
+                                There are some information of your ticket are invalid(red inputs). Please post a new ticket and check all inputs carefully.
+                            </Text> : null}
+                        <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{vehicleName}</Text>
                         </Item>
-                        <Label style={styles.label}>Transportation:</Label>
+                        <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{transportationName}</Text>
                         </Item>
-                        <Label style={styles.label}>Ticket Type:</Label>
+                        <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{ticketTypeName}</Text>
                         </Item>
-                        <Label style={styles.label}>Departure City:</Label>
+                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{departureCityName}</Text>
                         </Item>
-                        <Label style={styles.label}>Departure Station:</Label>
+                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{departureStationName}</Text>
                         </Item>
-                        <Label style={styles.label}>Arrival City:</Label>
+                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{arrivalCityName}</Text>
                         </Item>
-                        <Label style={styles.label}>Arrival Station:</Label>
+                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{arrivalStationName}</Text>
                         </Item>
-                        <Label style={styles.label}>Departure Date:</Label>
+                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{departureDateTime}</Text>
                         </Item>
-                        <Label style={styles.label}>Arrival Date:</Label>
+                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{arrivalDateTime}</Text>
                         </Item>
-                        <Label style={styles.label}>Ticket Code:</Label>
+                        <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{ticketCode}</Text>
                         </Item>
-                        <Label style={styles.label}>Passenger Name:</Label>
+                        <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{passengerName}</Text>
                         </Item>
-                        <Label style={styles.label}>emailBooking:</Label>
+                        <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>emailBooking:</Label>
                         <Item style={styles.detail}>
                             <Text style={{ color: 'black' }}>{emailBooking}</Text>
                         </Item>
@@ -210,7 +235,7 @@ export default class DetailTicketScreen extends Component {
         const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
         const { navigation } = this.props;
         if (resDeleteTicket.status === 200) {
-            this.setState({isLoading: false})
+            this.setState({ isLoading: false })
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'
             })
@@ -235,6 +260,11 @@ const styles = StyleSheet.create({
     label: {
         paddingTop: 10,
         fontSize: 10
+    },
+    invalidLabel: {
+        paddingTop: 10,
+        fontSize: 10,
+        color: 'red'
     },
     detail: {
         height: 30,

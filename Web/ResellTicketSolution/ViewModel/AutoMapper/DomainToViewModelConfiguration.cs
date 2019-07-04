@@ -29,7 +29,8 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.DepartureStationName, option => option.MapFrom(source => source.DepartureStation.Name))
                 .ForMember(dest => dest.ArrivalCityName, option => option.MapFrom(source => source.ArrivalStation.City.Name))
                 .ForMember(dest => dest.ArrivalCityId, option => option.MapFrom(source => source.ArrivalStation.CityId))
-                .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name));
+                .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name))
+                .ForMember(dest => dest.ExpiredBefore, option => option.MapFrom(source => source.Transportation.ExpiredBefore));
 
             CreateMap<Route, RouteDetailViewModel>();
             CreateMap<RouteTicket, RouteTicketDetailViewModel>()

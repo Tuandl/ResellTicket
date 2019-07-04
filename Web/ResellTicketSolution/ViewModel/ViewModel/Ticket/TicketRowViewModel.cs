@@ -5,7 +5,7 @@ using Core.Enum;
 
 namespace ViewModel.ViewModel.Ticket
 {
-    public class TicketRowViewModel
+    public class TicketRowViewModel 
     {
         public int Id { get; set; }
         public string TicketCode { get; set; }

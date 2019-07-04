@@ -32,6 +32,7 @@ namespace ViewModel.ViewModel.Ticket
         public string PassengerName { get; set; }
         public string EmailBooking { get; set; }
         public decimal SellingPrice { get; set; }
+        public int ExpiredBefore { get; set; }
 
         public bool? IsTicketCodeValid { get; set; }
         public bool? IsVehicleValid { get; set; }

@@ -5,10 +5,11 @@ import { Redirect, Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
+import PaginationView from '../Pagination/PaginationComponent';
 
 
 function TicketRow(props) {
-    const { ticket} = props;
+    const { ticket } = props;
     const getBadge = (status) => {
         if (status === 1) {
             return (
@@ -17,18 +18,6 @@ function TicketRow(props) {
         }
     }
     const ticketLink = `/newPostedTicket/${ticket.id}`
-
-    // const getBadge = (isActive) => {
-    //     if (isActive === true) {
-    //         return (
-    //             <Badge color="success">Active</Badge>
-    //         )
-    //     } else {
-    //         return (
-    //             <Badge color="danger">Inactive</Badge>
-    //         )
-    //     }
-    // }
     return (
         <tr>
             <th>{props.index + 1}</th>
@@ -64,21 +53,25 @@ class NewPostedTickets extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            searchParam: '',
             tickets: [],
             isLogin: false,
             userRole: '',
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1
         }
 
     }
 
     componentWillMount() {
-        var OneSignal = window.OneSignal || [];
-        var self = this
-        OneSignal.on('notificationDisplay', function (event) {
-            if (event.content.indexOf('posted')) {
-                self.getPendingTickets();
-            }
-        });
+        // var OneSignal = window.OneSignal || [];
+        // var self = this
+        // OneSignal.on('notificationDisplay', function (event) {
+        //     if (event.content.indexOf('posted')) {
+        //         self.getPendingTickets();
+        //     }
+        // });
         var token = localStorage.getItem('userToken');
         if (token) {
             this.setState({
@@ -96,20 +89,12 @@ class NewPostedTickets extends Component {
         }
     }
 
-    // getTickets = async () => {
-    //     await Axios.get('api/ticket').then(res => {
-    //         this.setState({
-    //             tickets: res.data
-    //         })
-    //         //console.log(this.state.tickets);
-    //     });
-
-    // }
-
     getPendingTickets = () => {
-        Axios.get('api/ticket/pending').then(res => {
+        var { pageSize, currentPage } = this.state;
+        Axios.get('api/ticket/pending?param=' + this.state.searchParam + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
             this.setState({
-                tickets: res.data
+                tickets: res.data.data,
+                pageCount: res.data.total <= pageSize ? 1 : parseInt(res.data.total / pageSize) + 1
             })
         });
 
@@ -124,11 +109,11 @@ class NewPostedTickets extends Component {
 
     onSearch = (event) => {
         event.preventDefault();
-        Axios.get('api/ticket/search?param=' + this.state.searchParam).then(res => {
-            this.setState({
-                tickets: res.data
-            })
-        });
+        this.setState({
+            currentPage: 1
+        }, () => {
+            this.getPendingTickets()
+        })
     }
 
     // onValidSaveChanges = (id) => {
@@ -154,8 +139,18 @@ class NewPostedTickets extends Component {
     //     })
     // }
 
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getPendingTickets();
+        })
+    }
+
     render() {
-        var { tickets, isLogin, userRole } = this.state
+        var { tickets, isLogin, userRole, currentPage, pageCount } = this.state
         return (
             isLogin ? userRole === 'Staff' ?
                 <div className="animated fadeIn">
@@ -171,7 +166,6 @@ class NewPostedTickets extends Component {
                                                 </Button>
                                         </InputGroup>
                                     </Form>
-
                                 </CardHeader>
                                 <CardBody>
                                     <Table responsive hover>
@@ -195,6 +189,10 @@ class NewPostedTickets extends Component {
                                             )}
                                         </tbody>
                                     </Table>
+
+                                    <div style={{ float: 'right' }}>
+                                        <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>

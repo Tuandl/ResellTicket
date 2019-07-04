@@ -5,15 +5,16 @@ import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
+import PaginationView from '../Pagination/PaginationComponent';
 
 function TicketRow(props) {
-    const {ticket} = props;
+    const { ticket } = props;
     const getBadge = (status) => {
-      if (status === 6) {
-          return (
-              <Badge color="success">Completed</Badge>
-          )
-      }
+        if (status === 6) {
+            return (
+                <Badge color="success">Completed</Badge>
+            )
+        }
     }
     return (
         <tr>
@@ -27,8 +28,6 @@ function TicketRow(props) {
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
         </tr>
-
-
     )
 }
 
@@ -40,7 +39,10 @@ class CompletedTickets extends Component {
             tickets: [],
             isLogin: false,
             userRole: '',
-            searchParam: ''
+            searchParam: '',
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1
         }
     }
 
@@ -62,71 +64,71 @@ class CompletedTickets extends Component {
         }
     }
 
-    // getTickets = async () => {
-    //     await Axios.get('api/ticket').then(res => {
-    //         this.setState({
-    //             tickets: res.data
-    //         })
-    //         // console.log(this.state.tickets);
-    //     });
-
-    // }
     getCompletedTickets = () => {
-      Axios.get('api/ticket/completed').then(res => {
-          this.setState({
-              tickets: res.data
-          })
-          // console.log(this.state.tickets);
-      });
+        var { pageSize, currentPage } = this.state;
+        Axios.get('api/ticket/completed?param=' + this.state.searchParam + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
+            this.setState({
+                tickets: res.data.data,
+                pageCount: res.data.total <= pageSize ? 1 : parseInt(res.data.total / pageSize) + 1
+            })
+        });
 
-  }
-
-    onChange(event) {
-      var {name, value} = event.target;
-      this.setState({
-          [name] : value
-      })
     }
 
-    onSearch(event) {
-      event.preventDefault();
-      //console.log(this.state.searchParam);
-      Axios.get('api/ticket?param=' + this.state.searchParam).then(res => {
-          console.log(res)
-          this.setState({
-              tickets : res.data
-          })
-      });
-  }
+    onChange = (event) => {
+        var { name, value } = event.target;
+        this.setState({
+            [name]: value
+        })
+    }
 
-    onValidSaveChanges = (id) => {
-      var renamedSuccess = true;
-      Axios.post('api/ticket/validate-rename?id=' + id +'&renameSuccess=' + renamedSuccess).then(res => {
-          if(res.status === 200) {
-              toastr.success('Valid Success', 'Ticket has been valid successfully.');
-              this.getRenamedTickets();
-              // this.props.history.push('/ticket');
-          } else {
-              toastr.error('Error', 'Error when valid Ticket');
-          }
-      })
-  }
+    onSearch = (event) => {
+        event.preventDefault();
+        this.setState({
+            currentPage: 1
+        }, () => {
+            this.getCompletedTickets()
+        })
+    }
 
-  onInValidSaveChanges = (id) => {
-    var renamedSuccess = false;
-    Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
-        if(res.status === 200) {
-            toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
-            this.getRenamedTickets();
-            // this.props.history.push('/ticket');
-        } else {
-            toastr.error('Error', 'Error when valid Ticket');
-        }
-    })
-  }
+    // onValidSaveChanges = (id) => {
+    //     var renamedSuccess = true;
+    //     Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+    //         if (res.status === 200) {
+    //             toastr.success('Valid Success', 'Ticket has been valid successfully.');
+    //             this.getRenamedTickets();
+    //             // this.props.history.push('/ticket');
+    //         } else {
+    //             toastr.error('Error', 'Error when valid Ticket');
+    //         }
+    //     })
+    // }
+
+    // onInValidSaveChanges = (id) => {
+    //     var renamedSuccess = false;
+    //     Axios.post('api/ticket/validate-rename?id=' + id + '&renameSuccess=' + renamedSuccess).then(res => {
+    //         if (res.status === 200) {
+    //             toastr.success('Invalid Success', 'Ticket has been invalid successfully.');
+    //             this.getRenamedTickets();
+    //             // this.props.history.push('/ticket');
+    //         } else {
+    //             toastr.error('Error', 'Error when valid Ticket');
+    //         }
+    //     })
+    // }
+
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getCompletedTickets();
+        })
+    }
 
     render() {
-        var { tickets, isLogin, userRole } = this.state
+        var { tickets, isLogin, userRole, currentPage, pageCount } = this.state
         return (
             isLogin ? userRole === 'Staff' ?
                 <div className="animated fadeIn">
@@ -136,7 +138,7 @@ class CompletedTickets extends Component {
                                 <CardHeader>
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Searchcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange}/>
+                                            <Input type="text" className="mr-2" placeholder="Searchcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange} />
                                             <Button color="primary">
                                                 <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
                                                 </Button>
@@ -162,10 +164,13 @@ class CompletedTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index}/>
+                                                <TicketRow key={index} ticket={ticket} index={index} />
                                             )}
                                         </tbody>
                                     </Table>
+                                    <div style={{ float: 'right' }}>
+                                        <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>

@@ -205,17 +205,9 @@ async function getTicketDetail() {
     if (res.status === 200) {
         const data = await res.json();
         var status = data.status;
-        if (status === 1 || status === 3) {
+        if (status === 1) {
             document.getElementById('title').innerHTML = 'EDIT TICKET'
-            displayInvalidField(data);
             createBtn('SAVE', 'editTicket()')
-            createBtn('DELETE', 'deleteTicket()')
-            if (status === 3) {
-                document.getElementById('invalidField').innerHTML = 'There are some information of your ticket are invalid(red inputs). Please check and edit them.';
-                document.getElementById('invalidField').style.color = 'red';
-                document.getElementById('invalidField').style.marginBottom = '20px';
-                document.getElementById('invalidField').style.display = 'block';
-            }
         } else {
             document.getElementById('title').innerHTML = "TICKET DETAIL";
             document.getElementById('select-vehicle').setAttribute('disabled', '')
@@ -223,7 +215,13 @@ async function getTicketDetail() {
             for (var i = 0; i < inputTags.length; i++) {
                 inputTags[i].setAttribute('readonly', '');
             }
-            if (status === 4) {
+            if (status === 3) {
+                displayInvalidField(data);
+                document.getElementById('invalidField').innerHTML = 'There are some information of your ticket are invalid(red inputs). Please post a new ticket and check all inputs carefully';
+                document.getElementById('invalidField').style.color = 'red';
+                document.getElementById('invalidField').style.marginBottom = '20px';
+                document.getElementById('invalidField').style.display = 'block';
+            } else if (status === 4) {
                 document.getElementById('title').innerHTML = "CONFIRM TICKET RENAME";
                 var btnConfirm = document.createElement('INPUT');
                 btnConfirm.setAttribute('type', 'button');
@@ -231,13 +229,10 @@ async function getTicketDetail() {
                 btnConfirm.setAttribute('class', 'btn-post-now');
                 btnConfirm.setAttribute('onclick', 'confirmTicketRename()', window.alert("Confirm rename successfully!"));
                 divBtn.appendChild(btnConfirm);
-
                 createBtn('REFUSE', 'refuseTicketRename()');
-            } else {
-                createBtn('DELETE', 'deleteTicket()')
-            }
+            } 
         }
-
+        createBtn('DELETE', 'deleteTicket()')
         setTicketDetail(data);
     }
 }
@@ -346,7 +341,8 @@ async function getDepartureStation() {
 }
 
 function setDepartureDate() {
-    ticketInfo.departureDateTime = moment(document.getElementById('departureDate').value).format('YYYY-MM-DD HH:mm')
+    var departureDate = document.getElementById('departureDate').value
+    ticketInfo.departureDateTime = moment(departureDate).format('YYYY-MM-DD HH:mm')
 }
 
 async function getArrivalCity() {
@@ -383,7 +379,7 @@ function setPassengerName() {
 }
 
 function setEmailBooking() {
-    ticketInfo.passengerName = document.getElementById('emailBooking').value;
+    ticketInfo.emailBooking = document.getElementById('emailBooking').value;
 }
 
 /* start format currency */
