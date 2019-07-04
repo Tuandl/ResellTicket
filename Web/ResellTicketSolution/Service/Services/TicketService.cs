@@ -503,7 +503,7 @@ namespace Service.Services
             }
             else
             {
-                existedTicket.Status = Core.Enum.TicketStatus.Bought;
+                existedTicket.Status = Core.Enum.TicketStatus.Invalid;
                 _ticketRepository.Update(existedTicket);
                 try
                 {
@@ -514,7 +514,7 @@ namespace Service.Services
                     return ex.Message;
                 }
                 List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
-                var message = "Ticket " + existedTicket.TicketCode + " renamed fail. Please check and rename again.";
+                var message = "Ticket " + existedTicket.TicketCode + " renamed fail.";
                 _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
             }
 
