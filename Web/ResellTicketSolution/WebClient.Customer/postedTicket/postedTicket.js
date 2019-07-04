@@ -223,12 +223,13 @@ async function getTicketDetail() {
                 document.getElementById('invalidField').style.display = 'block';
             } else if (status === 4) {
                 document.getElementById('title').innerHTML = "CONFIRM TICKET RENAME";
-                var btnConfirm = document.createElement('INPUT');
-                btnConfirm.setAttribute('type', 'button');
-                btnConfirm.setAttribute('value', 'CONFIRM');
-                btnConfirm.setAttribute('class', 'btn-post-now');
-                btnConfirm.setAttribute('onclick', 'confirmTicketRename()', window.alert("Confirm rename successfully!"));
-                divBtn.appendChild(btnConfirm);
+                // var btnConfirm = document.createElement('INPUT');
+                // btnConfirm.setAttribute('type', 'button');
+                // btnConfirm.setAttribute('value', 'CONFIRM');
+                // btnConfirm.setAttribute('class', 'btn-post-now');
+                // btnConfirm.setAttribute('onclick', 'confirmTicketRename()');
+                // // divBtn.appendChild(btnConfirm);
+                createBtn('CONFIRM', 'confirmTicketRename()');
                 createBtn('REFUSE', 'refuseTicketRename()');
             } 
         }

@@ -50,6 +50,7 @@ function searchResult() {
                 departureDate: route.routeTickets[0].departureDateTime,
                 arrivalDate: route.routeTickets[0].arrivalDateTime,
                 saved: route.saved || false,
+                routeTickets: route.routeTickets,
             }
         });
     }
