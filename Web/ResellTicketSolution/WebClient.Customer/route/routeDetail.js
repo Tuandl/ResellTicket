@@ -2,6 +2,7 @@ import commonService from "../js/service/commonService.js";
 import apiService from '../js/service/apiService.js';
 import { appConfig } from "../constant/appConfig.js";
 import TicketComponent from "../js/component/TicketComponent.js";
+import CustomerComponent from "../js/component/CustomerComponent.js";
 import toastService from "../js/service/toastService.js";
 
 function routeDetail() {
@@ -11,16 +12,22 @@ function routeDetail() {
         ticketContainer: 'ticket-container',
         btnDelete: 'btn-delete',
         btnBuy: 'btn-buy',
+        btnConfirm: 'btn-confirm',
+        customerDetailContainer: 'customer-detail-container',
+        customerDetailModal: 'customer-detail-modal',
         changeTicketModal: 'update-route-modal',
         changeTicketContainer: 'tickets-container',
         changeTicketEmpty: 'tickets-empty-container',
         btnUpdateRoute: 'btnUpdateRoute',
     };
     const elements = {
+        customerDetailContainer: document.getElementById(id.customerDetailContainer),
+        customerDetailModal: document.getElementById(id.customerDetailModal),
         routeCode: document.getElementById(id.routeCode),
         ticketContainer: document.getElementById(id.ticketContainer),
         btnDelete: document.getElementById(id.btnDelete),
         btnBuy: document.getElementById(id.btnBuy),
+        btnConfirm: document.getElementById(id.btnConfirm),
         changeTicketContainer: document.getElementById(id.changeTicketContainer),
         availableTicketElements: [],
         btnUpdateRoute: document.getElementById(id.btnUpdateRoute),
@@ -28,6 +35,7 @@ function routeDetail() {
     };
 
     const routeId = commonService.getQueryParam('routeId');
+    const customerComponent = new CustomerComponent(routeId);
     const model = {};
     const watchObj = commonService.createWatch({
         selectedAvailableTicketId: null,
@@ -40,12 +48,18 @@ function routeDetail() {
 
         renderRouteCode(model.route.code);
         renderTickets(model.route.routeTickets);
+        const customerComponent = new CustomerComponent(model.route);
 
         elements.btnDelete.addEventListener('click', onBtnDeleteClicked);
         elements.btnBuy.addEventListener('click', onBtnBuyClicked);
+        elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
+        // customerComponent.domElement.addEventListener('click', function(e) {
+        //     onBtnBuyClicked(model.route);
+        // });
         elements.btnUpdateRoute.addEventListener('click', onBtnUpdateRouteTicketClicked);
     }
 
+    
     function renderRouteCode(routeCode) {
         commonService.removeAllChildren(elements.routeCode);
         elements.routeCode.innerHTML = routeCode;
@@ -64,8 +78,39 @@ function routeDetail() {
         window.history.back();
     }
 
-    function onBtnBuyClicked() {
-        toastService.error('Not Support');
+    async function onBtnConfirmClicked() {
+        if(customerComponent.passengerDetail.passengerName === '' || customerComponent.passengerDetail.emailBooking === '') {
+            toastService.error('Please input all field!');
+        } else {
+            const params = {
+                routeId: routeId,
+                passengerName: customerComponent.passengerDetail.passengerName,
+                emailBooking: customerComponent.passengerDetail.emailBooking
+            }
+                try {
+                    var response = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
+                    if(response.status === 200) {
+                        // toastService.success('Buy route successfully!');
+                        window.location.replace('/index.html');
+                    } else {
+                        toastService.error('error');
+                    }
+                } catch (ex) {
+                    toastService.error('error');
+                }
+                
+        }
+    }
+
+    async function onBtnBuyClicked() {
+        await renderCustomerDetail(routeId);
+    }
+
+    function renderCustomerDetail(routeId) {
+        commonService.removeAllChildren(elements.customerDetailContainer);
+            // const customerComponent = new CustomerComponent(routeId);
+            elements.customerDetailContainer.appendChild(customerComponent.render());
+        $(`#${id.customerDetailModal}`).modal();
     }
 
     async function onRouteTicketClicked(component) {
