@@ -17,6 +17,7 @@ class TransportationViewComponent extends Component {
                 email: '',
                 vehicleId: '',
                 vehicleName: '',
+                expiredBefore: 0
             }
         }
 
@@ -26,7 +27,6 @@ class TransportationViewComponent extends Component {
     }
 
     componentWillMount() {
-        console.log("thanh");
         var { match } = this.props;
         var transportationID = match.params.id;
         this.props.findTransportationById(transportationID);
@@ -50,7 +50,7 @@ class TransportationViewComponent extends Component {
             this.setState({
                 vehicles: vehicleResponse.data,
             });
-        } catch(error) {
+        } catch (error) {
             toastr.error('Error', 'Error on Load Roles Data');
         }
     }
@@ -67,7 +67,7 @@ class TransportationViewComponent extends Component {
         }
     }
 
-    
+
 
     handleOnChanged(e) {
         const { id, value } = e.target;
@@ -84,7 +84,7 @@ class TransportationViewComponent extends Component {
 
         toastr.info('Infomation', 'Please wait while we processing your request.');
         var updateResponse = await Axios.put('api/transportation', data);
-        if(updateResponse.status === 200) {
+        if (updateResponse.status === 200) {
             toastr.success('Update Success', 'Transportation has been updated successfully.');
             this.props.history.push('/transportation');
         } else {
@@ -99,7 +99,7 @@ class TransportationViewComponent extends Component {
     render() {
         var { transportation } = this.state;
         var vehicleOption = this.getVehicleOptions();
-        
+
         return (
             <div className="animated fadeIn">
                 <Card>
@@ -111,9 +111,9 @@ class TransportationViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="name">Name</Label>
-                                    <Input type="text" id="name" 
-                                        placeholder="Enter Name..."  
-                                        value={transportation.name} 
+                                    <Input type="text" id="name"
+                                        placeholder="Enter Name..."
+                                        value={transportation.name}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -121,9 +121,9 @@ class TransportationViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="email">Email</Label>
-                                    <Input type="email" id="email" 
-                                        placeholder="Enter email..."  
-                                        value={transportation.email} 
+                                    <Input type="email" id="email"
+                                        placeholder="Enter email..."
+                                        value={transportation.email}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -133,9 +133,9 @@ class TransportationViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="phoneNumber">Phone Number</Label>
-                                    <Input type="text" id="phoneNumber" 
-                                        placeholder="Enter Phone number..."  
-                                        value={transportation.phoneNumber} 
+                                    <Input type="text" id="phoneNumber"
+                                        placeholder="Enter Phone number..."
+                                        value={transportation.phoneNumber}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -143,13 +143,27 @@ class TransportationViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="vehicleId">Vehicle</Label>
-                                    <Input type="select" id="vehicleId" 
-                                         value={transportation.vehicleId}
+                                    <Input type="select" id="vehicleId"
+                                        value={transportation.vehicleId}
                                         onChange={this.handleOnChanged}
                                     >
                                         {vehicleOption}
                                     </Input>
                                 </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="expiredBefore">Expire before departure date</Label>
+                                    <Input type="number" min={0} id="expiredBefore"
+                                        placeholder="Enter hours..."
+                                        value={transportation.expiredBefore}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
                             </Col>
                         </Row>
                         <Row className="float-right">
@@ -172,7 +186,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = (dispatch, props) => {
-    return { 
+    return {
         findTransportationById: (transportationID) => {
             dispatch(findTransportationByIdRequest(transportationID));
         }

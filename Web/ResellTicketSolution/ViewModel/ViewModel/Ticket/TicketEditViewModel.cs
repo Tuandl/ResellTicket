@@ -7,32 +7,18 @@ namespace ViewModel.ViewModel.Ticket
 {
     public class TicketEditViewModel
     {
-        [Required]
         public int Id { get; set; }
-
-        [Required]
         public string TicketCode { get; set; }
-
-        [Required]
+        public int VehicleId { get; set; }
         public int TransportationId { get; set; }
-
-        [Required]
+        public int DepartureCityId { get; set; }
         public int DepartureStationId { get; set; }
-
-        [Required]
+        public int ArrivalCityId { get; set; }
         public int ArrivalStationId { get; set; }
-
-        [Required]
         public decimal SellingPrice { get; set; }
         public string Description { get; set; }
-
-        [Required]
         public DateTime DepartureDateTime { get; set; }
-
-        [Required]
         public DateTime ArrivalDateTime { get; set; }
-
-        [Required]
         public int TicketTypeId { get; set; }
         public string PassengerName { get; set; }
         public string EmailBooking { get; set; }

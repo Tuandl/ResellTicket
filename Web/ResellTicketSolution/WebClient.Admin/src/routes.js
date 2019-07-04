@@ -59,6 +59,8 @@ const RenamedTickets = React.lazy(() => import('./views/Tickets/RenamedTickets')
 const BoughtTickets = React.lazy(() => import('./views/Tickets/BoughtTickets'));
 const CompletedTickets = React.lazy(() => import('./views/Tickets/CompletedTickets'));
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
+
+const ValidTicketDetail  = React.lazy(() => import('./views/Tickets/ValidTicketDetail'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -103,7 +105,7 @@ const routes = [
   { path: '/user/add', exact: true, name: 'Register', component: UserCreate},
   { path: '/user/:id', name: 'User Details', component: UserView},
   { path: '/profile', name: 'User Profile', component: UserProfile},
-  {path: '/newPostedTicket', name: 'New Posted Tickets', component: NewPostedTickets},
+  {path: '/newPostedTicket', exact: true, name: 'New Posted Tickets', component: NewPostedTickets},
   {path: '/customer', exact: true, name: 'Customers', component: Customers},
   {path: '/customer/:id', name: 'Customer Details', component: CustomerView},
   { path: '/transportation', exact: true,  name: 'Transportations', component: Transportations },
@@ -123,6 +125,8 @@ const routes = [
   {path: '/renamedTicket', name: 'Renamed Tickets', component: RenamedTickets},
   {path: '/boughtTicket', name: 'Bought Tickets', component: BoughtTickets},
   {path: '/completedTicket', name: 'Completed Tickets', component: CompletedTickets},
+
+  {path: '/newPostedTicket/:id', exact: true, name: 'Valid Ticket Detail', component: ValidTicketDetail},
 ];
 
 export default routes;

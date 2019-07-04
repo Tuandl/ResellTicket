@@ -23,6 +23,6 @@ function convertStatusForSeller(status) {
         case TicketStatus.COMPLETED:
             return 'Completed';
         default:
-            return 'Pending';
+            return 'Expired';
     }
 }

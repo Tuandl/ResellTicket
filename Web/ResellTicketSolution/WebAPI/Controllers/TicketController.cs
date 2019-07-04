@@ -138,7 +138,7 @@ namespace WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
             }
 
-            var rejectResult = _ticketService.RejectTicket(id);
+            var rejectResult = _ticketService.RefuseTicket(id);
 
             if (!string.IsNullOrEmpty(rejectResult))
             {

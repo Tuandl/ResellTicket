@@ -46,7 +46,7 @@ export default class PostEditTicket extends Component {
             sellingPrice: '',
             passengerName: '',
             emailBooking: '',
-            emailValid: true
+            emailValid: true,
         }
     }
 
@@ -73,11 +73,17 @@ export default class PostEditTicket extends Component {
             const ticketDetail = res.data
             this.setState({
                 vehicleId: ticketDetail.vehicleId,
+                transportationId: ticketDetail.transportationId,
                 transportationName: ticketDetail.transportationName,
+                ticketTypeId: ticketDetail.ticketTypeId,
                 ticketTypeName: ticketDetail.ticketTypeName,
+                departureCityId: ticketDetail.departureCityId,
                 departureCityName: ticketDetail.departureCityName,
+                departureStationId: ticketDetail.departureStationId,
                 departureStationName: ticketDetail.departureStationName,
+                arrivalCityId: ticketDetail.arrivalCityId,
                 arrivalCityName: ticketDetail.arrivalCityName,
+                arrivalStationId: ticketDetail.arrivalStationId,
                 arrivalStationName: ticketDetail.arrivalStationName,
                 departureDateTime: moment(ticketDetail.departureDateTime).format('YYYY-MM-DD HH:mm'),
                 arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
@@ -85,7 +91,8 @@ export default class PostEditTicket extends Component {
                 sellingPrice: ticketDetail.sellingPrice,
                 passengerName: ticketDetail.passengerName,
                 emailBooking: ticketDetail.emailBooking,
-                isLoading: false
+                isLoading: false,
+                status: ticketDetail.status,
             })
         }
     }
@@ -136,7 +143,7 @@ export default class PostEditTicket extends Component {
             isLoading,
             isPostEditLoading,
             isDeleteLoading,
-            emailValid
+            emailValid, //check regular
         } = this.state
         const { navigate } = this.props.navigation;
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
@@ -368,7 +375,6 @@ export default class PostEditTicket extends Component {
                             {/* Enter Ticket Code */}
                             <Label style={styles.label}>Ticket Code:</Label>
                             <Input
-
                                 onChangeText={ticketCode => this.setState({ ticketCode })}
                                 value={ticketCode}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
@@ -452,7 +458,8 @@ export default class PostEditTicket extends Component {
 
     editTicket = async () => {
         const { transportationName, ticketTypeName, departureStationName, arrivalStationName,
-            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking } = this.state;
+            ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking,
+            vehicleId, transportationId,ticketTypeId, departureCityId, departureStationId, arrivalCityId, arrivalStationId } = this.state;
         const { navigation } = this.props;
         const ticketId = this.props.navigation.getParam('ticketId');
         const index = this.props.navigation.getParam('index');
@@ -463,14 +470,17 @@ export default class PostEditTicket extends Component {
             var ticket = {
                 id: ticketId,
                 ticketCode: ticketCode,
-                transportationId: this.state.transportationId,
-                departureStationId: this.state.departureStationId,
-                arrivalStationId: this.state.arrivalStationId,
+                vehicleId: vehicleId,
+                transportationId: transportationId,
+                ticketTypeId: ticketTypeId,
+                departureCityId: departureCityId,
+                departureStationId: departureStationId,
+                departureDateTime: departureDateTime,
+                arrivalCityId: arrivalCityId,
+                arrivalStationId: arrivalStationId,
+                arrivalDateTime: arrivalDateTime,
                 sellingPrice: sellingPrice,
                 description: '',
-                departureDateTime: departureDateTime,
-                arrivalDateTime: arrivalDateTime,
-                ticketTypeId: this.state.ticketTypeId,
                 emailBooking: emailBooking,
                 passengerName: passengerName
             }
@@ -660,7 +670,12 @@ const styles = StyleSheet.create({
     },
     label: {
         paddingTop: 10,
-        fontSize: 10
+        fontSize: 10,
+    },
+    invalidLabel: {
+        paddingTop: 10,
+        fontSize: 10,
+        color: 'red'
     },
     buttonText: {
         color: '#fff',

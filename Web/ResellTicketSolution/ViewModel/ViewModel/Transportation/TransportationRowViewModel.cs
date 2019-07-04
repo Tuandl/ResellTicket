@@ -13,5 +13,6 @@ namespace ViewModel.ViewModel.Transportation
         public string Email { get; set; }
         public int VehicleId { get; set; }
         public string VehicleName { get; set; }
+        public int ExpiredBefore { get; set; }
     }
 }

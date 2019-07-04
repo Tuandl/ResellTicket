@@ -15,18 +15,33 @@ export default class TicketViewComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            statusColor: ''
+            statusColor: '',
+            statusTemp: 0
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        if (moment(new Date()).isAfter(moment(props.postedTicket.expiredDateTime))) {
+            this.state.statusColor = 'lightgrey'
+            this.setState({
+                statusTemp: 0
+            })
+        } else {
+            this.setState({
+                statusTemp: props.postedTicket.status
+            })
         }
     }
 
     editTicketOrViewTicketDetails = () => {
-        const { postedTicket, navigate, refreshPostedTicket, index } = this.props;
-        if(postedTicket.status !== 1 && postedTicket.status !== 3) {
-            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
+        const { postedTicket, navigate, refreshPostedTicket } = this.props;
+        var { statusTemp } = this.state;
+        if (statusTemp !== 1) {
+            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
         } else {
-            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id})
+            navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
         }
-        
+
     }
 
     render() {
@@ -35,15 +50,17 @@ export default class TicketViewComponent extends Component {
             sellingPrice,
             departureDateTime,
             arrivalDateTime,
-            status,
+            expiredDateTime,
             vehicle,
             ticketCode } = this.props.postedTicket;
-
+        var { statusTemp, statusColor } = this.state;
         {   //check hết hạn vé
-            status === 1 ? this.state.statusColor = 'orange' 
-            : status === 3 ? this.state.statusColor = 'red' 
-            : this.state.statusColor = '#28a745'
-        } 
+            statusTemp === 1 ? statusColor = 'orange'
+                : statusTemp === 3 ? statusColor = 'red'
+                    : statusTemp === 0 ? statusColor = 'lightgrey' :
+                        statusColor = '#28a745';
+
+        }
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
@@ -76,17 +93,17 @@ export default class TicketViewComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             <Text>{ticketCode}</Text>
-                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('MMM DD YYYY')}</Text>
-                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('MMM DD YYYY')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('ddd, MMM DD YYYY')}</Text>
+                            <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('ddd, MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toString(status)}</Text>
+                            <Text style={{ fontSize: 12, color: statusColor }}>{convertTicketStatus.toString(statusTemp)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(departureDateTime).format('MMM DD YYYY HH:mm')}</Text>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>

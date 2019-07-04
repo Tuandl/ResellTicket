@@ -36,44 +36,44 @@ namespace WebAPI.Admin.Controllers
             return tickets;
         }
         [HttpGet("pending")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetPendingTickets()
+        public ActionResult<TicketDataTable> GetPendingTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetPendingTickets();
+            var tickets = _ticketService.GetPendingTickets(param, page, pageSize);
             return tickets;
         }
 
         [HttpGet("valid")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetValidTickets()
+        public ActionResult<TicketDataTable> GetValidTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetValidTickets();
+            var tickets = _ticketService.GetValidTickets(param, page, pageSize);
             return tickets;
         }
 
         [HttpGet("renamed")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetRenamedTickets()
+        public ActionResult<TicketDataTable> GetRenamedTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetRenamedTickets();
+            var tickets = _ticketService.GetRenamedTickets(param, page, pageSize);
             return tickets;
         }
 
         [HttpGet("bought")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetBoughtTickets()
+        public ActionResult<TicketDataTable> GetBoughtTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetBoughtTickets();
+            var tickets = _ticketService.GetBoughtTickets(param, page, pageSize);
             return tickets;
         }
 
         [HttpGet("completed")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetCompletedTickets()
+        public ActionResult<TicketDataTable> GetCompletedTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetCompletedTickets();
+            var tickets = _ticketService.GetCompletedTickets(param, page, pageSize);
             return tickets;
         }
 
         [HttpGet("invalid")]
-        public ActionResult<IEnumerable<TicketRowViewModel>> GetInValidTickets()
+        public ActionResult<TicketDataTable> GetInValidTickets(string param, int page, int pageSize)
         {
-            var tickets = _ticketService.GetInValidTickets();
+            var tickets = _ticketService.GetInValidTickets(param, page, pageSize);
             return tickets;
         }
 
@@ -84,19 +84,34 @@ namespace WebAPI.Admin.Controllers
             return ticketRowViewModels;
         }
 
+        [HttpGet("detail")]
+        [Authorize]
+        public ActionResult<TicketDetailViewModel> GetTicketDetail(int ticketId)
+        {
+            try
+            {
+                var ticketDetailVM = _ticketService.GetTicketDetail(ticketId);
+                return Ok(ticketDetailVM);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
         /// <summary>
         /// Approve Ticket
         /// </summary>
         /// <returns></returns>
         [HttpPut("approve/{id}")]
-        public ActionResult ApproveTicket(int id)
+        public ActionResult ApproveTicket(int id, decimal commissionFee, DateTime expiredDateTime)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var approveResult = _ticketService.ApproveTicket(id);
+            var approveResult = _ticketService.ApproveTicket(id, commissionFee, expiredDateTime);
 
             if (!string.IsNullOrEmpty(approveResult))
             {
@@ -110,14 +125,14 @@ namespace WebAPI.Admin.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPut("reject/{id}")]
-        public ActionResult RejectTicket(int id)
+        public ActionResult RejectTicket(int id, string invalidField)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
 
-            var rejectResult = _ticketService.RejectTicket(id);
+            var rejectResult = _ticketService.RejectTicket(id, invalidField);
 
             if (!string.IsNullOrEmpty(rejectResult))
             {

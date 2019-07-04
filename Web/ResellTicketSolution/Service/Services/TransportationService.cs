@@ -37,8 +37,6 @@ namespace Service.Services
                     x.Name.Equals(model.Name, StringComparison.Ordinal) && x.VehicleId == model.VehicleId) == null)
             {
                 var transportation = _mapper.Map<TransportationCreateViewModel, Transportation>(model);
-                transportation.CreatedAt = DateTime.Now;
-                transportation.UpdatedAt = DateTime.Now;
                 transportation.Deleted = false;
                 _transportationRepository.Add(transportation);
                 _unitOfWork.CommitChanges();
@@ -110,7 +108,7 @@ namespace Service.Services
             {
                 existedTranportation.VehicleId = model.VehicleId;
             }
-            
+            existedTranportation.ExpiredBefore = model.ExpiredBefore;
 
             existedTranportation.UpdatedAt = DateTime.Now;
             _transportationRepository.Update(existedTranportation);

@@ -10,6 +10,7 @@ namespace Core.Models
         public string PhoneNumber { get; set; }
         public string Email { get; set; }
         public int VehicleId { get; set; }
+        public int ExpiredBefore { get; set; }
         public virtual Vehicle Vehicle { get; set; }
         public virtual ICollection<Ticket> Tickets { get; set; } 
 

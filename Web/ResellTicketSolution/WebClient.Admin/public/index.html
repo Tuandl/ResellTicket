@@ -39,23 +39,7 @@
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
   <script>
-    const OneSignalAppId = 'bcc5a63f-d900-4eb0-af8d-6a85c8dbd01b';
-    const SubDomainName = 'webadmin.OS.TC';
-
-    var OneSignal = window.OneSignal || [];
-    OneSignal.push(function () {
-      OneSignal.init({
-        appId: OneSignalAppId,
-        subdomainName: SubDomainName,
-        notifyButton: {
-          enable: false,
-        }
-      });
-      OneSignal.on('notificationDisplay', function (event) {
-        alert(event.content);
-      });
-      OneSignal.setSubscription(true);
-    });
+    
   </script>
 </head>
 
