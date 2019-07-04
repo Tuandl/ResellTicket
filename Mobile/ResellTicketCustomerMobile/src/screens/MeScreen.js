@@ -21,6 +21,10 @@ export default class MeScreen extends Component {
 
     componentDidMount() {
         this.getUsename();
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener("didFocus", () => {
+            this.isExistedConnectAccount();
+        });
         this.isExistedConnectAccount();
     }
 

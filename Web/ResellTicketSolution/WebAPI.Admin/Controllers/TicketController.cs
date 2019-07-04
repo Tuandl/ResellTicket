@@ -18,11 +18,12 @@ namespace WebAPI.Admin.Controllers
     {
         private readonly ITicketService _ticketService;
         private readonly IPayoutService _payoutService;
-
-        public TicketController(ITicketService ticketService, IPayoutService payoutService)
+        private readonly IRefundService _refundService;
+        public TicketController(ITicketService ticketService, IPayoutService payoutService, IRefundService refundService)
         {
             _ticketService = ticketService;
             _payoutService = payoutService;
+            _refundService = refundService;
         }
 
         /// <summary>
@@ -133,20 +134,32 @@ namespace WebAPI.Admin.Controllers
             {
                 return BadRequest("Invalid Request");
             }
+            var validResult = _ticketService.ValidateRenameTicket(id, renameSuccess);
 
-            var payoutResult = _payoutService.MakePayoutToCustomer(id);
-
-            if (!string.IsNullOrEmpty(payoutResult))
+            if (!string.IsNullOrEmpty(validResult))
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, payoutResult);
+                return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
             }
 
-            //var validResult = _ticketService.ValidateRenameTicket(id, renameSuccess);
+            if (renameSuccess)
+            {
+                //valid thì make Payout cho số tiền 1 vé cho  người SELLER
+                var payoutResult = _payoutService.MakePayoutToCustomer(id);
 
-            //if (!string.IsNullOrEmpty(validResult))
-            //{
-            //    return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
-            //}
+                if (!string.IsNullOrEmpty(payoutResult))
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, payoutResult);
+                }
+            } else
+            {
+                //invalid thì make Refund cho số tiền 1 ROUTE cho  người BUYER
+                var refundResult = _refundService.RefundMoneyToCustomer(id);
+
+                if (!string.IsNullOrEmpty(refundResult))
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
+                }
+            }
             return Ok();
         }
     }
