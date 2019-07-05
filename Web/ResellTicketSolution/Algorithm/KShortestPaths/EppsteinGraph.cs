@@ -62,28 +62,44 @@ namespace Algorithm.KShortestPaths
         /// <param name="destinationId"></param>
         private void InitSourceDestination(int departureId, int destinationId)
         {
-            SourceVertex = new Vertex(departureId, DateTime.MinValue);
-            DestinationVertex = new Vertex(destinationId, DateTime.MaxValue);
+            //SourceVertex = new Vertex(departureId, DateTime.MinValue);
+            //DestinationVertex = new Vertex(destinationId, DateTime.MaxValue);
+
+            //Source vertex is the earliest departure node
+            SourceVertex = this.vertices.Where(x => x.GroupId == departureId)
+                .OrderBy(x => x.ArrivalTime)
+                .FirstOrDefault();
+            if(SourceVertex == null) throw new KeyNotFoundException();
+
+            //Destination vertex is the latest destination node
+            DestinationVertex = this.vertices.Where(x => x.GroupId == destinationId) 
+                .OrderByDescending(x => x.ArrivalTime)
+                .FirstOrDefault();
+            if(DestinationVertex == null) throw new KeyNotFoundException();
 
             this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTime).ToList();
 
-            foreach (var vertex in vertices)
-            {
-                if(vertex.GroupId == departureId)
-                {
-                    //connect to source vertex
-                    var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting, null);
-                    SourceVertex.RelatedEdges.Add(edge);
-                    vertex.RelatedEdges.Add(edge);
-                }
-                else if(vertex.GroupId == destinationId)
-                {
-                    //connect to destination vertex
-                    var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting, null);
-                    vertex.RelatedEdges.Add(edge);
-                    DestinationVertex.RelatedEdges.Add(edge);
-                }
-            }
+            //bool isConnectSourceVertex = false;
+            //foreach (var vertex in vertices)
+            //{
+            //    if (vertex.GroupId == departureId && !isConnectSourceVertex)
+            //    {
+            //        //connect to source vertex
+            //        //Connect only the earliest departure node
+            //        var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting, null);
+            //        SourceVertex.RelatedEdges.Add(edge);
+            //        vertex.RelatedEdges.Add(edge);
+            //        //Flag do not connect to source vertex again
+            //        isConnectSourceVertex = true;
+            //    }
+            //    if (vertex.GroupId == destinationId)
+            //    {
+            //        //connect to destination vertex
+            //        var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting, null);
+            //        vertex.RelatedEdges.Add(edge);
+            //        DestinationVertex.RelatedEdges.Add(edge);
+            //    }
+            //}
 
             //Connect the vertices in a group
             for(int i = 0; i < vertices.Count() - 1; i++)
@@ -264,22 +280,25 @@ namespace Algorithm.KShortestPaths
                 }
                 
                 //Check duplicate path result
-                bool isExisted = false;
-                var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
-                foreach (var node in SideTrackPathsHeap.data)
-                {
-                    var nodeFullPath = RebuildPath(node.SideTrack).Trim();
-                    if(currentFullPath.ToString() == nodeFullPath.ToString())
-                    {
-                        isExisted = true;
-                        break;
-                    }
-                }
+                //bool isExisted = false;
+                //var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
+                //foreach (var node in SideTrackPathsHeap.data)
+                //{
+                //    var nodeFullPath = RebuildPath(node.SideTrack).Trim();
+                //    if(currentFullPath.ToString() == nodeFullPath.ToString())
+                //    {
+                //        isExisted = true;
+                //        break;
+                //    }
+                //}
 
-                if(!isExisted)
-                {
-                    SideTrackPathsHeap.Enqueue(currentSideTrack);
-                }
+                //if(!isExisted)
+                //{
+                //    SideTrackPathsHeap.Enqueue(currentSideTrack);
+                //}
+                
+                //Add Path to result
+                SideTrackPathsHeap.Enqueue(currentSideTrack);
 
                 var currentVertex = currentSideTrack.CurrentVertex;
                 var currentPath = new Path();
