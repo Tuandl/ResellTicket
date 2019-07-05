@@ -37,6 +37,7 @@ namespace WebAPI.Controllers
         /// <param name="arrivalCityId">Arrival City</param>
         /// <param name="maxTicketCombination">Max Ticket Combination</param>
         /// <param name="departureDate">Departure Date (Local departure city)</param>
+        /// <param name="arrivalDate">Arrival Date (Local arrival city)</param>
         /// <param name="page">Current Page</param>
         /// <param name="pageSize">Size of a page</param>
         /// <returns>Search Result</returns>
@@ -46,6 +47,7 @@ namespace WebAPI.Controllers
             int arrivalCityId,
             int maxTicketCombination,
             DateTime departureDate,
+            DateTime arrivalDate,
             int page,
             int pageSize)
         {
@@ -53,7 +55,7 @@ namespace WebAPI.Controllers
             {
                 //TODO: Convert departure time into UTC
                 var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,
-                    departureDate, page, pageSize, maxTicketCombination
+                    departureDate, arrivalDate, page, pageSize, maxTicketCombination
                 );
 
                 return Ok(routes);

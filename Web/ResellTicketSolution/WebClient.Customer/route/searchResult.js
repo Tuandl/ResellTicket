@@ -21,6 +21,7 @@ function searchResult() {
         arrivalCityId: commonService.getQueryParam('arrivalCityId'),
         maxTicketCombination: commonService.getQueryParam('maxTicketCombination'),
         departureDate: moment(commonService.getQueryParam('departureDate')).format(appConfig.format.datetimeISO),
+        arrivalDate: moment(commonService.getQueryParam('arrivalDate')).format(appConfig.format.datetimeISO),
         page: commonService.getQueryParam('page'),
         pageSize: commonService.getQueryParam('pageSize'),
     };
