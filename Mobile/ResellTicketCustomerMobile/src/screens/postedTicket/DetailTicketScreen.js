@@ -163,6 +163,12 @@ export default class DetailTicketScreen extends Component {
                                     <Text style={styles.buttonText}>Refuse Ticket</Text>
                                 </Button>
                             </Container>
+                            : status == 5 
+                            ? <Button rounded block success
+                                    style={{ margin: 20, marginBottom: 0 }}
+                                    onPress={this.PassengerInformation}>
+                                    <Text style={styles.buttonText}>View Passenger Information</Text>
+                                </Button>
                             : <Button rounded block danger
                                 style={{ margin: 40, marginBottom: 0 }}
                                 onPress={this.deletePostedTicket}>
@@ -173,6 +179,15 @@ export default class DetailTicketScreen extends Component {
                 </ScrollView>
             </Container>
         )
+    }
+
+    PassengerInformation = async () => {
+        const ticketId = this.props.navigation.getParam('ticketId');
+        const params = {
+            ticketId: ticketId
+        }
+        const { navigation } = this.props;
+            navigation.navigate('PassengerInfo', {params: params});
     }
 
     confirmTicketRenamed = async () => {

@@ -24,5 +24,6 @@ namespace ViewModel.ViewModel.Ticket
         public TicketStatus Status { get; set; }
         public string PassengerName { get; set; }
         public string EmailBooking { get; set; }
+        public string PassengerId { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace Core.Models
 {
     public class Ticket : EntityBase
     {
+        public string PassengerId { get; set; }
         public string TicketCode { get; set; }
         public int TransportationId { get; set; }
         public int DepartureStationId { get; set; }
