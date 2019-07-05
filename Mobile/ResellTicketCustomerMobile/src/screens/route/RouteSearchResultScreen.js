@@ -20,7 +20,7 @@ export default class RouteSearchResultScreen extends Component {
         super(props);
 
         this.params = this.props.navigation.getParam('params');
-        console.log('route search params here', this.params);
+        // console.log('route search params here', this.params);
         this.navigation = this.props.navigation;
         this.state = {
             routes: [],

@@ -22,6 +22,7 @@ export default class RouteSearchFormScreen extends Component {
             arrivalCityId: null,
             arrivalCityName: '',
             departureDate: new Date(),
+            arrivalDate: new Date(),
             maxTicketCombination: 3,
             departureCitiesAutoSuggest: [],
             arrivalCitiesAutoSuggest: [],
@@ -30,6 +31,7 @@ export default class RouteSearchFormScreen extends Component {
         this.getDepartureCityAutoSuggest = this.getDepartureCityAutoSuggest.bind(this);
         this.getArrivalCityAutoSuggest = this.getArrivalCityAutoSuggest.bind(this);
         this.onDepartureDateChanged = this.onDepartureDateChanged.bind(this);
+        this.onArrivalDateChanged = this.onArrivalDateChanged.bind(this);
         this.onMaxTicketCombinationChanged = this.onMaxTicketCombinationChanged.bind(this);
         this.onBtnSearchPress = this.onBtnSearchPress.bind(this);
     }
@@ -64,7 +66,13 @@ export default class RouteSearchFormScreen extends Component {
 
     onDepartureDateChanged(value) {
         this.setState({
-            departuredate: value
+            departureDate: value
+        })
+    }
+
+    onArrivalDateChanged(value) {
+        this.setState({
+            arrivalDate: value
         })
     }
 
@@ -80,6 +88,7 @@ export default class RouteSearchFormScreen extends Component {
             arrivalCityId: this.state.arrivalCityId,
             maxTicketCombination: this.state.maxTicketCombination,
             departureDate: moment(this.state.departureDate).format('YYYY-MM-DD 00:00:00'),
+            arrivalDate: moment(this.state.arrivalDate).format('YYYY-MM-DD 00:00:00'),
             page: 1,
             pageSize: 10,
         };
@@ -92,6 +101,7 @@ export default class RouteSearchFormScreen extends Component {
             arrivalCitiesAutoSuggest,
             departureCitiesAutoSuggest,
             departureDate,
+            arrivalDate,
             maxTicketCombination
         } = this.state;
         const { navigation } = this.props;
@@ -181,6 +191,22 @@ export default class RouteSearchFormScreen extends Component {
                         placeHolderText="Select Departure Date"
                         placeHolderTextStyle={{ color: "#d3d3d3" }}
                         onDateChange={this.onDepartureDateChanged}
+                        disabled={false}
+                    />
+
+                    {/* Select Arrival date */}
+                    <Label style={styles.label}>Arrival Date:</Label>
+                    <DatePicker
+                        defaultDate={arrivalDate}
+                        minimumDate={new Date()}
+                        locale={"en"}
+                        timeZoneOffsetInMinutes={undefined}
+                        modalTransparent={false}
+                        animationType={"fade"}
+                        androidMode={"calendar"}
+                        placeHolderText="Select Arrival Date"
+                        placeHolderTextStyle={{ color: "#d3d3d3" }}
+                        onDateChange={this.onArrivalDateChanged}
                         disabled={false}
                     />
 
