@@ -41,7 +41,7 @@ namespace Service.Services
         int PostTicket(string username, TicketPostViewModel model);
         void EditTicket(TicketEditViewModel model);
         void DeleteTicket(int ticketId);
-        List<CustomerTicketViewModel> GetCustomerTickets(string username, int page);
+        List<CustomerTicketViewModel> GetCustomerTickets(string username, int page, int pageSize, TicketStatus? status);
         TicketDetailViewModel GetTicketDetail(int ticketId);
         string ConfirmRenameTicket(int id);
         string ValidateRenameTicket(int id, bool renameSuccess);
@@ -227,16 +227,20 @@ namespace Service.Services
             return ticketDataTable;
         }
 
-        public List<CustomerTicketViewModel> GetCustomerTickets(string username, int page)
+        public List<CustomerTicketViewModel> GetCustomerTickets(string username, int page, int pageSize, TicketStatus? status)
         {
+            
             var existedCustomer = _customerRepository.Get(x => x.Username == username);
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
-                .Skip((page - 1) * 5).Take(5)
-                .ToList();
-            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets);
+                .Skip((page - 1) * 5).Take(pageSize);
+            if(status != null)
+            {
+                customerTickets = customerTickets.Where(x => x.Status == status);
+            }
+            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets.ToList());
             return customerTicketVMs;
         }
 

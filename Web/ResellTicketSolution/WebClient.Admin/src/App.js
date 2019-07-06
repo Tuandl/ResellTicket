@@ -36,7 +36,7 @@ class App extends Component {
         }
       });
       OneSignal.on('notificationDisplay', function (event) {
-        toastr.success('Notifications', event.content);
+        // toastr.success('Notifications', event.content);
       });
       OneSignal.setSubscription(true);
     });

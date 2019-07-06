@@ -30,17 +30,11 @@ function TicketRow(props) {
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
             <td>
-                {/* <Button color="success" className="mr-2" onClick={() => { parent.onValidSaveChanges(ticket.id) }}>
-                    <i className="fa fa-edit fa-lg mr-1"></i>Valid
-                </Button> */}
                 <Link to={ticketLink}>
                     <Button color="success" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Valid
                     </Button>
                 </Link>
-                {/* <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
-                    <i className="fa fa-edit fa-lg mr-1"></i>Invalid
-                </Button> */}
             </td>
         </tr>
 
@@ -65,13 +59,13 @@ class NewPostedTickets extends Component {
     }
 
     componentWillMount() {
-        // var OneSignal = window.OneSignal || [];
-        // var self = this
-        // OneSignal.on('notificationDisplay', function (event) {
-        //     if (event.content.indexOf('posted')) {
-        //         self.getPendingTickets();
-        //     }
-        // });
+        var OneSignal = window.OneSignal || [];
+        var self = this
+        OneSignal.on('notificationDisplay', function (event) {
+            if (event.content.indexOf('posted')) {
+                self.getPendingTickets();
+            }
+        });
         var token = localStorage.getItem('userToken');
         if (token) {
             this.setState({
@@ -115,29 +109,6 @@ class NewPostedTickets extends Component {
             this.getPendingTickets()
         })
     }
-
-    // onValidSaveChanges = (id) => {
-    //     Axios.put('api/ticket/approve/' + id).then(res => {
-    //         if (res.status === 200) {
-    //             toastr.success('Update Success', 'Ticket has been valid successfully.');
-    //             this.getPendingTickets();
-    //         } else {
-    //             toastr.error('Error', 'Error when valid Ticket');
-    //         }
-    //     })
-    // }
-
-    // onInValidSaveChanges = (id) => {
-    //     Axios.put('api/ticket/reject/' + id).then(res => {
-    //         if (res.status === 200) {
-    //             toastr.success('Reject Success', 'Ticket has been rejected.');
-    //             // this.props.history.push('/ticket');
-    //             this.getPendingTickets();
-    //         } else {
-    //             toastr.error('Error', 'Error when reject Ticket');
-    //         }
-    //     })
-    // }
 
     goPage = (pageNumber) => {
         this.setState({
