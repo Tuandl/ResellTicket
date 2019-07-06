@@ -472,6 +472,7 @@ namespace Service.Services
                     existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username)).Id;
                     foreach (var ticket in tickets)
                     {
+                        ticket.PassengerId = model.PassengerId;
                         ticket.PassengerName = model.PassengerName;
                         ticket.EmailBooking = model.EmailBooking;
                         ticket.BuyerId = existedRoute.CustomerId;
