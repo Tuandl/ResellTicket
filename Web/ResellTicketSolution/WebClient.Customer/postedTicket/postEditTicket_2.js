@@ -44,15 +44,16 @@ function postEditTicketController() {
         initEmailBookingInputField();
         initSellingPriceInputField();
     }
+    
 
     async function getTicketDetail() {
         if (ticketId !== '') {
             const data = await apiService.get(appConfig.apiUrl.ticketDetail, { ticketId });
             model = data;
             model.departureDateTime = moment(data.departureDateTime).format(appConfig.format.datetimeISO);
-            model.arrivalDateTime = moment(data.arrivalDateTime).format(appConfig.format.datetimeISO),
+            model.arrivalDateTime = moment(data.arrivalDateTime).format(appConfig.format.datetimeISO);
 
-                document.getElementById(id.vehicle).value = data.vehicleId;
+            document.getElementById(id.vehicle).value = data.vehicleId;
             document.getElementById(id.transportation).children[0].children[0].value = data.transportationName;
             document.getElementById(id.ticketType).children[0].children[0].value = data.ticketTypeName;
             document.getElementById(id.departureCity).children[0].children[0].value = data.departureCityName;
@@ -65,8 +66,51 @@ function postEditTicketController() {
             document.getElementById(id.sellingPrice).value = numeral(data.sellingPrice).format('$0,0.00');
             document.getElementById(id.passengerName).value = data.passengerName;
             document.getElementById(id.emailBooking).value = data.emailBooking;
+
+            if (data.status !== TicketStatus.Pending) {
+                document.getElementById(id.vehicle).setAttribute('disabled', '')
+                var inputTags = document.getElementsByTagName('input');
+                for (var i = 0; i < inputTags.length; i++) {
+                    inputTags[i].setAttribute('readonly', '');
+                }
+            }
+            if(data.status === TicketStatus.Invalid) {
+                displayInvalidField(data)
+            }
         }
         initBtnEvent();
+    }
+
+    function displayInvalidField(data) {
+        var invalidBorderStyle = '1px solid red';
+        if (!data.isVehicleValid) {
+            document.getElementById(id.vehicle).style.border = invalidBorderStyle;
+        }
+        if (!data.isTransportationValid) {
+            document.getElementById(id.transportation).children[0].children[0].style.border = invalidBorderStyle;
+        }
+        if (!data.isTicketTypeValid) {
+            document.getElementById(id.ticketType).children[0].children[0].style.border = invalidBorderStyle;
+        }
+        if (!data.isDepartureValid) {
+            document.getElementById(id.departureCity).children[0].children[0].style.border = invalidBorderStyle;
+            document.getElementById(id.departureStation).children[0].children[0].style.border = invalidBorderStyle;
+            document.getElementById(id.departureDate).style.border = invalidBorderStyle;
+        }
+        if (!data.isArrivalValid) {
+            document.getElementById(id.arrivalCity).children[0].children[0].style.border = invalidBorderStyle;
+            document.getElementById(id.arrivalStation).children[0].children[0].style.border = invalidBorderStyle;
+            document.getElementById(id.arrivalDate).border = invalidBorderStyle;
+        }
+        if (!data.isTicketCodeValid) {
+            document.getElementById(id.ticketCode).style.border = invalidBorderStyle;
+        }
+        if (!data.isEmailBookingValid) {
+            document.getElementById(id.emailBooking).style.border = invalidBorderStyle;
+        }
+        if (!data.isPassengerNameValid) {
+            document.getElementById(id.passengerName).style.border = invalidBorderStyle;
+        }
     }
 
     function createBtn(btnValue, event) {
@@ -198,7 +242,7 @@ function postEditTicketController() {
                 return apiService.get(appConfig.apiUrl.city, params);
             },
             function (item) {
-                if(model.departureCityId !== item.id) {
+                if (model.departureCityId !== item.id) {
                     model.departureStationId = undefined;
                     document.getElementById(id.departureStation).children[0].children[0].value = ''
                 }
@@ -252,7 +296,7 @@ function postEditTicketController() {
                 return apiService.get(appConfig.apiUrl.city, params);
             },
             function (item) {
-                if(model.arrivalCityId !== item.id) {
+                if (model.arrivalCityId !== item.id) {
                     model.arrivalStationId = undefined;
                     document.getElementById(id.arrivalStation).children[0].children[0].value = ''
                 }
