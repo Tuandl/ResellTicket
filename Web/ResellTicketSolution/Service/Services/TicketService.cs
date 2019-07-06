@@ -236,7 +236,7 @@ namespace Service.Services
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
                 .Skip((page - 1) * 5).Take(pageSize);
-            if(status != null)
+            if(status != null && status != TicketStatus.Pending)
             {
                 customerTickets = customerTickets.Where(x => x.Status == status);
             }

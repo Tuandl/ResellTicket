@@ -107,7 +107,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("confirm-rename")]
+        [HttpPut("confirm-rename")]
         public ActionResult ConfirmRenameTicket(int id)
         {
             if (!ModelState.IsValid)
