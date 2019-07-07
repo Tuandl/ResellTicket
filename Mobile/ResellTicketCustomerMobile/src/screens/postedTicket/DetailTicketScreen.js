@@ -231,7 +231,7 @@ export default class DetailTicketScreen extends Component {
             isConfirmLoading: true
         })
         const ticketId = this.props.navigation.getParam('ticketId');
-        const resConfirmRenamedTicket = await Api.post('api/ticket/confirm-rename?id=' + ticketId);
+        const resConfirmRenamedTicket = await Api.put('api/ticket/confirm-rename?id=' + ticketId);
         const { navigation } = this.props;
         if (resConfirmRenamedTicket.status === 200) {
             this.setState({

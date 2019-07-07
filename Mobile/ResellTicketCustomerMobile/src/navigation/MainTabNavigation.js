@@ -57,16 +57,18 @@ const MeStack = createStackNavigator(
   }
 )
 
+
 export default createBottomTabNavigator(
   {
     Route: {
       screen: RouteStack,
-      navigationOptions: {
+      navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Route',
-        tabBarIcon: ({ tintColor }) => {
+        tabBarIcon: ({ }) => {
           return <Icon name="map-o" type="font-awesome" />
-        }
-      }
+        },
+        tabBarVisible: navigation.state.index > 0 ? false: true
+      }),
     },
     Tour: {
       screen: TourScreen,

@@ -69,13 +69,15 @@ namespace Algorithm.KShortestPaths
             SourceVertex = this.vertices.Where(x => x.GroupId == departureId)
                 .OrderBy(x => x.ArrivalTime)
                 .FirstOrDefault();
-            if(SourceVertex == null) throw new KeyNotFoundException();
+            if(SourceVertex == null) 
+                SourceVertex = new Vertex(departureId, DateTime.MinValue);
 
             //Destination vertex is the latest destination node
             DestinationVertex = this.vertices.Where(x => x.GroupId == destinationId) 
                 .OrderByDescending(x => x.ArrivalTime)
                 .FirstOrDefault();
-            if(DestinationVertex == null) throw new KeyNotFoundException();
+            if(DestinationVertex == null)
+                new Vertex(destinationId, DateTime.MaxValue);
 
             this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTime).ToList();
 
