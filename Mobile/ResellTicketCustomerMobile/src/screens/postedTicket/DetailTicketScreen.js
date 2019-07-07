@@ -179,6 +179,11 @@ export default class DetailTicketScreen extends Component {
                             <Container>
                                 <Button rounded block success
                                     style={{ margin: 20, marginBottom: 0 }}
+                                    onPress={this.PassengerInformation}>
+                                    <Text style={styles.buttonText}>View Passenger Information</Text>
+                                </Button>
+                                <Button rounded block success
+                                    style={{ margin: 20, marginBottom: 0 }}
                                     onPress={this.confirmTicketRenamed}>
                                     <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>
                                 </Button>
@@ -188,12 +193,6 @@ export default class DetailTicketScreen extends Component {
                                     <Text style={styles.buttonText}>Refuse Ticket</Text>
                                 </Button>
                             </Container>
-                            : status == 5 
-                            ? <Button rounded block success
-                                    style={{ margin: 20, marginBottom: 0 }}
-                                    onPress={this.PassengerInformation}>
-                                    <Text style={styles.buttonText}>View Passenger Information</Text>
-                                </Button>
                             : <Button rounded block danger
                                 style={{ margin: 40, marginBottom: 0 }}
                                 onPress={this.deletePostedTicket}>
