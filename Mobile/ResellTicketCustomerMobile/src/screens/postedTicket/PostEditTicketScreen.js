@@ -589,14 +589,14 @@ export default class PostEditTicket extends Component {
         this.setState({
             departureCityName: searchValue
         })
-        const res = await Api.get('api/city?name=' + searchValue);
+        const res = await Api.get('api/city?name=' + searchValue + '&ignoreCityId=' + this.state.arrivalCityId);
         if (res.status === 200) {
-            for(var i = 0;i < res.data.length; i++) {
-                if(res.data[i].id === this.state.arrivalCityId) {
-                    res.data.splice(i, 1)
-                    break;
-                }
-            }
+            // for(var i = 0;i < res.data.length; i++) {
+            //     if(res.data[i].id === this.state.arrivalCityId) {
+            //         res.data.splice(i, 1)
+            //         break;
+            //     }
+            // }
             this.setState({
                 departureCities: res.data
             })
@@ -607,14 +607,14 @@ export default class PostEditTicket extends Component {
         this.setState({
             departureStationName: searchValue
         })
-        const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + searchValue);
+        const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + searchValue + '&ignoreStationId=' + this.state.arrivalStationId);
         if (res.status === 200) {
-            for(var i = 0;i < res.data.length; i++) {
-                if(res.data[i].id === this.state.departureStationId) {
-                    res.data.splice(i, 1)
-                    break;
-                }
-            }
+            // for(var i = 0;i < res.data.length; i++) {
+            //     if(res.data[i].id === this.state.departureStationId) {
+            //         res.data.splice(i, 1)
+            //         break;
+            //     }
+            // }
             this.setState({
                 departureStations: res.data
             })
@@ -625,14 +625,14 @@ export default class PostEditTicket extends Component {
         this.setState({
             arrivalCityName: searchValue
         })
-        const res = await Api.get('api/city?name=' + searchValue);
+        const res = await Api.get('api/city?name=' + searchValue + '&ignoreCityId=' + this.state.departureCityId);
         if (res.status === 200) {
-            for(var i = 0;i < res.data.length; i++) {
-                if(res.data[i].id === this.state.departureCityId) {
-                    res.data.splice(i, 1)
-                    break;
-                }
-            }
+            // for(var i = 0;i < res.data.length; i++) {
+            //     if(res.data[i].id === this.state.departureCityId) {
+            //         res.data.splice(i, 1)
+            //         break;
+            //     }
+            // }
             this.setState({
                 arrivalCities: res.data
             })
@@ -643,14 +643,14 @@ export default class PostEditTicket extends Component {
         this.setState({
             arrivalStationName: searchValue
         })
-        const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + searchValue);
+        const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + searchValue + '&ignoreStationId=' + this.state.departureStationId);
         if (res.status === 200) {
-            for(var i = 0;i < res.data.length; i++) {
-                if(res.data[i].id === this.state.departureStationId) {
-                    res.data.splice(i, 1)
-                    break;
-                }
-            }
+            // for(var i = 0;i < res.data.length; i++) {
+            //     if(res.data[i].id === this.state.departureStationId) {
+            //         res.data.splice(i, 1)
+            //         break;
+            //     }
+            // }
             this.setState({
                 arrivalStations: res.data
             })

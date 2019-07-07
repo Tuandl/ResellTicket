@@ -55,7 +55,7 @@
 				appId: appConfig.OneSignalAppId,
 				subdomainName: appConfig.SubdomainName,
 				notifyButton: {
-					enable: true,
+					enable: false,
 				}
 			});
 			OneSignal.on('notificationDisplay', function (event) {
@@ -315,7 +315,7 @@
                             </div>
 
                         </div>
-                        <div class="row" style="margin-top: 30px; text-align: center" id="btnPostEditDelete">
+                        <div class="row" style="margin-top: 30px; text-align: center" id="btnEvent">
 
                             <!-- <input type="button" value="POST NOW" class="btn-post-now" onclick="postTicket()" /> -->
                         </div>

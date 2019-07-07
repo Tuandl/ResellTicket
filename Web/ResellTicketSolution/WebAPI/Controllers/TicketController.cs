@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Core.Enum;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -47,12 +48,12 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int page)
+        public ActionResult<List<CustomerTicketViewModel>> GetCustomerTickets(int page, int pageSize, TicketStatus? status = null)
         {
             try
             {
                 var username = User.Identity.Name;
-                var customerTicketVMs = _ticketService.GetCustomerTickets(username, page);
+                var customerTicketVMs = _ticketService.GetCustomerTickets(username, page, pageSize, status);
                 return Ok(customerTicketVMs);
             } catch(Exception e)
             {
@@ -106,7 +107,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("confirm-rename")]
+        [HttpPut("confirm-rename")]
         public ActionResult ConfirmRenameTicket(int id)
         {
             if (!ModelState.IsValid)

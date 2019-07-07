@@ -5,4 +5,5 @@ export default {
     Bought: 4,
     Renamed: 5,
     Completed: 6,
+    All: 21
 }

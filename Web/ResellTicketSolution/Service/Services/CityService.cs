@@ -12,6 +12,7 @@ namespace Service.Services
     public interface ICityService
     {
         bool CreateCity(CityRowViewModel model);
+        List<CityRowViewModel> GetCities(string name, int ignoreCityId);
         List<CityRowViewModel> GetCities(string name);
         CityRowViewModel FindCityById(int id);
         string UpdateCity(CityUpdateViewModel model);
@@ -43,15 +44,19 @@ namespace Service.Services
         }
 
         //get city by param or get all cities when param = ""
-        public List<CityRowViewModel> GetCities(string name)
+        public List<CityRowViewModel> GetCities(string name, int ignoreCityId)
         {
             //select * from city
             //select * from city where name like '%abc%'
 
             name = name ?? "";
             var cities = _cityRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(name.ToLower())).ToList();
-            var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower()));
+            if(ignoreCityId != -1)
+            {
+                cities = cities.Where(x => x.Id != ignoreCityId);
+            }
+            var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities.ToList());
             return cityRowViewModels;
         }
 
@@ -84,6 +89,13 @@ namespace Service.Services
             return string.Empty;
         }
 
-        
+        public List<CityRowViewModel> GetCities(string name) //admin
+        {
+            name = name ?? "";
+            var cities = _cityRepository.GetAllQueryable()
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower()));
+            var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities.ToList());
+            return cityRowViewModels;
+        }
     }
 }

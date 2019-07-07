@@ -27,6 +27,8 @@ export default class DetailTicketScreen extends Component {
             sellingPrice: '',
             status: '',
             isLoading: false,
+            isConfirmLoading: false,
+            isRefuseLoading: false,
             invalidField: {
                 isTicketCodeValid: true,
                 isVehicleValid: true,
@@ -45,11 +47,15 @@ export default class DetailTicketScreen extends Component {
     }
 
     async getTicketDetail() {
+        this.setState({
+            isLoading : true
+        })
         const ticketId = this.props.navigation.getParam('ticketId');
         const res = await Api.get('api/ticket/detail?ticketId=' + ticketId);
         if (res.status === 200) {
             const ticketDetail = res.data
             this.setState({
+                isLoading: false,
                 vehicleName: ticketDetail.vehicleName,
                 transportationName: ticketDetail.transportationName,
                 ticketTypeName: ticketDetail.ticketTypeName,
@@ -95,6 +101,8 @@ export default class DetailTicketScreen extends Component {
             sellingPrice,
             status,
             isLoading,
+            isConfirmLoading,
+            isRefuseLoading,
             invalidField
         } = this.state
         const { navigate } = this.props.navigation;
@@ -113,93 +121,97 @@ export default class DetailTicketScreen extends Component {
                     <Right />
                 </Header>
                 <ScrollView>
-                    <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        {status === 3 ?
+                    {isLoading ? <ActivityIndicator size="large" animating /> :
+                        <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
+                            {/* {status === 3 ?
                             <Text style={{ color: 'red', marginBottom: 10, marginTop: 10 }}>
                                 There are some information of your ticket are invalid(red inputs). Please post a new ticket and check all inputs carefully.
-                            </Text> : null}
-                        <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{vehicleName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{transportationName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{ticketTypeName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{departureCityName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{departureStationName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{arrivalCityName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{arrivalStationName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{departureDateTime}</Text>
-                        </Item>
-                        <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{arrivalDateTime}</Text>
-                        </Item>
-                        <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{ticketCode}</Text>
-                        </Item>
-                        <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{passengerName}</Text>
-                        </Item>
-                        <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>emailBooking:</Label>
-                        <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{emailBooking}</Text>
-                        </Item>
-                        <Label style={styles.label}>Selling Price:</Label>
-                        <Item style={styles.detail}>
-                            <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
-                                suffix={' $'}
-                                renderText={value => (
-                                    <Text style={{ color: 'black' }}>{value}</Text>
-                                )}
-                            />
-                        </Item>
-                        {status == 4 ?
-                            <Container>
-                                <Button rounded block success
-                                    style={{ margin: 20, marginBottom: 0 }}
-                                    onPress={this.PassengerInformation}>
-                                    <Text style={styles.buttonText}>View Passenger Information</Text>
-                                </Button>
-                                <Button rounded block success
-                                    style={{ margin: 20, marginBottom: 0 }}
-                                    onPress={this.confirmTicketRenamed}>
-                                    <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>
-                                </Button>
-                                <Button rounded block danger
-                                    style={{ marginLeft: 60, marginRight: 60, marginTop: 20, marginBottom: 0 }}
-                                    onPress={this.RefuseTicket}>
-                                    <Text style={styles.buttonText}>Refuse Ticket</Text>
-                                </Button>
-                            </Container>
-                            : <Button rounded block danger
-                                style={{ margin: 40, marginBottom: 0 }}
-                                onPress={this.deletePostedTicket}>
-                                {isLoading ? <ActivityIndicator size="small" animating color="#fff" />
-                                    : <Text style={styles.buttonText}>Delete</Text>}
-                            </Button>}
-                    </Content>
+                            </Text> : null} */}
+                            <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{vehicleName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{transportationName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{ticketTypeName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{departureCityName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{departureStationName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{arrivalCityName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{arrivalStationName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{departureDateTime}</Text>
+                            </Item>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{arrivalDateTime}</Text>
+                            </Item>
+                            <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{ticketCode}</Text>
+                            </Item>
+                            <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{passengerName}</Text>
+                            </Item>
+                            <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>emailBooking:</Label>
+                            <Item style={styles.detail}>
+                                <Text style={{ color: 'black' }}>{emailBooking}</Text>
+                            </Item>
+                            <Label style={styles.label}>Selling Price:</Label>
+                            <Item style={styles.detail}>
+                                <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
+                                    suffix={' $'}
+                                    renderText={value => (
+                                        <Text style={{ color: 'black' }}>{value}</Text>
+                                    )}
+                                />
+                            </Item>
+                            {status == 4 ?
+                                <Container>
+                                    <Button rounded block success
+                                        style={{ margin: 20, marginBottom: 0 }}
+                                        onPress={this.PassengerInformation}>
+                                        <Text style={styles.buttonText}>View Passenger Information</Text>
+                                    </Button>
+                                    <Button rounded block success
+                                        style={{ margin: 20, marginBottom: 0 }}
+                                        onPress={this.confirmTicketRenamed}>
+                                        {isConfirmLoading ?  <ActivityIndicator size="small" animating color="#fff" /> 
+                                        : <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>}
+                                    </Button>
+                                    <Button rounded block danger
+                                        style={{ marginTop: 20, marginBottom: 0 }}
+                                        onPress={this.RefuseTicket}>
+                                        {isRefuseLoading ? <ActivityIndicator size="small" animating color="#fff" /> 
+                                        : <Text style={styles.buttonText}>Refuse Ticket Renamed</Text>}
+                                    </Button>
+                                </Container>
+                                : <Button rounded block danger
+                                    style={{ margin: 40, marginBottom: 0 }}
+                                    onPress={this.deletePostedTicket}>
+                                    {isLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                        : <Text style={styles.buttonText}>Delete</Text>}
+                                </Button>}
+                        </Content>
+                    }
                 </ScrollView>
             </Container>
         )
@@ -215,10 +227,16 @@ export default class DetailTicketScreen extends Component {
     }
 
     confirmTicketRenamed = async () => {
+        this.setState({
+            isConfirmLoading: true
+        })
         const ticketId = this.props.navigation.getParam('ticketId');
         const resConfirmRenamedTicket = await Api.post('api/ticket/confirm-rename?id=' + ticketId);
         const { navigation } = this.props;
         if (resConfirmRenamedTicket.status === 200) {
+            this.setState({
+                isConfirmLoading: false
+            })
             RNToasty.Success({
                 title: 'Confirm Renamed Ticket Successfully'
             })
@@ -228,10 +246,16 @@ export default class DetailTicketScreen extends Component {
     }
 
     RefuseTicket = async () => {
+        this.setState({
+            isRefuseLoading: true
+        })
         const ticketId = this.props.navigation.getParam('ticketId');
         const resRefuseTicket = await Api.put('api/ticket/refuse?id=' + ticketId);
         const { navigation } = this.props;
         if (resRefuseTicket.status === 200) {
+            this.setState({
+                isRefuseLoading: false
+            })
             RNToasty.Success({
                 title: 'Refuse Ticket Successfully'
             })

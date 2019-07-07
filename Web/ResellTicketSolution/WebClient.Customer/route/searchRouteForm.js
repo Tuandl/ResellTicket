@@ -22,6 +22,7 @@ function searchRouteForm() {
             function(searchValue) {
                 const param = {
                     name: searchValue,
+                    ignoreCityId: model.arrivalCityId === undefined ? -1 : model.arrivalCityId
                 };
                 return apiService.get(appConfig.apiUrl.city, param);
             }, 
@@ -38,6 +39,7 @@ function searchRouteForm() {
             function(searchValue) {
                 const param = {
                     name: searchValue,
+                    ignoreCityId: model.departureCityId === undefined ? -1 : model.departureCityId
                 };
                 return apiService.get(appConfig.apiUrl.city, param);
             }, 
