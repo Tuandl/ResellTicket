@@ -30,11 +30,11 @@ namespace Service.Services
         }
         public bool CreateCity(CityRowViewModel model)
         {
-            if (_cityRepository.Get(x => x.Name.Equals(model.Name)
-             ) == null)
+            if (_cityRepository.Get(x => x.Name.Equals(model.Name)) == null)
             {
                 var city = new City();
                 city.Name = model.Name;
+                city.TimeZoneId = model.TimeZoneId;
                 _cityRepository.Add(city);
                 _unitOfWork.CommitChanges();
 
@@ -76,6 +76,8 @@ namespace Service.Services
             }
 
             existedCity.Name = model.Name;
+            existedCity.TimeZoneId = model.TimeZoneId;
+
             _cityRepository.Update(existedCity);
             try
             {

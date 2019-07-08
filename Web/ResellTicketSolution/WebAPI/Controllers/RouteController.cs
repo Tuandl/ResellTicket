@@ -53,11 +53,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                //TODO: Convert departure time into UTC
-                
                 //Set departureDate is the begin of this day
-                //Set arrivalDate is the end of this day
                 departureDate = departureDate.Date;
+                //Set arrivalDate is the end of this day
                 arrivalDate = arrivalDate.Date.AddDays(1).AddMilliseconds(-1);
 
                 var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,

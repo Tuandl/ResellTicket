@@ -38,7 +38,7 @@ namespace Service.Services
                 var station = new Station();
                 station.Name = model.Name;
                 station.CityId = model.CityId;
-                station.CreatedAt = DateTime.UtcNow;
+                station.CreatedAtUTC = DateTime.UtcNow;
                 _StationRepository.Add(station);
                 _unitOfWork.CommitChanges();
 

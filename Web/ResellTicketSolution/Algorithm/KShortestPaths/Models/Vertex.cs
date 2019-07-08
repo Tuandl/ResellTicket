@@ -11,7 +11,7 @@ namespace Algorithm.KShortestPaths.Models
         public Vertex(int groupId, DateTime arrivalTime)
         {
             this.GroupId = groupId;
-            this.ArrivalTime = arrivalTime;
+            this.ArrivalTimeUTC = arrivalTime;
             this.RelatedEdges = new List<Edge>();
         }
 
@@ -23,7 +23,7 @@ namespace Algorithm.KShortestPaths.Models
         /// <summary>
         /// Arrival time of this vertex
         /// </summary>
-        public DateTime ArrivalTime { get; set; }
+        public DateTime ArrivalTimeUTC { get; set; }
 
         /// <summary>
         /// Related Edges of this Vertex. Available after calculate shortest path.
@@ -66,7 +66,7 @@ namespace Algorithm.KShortestPaths.Models
             if(obj is Vertex)
             {
                 return this.GroupId == (obj as Vertex).GroupId && 
-                    this.ArrivalTime == (obj as Vertex).ArrivalTime;
+                    this.ArrivalTimeUTC == (obj as Vertex).ArrivalTimeUTC;
             }
             return false;
         }
@@ -77,7 +77,7 @@ namespace Algorithm.KShortestPaths.Models
         /// <returns>Hash Calculated for this object</returns>
         public override int GetHashCode()
         {
-            return GroupId.GetHashCode() ^ ArrivalTime.GetHashCode();
+            return GroupId.GetHashCode() ^ ArrivalTimeUTC.GetHashCode();
         }
 
 

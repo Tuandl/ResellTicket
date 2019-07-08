@@ -47,13 +47,13 @@ namespace Service.Services
                 newOTP = new OTP();
                 newOTP.PhoneNo = phoneNumber;
                 newOTP.Code = RandomNo;
-                newOTP.ExpiredAt = DateTime.Now.AddMinutes(OTP_EXPIRED_MIN);
+                newOTP.ExpiredAtUTC = DateTime.UtcNow.AddMinutes(OTP_EXPIRED_MIN);
                 _oTPRepository.Add(newOTP);
             }
             else
             {
                 newOTP.Code = RandomNo;
-                newOTP.ExpiredAt = DateTime.Now.AddMinutes(OTP_EXPIRED_MIN);
+                newOTP.ExpiredAtUTC = DateTime.UtcNow.AddMinutes(OTP_EXPIRED_MIN);
                 _oTPRepository.Update(newOTP);
             }
             _unitOfWork.CommitChanges();

@@ -86,7 +86,7 @@ namespace Service.Services
 
             if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
                     _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) &&
-                    x.Code.Equals(model.OTPNumber) && x.ExpiredAt > DateTime.UtcNow) != null)
+                    x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null)
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -96,8 +96,8 @@ namespace Service.Services
                 //Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
                 customer.PasswordHash = HashPassword(customer.PasswordHash, salt);
                 customer.SaltPasswordHash = Convert.ToBase64String(salt);
-                customer.CreatedAt = DateTime.UtcNow;
-                customer.UpdatedAt = DateTime.UtcNow;
+                customer.CreatedAtUTC = DateTime.UtcNow;
+                customer.UpdatedAtUTC = DateTime.UtcNow;
                 customer.IsActive = true;
                 _customerRepository.Add(customer);
                 _unitOfWork.CommitChanges();
@@ -192,7 +192,7 @@ namespace Service.Services
             var validOtp = _oTPRepository.Get(x =>
                 x.Deleted == false &&
                 x.Code == model.OTP &&
-                x.ExpiredAt > DateTime.Now &&
+                x.ExpiredAtUTC > DateTime.UtcNow &&
                 x.PhoneNo == model.PhoneNumber
             );
 
@@ -246,7 +246,7 @@ namespace Service.Services
             {
                 existedCustomer.Address = model.Address;
             }
-            existedCustomer.UpdatedAt = DateTime.Now;
+            existedCustomer.UpdatedAtUTC = DateTime.UtcNow;
             existedCustomer.IsActive = true;
             _customerRepository.Update(existedCustomer);
             try

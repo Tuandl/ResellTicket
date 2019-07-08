@@ -5,6 +5,7 @@ using Core.Enum;
 using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
+using Service.Helpers;
 using Service.NotificationService;
 using System;
 using System.Collections.Generic;
@@ -146,7 +147,7 @@ namespace Service.Services
                 {
                     Id = x.Id,
                     Code = x.Code,
-                    CreatedAt = x.CreatedAt,
+                    CreatedAt = x.CreatedAtUTC,
                     CustomerId = x.CustomerId,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
@@ -259,13 +260,22 @@ namespace Service.Services
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
             DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3)
         {
+            //Convert fromDate, toDate into UTC
+            var departureCity = _cityRepository.Get(x => x.Id == departureCityId);
+            if(departureCity == null) throw new NotFoundException();
+            var arrivalCity = _cityRepository.Get(x => x.Id == arrivalCityId);
+            if(arrivalCity == null) throw new NotFoundException();
+
+            var departureDateUTC = departureDate.ToSpecifiedTimeZone(departureCity.TimeZoneId);
+            var arrivalDateUTC = arrivalDate.ToSpecifiedTimeZone(arrivalCity.TimeZoneId);
+
             //Get raw available tickets in db
             var tickets = _ticketRepository.GetAllQueryable()
                 .Where(x => 
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     x.Deleted == false &&
-                    x.DepartureDateTime >= departureDate &&
-                    x.ArrivalDateTime <= arrivalDate
+                    x.DepartureDateTimeUTC >= departureDateUTC &&
+                    x.ArrivalDateTimeUTC <= arrivalDateUTC
                 );
 
 

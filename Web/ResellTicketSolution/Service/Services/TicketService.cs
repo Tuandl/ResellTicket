@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using ViewModel.AppSetting;
 using Service.NotificationService;
 using Core.Enum;
+using Service.Helpers;
 
 namespace Service.Services
 {
@@ -234,7 +235,7 @@ namespace Service.Services
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
-                .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
+                .OrderByDescending(x => x.UpdatedAtUTC ?? x.CreatedAtUTC)
                 .Skip((page - 1) * 5).Take(pageSize);
             if(status != null && status != TicketStatus.Pending)
             {
@@ -320,6 +321,31 @@ namespace Service.Services
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.SellerId = customerId;
             ticket.ExpiredDateTime = model.DepartureDateTime;
+            
+            //convert time into UTC time
+            var departureStation = _stationRepository.Get(x => x.Id == ticket.DepartureStationId);
+            if(departureStation.City.TimeZoneId != null)
+            {
+                ticket.DepartureDateTimeUTC = ticket.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
+                if(ticket.ExpiredDateTime != null)
+                    ticket.ExpiredDateTimeUTC = ticket.ExpiredDateTime.Value.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
+            }
+            else
+            {
+                ticket.DepartureDateTimeUTC = ticket.DepartureDateTime;
+                ticket.ExpiredDateTimeUTC = ticket.ExpiredDateTime;
+            }
+
+            var arrivalStation = _stationRepository.Get(x => x.Id == ticket.ArrivalStationId);
+            if(arrivalStation.City.TimeZoneId != null)
+            {
+                ticket.ArrivalDateTimeUTC = ticket.ArrivalDateTime.ToSpecifiedTimeZone(arrivalStation.City.TimeZoneId);
+            } 
+            else
+            {
+                ticket.ArrivalDateTimeUTC = ticket.ArrivalDateTime;
+            }
+
             _ticketRepository.Add(ticket);
             _unitOfWork.CommitChanges();
 
@@ -634,6 +660,27 @@ namespace Service.Services
             existedTicket.PassengerName = model.PassengerName;
             existedTicket.EmailBooking = model.EmailBooking;
             existedTicket.SellingPrice = model.SellingPrice;
+
+            //convert time into UTC time
+            var departureStation = existedTicket.DepartureStation;
+            if (departureStation.City.TimeZoneId != null)
+            {
+                existedTicket.DepartureDateTimeUTC = model.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
+            }
+            else
+            {
+                existedTicket.DepartureDateTimeUTC = model.DepartureDateTime;
+            }
+
+            var arrivalStation = existedTicket.ArrivalStation;
+            if (arrivalStation.City.TimeZoneId != null)
+            {
+                existedTicket.ArrivalDateTimeUTC = model.ArrivalDateTime.ToSpecifiedTimeZone(arrivalStation.City.TimeZoneId);
+            }
+            else
+            {
+                existedTicket.ArrivalDateTimeUTC = model.ArrivalDateTime;
+            }
         }
 
         public bool CheckInvalidFieldRemain(Ticket existedTicket)

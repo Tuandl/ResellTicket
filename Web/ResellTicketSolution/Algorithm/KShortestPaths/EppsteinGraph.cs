@@ -62,46 +62,21 @@ namespace Algorithm.KShortestPaths
         /// <param name="destinationId"></param>
         private void InitSourceDestination(int departureId, int destinationId)
         {
-            //SourceVertex = new Vertex(departureId, DateTime.MinValue);
-            //DestinationVertex = new Vertex(destinationId, DateTime.MaxValue);
-
             //Source vertex is the earliest departure node
             SourceVertex = this.vertices.Where(x => x.GroupId == departureId)
-                .OrderBy(x => x.ArrivalTime)
+                .OrderBy(x => x.ArrivalTimeUTC)
                 .FirstOrDefault();
             if(SourceVertex == null) 
                 SourceVertex = new Vertex(departureId, DateTime.MinValue);
 
             //Destination vertex is the latest destination node
             DestinationVertex = this.vertices.Where(x => x.GroupId == destinationId) 
-                .OrderByDescending(x => x.ArrivalTime)
+                .OrderByDescending(x => x.ArrivalTimeUTC)
                 .FirstOrDefault();
             if(DestinationVertex == null)
                 new Vertex(destinationId, DateTime.MaxValue);
 
-            this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTime).ToList();
-
-            //bool isConnectSourceVertex = false;
-            //foreach (var vertex in vertices)
-            //{
-            //    if (vertex.GroupId == departureId && !isConnectSourceVertex)
-            //    {
-            //        //connect to source vertex
-            //        //Connect only the earliest departure node
-            //        var edge = new Edge(SourceVertex, vertex, 0, EdgeType.Waiting, null);
-            //        SourceVertex.RelatedEdges.Add(edge);
-            //        vertex.RelatedEdges.Add(edge);
-            //        //Flag do not connect to source vertex again
-            //        isConnectSourceVertex = true;
-            //    }
-            //    if (vertex.GroupId == destinationId)
-            //    {
-            //        //connect to destination vertex
-            //        var edge = new Edge(vertex, DestinationVertex, 0, EdgeType.Waiting, null);
-            //        vertex.RelatedEdges.Add(edge);
-            //        DestinationVertex.RelatedEdges.Add(edge);
-            //    }
-            //}
+            this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTimeUTC).ToList();
 
             //Connect the vertices in a group
             for(int i = 0; i < vertices.Count() - 1; i++)
@@ -191,7 +166,7 @@ namespace Algorithm.KShortestPaths
         {
             return vertices.FirstOrDefault(x =>
                 x.GroupId == departureId && 
-                x.ArrivalTime == arrivalTime
+                x.ArrivalTimeUTC == arrivalTime
             );
         }
 
@@ -426,7 +401,7 @@ namespace Algorithm.KShortestPaths
         /// <param name="newVertex"></param>
         public void AddVertex(Vertex newVertex)
         {
-            var existedVertex = this.GetVertex(newVertex.GroupId, newVertex.ArrivalTime);
+            var existedVertex = this.GetVertex(newVertex.GroupId, newVertex.ArrivalTimeUTC);
             if(existedVertex != null)
             {
                 //Don't allow to add duplicate vertex id

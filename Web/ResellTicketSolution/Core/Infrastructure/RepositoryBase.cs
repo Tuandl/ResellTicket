@@ -28,7 +28,7 @@ namespace Core.Infrastructure
         {
             if(entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
-                (entity as EntityBase).CreatedAt = DateTime.Now;
+                (entity as EntityBase).CreatedAtUTC = DateTime.UtcNow;
             }
 
             _dbSet.Add(entity);
@@ -69,7 +69,7 @@ namespace Core.Infrastructure
         {
             if(entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
-                (entity as EntityBase).UpdatedAt = DateTime.Now;
+                (entity as EntityBase).UpdatedAtUTC = DateTime.UtcNow;
             }
 
             _dbSet.Update(entity);
@@ -79,7 +79,7 @@ namespace Core.Infrastructure
         {
             if (entity.GetType().IsSubclassOf(typeof(EntityBase)))
             {
-                (entity as EntityBase).UpdatedAt = DateTime.Now;
+                (entity as EntityBase).UpdatedAtUTC = DateTime.UtcNow;
             }
 
             _dbSet.Attach(entity);
