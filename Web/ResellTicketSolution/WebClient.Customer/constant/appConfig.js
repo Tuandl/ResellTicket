@@ -1,9 +1,11 @@
 const appConfig = {
-    apiBaseUrl: 'http://api.resellticket.local/',
+    apiBaseUrl: 'http://localhost:59152/',
     apiUrl: {
         route: 'api/route/',
         routeTicket: 'api/route/route-ticket/',
-        city: 'api/city/'
+        city: 'api/city/',
+        creditCard: 'api/credit-card',
+        setDefaultCard: 'api/credit-card/set-default-card',
     },
     url: {
         home: '/index.html',
@@ -24,7 +26,10 @@ const appConfig = {
     },
     MAX_RANDOM_ID: 9999999,
     OneSignalAppId: '2c3cad5d-d711-4abb-b25a-5f5cf2c9b5d1',
-    SubdomainName: 'webcustomer.os.tc'
+    SubdomainName: 'webcustomer.os.tc',
+    stripe : {
+        pusblishableKey: 'pk_test_D0BLH7S0dIaPbxYxUJTFYa0T00ekNdTcE3'
+    }
 }
 
 export {

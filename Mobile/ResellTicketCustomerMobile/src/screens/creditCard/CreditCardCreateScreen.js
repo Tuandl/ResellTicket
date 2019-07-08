@@ -122,12 +122,6 @@ export default class CreditCardCreateScreen extends Component {
                 expiredMonthHash: expiredMonthHash,
                 customerId: customerIdDefault
             }
-
-
-
-
-
-
             try {
                 const client = new Stripe(StripeConstant.STORAGE.PUSBLISHABLEKEY);
                 const stripeResponse = await client.createToken({
