@@ -1,9 +1,17 @@
 const appConfig = {
-    apiBaseUrl: 'http://api.resellticket.local/',
+    apiBaseUrl: 'http://localhost:59152/',
     apiUrl: {
         route: 'api/route/',
         routeTicket: 'api/route/route-ticket/',
-        city: 'api/city/'
+        city: 'api/city/',
+        ticket: 'api/ticket',
+        ticketDetail: 'api/ticket/detail',
+        ticketConfirmRenamed: 'api/ticket/confirm-rename',
+        ticketRefuseRenamed: 'api/ticket/refuse',
+        vehicle: 'api/vehicle',
+        transportation: 'api/transportation',
+        ticketType: 'api/ticketType',
+        station: 'api/station'
     },
     url: {
         home: '/index.html',
@@ -14,6 +22,11 @@ const appConfig = {
             searchForm: '/route/searchRouteForm.html',
             searchResult: '/route/searchResult.html',
             detail: '/route/routeDetail.html',
+        },
+        ticket: {
+            postEditForm_2: '/postedTicket/postEditTicket_2.html',
+            postEditForm: '/postedTicket/postEditTicket.html',
+            //detail: ''
         }
     },
     format: {
