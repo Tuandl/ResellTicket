@@ -16,7 +16,7 @@ class TicketComponent {
     }
 
     renderStatus(status) {
-        switch(status) {
+        switch (status) {
             case ticketStatus.Pending:
                 return `<span class="label label-warning">Pending</span>`;
             case ticketStatus.Valid:
@@ -29,16 +29,18 @@ class TicketComponent {
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
                 return `<span class="label label-success">Completed</span>`;
+            default:
+                return `<span class="label label-default">Expired</span>`;
         }
     }
 
     renderVehicleIcon(vehicle) {
-        switch(vehicle) {
-            case vehicleNameEnum.PLANE: 
+        switch (vehicle) {
+            case vehicleNameEnum.PLANE:
                 return `<i class="fa fa-plane ticket-component__iconVehicle" aria-hidden="true"></i>`;
-            case vehicleNameEnum.BUS: 
+            case vehicleNameEnum.BUS:
                 return `<i class="fa fa-bus ticket-component__iconVehicle" aria-hidden="true"></i>`;
-            case vehicleNameEnum.TRAIN: 
+            case vehicleNameEnum.TRAIN:
                 return `<i class="fa fa-subway ticket-component__iconVehicle" aria-hidden="true"></i>`;
         }
     }
@@ -56,7 +58,7 @@ class TicketComponent {
                                 <div class="ticket-component__stationName">${ticket.departureStationName}</div>
                             </div>
                             <div class="col-sm-1 text-center">
-                                ${this.renderVehicleIcon(ticket.vehicleName)}
+                                ${this.renderVehicleIcon(ticket.vehicle)}
                             </div>
                             <div class="col-sm-5 text-center">
                                 <div>${ticket.arrivalCityName}</div>
@@ -121,8 +123,8 @@ class TicketComponent {
     bindEvents() {
         const self = this;
 
-        if(this.events.onClicked) {
-            this.html.addEventListener('click', function() {
+        if (this.events.onClicked) {
+            this.html.addEventListener('click', function () {
                 self.events.onClicked(self);
             });
         }

@@ -1,117 +1,119 @@
+// import apiService from "../js/service/apiService";
+// import { appConfig } from "../constant/appConfig";
 
 function logout() {
     localStorage.clear()
     window.location.href = '../index.html'
 }
 
-function getPostedTicket() {
-    ReactDOM.render(
-        React.createElement(TicketList),
-        document.getElementById('myTickets')
-    );
+// function getPostedTicket() {
+//     ReactDOM.render(
+//         React.createElement(TicketList),
+//         document.getElementById('myTickets')
+//     );
 
-}
-class TicketList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            tickets: [],
-        }
-    }
+// }
+// class TicketList extends React.Component {
+//     constructor(props) {
+//         super(props);
+//         this.state = {
+//             tickets: [],
+//         }
+//     }
 
-    componentDidMount() {
-        this.getPostedTicket();
-    }
+//     componentDidMount() {
+//         this.getPostedTicket();
+//     }
 
-    async getPostedTicket() {
-        const res = await Get('api/ticket?customerId=' + 1 + '&page=' + 1);
-        if (res.status === 200) {
-            var data = await res.json();
-            this.setState({
-                tickets: data
-            }, () => {
-                var tickets = document.getElementsByClassName('route');
-                for (var i = 0; i < tickets.length; i++) {
-                    var ticketId = tickets[i].childNodes[0].value;
-                    tickets[i].addEventListener('click', function (ticketCopy) {
-                        return function () {
-                            window.location.href = 'postEditTicket.html?ticketId=' + ticketCopy;
-                        }
-                    }(ticketId))
-                }
-            })
-        }
-    }
+//     async getPostedTicket() {
+//         const res = await Get('api/ticket?customerId=' + 1 + '&page=' + 1);
+//         if (res.status === 200) {
+//             var data = await res.json();
+//             this.setState({
+//                 tickets: data
+//             }, () => {
+//                 var tickets = document.getElementsByClassName('route');
+//                 for (var i = 0; i < tickets.length; i++) {
+//                     var ticketId = tickets[i].childNodes[0].value;
+//                     tickets[i].addEventListener('click', function (ticketCopy) {
+//                         return function () {
+//                             window.location.href = 'postEditTicket.html?ticketId=' + ticketCopy;
+//                         }
+//                     }(ticketId))
+//                 }
+//             })
+//         }
+//     }
 
-    render() {
-        var { tickets } = this.state
-        return (
-            tickets.map((item, index) => {
-                //console.log(item.Id)
-                var labelStatus = item.status === 1 ? 'label label-warning'
-                    : item.status === 3 ? 'label label-danger'
-                        : 'label label-success';
-                if (moment(new Date()).isAfter(moment(item.expiredDateTime))) {
-                    labelStatus = 'label label-default';
-                    item.status = 0;
-                }
-                return (
-                    <div className="row" key={index} style={{ marginBottom: 50 }}>
-                        <h3 style={{ color: '#fab005' }}>
-                            <span>{item.departureCityName}  </span>
-                            <i className="fa fa-long-arrow-right"></i>
-                            <span>  {item.arrivalCityName}</span>
-                        </h3>
+//     render() {
+//         var { tickets } = this.state
+//         return (
+//             tickets.map((item, index) => {
+//                 //console.log(item.Id)
+//                 var labelStatus = item.status === 1 ? 'label label-warning'
+//                     : item.status === 3 ? 'label label-danger'
+//                         : 'label label-success';
+//                 if (moment(new Date()).isAfter(moment(item.expiredDateTime))) {
+//                     labelStatus = 'label label-default';
+//                     item.status = 0;
+//                 }
+//                 return (
+//                     <div className="row" key={index} style={{ marginBottom: 50 }}>
+//                         <h3 style={{ color: '#fab005' }}>
+//                             <span>{item.departureCityName}  </span>
+//                             <i className="fa fa-long-arrow-right"></i>
+//                             <span>  {item.arrivalCityName}</span>
+//                         </h3>
 
-                        <div className="col-md-12 route">
-                            <input type="hidden" value={item.id} />
-                            <div className="routeHeader">
-                                <div className="col-md-2">
-                                    <h4><b>Ticket</b></h4>
-                                </div>
-                                <div className="col-md-2">
-                                    <h4><b>Departure</b></h4>
-                                </div>
-                                <div className="col-md-2">
-                                    <h4><b>Arrival</b></h4>
-                                </div>
-                                <div className="col-md-2">
-                                    <h4><b>Vehicle</b></h4>
-                                </div>
-                                <div className="col-md-2">
-                                    <h4><b>Status</b></h4>
-                                </div>
-                                <div className="col-md-2">
-                                    <h4><b>Price</b></h4>
-                                </div>
-                            </div>
-                            <div className="routeBody" style={{ color: '#b8891d' }}>
-                                <div className="col-md-2"><span><b>{item.ticketCode}</b></span></div>
-                                <div className="col-md-2">
-                                    <span>{moment(item.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
-                                </div>
-                                <div className="col-md-2">
-                                    <span>{moment(item.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
-                                </div>
-                                <div className="col-md-2"><span>{item.vehicle}</span></div>
-                                <div className="col-md-2"><span className={labelStatus}>{convertStatusForSeller(item.status)}</span></div>
+//                         <div className="col-md-12 route">
+//                             <input type="hidden" value={item.id} />
+//                             <div className="routeHeader">
+//                                 <div className="col-md-2">
+//                                     <h4><b>Ticket</b></h4>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <h4><b>Departure</b></h4>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <h4><b>Arrival</b></h4>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <h4><b>Vehicle</b></h4>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <h4><b>Status</b></h4>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <h4><b>Price</b></h4>
+//                                 </div>
+//                             </div>
+//                             <div className="routeBody" style={{ color: '#b8891d' }}>
+//                                 <div className="col-md-2"><span><b>{item.ticketCode}</b></span></div>
+//                                 <div className="col-md-2">
+//                                     <span>{moment(item.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
+//                                 </div>
+//                                 <div className="col-md-2">
+//                                     <span>{moment(item.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</span>
+//                                 </div>
+//                                 <div className="col-md-2"><span>{item.vehicle}</span></div>
+//                                 <div className="col-md-2"><span className={labelStatus}>{convertStatusForSeller(item.status)}</span></div>
 
-                                <div className="col-md-2">
-                                    <h3>{numeral(item.sellingPrice).format('$0,0.00')}</h3>
-                                </div>
-                            </div>
-                            <div className="routeFooter">
-                                <span style={{ color: 'red' }}>
-                                    Expired Date: {moment(item.expiredDateTime).format('ddd, MMM DD YYYY, HH:mm')}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                )
-            })
-        )
-    }
-}
+//                                 <div className="col-md-2">
+//                                     <h3>{numeral(item.sellingPrice).format('$0,0.00')}</h3>
+//                                 </div>
+//                             </div>
+//                             <div className="routeFooter">
+//                                 <span style={{ color: 'red' }}>
+//                                     Expired Date: {moment(item.expiredDateTime).format('ddd, MMM DD YYYY, HH:mm')}
+//                                 </span>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 )
+//             })
+//         )
+//     }
+// }
 
 //post, edit Ticket
 var ticketId = window.location.search.substr(10);
@@ -186,7 +188,7 @@ function displayInvalidField(data) {
 }
 
 function createBtn(btnValue, event) {
-    var divBtn = document.getElementById('btnPostEditDelete');
+    var divBtn = document.getElementById('btnEvent');
     var btn = document.createElement('INPUT');
     btn.setAttribute('type', 'button');
     btn.setAttribute('value', btnValue);
@@ -251,7 +253,7 @@ async function postTicket() {
         passengerName: ticketInfo.passengerName,
         emailBooking: ticketInfo.emailBooking
     }
-    const res = await Post('api/ticket', ticket);
+    const res = await apiService(appConfig.apiUrl.ticket, ticket);
     if (res.status === 200) {
         window.location.href = "postedTicket.html";
     }
@@ -275,7 +277,7 @@ async function editTicket() {
         passengerName: document.getElementById('passengerName').value,
         emailBooking: document.getElementById('emailBooking').value,
     }
-    const res = await Put('api/ticket', ticket);
+    const res = await apiService.put(appConfig.apiUrl.ticket, ticket);
     if (res.status === 200) {
         window.location.href = "postedTicket.html";
     }

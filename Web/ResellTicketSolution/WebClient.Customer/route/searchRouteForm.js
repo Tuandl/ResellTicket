@@ -22,6 +22,7 @@ function searchRouteForm() {
             function(searchValue) {
                 const param = {
                     name: searchValue,
+                    ignoreCityId: model.arrivalCityId === undefined ? -1 : model.arrivalCityId
                 };
                 return apiService.get(appConfig.apiUrl.city, param);
             }, 
@@ -38,6 +39,7 @@ function searchRouteForm() {
             function(searchValue) {
                 const param = {
                     name: searchValue,
+                    ignoreCityId: model.departureCityId === undefined ? -1 : model.departureCityId
                 };
                 return apiService.get(appConfig.apiUrl.city, param);
             }, 
@@ -54,10 +56,10 @@ function searchRouteForm() {
             minDate: new Date()
         });
 
-        // $(`#${id.arrivalDate}`).datetimepicker({
-        //     format: appConfig.format.datetime,
-        //     minDate: new Date()
-        // });
+        $(`#${id.arrivalDate}`).datetimepicker({
+            format: appConfig.format.datetime,
+            minDate: new Date()
+        });
 
         const btnSearch = document.getElementById(id.btnSearch);
         btnSearch.addEventListener('click', function(e) {
@@ -68,6 +70,7 @@ function searchRouteForm() {
                 arrivalCityId: model.arrivalCityId,
                 maxTicketCombination: document.getElementById(id.maxTickets).value,
                 departureDate: document.getElementById(id.departureDate).value,
+                arrivalDate: document.getElementById(id.arrivalDate).value,
                 page: 1,
                 pageSize: 10,
             });

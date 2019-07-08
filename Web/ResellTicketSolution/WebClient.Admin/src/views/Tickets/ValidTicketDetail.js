@@ -17,7 +17,8 @@ export default class ValidTicketDetail extends Component {
             invalidField: '',
             commissionFee: 10,
             expiredBefore: '0', //hours
-            expiredDateTime: ''
+            expiredDateTime: '',
+            
         }
 
     }

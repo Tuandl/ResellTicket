@@ -6,7 +6,6 @@ import { Icon } from 'react-native-elements';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import convertTicketStatus from '../helper/convertTicketStatus';
-
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
@@ -20,17 +19,22 @@ export default class TicketViewComponent extends Component {
         }
     }
 
-    componentWillReceiveProps(props) {
-        if (moment(new Date()).isAfter(moment(props.postedTicket.expiredDateTime))) {
+    componentDidMount() {
+        var {postedTicket} = this.props
+        if (moment(new Date()).isAfter(moment(postedTicket.expiredDateTime))) {
             this.state.statusColor = 'lightgrey'
             this.setState({
                 statusTemp: 0
             })
         } else {
             this.setState({
-                statusTemp: props.postedTicket.status
+                statusTemp: postedTicket.status
             })
         }
+    }
+
+    componentWillReceiveProps(props) {
+        
     }
 
     editTicketOrViewTicketDetails = () => {

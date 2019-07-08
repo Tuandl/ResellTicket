@@ -18,7 +18,7 @@ function Get(url, params) {
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
-            if(response.status === 200) {
+            if (response.status === 200) {
                 response.json().then(data => resolve(data));
             } else {
                 reject(response);
@@ -45,7 +45,7 @@ function Post(url, data) {
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
-            if(response.status === 200) {
+            if (response.status === 200) {
                 resolve(response);
             } else {
                 reject(response);
@@ -72,7 +72,7 @@ function Put(url, data) {
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
-            if(response.status === 200) {
+            if (response.status === 200) {
                 resolve(response);
             } else {
                 reject(response);
@@ -84,9 +84,35 @@ function Put(url, data) {
     });
 }
 
-function Delete(url) {
+function PutParams(url, params) {
     return new Promise((resolve, reject) => {
-        fetch(appConfig.apiBaseUrl + url, {
+        fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
+            method: 'PUT',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+        }).then((response) => {
+            if (response.status === 401) {
+                window.location.replace(appConfig.url.login);
+                reject(response);
+            }
+            if (response.status === 200) {
+                resolve(response);
+            } else {
+                reject(response);
+            }
+        }).catch((error) => {
+            toastService.error('Error');
+            reject(error);
+        })
+    });
+}
+
+function Delete(url, params) {
+    return new Promise((resolve, reject) => {
+        fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/json',
@@ -98,7 +124,7 @@ function Delete(url) {
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
-            if(response.status === 200) {
+            if (response.status === 200) {
                 resolve(response);
             } else {
                 reject(response);
@@ -114,6 +140,7 @@ const apiService = {
     get: Get,
     post: Post,
     put: Put,
+    putParams: PutParams,
     delete: Delete,
 }
 

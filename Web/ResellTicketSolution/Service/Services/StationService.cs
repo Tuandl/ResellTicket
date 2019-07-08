@@ -13,7 +13,7 @@ namespace Service.Services
     {
         bool CreateStation(StationCreateViewModel model);
         List<StationRowViewModel> GetStations(string param);
-        List<StationRowViewModel> GetStationsByCityId(int cityId, string name);
+        List<StationRowViewModel> GetStationsByCityId(int cityId, string name, int ignoreStationId);
         StationRowViewModel FindStationById(int id);
         string UpdateStation(StationUpdateViewModel model);
     }
@@ -64,26 +64,21 @@ namespace Service.Services
             return StationRowViewModels;
         }
 
-        public List<StationRowViewModel> GetStationsByCityId(int cityId, string name)
+        public List<StationRowViewModel> GetStationsByCityId(int cityId, string name, int ignoreStationId)
         {
             name = name ?? "";
-            List<Station> stations = null;
-            if (cityId == -1)
+            var stations = _StationRepository.GetAllQueryable()
+               .Where(x => x.Name.ToLower().Contains(name.ToLower()))
+               .Where(x => x.Deleted == false);
+            if(cityId != -1)
             {
-                stations = _StationRepository.GetAllQueryable()
-                   .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                   .Where(x => x.Deleted == false)
-                   .ToList();
+                stations = stations.Where(x => x.CityId == cityId);
             }
-            else
+            if(ignoreStationId != -1)
             {
-                stations = _StationRepository.GetAllQueryable()
-                .Where(x => x.CityId == cityId)
-                .Where(x => x.Name.ToLower().Contains(name.ToLower()))
-                .Where(x => x.Deleted == false)
-                .ToList();
+                stations = stations.Where(x => x.Id != ignoreStationId);
             }
-            var stationRowViewModels = _mapper.Map<List<Station>, List<StationRowViewModel>>(stations);
+            var stationRowViewModels = _mapper.Map<List<Station>, List<StationRowViewModel>>(stations.ToList());
             return stationRowViewModels;
         }
 
