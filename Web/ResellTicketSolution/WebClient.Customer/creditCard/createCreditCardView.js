@@ -1,6 +1,7 @@
 import cardParserService from './../js/service/cardParserService.js';
 import { appConfig } from "./../constant/appConfig.js";
 import apiService from './../js/service/apiService.js';
+import toastService from './../js/service/toastService.js';
 
 function createCreditCardController() {
 
@@ -9,7 +10,11 @@ function createCreditCardController() {
         txtName: 'txt-name',
         txtExpiry: 'txt-expiry',
         txtCVC: 'txt-cvc',
-        btnCreateCreditCard: 'btnCreateCreditCard'
+        btnCreateCreditCard: 'btnCreateCreditCard',
+        numberAlert: 'number-alert',
+        nameAlert: 'name-alert',
+        expiryAlert: 'expiry-alert',
+        cvcAlert: 'cvc-alert',
     }
 
     const validate = {
@@ -39,7 +44,11 @@ function createCreditCardController() {
         txtName: document.getElementById(id.txtName),
         txtExpiry: document.getElementById(id.txtExpiry),
         txtCVC: document.getElementById(id.txtCVC),
-        btnCreateCreditCard: document.getElementById(id.btnCreateCreditCard)
+        btnCreateCreditCard: document.getElementById(id.btnCreateCreditCard),
+        numberAlert: document.getElementById(id.numberAlert),
+        nameAlert: document.getElementById(id.nameAlert),
+        expiryAlert: document.getElementById(id.expiryAlert),
+        cvcAlert: document.getElementById(id.cvcAlert),
     }
 
     init()
@@ -56,11 +65,15 @@ function createCreditCardController() {
             && pattNumber.test(elements.txtNumber.value)) {
             validate.number_valid = true;
             data.last4DigitsHash = elements.txtNumber.value;//.replace(/^.{14}/g, '**** **** ****');
+        } else {
+            validate.number_valid = false;
         }
         var pattName = /^[a-zA-Z ]{6,100}$/;
         if (elements.txtName.value != null && pattName.test(elements.txtName.value)) {
             validate.name_valid = true;
             data.nameOnCard = elements.txtName.value;
+        } else {
+            validate.name_valid = false;
         }
         if (elements.txtExpiry.value != null) {
             console.log("txtExpiry", elements.txtExpiry.value);
@@ -74,13 +87,21 @@ function createCreditCardController() {
                 data.expiredMonthHash = month;
                 data.expiredYearHash = year;
             }
+        } else {
+            validate.expiry_valid = false;
         }
         var pattCVC = /^[0-9]{4}$/;
         if (elements.txtCVC.value != null && pattCVC.test(elements.txtCVC.value)) {
             validate.cvc_valid = true;
             data.cvc = elements.txtCVC.value;
+        } else {
+            validate.cvc_valid = false;
         }
         if (validate.number_valid && validate.name_valid && validate.expiry_valid && validate.cvc_valid) {
+            elements.numberAlert.style.display = 'none';
+            elements.nameAlert.style.display = 'none';
+            elements.expiryAlert.style.display = 'none';
+            elements.cvcAlert.style.display = 'none';
             validate.isCreated = true;
         }
 
@@ -91,7 +112,7 @@ function createCreditCardController() {
     }
     async function stripeResponseHandler(status, response) {
         if (response.error) {
-            alert("stripe meet error")
+            toastService.error("Something Wrong with Stripe.");
         } else {
             // Getting token from the response json.
             data.brand = cardParserService.GetBrandBank(data.last4DigitsHash);
@@ -104,17 +125,18 @@ function createCreditCardController() {
                 customerId: data.customerId
             }
 
-            var creditCardResponse = await apiService.post(appConfig.apiUrl.creditCard, dataCreditCard);
-                if (creditCardResponse.status === 200) {
-                    alert("Create Credit Card successfully");
-                } else {
-                    alert("Create credit card Error");
-                }
 
             try {
-                
+                var creditCardResponse = await apiService.post(appConfig.apiUrl.creditCard, dataCreditCard);
+                if (creditCardResponse.status === 200) {
+                    window.location.href = appConfig.url.creditCard.viewListCreditCard;
+                    toastService.success("Create Credit Card successfully");
+                } else {
+                    toastService.error("Create credit card Error");
+                }
+
             } catch (error) {
-                alert("Error on Create Credit Card Data");
+                toastService.error("Error on Creating Credit Card Data");
             }
 
         }
@@ -134,16 +156,24 @@ function createCreditCardController() {
 
         } else {
             if (!validate.number_valid) {
-                alert("Number is not valid");
+                elements.numberAlert.style.display = 'block';
+            } else {
+                elements.numberAlert.style.display = 'none';
             }
             if (!validate.name_valid) {
-                alert("Name is not valid");
+                elements.nameAlert.style.display = 'block';
+            } else {
+                elements.nameAlert.style.display = 'none';
             }
             if (!validate.expiry_valid) {
-                alert("Expiry is not valid");
+                elements.expiryAlert.style.display = 'block';
+            } else {
+                elements.expiryAlert.style.display = 'none';
             }
             if (!validate.cvc_valid) {
-                alert("CVC is not valid");
+                elements.cvcAlert.style.display = 'block';
+            } else {
+                elements.cvcAlert.style.display = 'none';
             }
         }
     }

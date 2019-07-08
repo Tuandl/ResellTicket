@@ -29,6 +29,9 @@ const appConfig = {
             postEditForm_2: '/postedTicket/postEditTicket_2.html',
             postEditForm: '/postedTicket/postEditTicket.html',
             //detail: ''
+        },
+        creditCard: {
+            viewListCreditCard: '/creditCard/ListCreditCardView.html'
         }
     },
     format: {

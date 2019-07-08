@@ -31,8 +31,8 @@ class CreditCardComponent {
                 return "http://www.scalsys.com/png/american-express-logo-png/american-express-logo-png_147383.png";
             case "visa":
                 return "https://seeklogo.com/images/V/VISA-logo-F3440F512B-seeklogo.com.png";
-            case "visa":
-                return "";
+            default:
+                return "https://cdn2.iconfinder.com/data/icons/summer-glyph-3/128/135-512.png";
         }
     }
 

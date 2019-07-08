@@ -2,6 +2,7 @@ import { appConfig } from "./../constant/appConfig.js";
 import apiService from './../js/service/apiService.js';
 import commonService from "./../js/service/commonService.js";
 import { CreditCardComponent } from "./../js/component/CreditCardComponent.js";
+import toastService from './../js/service/toastService.js';
 
 
 
@@ -54,9 +55,20 @@ function ListCreditCardViewController() {
 
     async function onBtnDeleteClicked(cardId){
         const param = {
-            id: cardId
+            Id: cardId
         }
-        var reponse = await apiService.put(appConfig.apiUrl.creditCard, param);
+        //1
+        try {
+            var reponse = await apiService.putParams(appConfig.apiUrl.creditCard, param);
+            if (reponse.status === 200) {
+                toastService.success("Delete Credit Card Successfully.");
+            } else {
+                toastService.error("Delete Credit Card Failed.");
+            }    
+        } catch (error) {
+            toastService.error("Error on Deleting Credit Card");
+        }
+        
         renderCreditCard(); 
     }
 
@@ -66,7 +78,17 @@ function ListCreditCardViewController() {
             Id: cardId,
             
         }
-        var reponse = await apiService.put(appConfig.apiUrl.setDefaultCard, param);
+        try {
+            var reponse = await apiService.putParams(appConfig.apiUrl.setDefaultCard, param);
+            if (reponse.status === 200) {
+                toastService.success("Credit Card has been set default successfully.");
+            } else {
+                toastService.error("Credit Card has been set default failed.");
+            }
+        } catch (error) {
+            toastService.error("Error on Setting Credit Card default.");
+        }
+        
         renderCreditCard();
     }
 

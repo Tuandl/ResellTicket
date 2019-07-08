@@ -136,7 +136,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                             </li>
                             <li><a href="#" class="hyper"><span>My Routes</span></a></li>
                             <li><a href="#" class="hyper"> <span>My Tours</span></a></li>
-                            <li><a href="./createCreditCardView.html" class="hyper"> <span>Credit Card</span></a></li>
+                            <li><a href="./ListCreditCardView.html" class="hyper"> <span>Credit Card</span></a></li>
                             <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
                         </ul>
                     </div>
@@ -178,11 +178,17 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <input type="text" placeholder="Number" id="txt-number" name="number">
                         <div class="clearfix"></div>
                     </div>
+                    <div id="number-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Number on your card must have 16 digits!!
+                    </div>
                     <label>Name:</label>
                     <div class="key">
                         <i class="fa fa-user" aria-hidden="true"></i>
                         <input type="text" placeholder="Name" id="txt-name" name="name">
                         <div class="clearfix"></div>
+                    </div>
+                    <div id="name-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Name must have more than 5 digits!!
                     </div>
                     <label>Expiry:</label>
                     <div class="key">
@@ -190,11 +196,17 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <input type="text" placeholder="Expiry" id="txt-expiry" name="expiry">
                         <div class="clearfix"></div>
                     </div>
+                    <div id="expiry-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Enter a valid expiry (mm/yyyy) !!
+                    </div>
                     <label>CVC:</label>
                     <div class="key">
                         <i class="fa fa-user" aria-hidden="true"></i>
-                        <input type="text" placeholder="Cvc number" id="txt-cvc" name="cvc">
+                        <input type="text" placeholder="CVC number" id="txt-cvc" name="cvc">
                         <div class="clearfix"></div>
+                    </div>
+                    <div id="cvc-alert" style="display: none" class="alert alert-danger" role="alert">
+                        CVC Number must have 4 digits!!
                     </div>
                     <button type="button" id="btnCreateCreditCard" class="btn btn-large btn-block btn-warning">
                         Create Credit Card
