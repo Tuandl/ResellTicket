@@ -12,7 +12,7 @@ namespace Service.Services
     public interface IStationService
     {
         bool CreateStation(StationCreateViewModel model);
-        List<StationRowViewModel> GetStations(string param);
+        StationDataTable GetStations(string param, int page, int pageSize);
         List<StationRowViewModel> GetStationsByCityId(int cityId, string name, int ignoreStationId);
         StationRowViewModel FindStationById(int id);
         string UpdateStation(StationUpdateViewModel model);
@@ -48,20 +48,28 @@ namespace Service.Services
         }
 
         //get Station by param or get all stations when param = ""
-        public List<StationRowViewModel> GetStations(string param)
+        public StationDataTable GetStations(string param, int page, int pageSize)
         {
             //select * from Station
             //select * from Station where name like '%abc%'
 
             param = param ?? "";
             var stations = _StationRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower())).ToList();
+                         .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower()))
+                         .OrderBy(x => x.City.Name.ToLower())
+                         .Skip((page - 1) * pageSize).Take(pageSize)
+                         .ToList();
+
+            var totalStations = _StationRepository.GetAllQueryable()
+                         .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower())).Count();
             var StationRowViewModels = _mapper.Map<List<Station>, List<StationRowViewModel>>(stations);
-            //foreach(var station in StationRowViewModels)
-            //{
-            //    station.CityName = _CityRepository.GetAllQueryable().SingleOrDefault(c => c.Id == station.CityId).Name;
-            //}
-            return StationRowViewModels;
+
+            var stationDataTable = new StationDataTable()
+            {
+                Data = StationRowViewModels,
+                Total = totalStations
+            };
+            return stationDataTable;
         }
 
         public List<StationRowViewModel> GetStationsByCityId(int cityId, string name, int ignoreStationId)

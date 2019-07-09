@@ -11,11 +11,12 @@ function postedTicketController() {
         ticketContainer: 'ticket-container',
         btnStatuses: 'btnStatuses',
         btnPostTicket: 'btnPostTicket',
+        btnLoadMore: 'btnLoadMore'
     }
 
     const model = {
         page: 1,
-        pageSize: 10,
+        pageSize: 5,
         tickets: [],
         searchStatus: ticketStatus.Pending,
         ticketComponents: [],
@@ -26,8 +27,10 @@ function postedTicketController() {
     renderTickets();
 
     function onStatusChanged(newStatus) {
+        model.page = 1;
         model.searchStatus = newStatus;
         renderBtnStatuses();
+        commonService.removeAllChildren(document.getElementById(id.ticketContainer));
         renderTickets();
     }
 
@@ -36,6 +39,17 @@ function postedTicketController() {
         commonService.removeAllChildren(container);
         const ticketFilterStatus = new TicketFilterStatusComponent(model.searchStatus, onStatusChanged);
         container.appendChild(ticketFilterStatus.render());
+    }
+
+    function renderBtnLoadMore() {
+        const container = document.getElementById(id.btnLoadMore);
+        var btnLoadMore = commonService.htmlToElement('<input type="button" value="LOAD MORE" class="btn-post-now">');
+        btnLoadMore.addEventListener('click', () => {
+            model.page += 1;
+            renderTickets();
+        });
+        commonService.removeAllChildren(container);
+        container.appendChild(btnLoadMore);
     }
 
     async function renderTickets() {
@@ -47,7 +61,7 @@ function postedTicketController() {
 
         const response = await apiService.get(appConfig.apiUrl.ticket, params);
         const containerElement = document.getElementById(id.ticketContainer);
-        commonService.removeAllChildren(containerElement);
+        //commonService.removeAllChildren(containerElement);
 
         response.forEach(ticket => {
             const ticketComponent = new SellerTicketComponent(ticket, onTicketClicked);
@@ -56,11 +70,17 @@ function postedTicketController() {
             ticketComponent.render();
             containerElement.appendChild(ticketComponent.domElement);
         });
+        if(response.length !== model.pageSize) {
+            commonService.removeAllChildren(document.getElementById(id.btnLoadMore))
+        } else {
+            renderBtnLoadMore();
+        }
+        
     }
 
     function bindEvent() {
         var btnPostTicket = document.getElementById(id.btnPostTicket);
-        btnPostTicket.addEventListener('click', function() {
+        btnPostTicket.addEventListener('click', function () {
             window.location.href = appConfig.url.ticket.postEditForm_2;
         });
     }

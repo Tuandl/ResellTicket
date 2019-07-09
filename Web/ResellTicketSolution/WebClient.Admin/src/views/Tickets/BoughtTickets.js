@@ -86,7 +86,7 @@ class BoughtTickets extends Component {
         Axios.get('api/ticket/bought?param=' + this.state.searchParam + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
             this.setState({
                 tickets: res.data.data,
-                pageCount: res.data.total <= pageSize ? 1 : parseInt(res.data.total / pageSize) + 1
+                pageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
             })
         });
 

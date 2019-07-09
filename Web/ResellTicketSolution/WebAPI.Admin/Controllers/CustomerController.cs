@@ -25,9 +25,9 @@ namespace WebAPI.Admin.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CustomerRowViewModel>> GetCustomers(string param)
+        public ActionResult<CustomerDataTable> GetCustomers(string param, int page, int pageSize)
         {
-            var customerRowViewModels = _customerService.GetCutomers(param);
+            var customerRowViewModels = _customerService.GetCutomers(param, page, pageSize);
             return customerRowViewModels;
         }
 

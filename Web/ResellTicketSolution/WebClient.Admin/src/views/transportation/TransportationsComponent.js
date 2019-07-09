@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table,
-    Pagination, PaginationItem, PaginationLink, } from 'reactstrap';
-import {getTransportationRequest} from './../../action/UserAdminAction'
+import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table} from 'reactstrap';
+// import {getTransportationRequest} from './../../action/UserAdminAction'
+import PaginationView from '../Pagination/PaginationComponent';
+import Axios from 'axios';
 
 
 
@@ -37,7 +38,11 @@ class TransportationsComponent extends Component {
         super(props);
         this.state = {
             searchValue: '',
-            userRole: ''
+            userRole: '',
+            transportations: [],
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1
         }
     }
 
@@ -50,11 +55,21 @@ class TransportationsComponent extends Component {
         var decode = jwt(token);
         var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         if (userRole === 'Manager') {
-            this.props.getTransportations(token);
+            this.getTransportations();
         }
         this.setState({
             userRole: userRole
         })
+    }
+
+    getTransportations = () => {
+        var { pageSize, currentPage } = this.state;
+        Axios.get('api/transportation?param=' + this.state.searchValue + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
+            this.setState({
+                transportations : res.data.data,
+                pageCount : res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
+            })
+        });
     }
 
     onChange = (event) => {
@@ -66,12 +81,25 @@ class TransportationsComponent extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        this.props.getTransportationsByName(this.state.searchValue);
+        this.setState({
+            currentPage: 1
+        }, () => {
+            this.getTransportations()
+        })
+    }
+
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getTransportations();
+        })
     }
 
     render() {
-        const {transportations} = this.props;
-        var { searchValue, userRole } = this.state;
+        var { searchValue, userRole, currentPage, pageCount, transportations } = this.state;
         return(
             userRole === 'Manager' ?
             <div className="animated fadeIn">
@@ -113,16 +141,9 @@ class TransportationsComponent extends Component {
                                             )}
                                         </tbody>
                                     </Table>
-                                    <Pagination>
-                                        <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
-                                        <PaginationItem active>
-                                            <PaginationLink tag="button">1</PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
-                                    </Pagination>
+                                    <div style={{ float: 'right' }}>
+                                        <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>
@@ -132,21 +153,21 @@ class TransportationsComponent extends Component {
     };
 } 
 
-const mapStateToProps = state => {
-    return {
-        transportations: state.transportations
-    }
-}
+// const mapStateToProps = state => {
+//     return {
+//         transportations: state.transportations
+//     }
+// }
 
-const mapDispatchToProps = (dispatch, props)=>{
-    return {
-        getTransportations: () => {
-            dispatch(getTransportationRequest());
-        },
-        getTransportationsByName: (param) => {
-            dispatch(getTransportationRequest(param));
-        }
-    }
-}
+// const mapDispatchToProps = (dispatch, props)=>{
+//     return {
+//         getTransportations: () => {
+//             dispatch(getTransportationRequest());
+//         },
+//         getTransportationsByName: (param) => {
+//             dispatch(getTransportationRequest(param));
+//         }
+//     }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(TransportationsComponent);
+export default TransportationsComponent;

@@ -41,9 +41,9 @@ namespace WebAPI.Admin.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CityRowViewModel>> GetCities(string param)
+        public ActionResult<CityDataTable> GetCities(string param, int page, int pageSize)
         {
-            var cityRowViewModels = _cityService.GetCities(param);
+            var cityRowViewModels = _cityService.GetCities(param, page, pageSize);
             return cityRowViewModels;
         }
 

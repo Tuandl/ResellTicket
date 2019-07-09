@@ -47,9 +47,9 @@ namespace WebAPI.Admin.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StationRowViewModel>> GetStations(string param)
+        public ActionResult<StationDataTable> GetStations(string param, int page, int pageSize)
         {
-            var stationRowViewModels = _stationService.GetStations(param);
+            var stationRowViewModels = _stationService.GetStations(param, page, pageSize);
             return stationRowViewModels;
         }
 

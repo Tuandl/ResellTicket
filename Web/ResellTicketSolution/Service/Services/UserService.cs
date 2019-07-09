@@ -14,7 +14,7 @@ namespace Service.Services
     public interface IUserService
     {
         Task<IEnumerable<IdentityError>> CreateUserAsync(UserRegisterViewModel model, string defaultPassword);
-        List<UserRowViewModel> GetUsers(string orderBy, string param);
+        UserDataTable GetUsers(string param, int page, int pageSize);
         Task<UserRowViewModel> FindUserById(string userId);
 
         //List<UserRowViewModel> GetUsersByFullNameOrUserName(string param);
@@ -61,11 +61,11 @@ namespace Service.Services
             var user = _mapper.Map<UserRegisterViewModel, User>(model); //map từ ViewModel qua Model
             var result = await _userManager.CreateAsync(user, defaultPassword);
 
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 result = await _userManager.AddToRoleAsync(user, model.RoleId);
             }
-            
+
             return result.Errors;
         }
 
@@ -83,7 +83,7 @@ namespace Service.Services
 
             //Get role of user
             var userRole = _userRoleRepository.Get(x => x.UserId == userId);
-            if(userRole != null)
+            if (userRole != null)
             {
                 userRowViewModel.RoleId = userRole.RoleId;
             }
@@ -91,25 +91,17 @@ namespace Service.Services
             return userRowViewModel;
         }
 
-        public List<UserRowViewModel> GetUsers(string orderBy, string param)
+        public UserDataTable GetUsers(string param, int page, int pageSize)
         {
-            var users = new List<User>();
-            orderBy = orderBy ?? "";        //orderBy = null gán bằng ""
             param = param ?? "";            //param = null gán bằng ""
-            if (orderBy == "desc")
-            {
-                //Lấy user có FullName like param hoặc UserName like param và sắp xếp decs theo UserName
-                users = _userRepository
-                    .GetAllQueryable()
-                    .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
-                    .OrderByDescending(u => u.UserName.ToLower()).ToList();
-            }
-            else //Lấy user có FullName like param hoặc UserName like param và sắp xếp asc theo UserName
-            {
-                users = _userRepository.GetAllQueryable()
-                    .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
-                    .OrderBy(u => u.UserName.ToLower()).ToList();
-            }
+
+            var users = _userRepository.GetAllQueryable()
+                   .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower()))
+                   .OrderBy(u => u.UserName.ToLower())
+                   .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var totalUsers = _userRepository.GetAllQueryable()
+                   .Where(u => u.FullName.ToLower().Contains(param.ToLower()) || u.UserName.ToLower().Contains(param.ToLower())).Count();
             //Map từ Model qua ViewModel
             var userRowViewModels = _mapper.Map<List<User>, List<UserRowViewModel>>(users);
 
@@ -117,19 +109,25 @@ namespace Service.Services
             foreach (var userRow in userRowViewModels)
             {
                 var userRole = _userRoleRepository.Get(x => x.UserId == userRow.Id);
-                if(userRole != null)
+                if (userRole != null)
                 {
                     userRow.RoleId = userRole.RoleId;
                 }
             }
 
-            return userRowViewModels;
+            var userDataTable = new UserDataTable()
+            {
+                Data = userRowViewModels,
+                Total = totalUsers
+            };
+
+            return userDataTable;
         }
 
         public async Task<string> UpdateUser(UserUpdateViewModel model)
         {
             var existedUser = _userRepository.Get(x => x.Id == model.Id);
-            if(existedUser == null)
+            if (existedUser == null)
             {
                 return "Not found User.";
             }
@@ -152,7 +150,7 @@ namespace Service.Services
             {
                 //remove existed role
                 var roles = await _userManager.GetRolesAsync(existedUser);
-                if(roles != null)
+                if (roles != null)
                 {
                     await _userManager.RemoveFromRolesAsync(existedUser, roles);
                 }

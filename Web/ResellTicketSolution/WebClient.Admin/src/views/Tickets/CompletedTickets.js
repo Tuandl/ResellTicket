@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { toastr } from 'react-redux-toastr';
+// import { toastr } from 'react-redux-toastr';
 import { Redirect } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
@@ -69,7 +69,7 @@ class CompletedTickets extends Component {
         Axios.get('api/ticket/completed?param=' + this.state.searchParam + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
             this.setState({
                 tickets: res.data.data,
-                pageCount: res.data.total <= pageSize ? 1 : parseInt(res.data.total / pageSize) + 1
+                pageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
             })
         });
 

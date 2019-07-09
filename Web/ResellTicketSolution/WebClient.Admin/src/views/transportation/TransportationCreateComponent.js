@@ -13,7 +13,8 @@ class TransportationCreateComponent extends Component {
                 name: '',
                 phoneNumber: '',
                 email: '',
-                vehicleId: ''
+                vehicleId: '',
+                expiredBefore: 0
             },
             nameError: '',
             emailError: '',
@@ -116,7 +117,7 @@ class TransportationCreateComponent extends Component {
             <div className="animated fadeIn">
                 <Card>
                     <CardHeader>
-                        <strong><i className="icon-info pr-1"></i>Transportstion Detail</strong>
+                        <strong><i className="icon-info pr-1"></i>Create Transportstion</strong>
                     </CardHeader>
                     <CardBody>
                         <Row>
@@ -168,6 +169,20 @@ class TransportationCreateComponent extends Component {
                                         {getVehicleOptions}
                                     </Input>
                                 </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6" xs="12">
+                                <FormGroup>
+                                    <Label htmlFor="expiredBefore">Expire before departure date</Label>
+                                    <Input type="number" min={0} id="expiredBefore"
+                                        placeholder="Enter hours..."
+                                        value={transportation.expiredBefore}
+                                        onChange={this.handleOnChanged}
+                                    />
+                                </FormGroup>
+                            </Col>
+                            <Col md="6" xs="12">
                             </Col>
                         </Row>
                         <Row className="float-right">

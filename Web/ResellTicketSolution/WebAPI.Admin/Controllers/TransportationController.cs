@@ -39,9 +39,9 @@ namespace WebAPI.Admin.Controllers
         }
         [HttpGet]
         [Route("")]
-        public ActionResult<IEnumerable<TransportationRowViewModel>> GetTransportation(string param)
+        public ActionResult<TransportationDataTable> GetTransportation(string param, int page, int pageSize)
         {
-            var transportation = _transportationService.GetTransportations(param);
+            var transportation = _transportationService.GetTransportations(param, page, pageSize);
             return transportation;
         }
 
