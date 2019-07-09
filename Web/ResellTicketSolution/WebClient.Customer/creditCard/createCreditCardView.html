@@ -1,0 +1,272 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Big store a Ecommerce Online Shopping Category Flat Bootstrap Responsive Website Template | Register ::
+        w3layouts</title>
+    <link href="./../css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="./../css/style.css" rel='stylesheet' type='text/css' />
+    <link href="./../css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="./../css/jstarbox.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="manifest" href="./../manifest.json">
+    <style>
+        ::placeholder {
+            color: #999;
+            opacity: 1;
+            /* Firefox */
+        }
+
+        :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #999;
+        }
+
+        ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #999;
+        }
+    </style>
+    <!-- js -->
+    <script src="https://js.stripe.com/v2/"></script>
+    <script src="./../js/jquery-1.11.1.min.js"></script>
+    <script src="./../js/jstarbox.js"></script>
+    <script type="text/javascript" src="./../helper/Api.js"></script>
+    <!-- <script type="text/javascript" src="./../constant/BasrUrl.js"></script> -->
+    <script type="text/javascript" src="./../js/authen.js"></script>
+    <script type="text/javascript" src="./../js/card.js"></script>
+    <script src="./../js/bootstrap.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
+    <script type="module" src="./createCreditCardView.js"></script>
+    <script type="module">
+        import { appConfig } from './../constant/appConfig.js';
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: appConfig.OneSignalAppId,
+                subdomainName: appConfig.SubdomainName,
+                notifyButton: {
+                    enable: true,
+                }
+            });
+            OneSignal.on('notificationDisplay', function (event) {
+                alert(event.content);
+                //console.log(event);
+            });
+        });
+    </script>
+
+</head>
+
+<body onload="checkLoginProfile();checkLogin()">
+    <div class="header">
+
+        <div class="container">
+
+            <div class="logo">
+                <h1><a href="./../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                            marketplace</span></a>
+                </h1>
+            </div>
+            <div class="head-t" id="isLoggin">
+                <ul class="card">
+                    <li>
+                        <h4><a href="./../login.html"><i class="fa fa-user" aria-hidden="true"></i>Login</a></h4>
+                    </li>
+                    <li>
+                        <h4><a href="./../checkPhoneNo.html"><i class="fa fa-key" aria-hidden="true"></i>Register</a>
+                        </h4>
+                    </li>
+                </ul>
+            </div>
+            <div class="head-t" id="showing-option">
+                <ul class="card">
+                    <li>
+                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
+                    </li>
+                    <li>
+                        <h4><a href="./../index.html"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
+                        </h4>
+                    </li>
+                    <li>
+                        <h4><a onclick="logout()" href="./../index.html"><i class="fa fa-sign-out"
+                                    aria-hidden="true"></i>Logout</a></h4>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="header-ri">
+                <ul class="social-top">
+                    <li><a href="#" class="icon facebook"><i class="fa fa-facebook"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon twitter"><i class="fa fa-twitter"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon pinterest"><i class="fa fa-pinterest-p"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon dribbble"><i class="fa fa-dribbble"
+                                aria-hidden="true"></i><span></span></a></li>
+                </ul>
+            </div>
+
+
+            <div class="nav-top">
+                <nav class="navbar navbar-default">
+
+                    <div class="navbar-header nav_2">
+                        <button type="button" class="navbar-toggle collapsed navbar-toggle1" data-toggle="collapse"
+                            data-target="#bs-megadropdown-tabs">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+
+                    </div>
+                    <div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
+                        <ul class="nav navbar-nav ">
+                            <li><a href="/updateProfile.html" class="hyper"><span>Profile</span></a>
+                            </li>
+                            <li><a href="/postedTicket/postedTicket.html" class="hyper"><span>My Tickets</span></a>
+                            </li>
+                            <li class="active"><a href="/creditCard/ListCreditCardView.html" class="hyper"> <span>Credit
+                                        Card</span></a></li>
+                            <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+    <!---->
+
+    <!--banner-->
+    <div class="banner-top">
+        <div class="container">
+            <h3>Create Credit Card</h3>
+            <h4><a href="/index.html">Home</a><label>/</label>My Credit Card<label>/</label>Create Credit Card</h4>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+
+    <!--login-->
+    <script type="text/javascript">
+
+
+    </script>
+
+    <div class="login">
+        <div class="main-agileits">
+            <div class="form-w3agile form1">
+                <h3>Create Credit Card</h3>
+                <div class='card-wrapper'></div>
+                <div class="clearfix"></div><br><br>
+                <!-- CSS is included via this JavaScript file -->
+                <form>
+                    <label>Number:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Number" id="txt-number" name="number">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="number-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Number on your card must have 16 digits!!
+                    </div>
+                    <label>Name:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Name" id="txt-name" name="name">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="name-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Name must have more than 5 digits!!
+                    </div>
+                    <label>Expiry:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Expiry" id="txt-expiry" name="expiry">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="expiry-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Enter a valid expiry (mm/yyyy) !!
+                    </div>
+                    <label>CVC:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="CVC number" id="txt-cvc" name="cvc">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="cvc-alert" style="display: none" class="alert alert-danger" role="alert">
+                        CVC Number must have 4 digits!!
+                    </div>
+                    <button type="button" id="btnCreateCreditCard" class="btn btn-large btn-block btn-warning">
+                        Create Credit Card
+                    </button>
+                </form>
+                <script>
+                    var card = new Card({
+                        form: 'form',
+                        container: '.card-wrapper',
+
+                        messages: {
+                            validDate: 'expire\ndate',
+                            monthYear: 'mm/yy'
+                        }
+                    });
+                    console.log("card", card);
+                </script>
+            </div>
+
+        </div>
+    </div>
+    <!--footer-->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                </h2>
+                <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
+                    last-minute deals. Welcome to a world of opportunities.</p>
+                <ul class="social-fo">
+                    <li><a href="#" class=" face"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" twi"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+                </ul>
+                <div class=" address">
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
+                                - P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-phone" aria-hidden="true"></i>+840916512300</p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><a href="mailto:info@example.com"><i class="fa fa-envelope-o"
+                                    aria-hidden="true"></i>dark5695@gmail.com</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <div class="copy-right">
+                <p> &copy; 2016 Resell Ticket. All Rights Reserved | Design by <a href="http://w3layouts.com/">
+                        W3layouts</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- //footer-->
+    <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+
+</body>
+
+</html>

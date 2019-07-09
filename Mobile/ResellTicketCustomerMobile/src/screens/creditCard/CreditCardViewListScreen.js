@@ -30,6 +30,7 @@ export default class CreditCardViewListScreen extends Component {
         this.state = {
             creditCard: []
         }
+        //this.deleteCreditCard = this.deleteCreditCard.bind(this);
     }
 
     componentDidMount() {
@@ -73,26 +74,27 @@ export default class CreditCardViewListScreen extends Component {
         }
     }
 
-    
+
 
     renderItem = ({ item }) => {
         const Icons = { ...defaultIcons };
         return (
             <ListItem style={{ marginLeft: 10 }} >
-                <TouchableOpacity onPress={() => this.setDefaultCard(item.id, item.customerId)}>
-                    <Body>
-                        <Image style={[s.icon]}
-                            source={Icons[item.brand]} />
-                        {console.log("qa:", item.isdefault)}
-                        <Text maxLength={10}>{item.last4DigitsHash} </Text>
-                        <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
-                            <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
-                        </Button>
-                        {item.isdefault === true ? <Button style={[s.butonCheck]} >
-                            <Icon name="check-circle-outline" type="material-community" color="#fff" />
-                        </Button> : null}
-                    </Body>
-                </TouchableOpacity>
+
+                <Body>
+                    <Image style={[s.icon]}
+                        source={Icons[item.brand]} />
+                    {console.log("qa:", item.isdefault)}
+                    <TouchableOpacity onPress={() => this.setDefaultCard(item.id, item.customerId)}>
+                        <Text maxLength={10}>{item.last4DigitsHash} </Text></TouchableOpacity>
+                    {item.isdefault === false ? <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
+                        <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
+                    </Button> : null}
+
+                    {item.isdefault === true ? <Button style={[s.butonCheck]} >
+                        <Icon name="check-circle-outline" type="material-community" color="#fff" />
+                    </Button> : null}
+                </Body>
             </ListItem>
         );
 
@@ -143,7 +145,7 @@ const s = StyleSheet.create({
         position: "absolute",
         top: -4,
         bottom: 10,
-        right: -150,
+        right: 40,
         width: 70,
         height: 30,
         resizeMode: "contain",
@@ -152,7 +154,7 @@ const s = StyleSheet.create({
         position: "absolute",
         top: -4,
         textAlign: "center",
-        right: -180,
+        right: 10,
         width: 30,
         height: 30,
         resizeMode: "cover",
@@ -162,7 +164,7 @@ const s = StyleSheet.create({
         position: "absolute",
         top: -2,
         //textAlign: "center",
-        right: -30,
+        right: 150,
         width: 25,
         height: 25,
         //resizeMode: "cover",

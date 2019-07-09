@@ -11,7 +11,9 @@ const appConfig = {
         vehicle: 'api/vehicle',
         transportation: 'api/transportation',
         ticketType: 'api/ticketType',
-        station: 'api/station'
+        station: 'api/station',
+        creditCard: 'api/credit-card',
+        setDefaultCard: 'api/credit-card/set-default-card',
     },
     url: {
         home: '/index.html',
@@ -27,6 +29,9 @@ const appConfig = {
             postEditForm_2: '/postedTicket/postEditTicket_2.html',
             postEditForm: '/postedTicket/postEditTicket.html',
             //detail: ''
+        },
+        creditCard: {
+            viewListCreditCard: '/creditCard/ListCreditCardView.html'
         }
     },
     format: {
@@ -37,7 +42,10 @@ const appConfig = {
     },
     MAX_RANDOM_ID: 9999999,
     OneSignalAppId: '2c3cad5d-d711-4abb-b25a-5f5cf2c9b5d1',
-    SubdomainName: 'webcustomer.os.tc'
+    SubdomainName: 'webcustomer.os.tc',
+    stripe : {
+        pusblishableKey: 'pk_test_D0BLH7S0dIaPbxYxUJTFYa0T00ekNdTcE3'
+    }
 }
 
 export {
