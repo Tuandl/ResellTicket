@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import Axios from 'axios';
+import PaginationView from '../Pagination/PaginationComponent';
 
 function CustomerRow(props) {
     const customer = props.customer
@@ -47,8 +48,11 @@ class CustomersComponent extends Component {
         this.state = {
             customers: [],
             isLogin: false,
-            userRole: '', 
-            searchParam : '',
+            userRole: '',
+            searchValue: '',
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1
         }
         this.onSearch = this.onSearch.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -74,34 +78,46 @@ class CustomersComponent extends Component {
     }
 
     getCustomers = async () => {
-        await Axios.get('api/customer').then(res => {
+        var { pageSize, currentPage } = this.state;
+        await Axios.get('api/customer?param=' + this.state.searchValue + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
             this.setState({
-                customers: res.data
+                customers: res.data.data,
+                pageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
             })
         })
     }
 
     onChange(event) {
-        var {name, value} = event.target;
+        var { name, value } = event.target;
         this.setState({
-            [name] : value
+            [name]: value
         })
     }
 
     async onSearch(event) {
         event.preventDefault();
-        //console.log(this.state.searchParam);
-        await Axios.get('api/customer?param=' + this.state.searchParam).then(res => {
-            console.log(res)
-            this.setState({
-                customers : res.data
-            })
-        });
+        //console.log(this.state.searchValue);
+        this.setState({
+            currentPage: 1
+        }, () => {
+            this.getCustomers();
+        })
+    }
+
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getCustomers();
+        })
     }
 
     render() {
-        var { customers } = this.state;
+        var { customers, userRole, currentPage, pageCount } = this.state;
         return (
+            userRole === 'Manager' ? 
             <div className="animated fadeIn">
                 <Row>
                     <Col xl={12}>
@@ -110,7 +126,7 @@ class CustomersComponent extends Component {
                                 <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                     <InputGroup>
                                         <Input type="text" className="mr-2" placeholder="Username or Fullname"
-                                        value={this.state.searchParam} name="searchParam" onChange={this.onChange}/>
+                                            value={this.state.searchValue} name="searchValue" onChange={this.onChange} />
                                         <Button color="primary">
                                             <i className="fa fa-search fa-lg mr-1"></i>Search Customer
                                         </Button>
@@ -136,11 +152,14 @@ class CustomersComponent extends Component {
                                         )}
                                     </tbody>
                                 </Table>
+                                <div style={{ float: 'right' }}>
+                                    <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-            </div>
+            </div>  : ''
         )
     }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { history } from './../src/helper/history';
-import { toastr } from 'react-redux-toastr';
+// import { toastr } from 'react-redux-toastr';
 // import { renderRoutes } from 'react-router-config';
 import './App.scss';
 

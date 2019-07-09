@@ -29,14 +29,15 @@ namespace WebAPI.Admin.Controllers
         /// <summary>
         /// Get All Users
         /// </summary>
-        /// <param name="orderBy"></param>
         /// <param name="param"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
         /// <returns>Return List admins</returns>
         /// <response code="200">Return List users</response>
         [HttpGet]
         [Authorize(Roles = "Manager")]
-        public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
-            var userRowViewModels = _userService.GetUsers(orderBy, param); 
+        public ActionResult<UserDataTable> GetUsers(string param, int page, int pageSize) { //Lấy all admin users
+            var userRowViewModels = _userService.GetUsers(param, page, pageSize); 
             return userRowViewModels; 
             
         }

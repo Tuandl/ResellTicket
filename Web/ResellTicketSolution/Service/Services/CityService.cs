@@ -13,7 +13,7 @@ namespace Service.Services
     {
         bool CreateCity(CityRowViewModel model);
         List<CityRowViewModel> GetCities(string name, int ignoreCityId);
-        List<CityRowViewModel> GetCities(string name);
+        CityDataTable GetCities(string name, int page, int pageSize);
         CityRowViewModel FindCityById(int id);
         string UpdateCity(CityUpdateViewModel model);
     }
@@ -89,13 +89,33 @@ namespace Service.Services
             return string.Empty;
         }
 
-        public List<CityRowViewModel> GetCities(string name) //admin
+        public CityDataTable GetCities(string name, int page, int pageSize) //admin
         {
             name = name ?? "";
-            var cities = _cityRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(name.ToLower()));
-            var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities.ToList());
-            return cityRowViewModels;
+            var cities = new List<City>();
+            if(page > 0 && pageSize > 0)
+            {
+                cities = _cityRepository.GetAllQueryable()
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower()))
+                         .OrderBy(x => x.Name)
+                         .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            } else
+            {
+                cities = _cityRepository.GetAllQueryable()
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower()))
+                         .OrderBy(x => x.Name).ToList();
+            }
+                         
+            var totalCities = _cityRepository.GetAllQueryable()
+                         .Where(x => x.Name.ToLower().Contains(name.ToLower())).Count();
+            
+            var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
+            var cityDataTable = new CityDataTable()
+            {
+                Data = cityRowViewModels,
+                Total = totalCities
+            };
+            return cityDataTable;
         }
     }
 }

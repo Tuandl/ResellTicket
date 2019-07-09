@@ -9,12 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Ticket;
-using System.IO;
-using System.Net;
-using Newtonsoft.Json;
-using Microsoft.Extensions.Options;
-using ViewModel.AppSetting;
-using Service.NotificationService;
 using Core.Enum;
 
 namespace Service.Services
@@ -235,7 +229,7 @@ namespace Service.Services
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAt ?? x.CreatedAt)
-                .Skip((page - 1) * 5).Take(pageSize);
+                .Skip((page - 1) * pageSize).Take(pageSize);
             if(status != null && status != TicketStatus.Pending)
             {
                 customerTickets = customerTickets.Where(x => x.Status == status);

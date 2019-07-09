@@ -13,7 +13,7 @@ namespace Service.Services
     public interface ITicketTypeService
     {
         bool CreateTicketType(TicketTypeCreateViewModel model);
-        List<TicketTypeRowViewModel> GetTicketType(string param);
+        TickeTypeDataTable GetTicketType(string param, int page, int pageSize);
         List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId, string ticketTypeName);
         TicketTypeRowViewModel FindTicketTypeById(int id);
         string UpdateTicketType(TicketTypeRowViewModel model);
@@ -74,17 +74,25 @@ namespace Service.Services
             var ticketTypeRowVMs = _mapper.Map<List<TicketType>, List<TicketTypeRowViewModel>>(ticketTypes);
             return ticketTypeRowVMs;
         }
-        public List<TicketTypeRowViewModel> GetTicketType(string param)
+        public TickeTypeDataTable GetTicketType(string param, int page, int pageSize)
         {
             param = param ?? "";
 
             var ticketTypes = _ticketTypeRepository.GetAllQueryable()
                 .Where(x => x.Name.ToLower().Contains(param.ToLower()))
                 .Where(x => x.Deleted == false)
-                .ToList();
+                .OrderBy(x => x.Vehicle.Name.ToLower())
+                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var totalTicketTypes = _ticketTypeRepository.GetAllQueryable()
+                .Where(x => x.Name.ToLower().Contains(param.ToLower()))
+                .Where(x => x.Deleted == false).Count();
             var ticketTypeReturn = _mapper.Map<List<TicketType>, List<TicketTypeRowViewModel>>(ticketTypes);
-
-            return ticketTypeReturn;
+            var ticketTypeDataTable = new TickeTypeDataTable()
+            {
+                Data = ticketTypeReturn,
+                Total = totalTicketTypes
+            };
+            return ticketTypeDataTable;
         }
 
         public string UpdateTicketType(TicketTypeRowViewModel model)

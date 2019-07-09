@@ -13,7 +13,7 @@ namespace Service.Services
     public interface ITransportationService
     {
         bool CreateTransportation(TransportationCreateViewModel transportation);
-        List<TransportationRowViewModel> GetTransportations(string param);
+        TransportationDataTable GetTransportations(string param, int page, int pageSize);
         List<TransportationRowViewModel> GetTransportationsByVehicleId(int vehicleId, string transportationName);
         TransportationRowViewModel FindTransportationById(int id);
         string UpdateTransportation(TransportationUpdateViewModel model);
@@ -75,13 +75,22 @@ namespace Service.Services
             return transportationRowViewModel;
         }
 
-        public List<TransportationRowViewModel> GetTransportations(string param)
+        public TransportationDataTable GetTransportations(string param, int page, int pageSize)
         {
             param = param ?? "";
             var Transportations = _transportationRepository.GetAllQueryable().Where(x => 
-                            x.Name.ToUpper().Contains(param.ToUpper())).ToList();
+                            x.Name.ToUpper().Contains(param.ToUpper()))
+                            .OrderBy(x => x.Vehicle.Name.ToLower())
+                            .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var totalTrans = _transportationRepository.GetAllQueryable().Where(x =>
+                            x.Name.ToUpper().Contains(param.ToUpper())).Count();
             var TransportationRowView = _mapper.Map<List<Transportation>, List<TransportationRowViewModel>>(Transportations);
-            return TransportationRowView;
+            var transDataTable = new TransportationDataTable()
+            {
+                Data = TransportationRowView,
+                Total = totalTrans
+            };
+            return transDataTable;
         }
 
         public string UpdateTransportation(TransportationUpdateViewModel model)

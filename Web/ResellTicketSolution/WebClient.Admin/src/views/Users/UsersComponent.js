@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table,
-    Pagination, PaginationItem, PaginationLink, } from 'reactstrap';
-import { getUsersRequest } from "../../action/UserAdminAction";
+import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+    import Axios from 'axios';
+// import { getUsersRequest } from "../../action/UserAdminAction";
+import PaginationView from '../Pagination/PaginationComponent';
 
 // import usersData from './UsersData'
 
@@ -50,24 +51,38 @@ class UsersComponent extends Component {
         super(props);
         this.state = {
             searchValue: '',
-            userRole: ''
+            userRole: '',
+            userList: [],
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1
         }
     }
 
     componentWillMount() {
         var token = localStorage.getItem('userToken');
         if (!token) {
-            this.props.getUsers();
+            this.getUsers();
         }
         var jwt = require('jwt-decode');
         var decode = jwt(token);
         var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
         if (userRole === 'Manager') {
-            this.props.getUsers(token);
+            this.getUsers();
         }
         this.setState({
             userRole: userRole
         })
+    }
+
+    getUsers = () => {
+        var { pageSize, currentPage } = this.state;
+        Axios.get('api/user?param=' + this.state.searchValue + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
+            this.setState({
+                userList : res.data.data,
+                pageCount : res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
+            })
+        });
     }
 
     onChange = (event) => {
@@ -79,13 +94,25 @@ class UsersComponent extends Component {
 
     onSubmit = (event) => {
         event.preventDefault();
-        this.props.getUsersByName(this.state.searchValue);
+        this.setState({
+            currentPage: 1
+        }, () => {
+            this.getUsers()
+        })
+    }
+
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getUsers();
+        })
     }
 
     render() {
-        //var {users} = this.props;
-        const userList = this.props.users;
-        var { searchValue, userRole } = this.state;
+        var { searchValue, userRole, userList, currentPage, pageCount } = this.state;
         return (
             userRole === 'Manager' ?
                 <div className="animated fadeIn">
@@ -129,16 +156,9 @@ class UsersComponent extends Component {
                                             )}
                                         </tbody>
                                     </Table>
-                                    <Pagination>
-                                        <PaginationItem disabled><PaginationLink previous tag="button">Prev</PaginationLink></PaginationItem>
-                                        <PaginationItem active>
-                                            <PaginationLink tag="button">1</PaginationLink>
-                                        </PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">2</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">3</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink tag="button">4</PaginationLink></PaginationItem>
-                                        <PaginationItem><PaginationLink next tag="button">Next</PaginationLink></PaginationItem>
-                                    </Pagination>
+                                    <div style={{ float: 'right' }}>
+                                        <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                    </div>
                                 </CardBody>
                             </Card>
                         </Col>
@@ -148,21 +168,21 @@ class UsersComponent extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        users: state.users
-    }
-}
+// const mapStateToProps = state => {
+//     return {
+//         users: state.users
+//     }
+// }
 
-const mapDispatchToProps = (dispatch, props) => {
-    return {
-        getUsers: () => {
-            dispatch(getUsersRequest());
-        },
-        getUsersByName: (param) => {
-            dispatch(getUsersRequest(param));
-        }
-    }
-}
+// const mapDispatchToProps = (dispatch, props) => {
+//     return {
+//         getUsers: () => {
+//             dispatch(getUsersRequest());
+//         },
+//         getUsersByName: (param) => {
+//             dispatch(getUsersRequest(param));
+//         }
+//     }
+// }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersComponent);
+export default UsersComponent;

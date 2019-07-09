@@ -23,9 +23,9 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("")]
-        public ActionResult<IEnumerable<TicketTypeRowViewModel>> getTicketType(string param)
+        public ActionResult<TickeTypeDataTable> getTicketType(string param, int page, int pageSize)
         {
-            var ticketTypeRowViewModels = _ticketTypeService.GetTicketType(param);
+            var ticketTypeRowViewModels = _ticketTypeService.GetTicketType(param, page, pageSize);
             return ticketTypeRowViewModels;
         }
 

@@ -24,7 +24,7 @@ namespace Service.Services
         string ViewAccountConnect(string username);
         string AddAccountStripeToReceiveMoney(string usename, string accountId);
         string HashPassword(string password, byte[] salt);
-        List<CustomerRowViewModel> GetCutomers(string param);
+        CustomerDataTable GetCutomers(string param, int page, int pageSize);
         CustomerRowViewModel FindCustomerById(int id);
         string UpdateCustomerAuthen(CustomerRowViewModel model);
         //update profile phía client
@@ -120,16 +120,29 @@ namespace Service.Services
         }
 
         //string orderBy, string param
-        public List<CustomerRowViewModel> GetCutomers(string param)
+        public CustomerDataTable GetCutomers(string param, int page, int pageSize)
         {
             param = param ?? "";
             var customers = _customerRepository.GetAllQueryable()
                             .Where(x => x.Username.Contains(param)
                             || x.FullName.ToLower().Contains(param.ToLower())
                             || x.Email.ToLower().Contains(param.ToLower())
-                            || x.PhoneNumber.Contains(param)).ToList();
+                            || x.PhoneNumber.Contains(param))
+                            .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var totalCustomers = _customerRepository.GetAllQueryable()
+                            .Where(x => x.Username.Contains(param)
+                            || x.FullName.ToLower().Contains(param.ToLower())
+                            || x.Email.ToLower().Contains(param.ToLower())
+                            || x.PhoneNumber.Contains(param)).Count();
             var customerRowViewModels = _mapper.Map<List<Core.Models.Customer>, List<CustomerRowViewModel>>(customers);
-            return customerRowViewModels;
+
+            var customerDataTable = new CustomerDataTable()
+            {
+                Data = customerRowViewModels,
+                Total = totalCustomers
+            };
+            return customerDataTable;
         }
 
         public CustomerRowViewModel FindCustomerById(int id)

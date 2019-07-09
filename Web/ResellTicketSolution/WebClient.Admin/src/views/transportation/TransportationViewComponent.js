@@ -68,7 +68,6 @@ class TransportationViewComponent extends Component {
     }
 
 
-
     handleOnChanged(e) {
         const { id, value } = e.target;
         this.setState({
