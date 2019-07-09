@@ -23,8 +23,11 @@ namespace Core.Models
         public string Description { get; set; }
         public decimal CommissionPercent { get; set; }
         public DateTime DepartureDateTime { get; set; }
+        public DateTime DepartureDateTimeUTC { get; set; }
         public DateTime ArrivalDateTime { get; set; }
+        public DateTime ArrivalDateTimeUTC { get; set; }
         public DateTime? ExpiredDateTime { get; set; }
+        public DateTime? ExpiredDateTimeUTC { get; set; }
         public int TicketTypeId { get; set; }
         public bool? IsTicketTypeValid { get; set; }
         public virtual TicketType TicketType { get; set; }

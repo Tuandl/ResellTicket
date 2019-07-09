@@ -16,18 +16,18 @@ namespace Algorithm.KShortestPaths
         {
             //Get Departure vertex
             //Vertex departureVertex = graph.GetVertex(ticket.DepartureStationId, ticket.DepartureDateTime);
-            Vertex departureVertex = graph.GetVertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
+            Vertex departureVertex = graph.GetVertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTimeUTC);
             if(departureVertex == null)
             {
-                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTime);
+                departureVertex = new Vertex(ticket.DepartureStation.City.Id, ticket.DepartureDateTimeUTC);
                 graph.AddVertex(departureVertex);
             }
 
             //Get arrival vertex
-            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
+            Vertex arrivalVertex = graph.GetVertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTimeUTC);
             if(arrivalVertex == null)
             {
-                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTime);
+                arrivalVertex = new Vertex(ticket.ArrivalStation.City.Id, ticket.ArrivalDateTimeUTC);
                 graph.AddVertex(arrivalVertex);
             }
 

@@ -37,8 +37,8 @@ namespace Service.Services
             var ticketType = _mapper.Map<TicketTypeCreateViewModel, TicketType>(model);
             if (_ticketTypeRepository.Get(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) == null)
             {
-                ticketType.CreatedAt = DateTime.Now;
-                ticketType.UpdatedAt = DateTime.Now;
+                ticketType.CreatedAtUTC = DateTime.UtcNow;
+                ticketType.UpdatedAtUTC = DateTime.UtcNow;
                 _ticketTypeRepository.Add(ticketType);
                 _unitOfWork.CommitChanges();
                 return true;
@@ -111,7 +111,7 @@ namespace Service.Services
             {
                 existedTicketType.VehicleId = model.VehicleId;
             }
-            existedTicketType.UpdatedAt = DateTime.Now;
+            existedTicketType.UpdatedAtUTC = DateTime.UtcNow;
             _ticketTypeRepository.Update(existedTicketType);
             _unitOfWork.CommitChanges();
 

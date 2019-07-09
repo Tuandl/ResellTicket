@@ -7,6 +7,6 @@ namespace Core.Models
     {
         public string PhoneNo { get; set; }
         public string Code { get; set; }
-        public DateTime ExpiredAt { get; set; }
+        public DateTime ExpiredAtUTC { get; set; }
     }
 }

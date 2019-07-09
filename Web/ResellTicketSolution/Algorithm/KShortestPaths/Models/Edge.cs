@@ -72,7 +72,7 @@ namespace Algorithm.KShortestPaths.Models
 
         public override string ToString()
         {
-            return $"{Tail.GroupId} {Tail.ArrivalTime} --> {Head.GroupId} {Head.ArrivalTime} ({Weight.ToString("C0")})";
+            return $"{Tail.GroupId} {Tail.ArrivalTimeUTC} --> {Head.GroupId} {Head.ArrivalTimeUTC} ({Weight.ToString("C0")})";
         }
     }
 }

@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
+using System.Collections.Generic;
+using System.Net;
 using ViewModel.ViewModel.City;
-using ViewModel.ViewModel.Customer;
 
 namespace WebAPI.Admin.Controllers
 {
@@ -70,8 +64,5 @@ namespace WebAPI.Admin.Controllers
             }
             return Ok();
         }
-
-
-
     }
 }

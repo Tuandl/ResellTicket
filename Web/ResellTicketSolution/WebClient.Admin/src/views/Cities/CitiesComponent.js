@@ -13,11 +13,12 @@ function CityRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{city.name}</td>
+            <td>{city.timeZoneId}</td>
             <td>
                 <Link to={cityLink}>
                     <Button color="danger" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
-                  </Button>
+                    </Button>
                 </Link>
             </td>
         </tr>
@@ -128,6 +129,7 @@ class CitiesComponent extends Component {
                                         <tr>
                                             <th>No.</th>
                                             <th>Name</th>
+                                            <th>Time Zone</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>

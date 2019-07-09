@@ -119,7 +119,7 @@ namespace Service.Services
             }
             existedTranportation.ExpiredBefore = model.ExpiredBefore;
 
-            existedTranportation.UpdatedAt = DateTime.Now;
+            existedTranportation.UpdatedAtUTC = DateTime.UtcNow;
             _transportationRepository.Update(existedTranportation);
             try
             {
