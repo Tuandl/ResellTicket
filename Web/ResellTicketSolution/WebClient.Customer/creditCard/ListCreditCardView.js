@@ -9,15 +9,11 @@ import toastService from './../js/service/toastService.js';
 function ListCreditCardViewController() {
 
     const id = {
-        creditCardList: 'credit-card-list',
-        btnDelete: 'btn-delete',
-        btnSetDefault: 'btn-set-default'
+        creditCardList: 'credit-card-list',  
     }
 
     const elements = {
         creditCardList: document.getElementById(id.creditCardList),
-        btnDelete: document.getElementById(id.btnDelete),
-        btnSetDefault: document.getElementById(id.btnSetDefault),
     }
 
     
@@ -32,9 +28,6 @@ function ListCreditCardViewController() {
         
         
         renderCreditCard();
-        elements.btnDelete.addEventListener('click', onBtnDeleteClicked);
-        elements.btnSetDefault.addEventListener('click', onBtnSetDefault);
-        
     }
 
     async function renderCreditCard(){
