@@ -79,17 +79,22 @@ function routeDetail() {
     }
 
     async function onBtnConfirmClicked() {
-        if(customerComponent.passengerDetail.passengerName === '' || customerComponent.passengerDetail.emailBooking === '') {
+        if(customerComponent.passengerDetail.buyerPassengerName === '' 
+        || customerComponent.passengerDetail.buyerPassengerEmail === '' 
+        || customerComponent.passengerDetail.buyerPassengerPhone === '' 
+        || customerComponent.passengerDetail.buyerPassengerIdentify === '') {
             toastService.error('Please input all field!');
         } else {
             const params = {
                 routeId: routeId,
-                passengerName: customerComponent.passengerDetail.passengerName,
-                emailBooking: customerComponent.passengerDetail.emailBooking
+                buyerPassengerName: customerComponent.passengerDetail.buyerPassengerName,
+                buyerPassengerEmail: customerComponent.passengerDetail.buyerPassengerEmail,
+                buyerPassengerPhone: customerComponent.passengerDetail.buyerPassengerPhone,
+                buyerPassengerIdentify: customerComponent.passengerDetail.buyerPassengerIdentify
             }
                 try {
-                    var response = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
-                    if(response.status === 200) {
+                    var routeResponse = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
+                    if(routeResponse.status === 200) {
                         // toastService.success('Buy route successfully!');
                         window.location.replace('/index.html');
                     } else {
@@ -106,10 +111,11 @@ function routeDetail() {
         await renderCustomerDetail(routeId);
     }
 
-    function renderCustomerDetail(routeId) {
+    async function renderCustomerDetail(routeId) {
         commonService.removeAllChildren(elements.customerDetailContainer);
             // const customerComponent = new CustomerComponent(routeId);
             elements.customerDetailContainer.appendChild(customerComponent.render());
+            await customerComponent.AutoFillCustomerDetail();
         $(`#${id.customerDetailModal}`).modal();
     }
 

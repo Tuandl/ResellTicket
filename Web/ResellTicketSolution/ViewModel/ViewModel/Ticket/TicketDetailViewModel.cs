@@ -42,6 +42,12 @@ namespace ViewModel.ViewModel.Ticket
         public bool? IsTicketTypeValid { get; set; }
         public bool? IsPassengerNameValid { get; set; }
         public bool? IsEmailBookingValid { get; set; }
-        public string PassengerId { get; set; }
+        public string BuyerPassengerIdentify { get; set; }
+        public string BuyerPassengerName { get; set; }
+        public string BuyerPassengerEmail { get; set; }
+        public string BuyerPassengerPhone { get; set; }
+
+
+
     }
 }

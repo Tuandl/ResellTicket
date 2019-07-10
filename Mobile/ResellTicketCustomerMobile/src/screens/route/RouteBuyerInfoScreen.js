@@ -14,9 +14,10 @@ export default class RouteBuyerInfoScreen extends Component {
         const params = this.navigation.getParam('params');
         this.state = {
             routeId: params.routeId,
-            passengerName: '',
-            emailBooking: '',
-            passengerId: null
+            buyerPassengerName: params.buyerPassengerName,
+            buyerPassengerEmail: params.buyerPassengerEmail,
+            buyerPassengerPhone: params.buyerPassengerPhone,
+            buyerPassengerIdentify: ''
         };
 
         // this.onDateOfBirthChanged = this.onDateOfBirthChanged.bind(this);
@@ -34,16 +35,17 @@ export default class RouteBuyerInfoScreen extends Component {
     // }
 
     async onBtnConfirmPressed () {
-        if(this.state.passengerName === '' || this.state.emailBooking === '' || this.state.passengerId === null) {
+        if(this.state.buyerPassengerName === '' || this.state.buyerPassengerEmail === '' || this.state.buyerPassengerPhone === '' || this.state.buyerPassengerIdentify === '') {
             RNToasty.Error({
                 title: 'Buy route Fail, please input all field!'
             })
         } else {
             var params = { 
                 routeId: this.state.routeId,
-                emailBooking: this.state.emailBooking,
-                passengerName: this.state.passengerName,
-                passengerId: this.state.passengerId };
+                buyerPassengerEmail: this.state.buyerPassengerEmail,
+                buyerPassengerName: this.state.buyerPassengerName,
+                buyerPassengerPhone: this.state.buyerPassengerPhone,
+                buyerPassengerIdentify: this.state.buyerPassengerIdentify };
             const resBuyRoute = await api.post('api/route/buy-route', params);
             const { navigation } = this.props;
             if (resBuyRoute.status === 200) {
@@ -62,9 +64,10 @@ export default class RouteBuyerInfoScreen extends Component {
 
     render() {
         const { 
-            passengerName,
-            emailBooking,
-            passengerId
+            buyerPassengerName,
+            buyerPassengerEmail,
+            buyerPassengerPhone,
+            buyerPassengerIdentify
         } = this.state;
         const { navigation } = this.props;
 
@@ -94,29 +97,36 @@ export default class RouteBuyerInfoScreen extends Component {
                         value={lastName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     /> */}
-                <Label style={styles.label}>Passenger Name:</Label>
+                <Label style={styles.label}>New Passenger Name:</Label>
                     <Input
-
-                        onChangeText={passengerName => this.setState({ passengerName })}
-                        placeholder="Enter Full Name"
-                        value={passengerName}
+                        onChangeText={buyerPassengerName => this.setState({ buyerPassengerName })}
+                        placeholder="Enter Your Name"
+                        value={buyerPassengerName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                <Label style={styles.label}>IdNumber:</Label>
+                <Label style={styles.label}>New Passenger Email:</Label>
+                    <Input
+                        onChangeText={buyerPassengerEmail => this.setState({ buyerPassengerEmail })}
+                        placeholder="Enter Email"
+                        value={buyerPassengerEmail}
+                        inputStyle={{ fontSize: 15, color: 'black' }}
+                    />
+                <Label style={styles.label}>New Passenger Phone:</Label>
+                    <Input
+                        onChangeText={buyerPassengerPhone => this.setState({ buyerPassengerPhone })}
+                        placeholder="Enter Phone"
+                        value={buyerPassengerPhone}
+                        inputStyle={{ fontSize: 15, color: 'black' }}
+                    />
+                <Label style={styles.label}>New Passenger Identify:</Label>
                     <Input
 
-                            onChangeText={passengerId => this.setState({ passengerId })}
-                            placeholder="Enter Id Number"
-                            value={passengerId}
+                            onChangeText={buyerPassengerIdentify => this.setState({ buyerPassengerIdentify })}
+                            placeholder="Enter Identify Number"
+                            value={buyerPassengerIdentify}
                             inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                <Label style={styles.label}>Booking Email:</Label>
-                    <Input
-                        onChangeText={emailBooking => this.setState({ emailBooking })}
-                        placeholder="Enter Email"
-                        value={emailBooking}
-                        inputStyle={{ fontSize: 15, color: 'black' }}
-                    />
+                
             {/* <Label style={styles.label}>Date Of Birth:</Label> */}
                     {/* Select Date Of Birth */}
                 {/* <Item>

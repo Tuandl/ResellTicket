@@ -8,7 +8,7 @@
     <link href="../css/bootstrap.css" rel='stylesheet' type='text/css' />
     <link href="../css/style.css" rel='stylesheet' type='text/css' />
     <link href="../css/font-awesome.css" rel="stylesheet">
-    <link href="../css/jquery-ui.css" rel="stylesheet">
+    <!-- <link href="../css/jquery-ui.css" rel="stylesheet"> -->
     <link href="../css/rt-style.css" rel='stylesheet' type='text/css' />
     <link rel="stylesheet" href="../css/bootstrap-datetimepicker.css" />
     <link rel="manifest" href="/manifest.json">
@@ -243,6 +243,31 @@
         </div>
     </div>
 
+    <!-- Modal -->
+    <div class="modal fade" id="customer-detail-modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Customer Detail</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="padding-15">
+                        <div id="customer-detail-container" class="padding-5">
+                        </div>
+                    </div>
+                </div>
+					<div class="row margin-bottom-20">
+						<div class="col-sm-12 text-center">
+								<button type="button" class="btn text-center" data-dismiss="modal" id="btn-close">Close</button>
+						</div>
+					</div>	
+            </div>
+        </div>
+    </div>
+    
     <!--footer-->
     <div class="footer">
         <div class="container">
