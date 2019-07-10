@@ -85,6 +85,7 @@ namespace Service.Services
         private readonly IOneSignalService _oneSignalService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly INotificationService _notificationService;
 
         public RouteService(
                 IRouteRepository routeRepository,
@@ -94,7 +95,8 @@ namespace Service.Services
                 ICustomerRepository customerRepository,
                 IUnitOfWork unitOfWork,
                 IMapper mapper,
-                IOneSignalService oneSignalService
+                IOneSignalService oneSignalService,
+                INotificationService notificationService
             )
         {
             _routeRepository = routeRepository;
@@ -105,6 +107,7 @@ namespace Service.Services
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _oneSignalService = oneSignalService;
+            _notificationService = notificationService;
         }
 
         public void DeleteRoute(int routeId)
@@ -510,6 +513,14 @@ namespace Service.Services
                         {
                             deviceIds.Add(cusDev.DeviceId);
                         }
+
+                        //Save Notification into db
+                        _notificationService.SaveNotification(
+                            customerId: ticket.Seller.Id,
+                            type: NotificationType.TicketIsBought,
+                            data: new { ticketId = ticket.Id }
+                        );
+
                         _oneSignalService.PushNotificationCustomer(message, deviceIds);
                     }
                 }
