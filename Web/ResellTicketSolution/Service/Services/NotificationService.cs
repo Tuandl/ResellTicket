@@ -38,7 +38,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        int CountUnreadNotifies(string username);
+        NotificationCountViewModel CountUnreadNotifications(string username);
     }
 
     public class NotificationService : INotificationService
@@ -132,13 +132,15 @@ namespace Service.Services
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        public int CountUnreadNotifies(string username)
+        public NotificationCountViewModel CountUnreadNotifications(string username)
         {
             var quantity = _notificationRepository.GetAllQueryable()
                 .Where(x => x.Customer.Username == username && x.Deleted == false)
                 .Count();
 
-            return quantity;
+            return new NotificationCountViewModel() {
+                Quantity = quantity 
+            };
         }
     }
 }
