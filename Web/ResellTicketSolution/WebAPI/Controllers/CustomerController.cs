@@ -192,7 +192,7 @@ namespace WebAPI.Controllers
                 return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
             }
 
-            return Ok();
+            return Ok("");
         }
 
         [HttpGet]

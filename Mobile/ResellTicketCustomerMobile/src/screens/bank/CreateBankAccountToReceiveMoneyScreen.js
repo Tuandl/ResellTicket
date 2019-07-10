@@ -9,7 +9,8 @@ import {
     Platform,
     AsyncStorage,
     FlatList,
-    WebView
+    WebView,
+    ActivityIndicator
 } from "react-native";
 //import { WebView } from 'react-native-webview';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
@@ -31,7 +32,8 @@ export default class CreateBankAccountToReceiveMoneyScreen extends Component {
         super(props);
         this.state = {
             linkCreateAccount: '',
-            isCallApi: true
+            isCallApi: true,
+            isLoading: false
         }
         this.createBankConnectAccount = this.createBankConnectAccount.bind(this);
     }
@@ -52,7 +54,8 @@ export default class CreateBankAccountToReceiveMoneyScreen extends Component {
                     title: 'Create credit card Error',
                 });
                 this.setState({
-                    isCallApi: true
+                    isCallApi: true,
+                    isLoading: false
                 });
             }
             this.props.navigation.navigate('Me');
@@ -70,38 +73,57 @@ export default class CreateBankAccountToReceiveMoneyScreen extends Component {
 
     componentWillMount() {
         const someHTMLFile = 'https://connect.stripe.com/express/oauth/authorize?' +
-            'redirect_uri=https://webhook.site/9381403c-2124-4c32-ba8e-cd9c435ec7e1&' +
-            'client_id=' + BankConstant.STORAGE.CLIENTID + '&state={STATE_VALUE}';
+            'redirect_uri=' + BankConstant.STORAGE.URLREDIRECT +
+            '&client_id=' + BankConstant.STORAGE.CLIENTID + '&state={STATE_VALUE}';
         this.setState({
             linkCreateAccount: someHTMLFile,
         });
-
     }
+
 
     render() {
 
-        const { linkCreateAccount, isCallApi } = this.state;
+        const { linkCreateAccount, isCallApi, isLoading } = this.state;
 
         return (
-            <View style={{ flex: 1 }}>
-                <WebView
-                    style={{ flex: 1 }}
-                    onNavigationStateChange={(e) => {
-                        if (e.url.includes(BankConstant.STORAGE.WEBSITE) && isCallApi) {
-                            this.setState({
-                                isCallApi: false
-                            });
-                            var receiveUrl = e.url;
-                            var stringReceive = receiveUrl.split(BankConstant.STORAGE.WEBSITE);
-                            var code = stringReceive[1].split('&')[0];
-                            this.createBankConnectAccount(code);
-                        }
-                    }}
-                    source={{ uri: linkCreateAccount }}
-                    ref={(webView) => this.webView = webView}
-                />
-            </View>
+            <Container style={{ flex: 1 }}>
+                <Header>
+                    <Left>
+                        <Button
+                            onPress={() => this.props.navigation.navigate('Me')}>
+                            <Icon name="arrow-left" type="material-community" color="#fff" />
+                        </Button>
+                    </Left>
+                    <Body>
+                        <Title>
+                            Connect Account
+                        </Title>
+                    </Body>
+                    <Right />
+                </Header>
+                {isLoading ? <ActivityIndicator size="large" animating /> :
+                    <View style={{ flex: 1 }}>
 
+                        <WebView
+                            style={{ flex: 1 }}
+                            onNavigationStateChange={(e) => {
+                                if (e.url.includes(BankConstant.STORAGE.PREXITRETURRN) && isCallApi) {
+                                    this.setState({
+                                        isCallApi: false,
+                                        isLoading: true
+                                    });
+                                    var receiveUrl = e.url;
+                                    var stringReceive = receiveUrl.split(BankConstant.STORAGE.PREXITRETURRN);
+                                    var code = stringReceive[1].split('&')[0];
+                                    this.createBankConnectAccount(code);
+                                }
+                            }}
+                            source={{ uri: linkCreateAccount }}
+                            ref={(webView) => this.webView = webView}
+                        />
+                    </View>
+                }
+            </Container>
         );
     }
 }

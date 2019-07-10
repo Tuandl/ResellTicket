@@ -1,5 +1,6 @@
 const appConfig = {
     apiBaseUrl: 'http://localhost:59152/',
+    apiBaseUrlVisual: 'http://127.0.0.1:8080/',
     apiUrl: {
         route: 'api/route/',
         routeTicket: 'api/route/route-ticket/',
@@ -17,6 +18,9 @@ const appConfig = {
         station: 'api/station',
         creditCard: 'api/credit-card',
         setDefaultCard: 'api/credit-card/set-default-card',
+        addBankConnectAccount: 'api/customer/add-bank-connect-account',
+        checkIsConnectedBank: 'api/customer/check-existed-connect-bank-account',
+        getLinkConnectBank: 'api/customer/view-connect-account'
     },
     url: {
         home: '/index.html',
@@ -35,6 +39,10 @@ const appConfig = {
         },
         creditCard: {
             viewListCreditCard: '/creditCard/ListCreditCardView.html'
+        },
+        bank: {
+            success: '/bank/createSuccessBankAccount.html',
+            fail: '/bank/createFailedBankAccount.html'
         }
     },
     format: {
@@ -48,6 +56,12 @@ const appConfig = {
     SubdomainName: 'webcustomer.os.tc',
     stripe : {
         pusblishableKey: 'pk_test_D0BLH7S0dIaPbxYxUJTFYa0T00ekNdTcE3'
+    },
+    bankConnect: {
+        linkCreate: 'https://connect.stripe.com/express/oauth/authorize?redirect_uri=' + 
+        'http://127.0.0.1:8080' + '/updateProfile.html&client_id='+'ca_FLG0Mrxeb6GeNLbV7uvRJG3CVcHaBPQc&state={STATE_VALUE}',
+        prexitResponse: 'http://127.0.0.1:8080' + '/updateProfile.html?code=',
+
     }
 }
 
