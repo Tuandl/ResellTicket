@@ -1,46 +1,58 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Resell Ticket</title>
+    <title>Big store a Ecommerce Online Shopping Category Flat Bootstrap Responsive Website Template | Register ::
+        w3layouts</title>
+    <link href="./../css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="./../css/style.css" rel='stylesheet' type='text/css' />
+    <link href="./../css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="./../css/jstarbox.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="manifest" href="./../manifest.json">
+    <style>
+        ::placeholder {
+            color: #999;
+            opacity: 1;
+            /* Firefox */
+        }
 
-    <!-- css -->
-    <link href="../css/bootstrap.css" rel='stylesheet' type='text/css' />
-    <link href="../css/style.css" rel='stylesheet' type='text/css' />
-    <link href="../css/font-awesome.css" rel="stylesheet">
-    <!-- <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-	<link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'> -->
-    <!-- <link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" /> -->
-    <link href="../css/rt-style.css" rel='stylesheet' type='text/css' />
-    <!-- css -->
+        :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #999;
+        }
 
+        ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #999;
+        }
+    </style>
     <!-- js -->
-    <!-- Load React. -->
-    <!-- <script src="../js/react-router-dom.min.js"></script> -->
-    <script src="../js/react.development.js" crossorigin></script>
-    <script src="../js/react-dom.development.js" crossorigin></script>
-
-    <script src="../js/babel.min.js"></script>
-    <!-- Load React. -->
-
-    <script src="../js/jstarbox.js"></script>
-    <script src="../js/jquery-1.11.1.min.js"></script>
-    <script src="../js/moment.js"></script>
-    <script src="../js/bootstrap.js"></script>
-    <script src="../helper/convertStatus.js"></script>
-    <script src="../js/numeral.min.js"></script>
-    <link rel="manifest" href="/manifest.json">
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script src="https://js.stripe.com/v2/"></script>
+    <script src="./../js/jquery-1.11.1.min.js"></script>
+    <script src="./../js/jstarbox.js"></script>
+    <script type="text/javascript" src="./../helper/Api.js"></script>
+    <!-- <script type="text/javascript" src="./../constant/BasrUrl.js"></script> -->
+    <script type="text/javascript" src="./../js/authen.js"></script>
+    <script type="text/javascript" src="./../js/card.js"></script>
+    <script src="./../js/bootstrap.js"></script>
     <script type="module" src="/bank/displayConnectBankButton.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
     <script type="module">
-        import { appConfig } from '../constant/appConfig.js';
+        import { appConfig } from './../constant/appConfig.js';
         var OneSignal = window.OneSignal || [];
         OneSignal.push(function () {
             OneSignal.init({
                 appId: appConfig.OneSignalAppId,
                 subdomainName: appConfig.SubdomainName,
                 notifyButton: {
-                    enable: false,
+                    enable: true,
                 }
             });
             OneSignal.on('notificationDisplay', function (event) {
@@ -49,32 +61,41 @@
             });
         });
     </script>
-    <!-- //js -->
-</head>
-<!-- <script src="./postedTicket.js" type="text/babel"></script> -->
-<script src="./postedTicket_2.js" type="module"></script>
-<script src="../helper/Api.js"></script>
 
-<body>
+</head>
+
+<body onload="checkLoginProfile();checkLogin()">
     <div class="header">
+
         <div class="container">
+
             <div class="logo">
-                <h1><a href="../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                <h1><a href="./../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
                             marketplace</span></a>
                 </h1>
             </div>
-
+            <div class="head-t" id="isLoggin">
+                <ul class="card">
+                    <li>
+                        <h4><a href="./../login.html"><i class="fa fa-user" aria-hidden="true"></i>Login</a></h4>
+                    </li>
+                    <li>
+                        <h4><a href="./../checkPhoneNo.html"><i class="fa fa-key" aria-hidden="true"></i>Register</a>
+                        </h4>
+                    </li>
+                </ul>
+            </div>
             <div class="head-t" id="showing-option">
                 <ul class="card">
                     <li>
-                        <h4>Welcome <span id="welcome-name">Huy0933</span>!!!</h4>
+                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
                     </li>
                     <li>
-                        <h4><a href="../updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
+                        <h4><a href="./../index.html"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
                         </h4>
                     </li>
                     <li>
-                        <h4><a onclick="logout()" href="../index.html"><i class="fa fa-sign-out"
+                        <h4><a onclick="logout()" href="./../index.html"><i class="fa fa-sign-out"
                                     aria-hidden="true"></i>Logout</a></h4>
                     </li>
                 </ul>
@@ -93,6 +114,7 @@
                 </ul>
             </div>
 
+
             <div class="nav-top">
                 <nav class="navbar navbar-default">
 
@@ -110,11 +132,11 @@
                         <ul class="nav navbar-nav ">
                             <li><a href="/updateProfile.html" class="hyper"><span>Profile</span></a>
                             </li>
-                            <li class="active"><a href="/postedTicket/postedTicket.html" class="hyper"><span>My Tickets</span></a>
+                            <li><a href="/postedTicket/postedTicket.html" class="hyper"><span>My Tickets</span></a>
                             </li>
-                            <li id="btn-reload"><a id="link-connect" class="hyper"><span id="value-link"></span></a>
+                            <li class="active" id="btn-reload"><a id="link-connect" class="hyper"><span id="value-link"></span></a>
                             </li>
-                            <li><a href="/creditCard/ListCreditCardView.html" class="hyper"><span>Credit
+                            <li><a href="/creditCard/ListCreditCardView.html" class="hyper"> <span>Credit
                                         Card</span></a></li>
                             <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
                         </ul>
@@ -127,38 +149,30 @@
         </div>
     </div>
     <!---->
-    <div data-vide-bg="../images/index-background.png">
+
+    <!--banner-->
+    <div class="banner-top">
         <div class="container">
-            <div class="banner-info">
-                <h3 style="color: #c7ad71">RESELL TICKET</h3>
-                <a class="btn-post-ticket" id="btnPostTicket">
-                    <i class="fa fa-plus" style="color: #fff"></i>
-                    POST TICKET
-                </a>
-            </div>
+            <h3>Create Connect Bank Account</h3>
+            <h4><a href="/index.html">Home</a><label>/</label>My Bank<label>/</label>Create Connect Bank Account</h4>
+            <div class="clearfix"> </div>
         </div>
     </div>
 
-    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
-    <script src="../js/jquery.vide.min.js"></script>
+    <!--login-->
+    <script type="text/javascript">
 
-    <div class="text-center margin-top-20" id="btnStatuses">
 
-    </div>
+    </script>
 
-    <!--content-->
-    <div class="content-top">
-        <div class="container">
-            <div id="ticket-container">
-                <!-- TicketList -->
+    <div class="login">
+        <div class="main-agileits">
+            <div class="form-w3agile form1">
+                <h3 style="color: greenwhite;">Your Bank Account has been connected with Stripe!</h3>
             </div>
+
         </div>
     </div>
-
-    <div class="text-center margin-bottom-20" id="btnLoadMore">
-
-    </div>
-
     <!--footer-->
     <div class="footer">
         <div class="container">
@@ -173,7 +187,7 @@
                     <li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
                     <li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
                 </ul>
-                <div class="address">
+                <div class=" address">
                     <div class="col-md-4 fo-grid1">
                         <p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
                                 - P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
@@ -197,6 +211,7 @@
     </div>
     <!-- //footer-->
     <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
 
 </body>
 

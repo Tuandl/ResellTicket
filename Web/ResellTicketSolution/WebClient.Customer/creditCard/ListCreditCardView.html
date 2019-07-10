@@ -41,7 +41,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <script type="text/javascript" src="./../js/card.js"></script>
     <script src="./../js/bootstrap.js"></script>
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-
+    <script type="module" src="/bank/displayConnectBankButton.js"></script>
     <script type="module" src="./ListCreditCardView.js"></script>
     <script type="module">
         import { appConfig } from './../constant/appConfig.js';
@@ -132,6 +132,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                             <li><a href="/updateProfile.html" class="hyper"><span>Profile</span></a>
                             </li>
                             <li><a href="/postedTicket/postedTicket.html" class="hyper"><span>My Tickets</span></a>
+                            </li>
+                            <li id="btn-reload"><a id="link-connect" class="hyper"><span id="value-link"></span></a>
                             </li>
                             <li class="active"><a href="/creditCard/ListCreditCardView.html" class="hyper"> <span>Credit Card</span></a></li>
                             <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
