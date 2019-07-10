@@ -104,31 +104,19 @@ class RouteDetailScreen extends Component {
     }
 
     
-    onBtnBuyRoutePressed () {
-        var params = {
-            routeId: this.routeId
-        //     departureDate: moment(this.state.departureDate).format('YYYY-MM-DD 00:00:00'),
-        };
+    async onBtnBuyRoutePressed () {
+        const response = await api.get('api/customer/detail');
+            if(response.status === 200) {
+                var params = {
+                    routeId: this.routeId,
+                    buyerPassengerName: response.data.fullName,
+                    buyerPassengerEmail: response.data.email,
+                    buyerPassengerPhone: response.data.phoneNumber
+                };
+            }
         
         this.props.navigation.navigate('RouteBuyerInfo', {params: params});
     }
-    // async onBtnBuyRoutePressed () {
-    //     const routeId = this.routeId;
-    //     var params = { routeId: routeId };
-    //     const resBuyRoute = await api.post('api/route/buy-route', params);
-    //     const { navigation } = this.props;
-    //     if (resBuyRoute.status === 200) {
-    //         RNToasty.Success({
-    //             title: 'Buy route Successfully'
-    //         })
-    //         navigation.navigate('Route');
-    //     }
-    //     else {
-    //         RNToasty.Error({
-    //             title: 'Buy route Fail, All tickets in route must be valid!'
-    //         })
-    //     }
-    // }
 
     onBtnDeletePressed() {
         this.deleteRoute(this.routeId);

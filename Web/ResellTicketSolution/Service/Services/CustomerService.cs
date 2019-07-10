@@ -32,6 +32,7 @@ namespace Service.Services
         bool CheckIsExistedPhoneNumber(string phoneNumber);
         bool CheckIsExistedConnectBankAccount(string username);
         CustomerRowViewModel FindCustomerByUsername(string usename);
+        CustomerRowViewModel GetCustomerDetail(string username);
 
         /// <summary>
         /// Send OTP for customer when customer forgot password
@@ -376,6 +377,13 @@ namespace Service.Services
             }
 
             return linkResponse;
+        }
+
+        public CustomerRowViewModel GetCustomerDetail(string username)
+        {
+            var customer = _customerRepository.Get(c => c.Username == username);
+            var customerRowViewModel = _mapper.Map<Core.Models.Customer, CustomerRowViewModel>(customer);
+            return customerRowViewModel;
         }
     }
 }

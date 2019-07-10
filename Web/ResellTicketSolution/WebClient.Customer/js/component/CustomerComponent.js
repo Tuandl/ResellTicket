@@ -1,4 +1,7 @@
 import commonService from '../service/commonService.js';
+import toastService from "../service/toastService.js";
+import apiService from '../service/apiService.js';
+import { appConfig } from "../../constant/appConfig.js";
 
 class CustomerComponent {
 
@@ -23,23 +26,40 @@ class CustomerComponent {
 
                     <div class="customer-form">
                         <input type="hidden" value=${this.html.id} />
-                        
-                            <div class="row">
-                                <div class="form-group">
-									<label class="control-label col-sm-3">Passenger Name:</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control" placeholder="Passenger Name" id="passengerName"/>
-									</div>	
-								</div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group">
-									<label class="control-label col-sm-3">Email Booking:</label>
-									<div class="col-sm-9">
-										<input type="text" class="form-control" placeholder="Email Booking" id="emailBooking"/>
-									</div>	
-								</div>
-                            </div>
+                            <form class="form-horizontal">
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3">New Passenger Name:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Passenger Name" id="passengerName"/>
+                                        </div>	
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3">New Passenger Email:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Passenger Email" id="passengerEmail"/>
+                                        </div>	
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3">New Passenger Phone:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Passenger Phone" id="passengerPhone"/>
+                                        </div>	
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3">New Passenger Identify:</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" placeholder="Passenger Identify" id="passengerIdentify"/>
+                                        </div>	
+                                    </div>
+                                </div>
+                            </form>
                     </div>
                 </div>
             </div>`;
@@ -48,10 +68,24 @@ class CustomerComponent {
     }
     get passengerDetail() {
         this.html.params = {
-            passengerName: document.getElementById('passengerName').value,
-            emailBooking: document.getElementById('emailBooking').value
+            buyerPassengerName: document.getElementById('passengerName').value,
+            buyerPassengerEmail: document.getElementById('passengerEmail').value,
+            buyerPassengerPhone: document.getElementById('passengerPhone').value,
+            buyerPassengerIdentify: document.getElementById('passengerIdentify').value            
         }
         return this.html.params;
+    }
+
+    async AutoFillCustomerDetail() {
+        try {
+            var customerResponse = await apiService.get(appConfig.apiUrl.customerDetail, '');
+                document.getElementById('passengerName').value = customerResponse.fullName;
+                var x = document.getElementById('passengerName').value;
+                document.getElementById('passengerEmail').value = customerResponse.email;
+                document.getElementById('passengerPhone').value = customerResponse.phoneNumber; 
+        } catch (ex) {
+            toastService.error('error');
+        }
     }
     get domElement() {
         return this.html;

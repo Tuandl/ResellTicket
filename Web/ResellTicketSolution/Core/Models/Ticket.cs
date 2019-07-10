@@ -8,7 +8,10 @@ namespace Core.Models
 {
     public class Ticket : EntityBase
     {
-        public string PassengerId { get; set; }
+        public string BuyerPassengerName { get; set; }
+        public string BuyerPassengerEmail { get; set; }
+        public string BuyerPassengerPhone { get; set; }
+        public string BuyerPassengerIdentify { get; set; }
         public string TicketCode { get; set; }
         public bool? IsTicketCodeValid { get; set; }
         public bool? IsVehicleValid { get; set; }

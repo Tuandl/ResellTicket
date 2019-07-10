@@ -29,18 +29,20 @@ export default class PassengerInformationScreen extends Component {
         if (res.status === 200) {
             const ticketDetail = res.data
             this.setState({
-                passengerName: ticketDetail.passengerName,
-                emailBooking: ticketDetail.emailBooking,
-                passengerId: ticketDetail.passengerId
+                buyerPassengerName: ticketDetail.buyerPassengerName,
+                buyerPassengerEmail: ticketDetail.buyerPassengerEmail,
+                buyerPassengerPhone: ticketDetail.buyerPassengerPhone,
+                buyerPassengerIdentify: ticketDetail.buyerPassengerIdentify
             })
         }
     }
 
     render() {
         const {
-            passengerName,
-            emailBooking,
-            passengerId
+            buyerPassengerName,
+            buyerPassengerEmail,
+            buyerPassengerPhone,
+            buyerPassengerIdentify
         } = this.state
         const { navigate } = this.props.navigation;
         return (
@@ -59,17 +61,21 @@ export default class PassengerInformationScreen extends Component {
                 </Header>
                 <ScrollView>
                     <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
-                        <Label style={styles.label}>Passenger Name:</Label>
+                        <Label style={styles.label}>New Passenger Name:</Label>
                         <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{passengerName}</Text>
+                            <Text style={{ color: 'black' }}>{buyerPassengerName}</Text>
                         </Item>
-                        <Label style={styles.label}>Passenger Id:</Label>
+                        <Label style={styles.label}>New Passenger Email:</Label>
                         <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{passengerId}</Text>
+                            <Text style={{ color: 'black' }}>{buyerPassengerEmail}</Text>
                         </Item>
-                        <Label style={styles.label}>Passenger Email:</Label>
+                        <Label style={styles.label}>New Passenger Phone:</Label>
                         <Item style={styles.detail}>
-                            <Text style={{ color: 'black' }}>{emailBooking}</Text>
+                            <Text style={{ color: 'black' }}>{buyerPassengerPhone}</Text>
+                        </Item>
+                        <Label style={styles.label}>New Passenger Identify:</Label>
+                        <Item style={styles.detail}>
+                            <Text style={{ color: 'black' }}>{buyerPassengerIdentify}</Text>
                         </Item>
                     </Content>
                 </ScrollView>

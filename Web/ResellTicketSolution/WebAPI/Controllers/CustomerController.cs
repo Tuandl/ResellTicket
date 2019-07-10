@@ -213,5 +213,14 @@ namespace WebAPI.Controllers
 
             return Ok(customer);
         }
+
+        [HttpGet]
+        [Route("detail")]
+        public ActionResult<CustomerRowViewModel> GetCustomerDetail()
+        {
+            var username = User.Identity.Name;
+            var customer = _customerService.GetCustomerDetail(username);
+            return Ok(customer);
+        }
     }
 }

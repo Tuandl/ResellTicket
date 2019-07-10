@@ -3,6 +3,7 @@ import apiService from '../js/service/apiService.js';
 import commonService from '../js/service/commonService.js';
 import AutoSuggestComponent from "../js/component/AutoSuggestComponent.js";
 import TicketStatus from '../js/enum/ticketStatus.js';
+import PassengerComponent from "../js/component/PassengerComponent.js";
 
 function postEditTicketController() {
 
@@ -21,10 +22,12 @@ function postEditTicketController() {
         emailBooking: 'emailBooking',
         sellingPrice: 'sellingPrice',
         btnEvent: 'btnEvent',
+        customerDetailContainer: 'customer-detail-container'
     };
 
     var model = {};
     const ticketId = parseInt(window.location.search.substr(10));
+    
     init();
     getTicketDetail();
 
@@ -123,6 +126,16 @@ function postEditTicketController() {
         divBtn.appendChild(btn);
     }
 
+    function createBtnView(btnValue, event) {
+        var divBtn = document.getElementById('btnEvent');
+        var btn = document.createElement('INPUT');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('value', btnValue);
+        btn.setAttribute('class', 'btn-view-now');
+        btn.setAttribute('onclick', event);
+        divBtn.appendChild(btn);
+    }    
+
     function initBtnEvent() {
         if (ticketId === '') {
             document.getElementById('title').innerHTML = 'POST TICKET'
@@ -142,6 +155,7 @@ function postEditTicketController() {
                     break
                 case TicketStatus.Bought:
                     document.getElementById('title').innerHTML = 'CONFIRM TIKCET RENAMING'
+                    createBtn('BUYER INFO', () => viewPassengerInfo());
                     createBtn('CONFIRM', () => confirmTicketRename());
                     createBtn('REFUSE', () => refuseTicketRename());
             }
@@ -168,6 +182,29 @@ function postEditTicketController() {
             window.location.href = "postedTicket.html";
         }
     }
+
+    // async function viewPassengerInfo() {
+    //     const res = await apiService.get(appConfig.apiUrl.ticketViewPassengerInfo, { ticketId });
+    //     if (res.status === 200) {
+    //         window.location.href = "postedTicket.html";
+    //     }
+    // }
+
+    function viewPassengerInfo() {
+        renderCustomerDetail(ticketId);
+    }
+    
+    async function renderCustomerDetail(ticketId) {
+        var customerDetailContainer = document.getElementById(id.customerDetailContainer);
+        commonService.removeAllChildren(customerDetailContainer);
+        const passengerComponent = new PassengerComponent(ticketId);
+        await passengerComponent.passengerDetail();
+        customerDetailContainer.appendChild(passengerComponent.render());
+        await passengerComponent.disabledField();
+        // passengerComponent.passengerDetail();
+        $(`#${'customer-detail-modal'}`).modal();
+    }
+    
 
     async function refuseTicketRename() {
         const res = await apiService.putParams(appConfig.apiUrl.ticketRefuseRenamed, { id: ticketId });
