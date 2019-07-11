@@ -528,48 +528,40 @@ namespace Service.Services
         public RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize)
         {
             param = param ?? "";
-            var liabilityRoutes = new List<RouteRowViewModel>();
+            //var liabilityRoutes = new List<RouteRowViewModel>();
 
-            var renamedSuccessOrFailTickets = _ticketRepository.GetAllQueryable()
-                                            .Where(x => x.Status == TicketStatus.RenamedSuccess || x.Status == TicketStatus.RenamedFail)
-                                            .OrderBy(x => x.UpdatedAtUTC);
-            string temp = "";
-            foreach (var ticket in renamedSuccessOrFailTickets)
-            {
-                int routeId = _routeTicketRepository.Get(x => x.TicketId == ticket.Id).RouteId;
-                if (!temp.Contains(routeId.ToString()))
-                {
-                    temp += routeId.ToString();
+            var routeVMs =
+                (from ROUTE in _routeRepository.GetAllQueryable()
 
-                    Route route = _routeRepository.Get(x => x.Id == routeId
-                                                        && x.Status == RouteStatus.Bought
-                                                        && x.Code.ToLower().Contains(param.ToLower())
-                                                        && x.Deleted == false);
-                    if (route != null)
-                    {
-                        var routeVM = new RouteRowViewModel()
-                        {
-                            Id = route.Id,
-                            Code = route.Code,
-                            CreatedAt = route.CreatedAtUTC,
-                            CustomerId = route.CustomerId,
-                            Status = route.Status,
-                            TotalAmount = route.TotalAmount,
-                            TicketQuantity = route.RouteTickets.Count(),
-                        };
-                        liabilityRoutes.Add(routeVM);
-                    }
-                }
-            }
-            var totalLiabilityRoutes = liabilityRoutes.Count();
-            liabilityRoutes.Skip((page - 1) * pageSize).Take(pageSize);
-            //Paging routes
-            //var routesPaged = routes.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                join ROUTETICKET in _routeTicketRepository.GetAllQueryable()
+                on ROUTE.Id equals ROUTETICKET.RouteId
+
+                where
+                    ROUTE.Deleted == false &&
+                    ROUTETICKET.Deleted == false &&
+                    ROUTETICKET.Ticket.Deleted == false &&
+                    ROUTE.Status == RouteStatus.Bought &&
+                    (ROUTETICKET.Ticket.Status == TicketStatus.RenamedSuccess || ROUTETICKET.Ticket.Status == TicketStatus.RenamedFail) &&
+                    ROUTE.Code.ToLower().Contains(param.ToLower())
+
+                select new RouteRowViewModel() {
+                    Id = ROUTE.Id,
+                    Code = ROUTE.Code,
+                    CreatedAt = ROUTE.CreatedAtUTC,
+                    CustomerId = ROUTE.CustomerId,
+                    Status = ROUTE.Status,
+                    TotalAmount = ROUTE.TotalAmount,
+                    TicketQuantity = ROUTE.RouteTickets.Count(),
+                }).Distinct();
+
+            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
+            var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
+
 
             var routeDataTable = new RouteDataTable()
             {
-                Data = liabilityRoutes,
-                Total = totalLiabilityRoutes
+                Data = routePagedVMs.ToList(),
+                Total = routeVMs.Count()
             };
 
             foreach (var route in routeDataTable.Data)
@@ -589,6 +581,41 @@ namespace Service.Services
             }
 
             return routeDataTable;
+
+            //var renamedSuccessOrFailTickets = _ticketRepository.GetAllQueryable()
+            //                                .Where(x => x.Status == TicketStatus.RenamedSuccess || x.Status == TicketStatus.RenamedFail)
+            //                                .OrderBy(x => x.UpdatedAtUTC);
+            //string temp = "";
+            //foreach (var ticket in renamedSuccessOrFailTickets)
+            //{
+            //    var route = _routeTicketRepository.Get(x => x.TicketId == ticket.Id && x.Route.Status == RouteStatus.Bought).Route;
+            //    if (!temp.Contains(route.Code.ToString()))
+            //    {
+            //        temp += route.Code.ToString();
+
+            //        route = _routeRepository.Get(x => x.Id == route.Id
+            //                                            && x.Status == RouteStatus.Bought
+            //                                            && x.Code.ToLower().Contains(param.ToLower())
+            //                                            && x.Deleted == false);
+            //        if (route != null)
+            //        {
+            //            var routeVM = new RouteRowViewModel()
+            //            {
+            //                Id = route.Id,
+            //                Code = route.Code,
+            //                CreatedAt = route.CreatedAtUTC,
+            //                CustomerId = route.CustomerId,
+            //                Status = route.Status,
+            //                TotalAmount = route.TotalAmount,
+            //                TicketQuantity = route.RouteTickets.Count(),
+            //            };
+            //            liabilityRoutes.Add(routeVM);
+            //        }
+            //    }
+            //}
+            //var totalLiabilityRoutes = liabilityRoutes.Count();
+            //Paging routes
+            //var routesPaged = routes.Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
     }
 }

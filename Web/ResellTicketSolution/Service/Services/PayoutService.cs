@@ -53,7 +53,7 @@ namespace Service.Services
 
             bool isRouteValid = true;
             int routeId = -1;
-            
+
             //lấy all routeTicke ứng vs cái Ticket
             ///// CÁCH 1
             var route =
@@ -93,7 +93,7 @@ namespace Service.Services
             //    }
             //}
 
-            
+
             //
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == route.Id);
             var ticket = _ticketRepository.Get(x => x.Id == TicketId);
@@ -121,8 +121,14 @@ namespace Service.Services
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
 
-            //ticket.Status = TicketStatus.Completed;
-            //_ticketRepository.Update(ticket);
+            ticket.Status = TicketStatus.Completed;
+            _ticketRepository.Update(ticket);
+            int renanmedSuccessTickets = route.RouteTickets.Where(x => x.Ticket.Status == TicketStatus.Completed && x.Deleted == false).Count();
+            if (renanmedSuccessTickets == route.RouteTickets.Count(x => x.Deleted == false))
+            {
+                route.Status = RouteStatus.Completed;
+                _routeRepository.Update(route);
+            }
 
             _unitOfWork.CommitChanges();
 
