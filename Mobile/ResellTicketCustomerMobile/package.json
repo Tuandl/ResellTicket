@@ -7,6 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@builderx/utils": "^0.1.6",
     "apisauce": "^1.0.2",
     "moment": "^2.24.0",
     "native-base": "^2.12.1",
@@ -21,6 +22,7 @@
     "react-native-onesignal": "^3.2.14",
     "react-native-stripe": "^1.2.2",
     "react-native-stripe-api": "^0.1.0",
+    "react-native-svg": "^9.5.1",
     "react-native-toasty": "^0.0.4",
     "react-native-vector-icons": "^6.4.2",
     "react-navigation": "^3.11.0",

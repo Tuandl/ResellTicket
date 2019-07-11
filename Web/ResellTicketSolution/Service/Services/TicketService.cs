@@ -60,6 +60,7 @@ namespace Service.Services
         private readonly IOneSignalService _oneSignalService;
         private readonly UserManager<User> _userManager;
         private readonly IAdminDeviceRepository _adminDeviceRepository;
+        private readonly INotificationService _notificationService;
 
         public TicketService(IMapper mapper,
                              IUnitOfWork unitOfWork,
@@ -70,7 +71,8 @@ namespace Service.Services
                              ICustomerDeviceRepository customerDeviceRepository,
                              IOneSignalService oneSignalService,
                              UserManager<User> userManager,
-                             IAdminDeviceRepository adminDeviceRepository
+                             IAdminDeviceRepository adminDeviceRepository,
+                             INotificationService notificationService
         )
         {
             _mapper = mapper;
@@ -82,6 +84,7 @@ namespace Service.Services
             _oneSignalService = oneSignalService;
             _userManager = userManager;
             _adminDeviceRepository = adminDeviceRepository;
+            _notificationService = notificationService;
         }
 
         public List<TicketRowViewModel> GetTickets()
@@ -415,6 +418,14 @@ namespace Service.Services
             }
             var message = "Ticket " + existedTicket.TicketCode + " is valid";
             List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+
+            //Save notification into db
+            _notificationService.SaveNotification(
+                customerId: existedTicket.SellerId,
+                type: NotificationType.TicketIsValid,
+                data: new { ticketId = existedTicket.Id }
+            );
+
             _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
             return string.Empty;
@@ -473,6 +484,14 @@ namespace Service.Services
             //}
             var message = "Ticket " + existedTicket.TicketCode + " is invalid. " + invalidField + " are incorrect.";
             List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
+
+            //Save notification into db
+            _notificationService.SaveNotification(
+                customerId: existedTicket.SellerId,
+                type: NotificationType.TicketIsReject,
+                data: new { ticketId = existedTicket.Id }
+            );
+
             _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
             return string.Empty;
@@ -528,14 +547,44 @@ namespace Service.Services
                 }
 
                 //noti to seller
+                #region Notify Seller
                 List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
                 var message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Money will be tranfered in a few minutes";
+
+                //Save notification into db
+                _notificationService.SaveNotification(
+                    customerId: existedTicket.SellerId,
+                    type: NotificationType.TicketIsConfirmedRenamed,
+                    data: new { ticketId = existedTicket.Id }
+                );
+
                 _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+                #endregion
 
                 //noti to buyer
-                List<string> buỷerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
+                #region Notify Buyer
+                List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
                 message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
-                _oneSignalService.PushNotificationCustomer(message, buỷerDeviceIds);
+
+                //Save notification into db
+                var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
+                    x.Route.Status == RouteStatus.Bought &&
+                    x.Deleted == false &&
+                    x.Route.Deleted == false
+                );
+
+                if (routeTicket != null && existedTicket.BuyerId != null)
+                {
+                    _notificationService.SaveNotification(
+                        customerId: existedTicket.BuyerId.Value,
+                        type: NotificationType.TicketIsRenamed,
+                        data: new { routeId = routeTicket.RouteId }
+                    );
+                }
+
+                _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+                #endregion
+
             }
             else
             {
@@ -550,9 +599,20 @@ namespace Service.Services
                 {
                     return ex.Message;
                 }
+
+                #region Notify Seller
                 List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
                 var message = "Ticket " + existedTicket.TicketCode + " renamed fail.";
+
+                //Save notification into db
+                _notificationService.SaveNotification(
+                    customerId: existedTicket.SellerId,
+                    type: NotificationType.TicketIsConfirmedRenamedFailed,
+                    data: new { ticketId = existedTicket.Id }
+                );
+
                 _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+                #endregion
             }
 
             return string.Empty;
@@ -620,9 +680,31 @@ namespace Service.Services
             existedTicket.Status = TicketStatus.RenamedFail;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
+
+            #region Notify Buyer
             var message = "Ticket " + existedTicket.TicketCode + " has been refused";
             List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
+
+            //save notification into db
+            var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
+                x.Deleted == false &&
+                x.Route.Deleted == false &&
+                x.Route.Status == RouteStatus.Bought
+            );
+
+            if (routeTicket != null && existedTicket.BuyerId != null)
+            {
+                _notificationService.SaveNotification(
+                    customerId: existedTicket.BuyerId.Value,
+                    type: NotificationType.TicketIsRefuse,
+                    data: new { routeId = routeTicket.RouteId }
+                );
+            }
+
             _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+            #endregion
+
+
             return string.Empty;
         }
 
