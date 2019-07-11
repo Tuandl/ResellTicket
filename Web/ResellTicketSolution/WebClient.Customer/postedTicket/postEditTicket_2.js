@@ -26,7 +26,7 @@ function postEditTicketController() {
     };
 
     var model = {};
-    const ticketId = parseInt(window.location.search.substr(10));
+    const ticketId = window.location.search.substr(10);
     
     init();
     getTicketDetail();

@@ -29,7 +29,7 @@ function TicketRow(props) {
                 )
             case TicketStatus.Completed:
                 return (
-                    <Badge color="danger">RenamedSuccess</Badge>
+                    <Badge color="success">RenamedSuccess</Badge>
                 )
         }
     }
@@ -52,7 +52,7 @@ function TicketRow(props) {
     }
 
     function tranferMoneyToSeller() {
-        props.tranferMoneyToSeller(ticket.id)
+        props.tranferMoneyToSeller(ticket.ticketId)
 
     }
 
@@ -138,14 +138,15 @@ class PayoutRefundTicket extends Component {
     //     })
     // }
 
-    // refundTotalAmountToBuyer = () => {
-    //     Axios.post('api/all-ticket?ticketId=' + ticketId).then(res => {
-    //         if(res.status === 200) {
-    //             toastr.success('Refund Success', 'Refund money successfully.');    
-    //             this.getRouteDetail();          
-    //         }
-    //     })
-    // }
+    refundTotalAmountToBuyer = () => {
+        const ticketId = this.state.routeTickets[0].ticketId;
+        Axios.post('api/all-ticket?ticketId=' + ticketId).then(res => {
+            if(res.status === 200) {
+                toastr.success('Refund Success', 'Refund money successfully.');    
+                this.getRouteDetail();          
+            }
+        })
+    }
 
     render() {
         const { routeDetail, routeTickets, isRefundAll } = this.state;
