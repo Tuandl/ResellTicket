@@ -82,6 +82,7 @@ export default class AccountConnectDetailScreen extends Component {
                 <Header>
                     <Left>
                         <Button
+                            transparent
                             onPress={() => this.props.navigation.navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
