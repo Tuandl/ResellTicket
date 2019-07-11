@@ -82,9 +82,10 @@ export default class LoginScreen extends Component {
                 RNToasty.Error({
                     title: 'Invalid Username or Password',
                 });
+                console.warn('login failed', response);
             }
         } catch (err) {
-            console.error('login error', err);
+            console.warn('login error', err);
         } finally {
             this.setState({
                 showLoading: false,
@@ -185,7 +186,7 @@ export default class LoginScreen extends Component {
                             titleStyle={{ fontWeight: 'bold', color: 'white' }}
                         />
                         <Button
-                            title="Forget Password?"
+                            title="Forgot Password?"
                             type="clear"
                             activeOpacity={0.5}
                             titleStyle={{ color: 'white', fontSize: 15 }}
