@@ -26,5 +26,6 @@ namespace ViewModel.ViewModel.Route
         public string TicketTypeName { get; set; }
         public string VehicleName { get; set; }
         public int Order { get; set; }
+        public string SellerPhone { get; set; }
     }
 }

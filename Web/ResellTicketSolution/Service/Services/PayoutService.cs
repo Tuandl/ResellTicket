@@ -120,6 +120,10 @@ namespace Service.Services
             payoutCreateIntoDatabase.FeeAmount = ticket.CommissionPercent;
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
+
+            //ticket.Status = TicketStatus.Completed;
+            //_ticketRepository.Update(ticket);
+
             _unitOfWork.CommitChanges();
 
             return "";

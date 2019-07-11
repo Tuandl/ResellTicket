@@ -224,17 +224,28 @@ namespace Service.Services
 
         public List<CustomerTicketViewModel> GetCustomerTickets(string username, int page, int pageSize, TicketStatus? status)
         {
-            
+
             var existedCustomer = _customerRepository.Get(x => x.Username == username);
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAtUTC ?? x.CreatedAtUTC)
                 .Skip((page - 1) * pageSize).Take(pageSize);
-            if(status != null && status != TicketStatus.Pending)
+            switch (status)
             {
-                customerTickets = customerTickets.Where(x => x.Status == status);
+                case TicketStatus.Bought:
+                    customerTickets = customerTickets.Where(x => x.Status == status);
+                    break;
+                case TicketStatus.Renamed:
+                    customerTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedSuccess);
+                    break;
+                case TicketStatus.Completed:
+                    customerTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedFail);
+                    break;
             }
+            //if (status != null && status != TicketStatus.Pending)
+            //{
+            //}
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets.ToList());
             return customerTicketVMs;
         }
@@ -315,13 +326,13 @@ namespace Service.Services
             ticket.Status = Core.Enum.TicketStatus.Pending;
             ticket.SellerId = customerId;
             ticket.ExpiredDateTime = model.DepartureDateTime;
-            
+
             //convert time into UTC time
             var departureStation = _stationRepository.Get(x => x.Id == ticket.DepartureStationId);
-            if(departureStation.City.TimeZoneId != null)
+            if (departureStation.City.TimeZoneId != null)
             {
                 ticket.DepartureDateTimeUTC = ticket.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
-                if(ticket.ExpiredDateTime != null)
+                if (ticket.ExpiredDateTime != null)
                     ticket.ExpiredDateTimeUTC = ticket.ExpiredDateTime.Value.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
             }
             else
@@ -331,10 +342,10 @@ namespace Service.Services
             }
 
             var arrivalStation = _stationRepository.Get(x => x.Id == ticket.ArrivalStationId);
-            if(arrivalStation.City.TimeZoneId != null)
+            if (arrivalStation.City.TimeZoneId != null)
             {
                 ticket.ArrivalDateTimeUTC = ticket.ArrivalDateTime.ToSpecifiedTimeZone(arrivalStation.City.TimeZoneId);
-            } 
+            }
             else
             {
                 ticket.ArrivalDateTimeUTC = ticket.ArrivalDateTime;
@@ -448,8 +459,8 @@ namespace Service.Services
             try
             {
                 _unitOfWork.CommitChanges();
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return ex.Message;
             }
@@ -502,7 +513,8 @@ namespace Service.Services
             }
             if (renameSuccess == true)
             {
-                existedTicket.Status = Core.Enum.TicketStatus.Completed;
+                //existedTicket.Status = Core.Enum.TicketStatus.Completed;
+                existedTicket.Status = TicketStatus.RenamedSuccess;
                 _ticketRepository.Update(existedTicket);
 
 
@@ -527,7 +539,8 @@ namespace Service.Services
             }
             else
             {
-                existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+                //existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+                existedTicket.Status = TicketStatus.RenamedFail;
                 _ticketRepository.Update(existedTicket);
                 try
                 {
@@ -603,7 +616,8 @@ namespace Service.Services
                 return "Not found ticket";
             }
 
-            existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+            //existedTicket.Status = Core.Enum.TicketStatus.Invalid;
+            existedTicket.Status = TicketStatus.RenamedFail;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
             var message = "Ticket " + existedTicket.TicketCode + " has been refused";
@@ -621,7 +635,10 @@ namespace Service.Services
 
             foreach (var sellerDevice in customerDevices)
             {
-                deviceIds.Add(sellerDevice.DeviceId);
+                if (sellerDevice.DeviceId != "" && sellerDevice.DeviceId != null)
+                {
+                    deviceIds.Add(sellerDevice.DeviceId);
+                }
             }
             return deviceIds;
         }

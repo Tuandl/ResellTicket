@@ -21,7 +21,7 @@ function toString(status) {
         case TicketStatus.RENAMED:
             return 'Renamed';
         case TicketStatus.COMPLETED:
-            return 'Completed';
+            return 'RenamedSuccess';
         case TicketStatus.REFUSED:
             return 'Refused';
         default:

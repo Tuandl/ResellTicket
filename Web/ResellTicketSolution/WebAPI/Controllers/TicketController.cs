@@ -132,12 +132,12 @@ namespace WebAPI.Controllers
                 return BadRequest("Invalid Request");
             }
 
-            var refundResult = _refundService.RefundMoneyToCustomer(id);
+            //var refundResult = _refundService.RefundMoneyToCustomer(id);
 
-            if (!string.IsNullOrEmpty(refundResult))
-            {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
-            }
+            //if (!string.IsNullOrEmpty(refundResult))
+            //{
+            //    return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
+            //}
 
             var rejectResult = _ticketService.RefuseTicket(id);
 
