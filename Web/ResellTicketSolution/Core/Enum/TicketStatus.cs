@@ -9,13 +9,13 @@ namespace Core.Enum
         /// <summary>
         /// trạng thái lúc post vé lên
         /// </summary>
-        Pending = 1, 
-        
+        Pending = 1,
+
         /// <summary>
         /// trạng thái sau khi staff duyệt vé hợp lệ
         /// hoặc khi người bán từ chổi đổi tên
         /// </summary>
-        Valid  = 2,
+        Valid = 2,
 
         /// <summary>
         /// trạng thái sau khi staff duyệt vé không hợp lệ
@@ -31,11 +31,14 @@ namespace Core.Enum
         /// trạng thái khi người bán thông báo đã đổi tên
         /// </summary>
         Renamed = 5,
-         
+
         /// <summary>
         /// trạng thái khi staff xác nhận đã đổi tên thành công
         /// </summary>
-        Completed = 6
+        Completed = 6,
+
+        RenamedSuccess = 7,
+        RenamedFail = 8
 
         /// <summary>
         /// trạng thái khi người bán từ chối đổi tên

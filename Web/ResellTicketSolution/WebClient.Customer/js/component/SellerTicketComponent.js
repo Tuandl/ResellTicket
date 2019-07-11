@@ -28,7 +28,12 @@ class SellerTicketComponent {
             case ticketStatus.Renamed:
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
-                return `<span class="label label-success">Completed</span>`;
+                // return `<span class="label label-success">Completed</span>`;
+                return `<span class="label label-success">RenamedSuccess</span>`;
+            case ticketStatus.RenamedSuccess:
+                return `<span class="label label-success">RenamedSuccess</span>`;
+            case ticketStatus.RenamedFail:
+                return `<span class="label label-danger">RenamedFail</span>`;
             default:
                 return `<span class="label label-default">Expired</span>`;
         }
@@ -47,7 +52,7 @@ class SellerTicketComponent {
 
     render() {
         const ticket = this.ticket;
-        if(moment(new Date()).isAfter(ticket.expiredDateTime)) {
+        if (moment(new Date()).isAfter(ticket.expiredDateTime)) {
             ticket.status = 0
         }
         this.html.innerHTML =

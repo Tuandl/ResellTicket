@@ -130,7 +130,7 @@ export default class ValidTicketDetail extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                <strong><i className="icon-info pr-1"></i>{validCount} {invalidCount}</strong>
+                                <strong><i className="icon-info pr-1"></i></strong>
                             </CardHeader>
                             <CardBody>
                                 <Row style={{ marginBottom: 10 }}>
@@ -148,7 +148,7 @@ export default class ValidTicketDetail extends Component {
                                         <Col md="6" xs="12">
                                             <FormGroup>
                                                 <Label htmlFor={detail.name}>{detail.name}</Label>
-                                                <Input type="text" id="{detail.name}" disabled value={detail.value}
+                                                <Input type="text" id={detail.name} disabled value={detail.value}
                                                 />
                                             </FormGroup>
                                         </Col>

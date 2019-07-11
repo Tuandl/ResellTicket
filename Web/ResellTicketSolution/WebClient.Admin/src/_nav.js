@@ -58,35 +58,41 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'New Posted Ticket',
+      name: 'New Posted Tickets',
       url: '/newPostedTicket',
       icon: 'fa fa-ticket'
     },
     {
-      name: 'Valid Ticket',
+      name: 'Valid Tickets',
       url: '/validTicket',
       icon: 'fa fa-ticket'
     },
     {
-      name: 'InValid Ticket',
+      name: 'InValid Tickets',
       url: '/invalidTicket',
       icon: 'fa fa-ticket'
     },
     {
-      name: 'Bought Ticket',
+      name: 'Bought Tickets',
       url: '/boughtTicket',
       icon: 'fa fa-ticket'
     },
     {
-      name: 'Renamed Ticket',
+      name: 'Renamed Tickets',
       url: '/renamedTicket',
       icon: 'fa fa-ticket'
     },
     {
-      name: 'Completed Ticket',
+      name: 'Liability Tickets',
+      url: '/liabilityTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Completed Tickets',
       url: '/completedTicket',
       icon: 'fa fa-ticket'
-    }
+    },
+    
     // {
     //   title: true,
     //   name: 'Theme',

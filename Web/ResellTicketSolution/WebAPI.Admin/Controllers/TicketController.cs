@@ -156,25 +156,25 @@ namespace WebAPI.Admin.Controllers
                 return StatusCode((int)HttpStatusCode.NotAcceptable, validResult);
             }
 
-            if (renameSuccess)
-            {
-                //valid thì make Payout cho số tiền 1 vé cho  người SELLER
-                var payoutResult = _payoutService.MakePayoutToCustomer(id);
+            //if (renameSuccess)
+            //{
+            //    //valid thì make Payout cho số tiền 1 vé cho  người SELLER
+            //    var payoutResult = _payoutService.MakePayoutToCustomer(id);
 
-                if (!string.IsNullOrEmpty(payoutResult))
-                {
-                    return StatusCode((int)HttpStatusCode.NotAcceptable, payoutResult);
-                }
-            } else
-            {
-                //invalid thì make Refund cho số tiền 1 ROUTE cho  người BUYER
-                var refundResult = _refundService.RefundMoneyToCustomer(id);
+            //    if (!string.IsNullOrEmpty(payoutResult))
+            //    {
+            //        return StatusCode((int)HttpStatusCode.NotAcceptable, payoutResult);
+            //    }
+            //} else
+            //{
+            //    //invalid thì make Refund cho số tiền 1 ROUTE cho  người BUYER
+            //    var refundResult = _refundService.RefundMoneyToCustomer(id);
 
-                if (!string.IsNullOrEmpty(refundResult))
-                {
-                    return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
-                }
-            }
+            //    if (!string.IsNullOrEmpty(refundResult))
+            //    {
+            //        return StatusCode((int)HttpStatusCode.NotAcceptable, refundResult);
+            //    }
+            //}
             return Ok();
         }
     }

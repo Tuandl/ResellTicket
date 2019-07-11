@@ -28,7 +28,11 @@ class TicketComponent {
             case ticketStatus.Renamed:
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
-                return `<span class="label label-success">Completed</span>`;
+                return `<span class="label label-success">RenamedSuccess</span>`;
+            case ticketStatus.RenamedSuccess:
+                return `<span class="label label-success">RenamedSuccess</span>`;
+            case ticketStatus.RenamedFail:
+                return `<span class="label label-success">RenamedFail</span>`;
             default:
                 return `<span class="label label-default">Expired</span>`;
         }
@@ -70,7 +74,7 @@ class TicketComponent {
                     <div class="route">
                         <input type="hidden" value=${ticket.ticketId} />
                         <div class="routeHeader">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <h4><b>Ticket</b></h4>
                             </div>
                             <div class="col-md-2">
@@ -82,7 +86,7 @@ class TicketComponent {
                             <div class="col-md-2">
                                 <h4><b>Transportation</b></h4>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <h4><b>Status</b></h4>
                             </div>
                             <div class="col-md-2">
@@ -90,7 +94,7 @@ class TicketComponent {
                             </div>
                         </div>
                         <div class="routeBody" style="color: '#b8891d'">
-                            <div class="col-md-3"><span><b>${ticket.ticketCode}</b></span></div>
+                            <div class="col-md-2"><span><b>${ticket.ticketCode}</b></span></div>
                             <div class="col-md-2">
                                 <span>${moment(ticket.departureDateTime).format(appConfig.format.datetime)}</span>
                             </div>
@@ -98,7 +102,7 @@ class TicketComponent {
                                 <span>${moment(ticket.arrivalDateTime).format(appConfig.format.datetime)}</span>
                             </div>
                             <div class="col-md-2"><span>${ticket.transportationName}</span></div>
-                            <div class="col-md-1">${this.renderStatus(ticket.status)}</div>
+                            <div class="col-md-2">${this.renderStatus(ticket.status)}</div>
 
                             <div class="col-md-2">
                                 <h3>${numeral(ticket.sellingPrice).format('$0,0.00')}</h3>

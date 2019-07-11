@@ -7,9 +7,8 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import PaginationView from '../Pagination/PaginationComponent';
 
-
-function TicketRow(props) {
-    const { ticket } = props;
+function RouteRow(props) {
+    const { route } = props;
     const getBadge = (status) => {
         if (status === 1) {
             return (
@@ -17,22 +16,23 @@ function TicketRow(props) {
             )
         }
     }
-    const ticketLink = `/newPostedTicket/${ticket.id}`
+    const routeLink = `/liabilityTicket/${route.id}`
     return (
         <tr>
             <th>{props.index + 1}</th>
-            <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureCity}</td>
-            <td>{moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{ticket.arrivalCity}</td>
-            <td>{moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            {/* <td>{ticket.sellerPhone}</td> */}
-            <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
-            <td>{getBadge(ticket.status)}</td>
+            <td>{route.code}</td>
+            <td>{route.departureCityName}</td>
+            <td>{moment(route.departureDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{route.arrivalCityName}</td>
+            <td>{moment(route.arrivalDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{<NumberFormat value={route.totalAmount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
+
+            <td>{route.ticketQuantity}</td>
+            {/* <td>{getBadge(route.status)}</td> */}
             <td>
-                <Link to={ticketLink}>
+                <Link to={routeLink}>
                     <Button color="success" className="mr-2">
-                        <i className="fa fa-edit fa-lg mr-1"></i>Valid
+                        <i className="fa fa-edit fa-lg mr-1"></i>Details
                     </Button>
                 </Link>
             </td>
@@ -42,40 +42,29 @@ function TicketRow(props) {
     )
 }
 
-class NewPostedTickets extends Component {
+class LiabilityTickets extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            searchParam: '',
-            tickets: [],
-            isLogin: false,
             userRole: '',
+            routes: [],
             currentPage: 1,
             pageSize: 5,
-            pageCount: 1
+            pageCount: 1,
+            searchValue: ''
         }
-
     }
 
     componentWillMount() {
-        var OneSignal = window.OneSignal || [];
-        var self = this
-        OneSignal.on('notificationDisplay', function (event) {
-            if (event.content.indexOf('posted')) {
-                self.getPendingTickets();
-            }
-        });
         var token = localStorage.getItem('userToken');
         if (token) {
-            this.setState({
-                isLogin: true
-            })
             var jwt = require('jwt-decode');
             var decode = jwt(token);
             var userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
             if (userRole === 'Staff') {
-                this.getPendingTickets();
+                // this.getPendingTickets();
+                this.getLiabilityRoutes();
                 this.setState({
                     userRole: userRole
                 })
@@ -83,15 +72,15 @@ class NewPostedTickets extends Component {
         }
     }
 
-    getPendingTickets = () => {
-        var { pageSize, currentPage } = this.state;
-        Axios.get('api/ticket/pending?param=' + this.state.searchParam + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
-            this.setState({
-                tickets: res.data.data,
-                pageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
-            })
-        });
-        
+    getLiabilityRoutes = () => {
+        var {searchValue, currentPage, pageSize} = this.state
+        Axios.get('api/route?param=' + searchValue + '&page=' + currentPage + '&pageSize=' + pageSize).then(res => {
+            if(res.status=== 200) {
+                this.setState({
+                    routes : res.data.data
+                })
+            }
+        })
     }
 
     onChange = (event) => {
@@ -106,7 +95,7 @@ class NewPostedTickets extends Component {
         this.setState({
             currentPage: 1
         }, () => {
-            this.getPendingTickets()
+            this.getLiabilityRoutes()
         })
     }
 
@@ -116,24 +105,24 @@ class NewPostedTickets extends Component {
                 pageNumber === 'next' ? this.state.currentPage + 1 :
                     pageNumber
         }, () => {
-            this.getPendingTickets();
+            this.getLiabilityRoutes();
         })
     }
 
     render() {
-        var { tickets, isLogin, userRole, currentPage, pageCount } = this.state
-        return (
-            isLogin ? userRole === 'Staff' ?
-                <div className="animated fadeIn">
+        var {routes, currentPage, pageCount, userRole} = this.state;
+        return(
+            userRole === 'Staff' ?
+            <div className="animated fadeIn">
                     <Row>
                         <Col xl={12}>
                             <Card>
                                 <CardHeader>
                                     <Form className="text-right mr-2" onSubmit={this.onSearch}>
                                         <InputGroup>
-                                            <Input type="text" className="mr-2" placeholder="Ticketcode" name="searchParam" value={this.state.searchParam} onChange={this.onChange} />
+                                            <Input type="text" className="mr-2" placeholder="Route Code" name="searchValue" value={this.state.searchValue} onChange={this.onChange} />
                                             <Button color="primary">
-                                                <i className="fa fa-search fa-lg mr-1"></i>Search Ticket
+                                                <i className="fa fa-search fa-lg mr-1"></i>Search Route
                                                 </Button>
                                         </InputGroup>
                                     </Form>
@@ -148,19 +137,18 @@ class NewPostedTickets extends Component {
                                                 <th>Departure Time</th>
                                                 <th>Arrival</th>
                                                 <th>Arrival Time</th>
-                                                {/* <th>Seller Phone</th> */}
-                                                <th>Price</th>
-                                                <th>Status</th>
+                                                <th>Total Amount</th>
+                                                <th>Ticket Quantity</th>
+                                                {/* <th>Status</th> */}
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} parent={this} />
-                                            )}
+                                            {routes.map((route, index) => (
+                                                <RouteRow key={index} route={route} index={index} parent={this} />
+                                            ))}
                                         </tbody>
                                     </Table>
-
                                     <div style={{ float: 'right' }}>
                                         <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
                                     </div>
@@ -168,12 +156,9 @@ class NewPostedTickets extends Component {
                             </Card>
                         </Col>
                     </Row>
-                </div>
-                : ''
-                : <Redirect to="/login" />
-
+                </div> : ''
         )
     }
 }
 
-export default NewPostedTickets
+export default LiabilityTickets;
