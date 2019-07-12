@@ -2,28 +2,32 @@ import React, { Component } from "react";
 import { StyleSheet, View, FlatList, Text, TextInput } from "react-native";
 import { Center } from "@builderx/utils";
 import Svg, { Ellipse } from "react-native-svg";
+import moment from 'moment';
+import formatConstant from "../constants/formatConstant";
 
 export default class NotificationListComponent extends Component {
+
+    constructor(props) {
+        super(props);
+    }
+
     render() {
+        const { notifications } = this.props;
+
         return (
             <View style={[styles.root, this.props.style]}>
                 <FlatList
-                    data={[
-                        {},{},{},
-                        {},{},{},
-                        {},{},{},
-                        {},{},{},
-                    ]}
+                    data={notifications}
                     renderItem={({ item, separators }) => (
                         <View style={styles.rowBgColor}>
                             <Center vertical>
                                 <View style={styles.group}>
                                     <Text style={styles.rowTitle}>Notification</Text>
                                     <Text style={styles.rowSubTitle}>
-                                        Your posted ticket is valid. Now people can buy your ticket.
+                                        {item.message}
                                     </Text>
                                     <Text style={styles.rowCreatedAt}>
-                                        21:59 - July 10, 2019
+                                        {moment(item.createdAt).format(formatConstant.NOTIFICATION_TIME)}
                                     </Text>
                                 </View>
                             </Center>
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignSelf: "stretch",
         paddingBottom: 8,
-        fontSize: 16
+        fontSize: 17
     },
     rowSubTitle: {
         flex: 1,
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf: "flex-start",
         justifyContent: "space-between",
-        fontSize: 13,
+        fontSize: 14,
         lineHeight: 16,
         letterSpacing: 0,
         textAlign: "left"
