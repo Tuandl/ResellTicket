@@ -39,6 +39,12 @@ namespace Service.Services
         /// <param name="username"></param>
         /// <returns></returns>
         NotificationCountViewModel CountUnreadNotifications(string username);
+
+        /// <summary>
+        /// Mark all Notifications as read for this customer
+        /// </summary>
+        /// <param name="usename"></param>
+        void ReadAllNotification(string usename);
     }
 
     public class NotificationService : INotificationService
@@ -141,6 +147,24 @@ namespace Service.Services
             return new NotificationCountViewModel() {
                 Quantity = quantity 
             };
+        }
+
+        public void ReadAllNotification(string usename)
+        {
+            var unreadNotifications = _notificationRepository.GetAllQueryable()
+                .Where(x => 
+                    x.Deleted == false &&
+                    x.Customer.Username == usename &&
+                    x.Read == false
+                );
+
+            foreach (var unreadNotification in unreadNotifications)
+            {
+                unreadNotification.Read = true;
+                _notificationRepository.Update(unreadNotification);
+            }
+
+            _unitOfWork.CommitChanges();
         }
     }
 }
