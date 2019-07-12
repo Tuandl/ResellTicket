@@ -7,6 +7,7 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import { ScrollView } from 'react-native-gesture-handler';
 import { RNToasty } from 'react-native-toasty';
+import Dialog from "react-native-dialog";
 
 export default class DetailTicketScreen extends Component {
     constructor(props) {
@@ -38,7 +39,10 @@ export default class DetailTicketScreen extends Component {
                 isArrivalValid: true,
                 isPassengerNameValid: true,
                 isEmailBookingValid: true
-            }
+            },
+            dialogVisibleConfirmTicketRenamed: false,
+            dialogVisibleRefuseTicketRenamed: false,
+            dialogVisibleDeleteTicket: false
         }
     }
 
@@ -46,9 +50,45 @@ export default class DetailTicketScreen extends Component {
         this.getTicketDetail();
     }
 
+    showDialogConfirmTicketRenamed = () => {
+        this.setState({
+            dialogVisibleConfirmTicketRenamed: true
+        });
+    }
+
+    handleConfirmTicketRenamedCANCEL = () => {
+        this.setState({
+            dialogVisibleConfirmTicketRenamed: false
+        });
+    }
+
+    showDialogRefuseTicketRenamed = () => {
+        this.setState({
+            dialogVisibleRefuseTicketRenamed: true
+        });
+    }
+
+    handleRefuseTicketRenamedCANCEL = () => {
+        this.setState({
+            dialogVisibleRefuseTicketRenamed: false
+        });
+    }
+
+    showDialogDeleteTicket = () => {
+        this.setState({
+            dialogVisibleDeleteTicket: true
+        });
+    }
+
+    handleDeleteTicketCANCEL = () => {
+        this.setState({
+            dialogVisibleDeleteTicket: false
+        });
+    }
+
     async getTicketDetail() {
         this.setState({
-            isLoading : true
+            isLoading: true
         })
         const ticketId = this.props.navigation.getParam('ticketId');
         const res = await Api.get('api/ticket/detail?ticketId=' + ticketId);
@@ -193,23 +233,47 @@ export default class DetailTicketScreen extends Component {
                                     </Button>
                                     <Button rounded block success
                                         style={{ margin: 20, marginBottom: 0 }}
-                                        onPress={this.confirmTicketRenamed}>
-                                        {isConfirmLoading ?  <ActivityIndicator size="small" animating color="#fff" /> 
-                                        : <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>}
+                                        onPress={this.showDialogConfirmTicketRenamed}>
+                                        {isConfirmLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                            : <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>}
                                     </Button>
+                                    <Dialog.Container visible={this.state.dialogVisibleConfirmTicketRenamed}>
+                                        <Dialog.Title>Confirm Ticket Renamed</Dialog.Title>
+                                        <Dialog.Description>
+                                            Do you want to Confirm Renamed this Ticket?
+                                        </Dialog.Description>
+                                        <Dialog.Button label="Cancel" onPress={this.handleConfirmTicketRenamedCANCEL} />
+                                        <Dialog.Button label="Rename" onPress={this.confirmTicketRenamed} />
+                                    </Dialog.Container>
                                     <Button rounded block danger
                                         style={{ marginTop: 20, marginBottom: 0 }}
-                                        onPress={this.RefuseTicket}>
-                                        {isRefuseLoading ? <ActivityIndicator size="small" animating color="#fff" /> 
-                                        : <Text style={styles.buttonText}>Refuse Ticket Renamed</Text>}
+                                        onPress={this.showDialogRefuseTicketRenamed}>
+                                        {isRefuseLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                            : <Text style={styles.buttonText}>Refuse Ticket Renamed</Text>}
                                     </Button>
+                                    <Dialog.Container visible={this.state.dialogVisibleRefuseTicketRenamed}>
+                                        <Dialog.Title>Refuse Ticket Renamed</Dialog.Title>
+                                        <Dialog.Description>
+                                            Do you want to Refuse to rename this Ticket ?
+                                        </Dialog.Description>
+                                        <Dialog.Button label="Cancel" onPress={this.handleRefuseTicketRenamedCANCEL} />
+                                        <Dialog.Button label="Refuse" onPress={this.RefuseTicket} />
+                                    </Dialog.Container>
                                 </Container>
                                 : <Button rounded block danger
                                     style={{ margin: 40, marginBottom: 0 }}
-                                    onPress={this.deletePostedTicket}>
+                                    onPress={this.showDialogDeleteTicket}>
                                     {isLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Delete</Text>}
                                 </Button>}
+                            <Dialog.Container visible={this.state.dialogVisibleDeleteTicket}>
+                                <Dialog.Title>Delete Ticket</Dialog.Title>
+                                <Dialog.Description>
+                                    Do you want to Delete this Ticket ?
+                                        </Dialog.Description>
+                                <Dialog.Button label="Cancel" onPress={this.handleDeleteTicketCANCEL} />
+                                <Dialog.Button label="Delete" onPress={this.deletePostedTicket} />
+                            </Dialog.Container>
                         </Content>
                     }
                 </ScrollView>
@@ -223,7 +287,7 @@ export default class DetailTicketScreen extends Component {
             ticketId: ticketId
         }
         const { navigation } = this.props;
-            navigation.navigate('PassengerInfo', {params: params});
+        navigation.navigate('PassengerInfo', { params: params });
     }
 
     confirmTicketRenamed = async () => {
@@ -235,7 +299,8 @@ export default class DetailTicketScreen extends Component {
         const { navigation } = this.props;
         if (resConfirmRenamedTicket.status === 200) {
             this.setState({
-                isConfirmLoading: false
+                isConfirmLoading: false,
+                showDialogConfirmTicketRenamed: false
             })
             RNToasty.Success({
                 title: 'Confirm Renamed Ticket Successfully'
@@ -254,7 +319,8 @@ export default class DetailTicketScreen extends Component {
         const { navigation } = this.props;
         if (resRefuseTicket.status === 200) {
             this.setState({
-                isRefuseLoading: false
+                isRefuseLoading: false,
+                dialogVisibleRefuseTicketRenamed: false
             })
             RNToasty.Success({
                 title: 'Refuse Ticket Successfully'
@@ -273,7 +339,10 @@ export default class DetailTicketScreen extends Component {
         const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
         const { navigation } = this.props;
         if (resDeleteTicket.status === 200) {
-            this.setState({ isLoading: false })
+            this.setState({
+                isLoading: false,
+                dialogVisibleDeleteTicket: false
+            })
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'
             })

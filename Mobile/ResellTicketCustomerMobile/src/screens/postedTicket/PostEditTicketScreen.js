@@ -9,6 +9,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
 import { TouchableNativeFeedback, TouchableOpacity, ScrollView } from 'react-native-gesture-handler';
 import { RNToasty } from 'react-native-toasty';
 import Autocomplete from 'react-native-autocomplete-input';
+import Dialog from "react-native-dialog";
 
 export default class PostEditTicket extends Component {
     constructor(props) {
@@ -47,7 +48,20 @@ export default class PostEditTicket extends Component {
             passengerName: '',
             emailBooking: '',
             emailValid: true,
+            dialogVisibleDeletePostedTicket: false
         }
+    }
+
+    handleDeletePostedTicketCANCEL = () => {
+        this.setState({
+            dialogVisibleDeletePostedTicket: false
+        });
+    }
+
+    showDialogDeletePostedTicket = () => {
+        this.setState({
+            dialogVisibleDeletePostedTicket: true
+        });
     }
 
     componentWillMount() {
@@ -171,10 +185,10 @@ export default class PostEditTicket extends Component {
                                     mode={"dialog"}
                                     style={{ height: 30 }}
                                     selectedValue={vehicleId}
-                                    onValueChange={(value) => this.setState({ 
+                                    onValueChange={(value) => this.setState({
                                         vehicleId: value,
                                         transportationId: value === vehicleId ? this.state.transportationId : -1,
-                                        transportationName:  value === vehicleId ? transportationName : '',
+                                        transportationName: value === vehicleId ? transportationName : '',
                                         ticketId: value === vehicleId ? this.state.ticketTypeId : -1,
                                         ticketTypeName: value === vehicleId ? ticketTypeName : ''
                                     })}
@@ -196,9 +210,9 @@ export default class PostEditTicket extends Component {
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
-                                        onPress={() => this.setState({ 
-                                            transportations: [], 
-                                            transportationName: item.name, 
+                                        onPress={() => this.setState({
+                                            transportations: [],
+                                            transportationName: item.name,
                                             transportationId: item.id
                                         })}>
                                         <Item>
@@ -425,10 +439,18 @@ export default class PostEditTicket extends Component {
                                 </Button>}
                             {isEdit ? <Button rounded block danger
                                 style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
-                                onPress={this.deletePostedTicket}>
+                                onPress={this.showDialogDeletePostedTicket}>
                                 {isDeleteLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                     : <Text style={styles.buttonText}>Delete</Text>}
                             </Button> : <Text></Text>}
+                            <Dialog.Container visible={this.state.dialogVisibleDeletePostedTicket}>
+                                <Dialog.Title>Delete Ticket</Dialog.Title>
+                                <Dialog.Description>
+                                    Do you want to Delete this Ticket ?
+                                        </Dialog.Description>
+                                <Dialog.Button label="Cancel" onPress={this.handleDeletePostedTicketCANCEL} />
+                                <Dialog.Button label="Delete" onPress={this.deletePostedTicket} />
+                            </Dialog.Container>
                         </Content>
                     }
                 </ScrollView>
@@ -444,6 +466,9 @@ export default class PostEditTicket extends Component {
         const index = this.props.navigation.getParam('index');
         const resDeleteTicket = await Api.delete('api/ticket?ticketId=' + ticketId);
         const { navigation } = this.props;
+        this.setState({
+            dialogVisibleDeletePostedTicket: false
+        });
         if (resDeleteTicket.status === 200) {
             this.setState({
                 isDeleteLoading: false
@@ -459,7 +484,7 @@ export default class PostEditTicket extends Component {
     editTicket = async () => {
         const { transportationName, ticketTypeName, departureStationName, arrivalStationName,
             ticketCode, sellingPrice, departureDateTime, arrivalDateTime, passengerName, emailBooking,
-            vehicleId, transportationId,ticketTypeId, departureCityId, departureStationId, arrivalCityId, arrivalStationId } = this.state;
+            vehicleId, transportationId, ticketTypeId, departureCityId, departureStationId, arrivalCityId, arrivalStationId } = this.state;
         const { navigation } = this.props;
         const ticketId = this.props.navigation.getParam('ticketId');
         const index = this.props.navigation.getParam('index');
@@ -535,7 +560,7 @@ export default class PostEditTicket extends Component {
                 })
                 RNToasty.Success({
                     title: 'Post Ticket Successfully'
-                }) 
+                })
                 navigation.state.params.refreshPostedTicket();
                 navigation.navigate('PostedTicket');
             }
