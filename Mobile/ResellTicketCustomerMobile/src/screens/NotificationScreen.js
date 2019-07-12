@@ -1,12 +1,12 @@
-import { Body, Container, Content, Header, Right, Title } from 'native-base';
+import { Body, Container, Content, Header, Right, Title, Button } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
-import { Button, Icon, AirbnbRating } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
+import { RNToasty } from 'react-native-toasty';
 import { withNavigation } from 'react-navigation';
 import NotificationListComponent from '../components/NotificationListComponent';
-import api from '../service/Api';
 import convertDateTime from '../helper/convertDateTime';
-import { RNToasty } from 'react-native-toasty';
+import api from '../service/Api';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -27,10 +27,21 @@ class NotificationScreen extends Component {
         this.getNotification = this.getNotification.bind(this);
         this.getMoreNotification = this.getMoreNotification.bind(this);
         this.readNotification = this.readNotification.bind(this);
+        this.handleOnReadAllClicked = this.handleOnReadAllClicked.bind(this);
+        this.resetData = this.resetData.bind(this);
     }
 
     componentDidMount() {
-        this.getNotification(this.page, this.pageSize);
+        // this.getNotification(this.page, this.pageSize);
+        const self = this;
+        const { navigation } = this.props;
+        this.focusListener = navigation.addListener("didFocus", () => {
+            self.resetData.bind(self)();
+        });
+    }
+
+    componentWillUnmount() {
+        this.focusListener.remove();
     }
 
     async getNotification(page, pageSize) {
@@ -91,6 +102,29 @@ class NotificationScreen extends Component {
         }
     }
 
+    async handleOnReadAllClicked() {
+        const response = await api.post('api/notification/read-all');
+        if(response.status === 200) {
+            this.resetData();
+        } else {
+            RNToasty.Error({
+                title: 'An Error occured when clear all notification.'
+            })
+        }
+    }
+
+    resetData() {
+        //clear notification
+        this.page = 1;
+        this.pageSize = 10;
+        this.total = 0;
+        this.setState({
+            notifications: [],
+            isLoading: true
+        });
+        this.getNotification(this.page, this.pageSize);
+    }
+
     render() {
         const { notifications, isLoading } = this.state;
 
@@ -102,9 +136,9 @@ class NotificationScreen extends Component {
                     </Body>
                     <Right>
                         <Button transparent
-                            onPress={() => navigate('RouteSearchForm')}
+                            onPress={() => {this.handleOnReadAllClicked();}}
                         >
-                            <Icon name='search' type="material-community" color="#fff" />
+                            <Icon name='clear-all' type='material' color="#fff" />
                         </Button>
                     </Right>
                 </Header>
