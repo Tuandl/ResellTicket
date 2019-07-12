@@ -20,9 +20,11 @@ class NotificationScreen extends Component {
         super(props);
         this.state = {
             notifications: [],
+            isLoading: false,
         };
 
         this.getNotification = this.getNotification.bind(this);
+        this.getMoreNotification = this.getMoreNotification.bind(this);
     }
 
     componentDidMount() {
@@ -30,6 +32,11 @@ class NotificationScreen extends Component {
     }
 
     async getNotification(page, pageSize) {
+
+        this.setState({
+            isLoading: true,
+        });
+
         const param = {
             page: page, 
             pageSize: pageSize,
@@ -37,25 +44,33 @@ class NotificationScreen extends Component {
         const response = await api.get(`api/notification/data-table`, param);
 
         if(response.status === 200) {
+            const listData = response.data.data.map(notification => {
+                return {
+                    ...notification,
+                    createdAt: convertDateTime.convertToLocalFromUTC(notification.createdAtUTC),
+                }
+            });
             this.total = response.data.total;
             this.setState({
-                notifications: response.data.data.map(notification => {
-                    return {
-                        ...notification,
-                        createdAt: convertDateTime.convertToLocalFromUTC(notification.createdAtUTC),
-                    }
-                }),
+                notifications: [...this.state.notifications, ...listData],
+                isLoading: false,
             });
         }
     }
 
+    getMoreNotification() {
+        if(this.state.notifications.length < this.total) {
+            this.page++;
+            this.getNotification(this.page, this.pageSize);
+        }
+    }
+
     render() {
-        const { notifications } = this.state;
+        const { notifications, isLoading } = this.state;
 
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
-                    {/* <Left></Left> */}
                     <Body style={{paddingLeft: 10}}>
                         <Title>Notification</Title>
                     </Body>
@@ -63,13 +78,17 @@ class NotificationScreen extends Component {
                         <Button transparent
                             onPress={() => navigate('RouteSearchForm')}
                         >
-                            <Icon name='search' color="#fff" />
+                            <Icon name='search' type="material-community" color="#fff" />
                         </Button>
                     </Right>
                 </Header>
                 <Content style={{ flex: 1, backgroundColor: 'white' }}>
                     <View style={{flex: 1, backgroundColor: "rgb(255,255,255)"}}>
-                        <NotificationListComponent notifications={notifications}/>
+                        <NotificationListComponent 
+                            notifications={notifications}
+                            isLoading={isLoading}
+                            getMoreNotification={this.getMoreNotification}
+                        />
                     </View>
                 </Content>
             </Container>

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, FlatList, Text, TextInput } from "react-native";
+import { StyleSheet, View, FlatList, Text, TextInput, ActivityIndicator } from "react-native";
 import { Center } from "@builderx/utils";
 import Svg, { Ellipse } from "react-native-svg";
 import moment from 'moment';
@@ -9,6 +9,12 @@ export default class NotificationListComponent extends Component {
 
     constructor(props) {
         super(props);
+        
+        this.handleOnEndReached = this.handleOnEndReached.bind(this);
+    }
+
+    handleOnEndReached() {
+
     }
 
     render() {
@@ -18,6 +24,7 @@ export default class NotificationListComponent extends Component {
             <View style={[styles.root, this.props.style]}>
                 <FlatList
                     data={notifications}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item, separators }) => (
                         <View style={styles.rowBgColor}>
                             <Center vertical>
@@ -44,6 +51,9 @@ export default class NotificationListComponent extends Component {
                             </Svg>
                         </View>
                     )}
+                    ListFooterComponent={this.props.isLoading ? <ActivityIndicator size="large" animating /> : ''}
+                    onEndReached={this.handleOnEndReached}
+                    onEndReachedThreshold={0.1}
                     style={styles.list}
                 />
             </View>
