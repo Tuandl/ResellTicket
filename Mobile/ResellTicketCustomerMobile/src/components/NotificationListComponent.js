@@ -1,45 +1,69 @@
 import React, { Component } from "react";
-import { StyleSheet, View, FlatList, Text, TextInput } from "react-native";
+import { StyleSheet, View, FlatList, Text, TextInput, ActivityIndicator } from "react-native";
 import { Center } from "@builderx/utils";
 import Svg, { Ellipse } from "react-native-svg";
+import moment from 'moment';
+import formatConstant from "../constants/formatConstant";
+import { TouchableNativeFeedback } from "react-native-gesture-handler";
 
 export default class NotificationListComponent extends Component {
+
+    constructor(props) {
+        super(props);
+        
+        this.handleOnEndReached = this.handleOnEndReached.bind(this);
+        this.handleOnItemPressed = this.handleOnItemPressed.bind(this);
+    }
+
+    handleOnEndReached() {
+        this.props.getMoreNotification();
+    }
+
+    handleOnItemPressed(item) {
+        this.props.readNotification(item.id);
+    }
+
     render() {
+        const { notifications } = this.props;
+        const iconColorUnread = 'rgba(126,211,33,1)';
+        const iconColorRead = 'rgb(224, 224, 224)';
+
         return (
             <View style={[styles.root, this.props.style]}>
                 <FlatList
-                    data={[
-                        {},{},{},
-                        {},{},{},
-                        {},{},{},
-                        {},{},{},
-                    ]}
+                    data={notifications}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item, separators }) => (
-                        <View style={styles.rowBgColor}>
-                            <Center vertical>
-                                <View style={styles.group}>
-                                    <Text style={styles.rowTitle}>Notification</Text>
-                                    <Text style={styles.rowSubTitle}>
-                                        Your posted ticket is valid. Now people can buy your ticket.
-                                    </Text>
-                                    <Text style={styles.rowCreatedAt}>
-                                        21:59 - July 10, 2019
-                                    </Text>
-                                </View>
-                            </Center>
-                            <Svg viewBox={"0 0 15.33 15.33"} style={styles.ellipse}>
-                                <Ellipse
-                                    strokeWidth={7}
-                                    fill={"rgba(126,211,33,1)"}
-                                    stroke={"rgba(126,211,33,1)"}
-                                    cx={7.67}
-                                    cy={7.67}
-                                    rx={3.67}
-                                    ry={3.67}
-                                />
-                            </Svg>
-                        </View>
+                        <TouchableNativeFeedback onPress={() => this.handleOnItemPressed(item)}>
+                            <View style={styles.rowBgColor}>
+                                <Center vertical>
+                                    <View style={styles.group}>
+                                        <Text style={item.read ? styles.rowTitleRead : styles.rowTitleUnread}>Notification</Text>
+                                        <Text style={item.read ? styles.messageRead : styles.messageUnread}>
+                                            {item.message}
+                                        </Text>
+                                        <Text style={styles.rowCreatedAt}>
+                                            {moment(item.createdAt).format(formatConstant.NOTIFICATION_TIME)}
+                                        </Text>
+                                    </View>
+                                </Center>
+                                <Svg viewBox={"0 0 15.33 15.33"} style={styles.ellipse}>
+                                    <Ellipse
+                                        strokeWidth={7}
+                                        fill={item.read ? iconColorRead : iconColorUnread}
+                                        stroke={item.read ? iconColorRead : iconColorUnread}
+                                        cx={7.67}
+                                        cy={7.67}
+                                        rx={3.67}
+                                        ry={3.67}
+                                    />
+                                </Svg>
+                            </View>
+                        </TouchableNativeFeedback>
                     )}
+                    ListFooterComponent={this.props.isLoading ? <ActivityIndicator size="large" animating /> : ''}
+                    onEndReached={this.handleOnEndReached}
+                    onEndReachedThreshold={0.1}
                     style={styles.list}
                 />
             </View>
@@ -83,20 +107,38 @@ const styles = StyleSheet.create({
         padding: 2,
         paddingTop: 4
     },
-    rowTitle: {
+    rowTitleRead: {
+        color: "#787878",
+        flexDirection: "column",
+        alignSelf: "stretch",
+        paddingBottom: 8,
+        fontSize: 17
+    },
+    rowTitleUnread: {
         color: "#212121",
         flexDirection: "column",
         alignSelf: "stretch",
         paddingBottom: 8,
-        fontSize: 16
+        fontSize: 17
     },
-    rowSubTitle: {
+    messageRead: {
         flex: 1,
         color: "#9E9E9E",
         flexDirection: "row",
         alignSelf: "flex-start",
         justifyContent: "space-between",
-        fontSize: 13,
+        fontSize: 14,
+        lineHeight: 16,
+        letterSpacing: 0,
+        textAlign: "left"
+    },
+    messageUnread: {
+        flex: 1,
+        color: "#424242",
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        justifyContent: "space-between",
+        fontSize: 14,
         lineHeight: 16,
         letterSpacing: 0,
         textAlign: "left"
