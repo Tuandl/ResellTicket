@@ -24,11 +24,42 @@ namespace WebAPI.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("bought")]
+        public ActionResult<RouteDataTable> GetBoughtRoutes(string param, int page, int pageSize)
+        {
+            try
+            {
+                var routes = _routeService.GetBoughtRoutes(param, page, pageSize);
+                return routes;
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("liability")]
         public ActionResult<RouteDataTable> GetLiabilityRoutes(string param, int page, int pageSize)
         {
             try
             {
                 var routes = _routeService.GetLiabilityRoutes(param, page, pageSize);
+                return routes;
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("completed")]
+        public ActionResult<RouteDataTable> GetCompletedRoutes(string param, int page, int pageSize)
+        {
+            try
+            {
+                var routes = _routeService.GetCompletedRoutes(param, page, pageSize);
                 return routes;
             }
             catch (Exception e)

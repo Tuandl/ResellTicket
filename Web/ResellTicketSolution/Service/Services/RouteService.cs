@@ -56,6 +56,10 @@ namespace Service.Services
 
         RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize); // liability - admin
 
+        RouteDataTable GetBoughtRoutes(string param, int page, int pageSize); // bought - admin
+
+        RouteDataTable GetCompletedRoutes(string param, int page, int pageSize);// completed - admin
+
         /// <summary>
         /// Update Route 
         /// </summary>
@@ -114,7 +118,7 @@ namespace Service.Services
 
         public void DeleteRoute(int routeId)
         {
-            var route = _routeRepository.Get(x => x.Id == routeId);
+            var route = _routeRepository.Get(x => x.Id == routeId && x.Deleted == false);
             if (route != null)
             {
                 //Delete RouteTicket first
@@ -268,9 +272,9 @@ namespace Service.Services
             DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3)
         {
             //Convert fromDate, toDate into UTC
-            var departureCity = _cityRepository.Get(x => x.Id == departureCityId);
+            var departureCity = _cityRepository.Get(x => x.Id == departureCityId && x.Deleted == false);
             if (departureCity == null) throw new NotFoundException();
-            var arrivalCity = _cityRepository.Get(x => x.Id == arrivalCityId);
+            var arrivalCity = _cityRepository.Get(x => x.Id == arrivalCityId && x.Deleted == false);
             if (arrivalCity == null) throw new NotFoundException();
 
             var departureDateUTC = departureDate.ToSpecifiedTimeZone(departureCity.TimeZoneId);
@@ -454,7 +458,7 @@ namespace Service.Services
 
         public string BuyRoute(BuyRouteParams model, string username)
         {
-            var existedRoute = _routeRepository.Get(x => x.Id == model.RouteId);
+            var existedRoute = _routeRepository.Get(x => x.Id == model.RouteId && x.Deleted == false);
             if (existedRoute == null)
             {
                 return "Not found route";
@@ -462,7 +466,7 @@ namespace Service.Services
             if (existedRoute.Status == RouteStatus.New)
             {
                 var routeTickets = _routeTicketRepository.GetAllQueryable()
-                .Where(t => t.RouteId == existedRoute.Id).ToList();
+                .Where(t => t.Deleted == false && t.RouteId == existedRoute.Id).ToList();
                 var tickets = new List<Ticket>();
                 var ticketList = _ticketRepository.GetAll();
                 foreach (var routeTicket in routeTickets)
@@ -486,7 +490,7 @@ namespace Service.Services
                 }
                 if (count == tickets.Count())
                 {
-                    existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username)).Id;
+                    existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username) && c.Deleted == false && c.IsActive == true).Id;
                     foreach (var ticket in tickets)
                     {
                         ticket.BuyerPassengerIdentify = model.BuyerPassengerIdentify;
@@ -545,26 +549,27 @@ namespace Service.Services
             var routeVMs =
                 (from ROUTE in _routeRepository.GetAllQueryable()
 
-                join ROUTETICKET in _routeTicketRepository.GetAllQueryable()
-                on ROUTE.Id equals ROUTETICKET.RouteId
+                 join ROUTETICKET in _routeTicketRepository.GetAllQueryable()
+                 on ROUTE.Id equals ROUTETICKET.RouteId
 
-                where
-                    ROUTE.Deleted == false &&
-                    ROUTETICKET.Deleted == false &&
-                    ROUTETICKET.Ticket.Deleted == false &&
-                    ROUTE.Status == RouteStatus.Bought &&
-                    (ROUTETICKET.Ticket.Status == TicketStatus.RenamedSuccess || ROUTETICKET.Ticket.Status == TicketStatus.RenamedFail) &&
-                    ROUTE.Code.ToLower().Contains(param.ToLower())
+                 where
+                     ROUTE.Deleted == false &&
+                     ROUTETICKET.Deleted == false &&
+                     ROUTETICKET.Ticket.Deleted == false &&
+                     ROUTE.Status == RouteStatus.Bought &&
+                     (ROUTETICKET.Ticket.Status == TicketStatus.RenamedSuccess || ROUTETICKET.Ticket.Status == TicketStatus.RenamedFail) &&
+                     ROUTE.Code.ToLower().Contains(param.ToLower())
 
-                select new RouteRowViewModel() {
-                    Id = ROUTE.Id,
-                    Code = ROUTE.Code,
-                    CreatedAt = ROUTE.CreatedAtUTC,
-                    CustomerId = ROUTE.CustomerId,
-                    Status = ROUTE.Status,
-                    TotalAmount = ROUTE.TotalAmount,
-                    TicketQuantity = ROUTE.RouteTickets.Count(),
-                }).Distinct();
+                 select new RouteRowViewModel()
+                 {
+                     Id = ROUTE.Id,
+                     Code = ROUTE.Code,
+                     CreatedAt = ROUTE.CreatedAtUTC,
+                     CustomerId = ROUTE.CustomerId,
+                     Status = ROUTE.Status,
+                     TotalAmount = ROUTE.TotalAmount,
+                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                 }).Distinct();
 
             var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
@@ -628,6 +633,120 @@ namespace Service.Services
             //var totalLiabilityRoutes = liabilityRoutes.Count();
             //Paging routes
             //var routesPaged = routes.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+        }
+
+        public RouteDataTable GetBoughtRoutes(string param, int page, int pageSize)
+        {
+            param = param ?? "";
+            var routeVMs =
+                (from ROUTE in _routeRepository.GetAllQueryable()
+
+                 join ROUTETICKET in _routeTicketRepository.GetAllQueryable()
+                 on ROUTE.Id equals ROUTETICKET.RouteId
+
+                 where
+                     ROUTE.Deleted == false &&
+                     ROUTETICKET.Deleted == false &&
+                     ROUTETICKET.Ticket.Deleted == false &&
+                     ROUTE.Status == RouteStatus.Bought &&
+                     ROUTE.Code.ToLower().Contains(param.ToLower())
+                 orderby ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC descending
+
+                 select new RouteRowViewModel()
+                 {
+                     Id = ROUTE.Id,
+                     Code = ROUTE.Code,
+                     CreatedAt = ROUTE.CreatedAtUTC,
+                     CustomerId = ROUTE.CustomerId,
+                     Status = ROUTE.Status,
+                     TotalAmount = ROUTE.TotalAmount,
+                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                 }).Distinct();
+
+            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Status);
+            var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
+
+
+            var routeDataTable = new RouteDataTable()
+            {
+                Data = routePagedVMs.ToList(),
+                Total = routeVMs.Count()
+            };
+
+            foreach (var route in routeDataTable.Data)
+            {
+                var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
+                    x.RouteId == route.Id &&
+                    x.Deleted == false
+                ).OrderBy(x => x.Order);
+
+                var firstRouteTicket = routeTickets.FirstOrDefault();
+                route.DepartureCityName = firstRouteTicket.DepartureStation.City.Name;
+                route.DepartureDate = firstRouteTicket.Ticket.DepartureDateTime;
+
+                var lastRouteTicket = routeTickets.LastOrDefault();
+                route.ArrivalCityName = lastRouteTicket.ArrivalStation.City.Name;
+                route.ArrivalDate = lastRouteTicket.Ticket.ArrivalDateTime;
+            }
+
+            return routeDataTable;
+        }
+
+        public RouteDataTable GetCompletedRoutes(string param, int page, int pageSize)
+        {
+            param = param ?? "";
+            var routeVMs =
+                (from ROUTE in _routeRepository.GetAllQueryable()
+
+                 join ROUTETICKET in _routeTicketRepository.GetAllQueryable()
+                 on ROUTE.Id equals ROUTETICKET.RouteId
+
+                 where
+                     ROUTE.Deleted == false &&
+                     ROUTETICKET.Deleted == false &&
+                     ROUTETICKET.Ticket.Deleted == false &&
+                     ROUTE.Status == RouteStatus.Completed &&
+                     ROUTE.Code.ToLower().Contains(param.ToLower())
+                 orderby ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC descending
+
+                 select new RouteRowViewModel()
+                 {
+                     Id = ROUTE.Id,
+                     Code = ROUTE.Code,
+                     CreatedAt = ROUTE.CreatedAtUTC,
+                     CustomerId = ROUTE.CustomerId,
+                     Status = ROUTE.Status,
+                     TotalAmount = ROUTE.TotalAmount,
+                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                 }).Distinct();
+
+            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Status);
+            var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
+
+
+            var routeDataTable = new RouteDataTable()
+            {
+                Data = routePagedVMs.ToList(),
+                Total = routeVMs.Count()
+            };
+
+            foreach (var route in routeDataTable.Data)
+            {
+                var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
+                    x.RouteId == route.Id &&
+                    x.Deleted == false
+                ).OrderBy(x => x.Order);
+
+                var firstRouteTicket = routeTickets.FirstOrDefault();
+                route.DepartureCityName = firstRouteTicket.DepartureStation.City.Name;
+                route.DepartureDate = firstRouteTicket.Ticket.DepartureDateTime;
+
+                var lastRouteTicket = routeTickets.LastOrDefault();
+                route.ArrivalCityName = lastRouteTicket.ArrivalStation.City.Name;
+                route.ArrivalDate = lastRouteTicket.Ticket.ArrivalDateTime;
+            }
+
+            return routeDataTable;
         }
     }
 }

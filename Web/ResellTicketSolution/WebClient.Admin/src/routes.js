@@ -62,8 +62,10 @@ const CompletedTickets = React.lazy(() => import('./views/Tickets/CompletedTicke
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 
 const ValidTicketDetail = React.lazy(() => import('./views/Tickets/ValidTicketDetail'));
-const LiabilityTickets = React.lazy(() => import('./views/Tickets/LiabilityTickets'));
-const PayoutRefundTickets = React.lazy(() => import('./views/Tickets/PayoutRefundTickets'));
+const BoughtRoutes = React.lazy(() => import('./views/routes/BoughtRoutes'));
+const PayoutRefundDetailRoute = React.lazy(() => import('./views/routes/PayoutRefundDetailRoute'));
+
+const CompletedRoutes = React.lazy(() => import('./views/routes/CompletedRoutes'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -129,8 +131,10 @@ const routes = [
   { path: '/boughtTicket', name: 'Bought Tickets', component: BoughtTickets },
   { path: '/completedTicket', name: 'Completed Tickets', component: CompletedTickets },
   { path: '/newPostedTicket/:id', exact: true, name: 'Valid Ticket Detail', component: ValidTicketDetail },
-  { path: '/liabilityTicket', exact: true, name: 'Liability Tickets', component: LiabilityTickets },
-  { path: '/liabilityTicket/:id', exact: true, name: 'Payout-Refund Tickets', component: PayoutRefundTickets },
+  { path: '/boughtRoute', exact: true, name: 'Bought Routes', component: BoughtRoutes },
+  { path: '/boughtRoute/:id', exact: true, name: 'Payout-Refund Tickets', component: PayoutRefundDetailRoute },
+  { path: '/completedRoute', exact: true, name: 'Completed Routes', component: CompletedRoutes },
+  { path: '/completedRoute/:id', exact: true, name: 'Route Detail', component: PayoutRefundDetailRoute },
 ];
 
 export default routes;

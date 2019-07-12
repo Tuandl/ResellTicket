@@ -32,7 +32,7 @@ namespace Service.Services
         }
         public bool CreateStation(StationCreateViewModel model)
         {
-            if (_StationRepository.Get(x => x.Name.ToLower().Equals(model.Name.ToLower())
+            if (_StationRepository.Get(x => x.Deleted == false && x.Name.ToLower().Equals(model.Name.ToLower())
              ) == null)
             {
                 var station = new Station();
@@ -55,13 +55,15 @@ namespace Service.Services
 
             param = param ?? "";
             var stations = _StationRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower()))
-                         .OrderBy(x => x.City.Name.ToLower())
-                         .Skip((page - 1) * pageSize).Take(pageSize)
-                         .ToList();
+                .Where(x => x.Deleted == false)
+                .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower()))
+                .OrderBy(x => x.City.Name.ToLower())
+                .Skip((page - 1) * pageSize).Take(pageSize)
+                .ToList();
 
             var totalStations = _StationRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower())).Count();
+                .Where(x => x.Deleted == false)
+                .Where(x => x.Name.ToLower().Contains(param.ToLower()) || x.City.Name.Contains(param.ToLower())).Count();
             var StationRowViewModels = _mapper.Map<List<Station>, List<StationRowViewModel>>(stations);
 
             var stationDataTable = new StationDataTable()
@@ -92,14 +94,14 @@ namespace Service.Services
 
         public StationRowViewModel FindStationById(int id)
         {
-            var Station = _StationRepository.Get(x => x.Id == id);
+            var Station = _StationRepository.Get(x => x.Deleted == false && x.Id == id);
             var StationRowViewModel = _mapper.Map<Station, StationRowViewModel>(Station);
             return StationRowViewModel;
         }
 
         public string UpdateStation(StationUpdateViewModel model)
         {
-            var existedStation = _StationRepository.Get(x => x.Id == model.Id);
+            var existedStation = _StationRepository.Get(x => x.Deleted == false && x.Id == model.Id);
             if (existedStation == null)
             {
                 return "Not found Station";

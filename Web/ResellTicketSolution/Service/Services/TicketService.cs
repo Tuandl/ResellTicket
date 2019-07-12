@@ -48,6 +48,8 @@ namespace Service.Services
         /// <param name="routeId"></param>
         /// <returns></returns>
         List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
+
+        TicketDataTable GetReplaceTickets(int routeTicketId, int ticketId);
     }
     public class TicketService : ITicketService
     {
@@ -96,7 +98,7 @@ namespace Service.Services
         }
         public TicketDetailViewModel GetTicketDetail(int ticketId)
         {
-            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId && x.Deleted == false);
             var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
             return ticketDetailVM;
         }
@@ -105,11 +107,13 @@ namespace Service.Services
         {
             param = param ?? "";
             var pendingTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Pending)
                 .Skip((page - 1) * pageSize).Take(pageSize)
                 .ToList();
             var totalPendingTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Pending).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(pendingTickets);
@@ -127,10 +131,12 @@ namespace Service.Services
         {
             param = param ?? "";
             var validTickets = _ticketRepository.GetAllQueryable()
+                 .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Valid)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             var totalValidTickets = _ticketRepository.GetAllQueryable()
+                 .Where(t => t.Deleted == false)
                .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                .Where(t => t.Status == Core.Enum.TicketStatus.Valid).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(validTickets);
@@ -147,13 +153,15 @@ namespace Service.Services
         {
             param = param ?? "";
             var invalidTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Invalid)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             var totalInvalidTickets = _ticketRepository.GetAllQueryable()
-               .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
-               .Where(t => t.Status == Core.Enum.TicketStatus.Invalid).Count();
+                .Where(t => t.Deleted == false)
+                .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
+                .Where(t => t.Status == Core.Enum.TicketStatus.Invalid).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(invalidTickets);
 
             var ticketDataTable = new TicketDataTable()
@@ -168,13 +176,15 @@ namespace Service.Services
         {
             param = param ?? "";
             var renamedTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Renamed)
-                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             var totalRenamedTickets = _ticketRepository.GetAllQueryable()
-              .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
-              .Where(t => t.Status == Core.Enum.TicketStatus.Renamed).Count();
+                .Where(t => t.Deleted == false)
+                .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
+                .Where(t => t.Status == Core.Enum.TicketStatus.Renamed).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(renamedTickets);
 
             var ticketDataTable = new TicketDataTable()
@@ -189,12 +199,14 @@ namespace Service.Services
         {
             param = param ?? "";
             var boughtTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Bought)
-                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             var totalBoughtTickets = _ticketRepository.GetAllQueryable()
-              .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
-              .Where(t => t.Status == Core.Enum.TicketStatus.Bought).Count();
+                .Where(t => t.Deleted == false)
+                .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
+                .Where(t => t.Status == Core.Enum.TicketStatus.Bought).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(boughtTickets);
 
             var ticketDataTable = new TicketDataTable()
@@ -209,12 +221,14 @@ namespace Service.Services
         {
             param = param ?? "";
             var completedTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
-                .Where(t => t.Status == Core.Enum.TicketStatus.Completed)
+                .Where(t => t.Status == TicketStatus.Completed || t.Status == TicketStatus.RenamedFail)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             var totalCompletedTickets = _ticketRepository.GetAllQueryable()
-             .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
-             .Where(t => t.Status == Core.Enum.TicketStatus.Completed).Count();
+                .Where(t => t.Deleted == false)
+                .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
+                .Where(t => t.Status == TicketStatus.Completed || t.Status == TicketStatus.RenamedFail).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
 
             var ticketDataTable = new TicketDataTable()
@@ -228,8 +242,9 @@ namespace Service.Services
         public List<CustomerTicketViewModel> GetCustomerTickets(string username, int page, int pageSize, TicketStatus? status)
         {
 
-            var existedCustomer = _customerRepository.Get(x => x.Username == username);
+            var existedCustomer = _customerRepository.Get(x => x.Username == username && x.Deleted == false);
             var customerTickets = _ticketRepository.GetAllQueryable()
+                .Where(t => t.Deleted == false)
                 .Where(x => x.SellerId == existedCustomer.Id)
                 .Where(x => x.Deleted == false)
                 .OrderByDescending(x => x.UpdatedAtUTC ?? x.CreatedAtUTC)
@@ -257,7 +272,8 @@ namespace Service.Services
         {
             param = param ?? "";
             var tickets = _ticketRepository.GetAllQueryable()
-                         .Where(x => x.TicketCode.ToLower().Contains(param.ToLower())).ToList();
+                         .Where(x => x.Deleted == false &&
+                                x.TicketCode.ToLower().Contains(param.ToLower())).ToList();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(tickets);
             return ticketRowViewModels;
         }
@@ -323,7 +339,7 @@ namespace Service.Services
 
         public int PostTicket(string username, TicketPostViewModel model)
         {
-            var customerId = _customerRepository.Get(x => x.Username == username).Id;
+            var customerId = _customerRepository.Get(x => x.Username == username && x.Deleted == false).Id;
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
@@ -331,7 +347,7 @@ namespace Service.Services
             ticket.ExpiredDateTime = model.DepartureDateTime;
 
             //convert time into UTC time
-            var departureStation = _stationRepository.Get(x => x.Id == ticket.DepartureStationId);
+            var departureStation = _stationRepository.Get(x => x.Id == ticket.DepartureStationId && x.Deleted == false);
             if (departureStation.City.TimeZoneId != null)
             {
                 ticket.DepartureDateTimeUTC = ticket.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
@@ -344,7 +360,7 @@ namespace Service.Services
                 ticket.ExpiredDateTimeUTC = ticket.ExpiredDateTime;
             }
 
-            var arrivalStation = _stationRepository.Get(x => x.Id == ticket.ArrivalStationId);
+            var arrivalStation = _stationRepository.Get(x => x.Id == ticket.ArrivalStationId && x.Deleted == false);
             if (arrivalStation.City.TimeZoneId != null)
             {
                 ticket.ArrivalDateTimeUTC = ticket.ArrivalDateTime.ToSpecifiedTimeZone(arrivalStation.City.TimeZoneId);
@@ -366,7 +382,7 @@ namespace Service.Services
 
         public void EditTicket(TicketEditViewModel model)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == model.Id);
+            var existedTicket = _ticketRepository.Get(x => x.Id == model.Id && x.Deleted == false);
             EditInfoTicket(existedTicket, model);
             //if (CheckInvalidFieldRemain(existedTicket))
             //{
@@ -382,7 +398,7 @@ namespace Service.Services
 
         public void DeleteTicket(int ticketId)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == ticketId);
+            var existedTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == ticketId);
             existedTicket.Deleted = true;
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
@@ -390,7 +406,7 @@ namespace Service.Services
 
         public string ApproveTicket(int id, decimal commissionFee, DateTime expiredDateTime)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            var existedTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == id);
             if (existedTicket == null)
             {
                 return "Not found ticket";
@@ -433,7 +449,7 @@ namespace Service.Services
 
         public string RejectTicket(int id, string invalidField)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            var existedTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == id);
             if (existedTicket == null)
             {
                 return "Not found ticket";
@@ -499,7 +515,7 @@ namespace Service.Services
 
         public string ConfirmRenameTicket(int id)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            var existedTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == id);
             if (existedTicket == null)
             {
                 return "Not found ticket";
@@ -525,7 +541,7 @@ namespace Service.Services
 
         public string ValidateRenameTicket(int id, bool renameSuccess)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            var existedTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == id);
             if (existedTicket == null)
             {
                 return "Not found ticket";
@@ -670,7 +686,7 @@ namespace Service.Services
 
         public string RefuseTicket(int id)
         {
-            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            var existedTicket = _ticketRepository.Get(x => x.Id == id && x.Deleted == false);
             if (existedTicket == null)
             {
                 return "Not found ticket";
@@ -682,7 +698,11 @@ namespace Service.Services
             _unitOfWork.CommitChanges();
 
             #region Notify Buyer
-            var message = "Ticket " + existedTicket.TicketCode + " has been refused";
+            var message = "Ticket " + existedTicket.TicketCode + " has been refused."; 
+            //if(_routeTicketRepository.Get(x => x.Deleted == false && x.TicketId == existedTicket.Id).Route.CustomerId == existedTicket.BuyerId)
+            //{
+            //    message += "Our staff will contact you in a few minutes.";
+            //}
             List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
 
             //save notification into db
@@ -711,8 +731,8 @@ namespace Service.Services
         public List<string> GetCustomerDeviceIds(Ticket ticket, bool isSeller)
         {
             var customerDevices = isSeller
-                ? ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList()
-                : ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false).ToList();
+                ? ticket.Seller.CustomerDevices.Where(x => x.Deleted == false && x.IsLogout == false).ToList()
+                : ticket.Buyer.CustomerDevices.Where(x => x.Deleted == false && x.IsLogout == false).ToList();
             List<string> deviceIds = new List<string>();
 
             foreach (var sellerDevice in customerDevices)
@@ -732,11 +752,15 @@ namespace Service.Services
             List<AdminDevice> adminDevices = new List<AdminDevice>();
             foreach (var staff in staffs)
             {
-                adminDevices.AddRange(_adminDeviceRepository.GetAllQueryable().Where(x => x.UserId == staff.Id).ToList());
+                adminDevices.AddRange(_adminDeviceRepository.GetAllQueryable()
+                    .Where(x => x.Deleted == false && x.UserId == staff.Id).ToList());
             }
             foreach (var device in adminDevices)
             {
-                adminDeviceIds.Add(device.DeviceId);
+                if (device.DeviceId != "" && device.DeviceId != null)
+                {
+                    adminDeviceIds.Add(device.DeviceId);
+                }
             }
             return adminDeviceIds;
         }
@@ -787,6 +811,42 @@ namespace Service.Services
             if (existedTicket.IsPassengerNameValid == false) return false;
             if (existedTicket.IsEmailBookingValid == false) return false;
             return true;
+        }
+
+        public TicketDataTable GetReplaceTickets(int routeTicketId, int ticketId)
+        {
+            int renamedFailTicketOrder = _routeTicketRepository.Get(x => x.Deleted == false
+                                && x.Id == routeTicketId && x.TicketId == ticketId
+                                && x.Route.Status == RouteStatus.Bought
+                                && x.Ticket.Status == TicketStatus.Bought).Order;
+
+            var routeTickets = _routeTicketRepository.Get(x => x.Deleted == false
+                                && x.Id == routeTicketId && x.TicketId == ticketId
+                                && x.Route.Status == RouteStatus.Bought
+                                && x.Ticket.Status == TicketStatus.Bought)
+                                .Route.RouteTickets.OrderBy(x =>x.Order);
+
+            switch (renamedFailTicketOrder)
+            {
+                case 0:
+                    break;
+                case 1:
+                    var firstTicketArrivalDateTime = 
+                    break;
+                case 2:
+                    break;
+                default:
+                    break;
+                        
+            }
+
+            //var renamedFailTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == ticketId);
+            //foreach (var routeTicket in routeTickets)
+            //{
+
+            //}
+
+            return null;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Service.Services
 
         public PaymentRowViewModel GetPaymentDetailByRouteId(int RouteId)
         {
-            var payment = _paymentRepository.Get(x => x.RouteId == RouteId);
+            var payment = _paymentRepository.Get(x => x.Deleted == false && x.RouteId == RouteId);
             var paymentRowViewModel = _mapper.Map<Payment, PaymentRowViewModel>(payment);
 
             return paymentRowViewModel;
@@ -60,7 +60,7 @@ namespace Service.Services
 
             var options = new ChargeCreateOptions
             {
-                Amount = Convert.ToInt64(routeToMakePayment.TotalAmount)*100,
+                Amount = Convert.ToInt64(routeToMakePayment.TotalAmount * 100),
                 Currency = "usd",
                 Description = customerInfor.FullName + "-" + customerInfor.Email + "-" +customerInfor.PhoneNumber + 
                     " buy Route Code: " + routeToMakePayment.Code,

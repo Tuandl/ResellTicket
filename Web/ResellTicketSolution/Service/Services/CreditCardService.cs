@@ -51,7 +51,7 @@ namespace Service.Services
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
 
-            var customerTMP = _customerRepository.Get(x => x.Id == model.CustomerId);
+            var customerTMP = _customerRepository.Get(x =>x.Deleted == false && x.Id == model.CustomerId);
 
             if (customerTMP.StripeId == null || customerTMP.StripeId == "")
             {
@@ -144,7 +144,7 @@ namespace Service.Services
 
         public string DeleteCreditCard(int Id)
         {
-            var existedCreditCard = _creditCardRepository.Get(x => x.Id == Id);
+            var existedCreditCard = _creditCardRepository.Get(x =>x.Deleted == false && x.Id == Id);
             if (existedCreditCard == null)
             {
                 return "Not found Credit Card";
@@ -162,8 +162,8 @@ namespace Service.Services
 
         public string SetDefaultCard(int id, int customerId)
         {
-            var creditCardToSetDefault = _creditCardRepository.Get(x => x.Id == id & x.CustomerId == customerId);
-            var creditCardToSetNOTDefault = _creditCardRepository.Get(x => x.CustomerId == customerId && x.Isdefault == true);
+            var creditCardToSetDefault = _creditCardRepository.Get(x => x.Deleted == false && x.Id == id && x.CustomerId == customerId);
+            var creditCardToSetNOTDefault = _creditCardRepository.Get(x => x.Deleted == false && x.CustomerId == customerId && x.Isdefault == true);
             if (creditCardToSetDefault == null)
             {
                 return "Not found Credit Card";
@@ -181,7 +181,7 @@ namespace Service.Services
 
         public CreditCardMakeChargeMoneyViewModel GetCardToPayment(int CustomerId)
         {
-            var creditCardToMakePayment = _creditCardRepository.Get(x => x.CustomerId == CustomerId && x.Isdefault == true);
+            var creditCardToMakePayment = _creditCardRepository.Get(x => x.Deleted == false && x.CustomerId == CustomerId && x.Isdefault == true);
             var creditCardMakeChargeMoneyViewModel = _mapper.Map<CreditCard, CreditCardMakeChargeMoneyViewModel>(creditCardToMakePayment);
             return creditCardMakeChargeMoneyViewModel;
         }

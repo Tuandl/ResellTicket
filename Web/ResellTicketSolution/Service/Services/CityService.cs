@@ -30,7 +30,7 @@ namespace Service.Services
         }
         public bool CreateCity(CityRowViewModel model)
         {
-            if (_cityRepository.Get(x => x.Name.Equals(model.Name)) == null)
+            if (_cityRepository.Get(x => x.Deleted == false && x.Name.Equals(model.Name)) == null)
             {
                 var city = new City();
                 city.Name = model.Name;
@@ -51,7 +51,8 @@ namespace Service.Services
 
             name = name ?? "";
             var cities = _cityRepository.GetAllQueryable()
-                         .Where(x => x.Name.ToLower().Contains(name.ToLower()));
+                .Where(x => x.Deleted == false)
+                .Where(x => x.Name.ToLower().Contains(name.ToLower()));
             if(ignoreCityId != -1)
             {
                 cities = cities.Where(x => x.Id != ignoreCityId);
@@ -62,14 +63,14 @@ namespace Service.Services
 
         public CityRowViewModel FindCityById(int id)
         {
-            var city = _cityRepository.Get(x => x.Id == id);
+            var city = _cityRepository.Get(x => x.Deleted == false && x.Id == id);
             var cityRowViewModel = _mapper.Map<City, CityRowViewModel>(city);
             return cityRowViewModel;
         }
 
         public string UpdateCity(CityUpdateViewModel model)
         {
-            var existedCity = _cityRepository.Get(x => x.Id == model.Id);
+            var existedCity = _cityRepository.Get(x => x.Deleted == false && x.Id == model.Id);
             if (existedCity == null)
             {
                 return "Not found city";
@@ -98,17 +99,20 @@ namespace Service.Services
             if(page > 0 && pageSize > 0)
             {
                 cities = _cityRepository.GetAllQueryable()
+                    .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                          .OrderBy(x => x.Name)
                          .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             } else
             {
                 cities = _cityRepository.GetAllQueryable()
+                    .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                          .OrderBy(x => x.Name).ToList();
             }
                          
             var totalCities = _cityRepository.GetAllQueryable()
+                .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower())).Count();
             
             var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
