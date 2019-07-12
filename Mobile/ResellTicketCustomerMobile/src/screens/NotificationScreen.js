@@ -1,11 +1,12 @@
 import { Body, Container, Content, Header, Right, Title } from 'native-base';
 import React, { Component } from 'react';
 import { Dimensions, View } from 'react-native';
-import { Button, Icon } from 'react-native-elements';
+import { Button, Icon, AirbnbRating } from 'react-native-elements';
 import { withNavigation } from 'react-navigation';
 import NotificationListComponent from '../components/NotificationListComponent';
 import api from '../service/Api';
 import convertDateTime from '../helper/convertDateTime';
+import { RNToasty } from 'react-native-toasty';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -25,6 +26,7 @@ class NotificationScreen extends Component {
 
         this.getNotification = this.getNotification.bind(this);
         this.getMoreNotification = this.getMoreNotification.bind(this);
+        this.readNotification = this.readNotification.bind(this);
     }
 
     componentDidMount() {
@@ -65,6 +67,30 @@ class NotificationScreen extends Component {
         }
     }
 
+    readNotification(notificationId) {
+        this.sendReadNotificationMessage(notificationId);
+
+        const notifications = [...this.state.notifications];
+        notifications.forEach(notification => {
+            if(notification.id === notificationId) {
+                notification.read = true;
+            }
+        });
+
+        this.setState({
+            notifications: notifications,
+        });
+    }
+
+    async sendReadNotificationMessage(notificationId) {
+        const response = await api.post(`api/notification/${notificationId}/read`);
+        if(response.status !== 200) {
+            RNToasty.Error({
+                title: 'Error while sending read notification request.',
+            });
+        }
+    }
+
     render() {
         const { notifications, isLoading } = this.state;
 
@@ -88,6 +114,7 @@ class NotificationScreen extends Component {
                             notifications={notifications}
                             isLoading={isLoading}
                             getMoreNotification={this.getMoreNotification}
+                            readNotification={this.readNotification}
                         />
                     </View>
                 </Content>

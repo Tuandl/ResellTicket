@@ -4,6 +4,7 @@ import { Center } from "@builderx/utils";
 import Svg, { Ellipse } from "react-native-svg";
 import moment from 'moment';
 import formatConstant from "../constants/formatConstant";
+import { TouchableNativeFeedback } from "react-native-gesture-handler";
 
 export default class NotificationListComponent extends Component {
 
@@ -11,10 +12,15 @@ export default class NotificationListComponent extends Component {
         super(props);
         
         this.handleOnEndReached = this.handleOnEndReached.bind(this);
+        this.handleOnItemPressed = this.handleOnItemPressed.bind(this);
     }
 
     handleOnEndReached() {
+        this.props.getMoreNotification();
+    }
 
+    handleOnItemPressed(item) {
+        this.props.readNotification(item.id);
     }
 
     render() {
@@ -28,30 +34,32 @@ export default class NotificationListComponent extends Component {
                     data={notifications}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item, separators }) => (
-                        <View style={styles.rowBgColor}>
-                            <Center vertical>
-                                <View style={styles.group}>
-                                    <Text style={item.read ? styles.rowTitleRead : styles.rowTitleUnread}>Notification</Text>
-                                    <Text style={item.read ? styles.messageRead : styles.messageUnread}>
-                                        {item.message}
-                                    </Text>
-                                    <Text style={styles.rowCreatedAt}>
-                                        {moment(item.createdAt).format(formatConstant.NOTIFICATION_TIME)}
-                                    </Text>
-                                </View>
-                            </Center>
-                            <Svg viewBox={"0 0 15.33 15.33"} style={styles.ellipse}>
-                                <Ellipse
-                                    strokeWidth={7}
-                                    fill={item.read ? iconColorRead : iconColorUnread}
-                                    stroke={item.read ? iconColorRead : iconColorUnread}
-                                    cx={7.67}
-                                    cy={7.67}
-                                    rx={3.67}
-                                    ry={3.67}
-                                />
-                            </Svg>
-                        </View>
+                        <TouchableNativeFeedback onPress={() => this.handleOnItemPressed(item)}>
+                            <View style={styles.rowBgColor}>
+                                <Center vertical>
+                                    <View style={styles.group}>
+                                        <Text style={item.read ? styles.rowTitleRead : styles.rowTitleUnread}>Notification</Text>
+                                        <Text style={item.read ? styles.messageRead : styles.messageUnread}>
+                                            {item.message}
+                                        </Text>
+                                        <Text style={styles.rowCreatedAt}>
+                                            {moment(item.createdAt).format(formatConstant.NOTIFICATION_TIME)}
+                                        </Text>
+                                    </View>
+                                </Center>
+                                <Svg viewBox={"0 0 15.33 15.33"} style={styles.ellipse}>
+                                    <Ellipse
+                                        strokeWidth={7}
+                                        fill={item.read ? iconColorRead : iconColorUnread}
+                                        stroke={item.read ? iconColorRead : iconColorUnread}
+                                        cx={7.67}
+                                        cy={7.67}
+                                        rx={3.67}
+                                        ry={3.67}
+                                    />
+                                </Svg>
+                            </View>
+                        </TouchableNativeFeedback>
                     )}
                     ListFooterComponent={this.props.isLoading ? <ActivityIndicator size="large" animating /> : ''}
                     onEndReached={this.handleOnEndReached}
