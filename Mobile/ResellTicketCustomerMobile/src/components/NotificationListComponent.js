@@ -19,6 +19,8 @@ export default class NotificationListComponent extends Component {
 
     render() {
         const { notifications } = this.props;
+        const iconColorUnread = 'rgba(126,211,33,1)';
+        const iconColorRead = 'rgb(224, 224, 224)';
 
         return (
             <View style={[styles.root, this.props.style]}>
@@ -29,8 +31,8 @@ export default class NotificationListComponent extends Component {
                         <View style={styles.rowBgColor}>
                             <Center vertical>
                                 <View style={styles.group}>
-                                    <Text style={styles.rowTitle}>Notification</Text>
-                                    <Text style={styles.rowSubTitle}>
+                                    <Text style={item.read ? styles.rowTitleRead : styles.rowTitleUnread}>Notification</Text>
+                                    <Text style={item.read ? styles.messageRead : styles.messageUnread}>
                                         {item.message}
                                     </Text>
                                     <Text style={styles.rowCreatedAt}>
@@ -41,8 +43,8 @@ export default class NotificationListComponent extends Component {
                             <Svg viewBox={"0 0 15.33 15.33"} style={styles.ellipse}>
                                 <Ellipse
                                     strokeWidth={7}
-                                    fill={"rgba(126,211,33,1)"}
-                                    stroke={"rgba(126,211,33,1)"}
+                                    fill={item.read ? iconColorRead : iconColorUnread}
+                                    stroke={item.read ? iconColorRead : iconColorUnread}
                                     cx={7.67}
                                     cy={7.67}
                                     rx={3.67}
@@ -97,16 +99,34 @@ const styles = StyleSheet.create({
         padding: 2,
         paddingTop: 4
     },
-    rowTitle: {
+    rowTitleRead: {
+        color: "#787878",
+        flexDirection: "column",
+        alignSelf: "stretch",
+        paddingBottom: 8,
+        fontSize: 17
+    },
+    rowTitleUnread: {
         color: "#212121",
         flexDirection: "column",
         alignSelf: "stretch",
         paddingBottom: 8,
         fontSize: 17
     },
-    rowSubTitle: {
+    messageRead: {
         flex: 1,
         color: "#9E9E9E",
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        justifyContent: "space-between",
+        fontSize: 14,
+        lineHeight: 16,
+        letterSpacing: 0,
+        textAlign: "left"
+    },
+    messageUnread: {
+        flex: 1,
+        color: "#424242",
         flexDirection: "row",
         alignSelf: "flex-start",
         justifyContent: "space-between",
