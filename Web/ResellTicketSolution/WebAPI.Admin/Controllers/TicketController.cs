@@ -177,5 +177,13 @@ namespace WebAPI.Admin.Controllers
             //}
             return Ok();
         }
+
+        [HttpGet]
+        [Route("replaceTicket")]
+        public ActionResult<TicketDataTable> GetReplaceTickets(int routeTicketId)
+        {
+            var replaceTickets = _ticketService.GetReplaceTickets(routeTicketId);
+            return replaceTickets;
+        }
     }
 }
