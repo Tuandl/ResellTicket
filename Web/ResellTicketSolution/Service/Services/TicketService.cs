@@ -11,6 +11,7 @@ using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Ticket;
 using Core.Enum;
 using Service.Helpers;
+using ViewModel.ViewModel.Route;
 
 namespace Service.Services
 {
@@ -49,7 +50,7 @@ namespace Service.Services
         /// <returns></returns>
         List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
 
-        TicketDataTable GetReplaceTickets(int routeTicketId, int ticketId);
+        TicketDataTable GetReplaceTickets(int routeTicketId);
     }
     public class TicketService : ITicketService
     {
@@ -813,40 +814,48 @@ namespace Service.Services
             return true;
         }
 
-        public TicketDataTable GetReplaceTickets(int routeTicketId, int ticketId)
+        public TicketDataTable GetReplaceTickets(int routeTicketId)
         {
-            int renamedFailTicketOrder = _routeTicketRepository.Get(x => x.Deleted == false
-                                && x.Id == routeTicketId && x.TicketId == ticketId
-                                && x.Route.Status == RouteStatus.Bought
-                                && x.Ticket.Status == TicketStatus.Bought).Order;
+            //int renamedFailTicketOrder = _routeTicketRepository.Get(x => x.Deleted == false
+            //                    && x.Id == routeTicketId && x.TicketId == ticketId
+            //                    && x.Route.Status == RouteStatus.Bought
+            //                    && x.Ticket.Status == TicketStatus.Bought).Order;
 
-            var routeTickets = _routeTicketRepository.Get(x => x.Deleted == false
-                                && x.Id == routeTicketId && x.TicketId == ticketId
-                                && x.Route.Status == RouteStatus.Bought
-                                && x.Ticket.Status == TicketStatus.Bought)
-                                .Route.RouteTickets.OrderBy(x =>x.Order);
+            var routeTickets = _routeTicketRepository.Get(
+                                x => x.Deleted == false && x.Id == routeTicketId 
+                                && x.Route.Status == RouteStatus.Bought)
+                                .Route.RouteTickets.OrderBy(x => x.Order);
 
-            switch (renamedFailTicketOrder)
+            var ticketDataTable = new TicketDataTable();
+            if(routeTickets.Count() == 2)
             {
-                case 0:
-                    break;
-                case 1:
-                    var firstTicketArrivalDateTime = 
-                    break;
-                case 2:
-                    break;
-                default:
-                    break;
-                        
+                var firstTicket = routeTickets.FirstOrDefault().Ticket;
+                var lastTicket = routeTickets.LastOrDefault().Ticket;
+                var replaceTickets = new List<Ticket>();
+                if(firstTicket.Status == TicketStatus.RenamedFail)
+                {
+                    var lastTicketDepartureDatetime = lastTicket.DepartureDateTimeUTC;
+                    replaceTickets = _ticketRepository.GetAllQueryable()
+                        .Where(x => x.Deleted == false && x.ExpiredDateTimeUTC > DateTime.UtcNow && x.Status == TicketStatus.Valid)
+                        .Where(x => x.ArrivalDateTimeUTC <= lastTicketDepartureDatetime && x.SellingPrice <= firstTicket.SellingPrice).ToList();
+
+                } else
+                {
+                    var firstArrivalDateTime = firstTicket.ArrivalDateTimeUTC;
+                    replaceTickets = _ticketRepository.GetAllQueryable()
+                        .Where(x => x.Deleted == false && x.ExpiredDateTimeUTC > DateTime.UtcNow && x.Status == TicketStatus.Valid)
+                        .Where(x => x.DepartureDateTimeUTC >= firstArrivalDateTime && x.SellingPrice <= lastTicket.SellingPrice).ToList();
+                }
+
+                var replaceTicketVms = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(replaceTickets);
+                ticketDataTable.Data = replaceTicketVms;
+                ticketDataTable.Total = replaceTickets.Count();
+            } else if(routeTickets.Count() == 3)
+            {
+
             }
 
-            //var renamedFailTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == ticketId);
-            //foreach (var routeTicket in routeTickets)
-            //{
-
-            //}
-
-            return null;
+            return ticketDataTable;
         }
     }
 }

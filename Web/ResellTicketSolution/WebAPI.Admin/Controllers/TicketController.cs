@@ -180,9 +180,10 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("replaceTicket")]
-        public ActionResult<TicketDataTable> GetReplaceTickets(int routeTicketId, int ticketId)
+        public ActionResult<TicketDataTable> GetReplaceTickets(int routeTicketId)
         {
-            return null;
+            var replaceTickets = _ticketService.GetReplaceTickets(routeTicketId);
+            return replaceTickets;
         }
     }
 }
