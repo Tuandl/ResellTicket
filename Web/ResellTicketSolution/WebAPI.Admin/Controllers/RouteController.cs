@@ -70,18 +70,33 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("detail")]
-        public ActionResult<RouteDetailViewModel> getRouteDetail(int routeId)
+        public ActionResult<RouteDetailViewModel> GetRouteDetail(int routeId)
         {
             try
             {
-                var routeDetail = _routeService.GetRouteDetail(routeId);
-                return routeDetail;
+                var routeDetail = _routeService.GetRouteDetailForAdmin(routeId);
+                return Ok(routeDetail);
             }
             catch (Exception e)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
             }
 
+        }
+
+        [HttpPost]
+        [Route("replaceOneFail")]
+        public ActionResult ReplaceOneFailTicket(int routeId, int failRouteTicketId, int replaceTicketId)
+        {
+            try
+            {
+                _routeService.ReplaceOneFailTicket(routeId, failRouteTicketId, replaceTicketId);
+            } catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+            
+            return Ok();
         }
     }
 }

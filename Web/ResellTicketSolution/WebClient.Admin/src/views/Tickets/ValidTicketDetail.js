@@ -18,7 +18,7 @@ export default class ValidTicketDetail extends Component {
             commissionFee: 10,
             expiredBefore: '0', //hours
             expiredDateTime: '',
-            
+            sellerPhone: ''
         }
 
     }
@@ -42,6 +42,7 @@ export default class ValidTicketDetail extends Component {
                     { name: "Passenger Name", value: res.data.passengerName },
                     { name: "Email Booking", value: res.data.emailBooking },
                 ],
+                sellerPhone: res.data.sellerPhone,
                 expiredBefore: res.data.expiredBefore,
                 expiredDateTime: moment(res.data.departureDateTime)
             })
@@ -49,12 +50,12 @@ export default class ValidTicketDetail extends Component {
     }
 
     radioValidChange = (event) => {
-        var {name} = event.target
+        var { name } = event.target
         var { validCount, invalidCount, radioName } = this.state;
         this.setState({
             validCount: validCount + 1,
             invalidCount: radioName.indexOf(name) !== -1 ? invalidCount - 1 : invalidCount,
-        }, ()=> {
+        }, () => {
             this.setState({
                 radioName: radioName.indexOf(name) !== -1 ? radioName : radioName + name,
             })
@@ -68,7 +69,7 @@ export default class ValidTicketDetail extends Component {
             invalidCount: invalidCount + 1,
             validCount: radioName.indexOf(name) !== -1 ? validCount - 1 : validCount,
             invalidField: invalidField + ', ' + name
-        }, ()=> {
+        }, () => {
             this.setState({
                 radioName: radioName.indexOf(name) !== -1 ? radioName : radioName + name
             })
@@ -93,7 +94,7 @@ export default class ValidTicketDetail extends Component {
         const ticketId = this.props.match.params.id;
         var { validCount, commissionFee, expiredBefore, expiredDateTime, invalidField } = this.state;
 
-        expiredDateTime.subtract({hours: expiredBefore})
+        expiredDateTime.subtract({ hours: expiredBefore })
         expiredDateTime = moment(expiredDateTime._d).format('YYYY-MM-DD HH:mm')
         if (validCount === 8) {
             var res = await Axios.put('api/ticket/approve/' + ticketId + "?commissionFee=" + commissionFee + "&expiredDateTime=" + expiredDateTime);
@@ -121,7 +122,8 @@ export default class ValidTicketDetail extends Component {
             validCount,
             invalidCount,
             commissionFee,
-            expiredBefore
+            expiredBefore,
+            sellerPhone
         } = this.state;
         return (
 
@@ -130,9 +132,19 @@ export default class ValidTicketDetail extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                <strong><i className="icon-info pr-1"></i></strong>
+                                <strong>Valid Ticket</strong>
                             </CardHeader>
                             <CardBody>
+                                <Row>
+                                    <Col md="6" xs="12">
+                                        <FormGroup>
+                                            <Label htmlFor="sellerPhone">Seller Phone</Label>
+                                            <Input type="text" id="sellerPhone" disabled value={sellerPhone}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <hr />
                                 <Row style={{ marginBottom: 10 }}>
                                     <Col md="6" xs="12"></Col>
                                     <Col md="1"></Col>

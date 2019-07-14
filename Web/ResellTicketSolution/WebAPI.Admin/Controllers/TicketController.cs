@@ -178,11 +178,16 @@ namespace WebAPI.Admin.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="routeTicketId"></param>
+        /// <returns></returns>
         [HttpGet]
-        [Route("replaceTicket")]
-        public ActionResult<TicketDataTable> GetReplaceTickets(int routeTicketId)
+        [Route("replaceOneFail")]
+        public ActionResult<AvailableTicketDataTable> GetReplaceTicketForOneFailTicket(int failRouteTicketId)
         {
-            var replaceTickets = _ticketService.GetReplaceTickets(routeTicketId);
+            var replaceTickets = _ticketService.GetReplaceTicketForOneFailTicket(failRouteTicketId);
             return replaceTickets;
         }
     }

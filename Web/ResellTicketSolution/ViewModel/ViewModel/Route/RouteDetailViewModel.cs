@@ -9,6 +9,7 @@ namespace ViewModel.ViewModel.Route
         public string Code { get; set; }
         public decimal TotalAmount { get; set; }
         public RouteStatus Status { get; set; }
+        public ResolveOption? ResolveOption { get; set; }
         public int CustomerId { get; set; }
         public string BuyerPhone { get; set; }
         public List<RouteTicketDetailViewModel> RouteTickets { get; set; }

@@ -50,6 +50,13 @@ namespace Service.Services
         /// <returns></returns>
         List<AvailableTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId);
 
+        /// <summary>
+        /// Get tickets replace for renamed fail ticket
+        /// WEB ADMIN
+        /// </summary>
+        /// <param name="failRouteTicketId"></param>
+        /// <returns></returns>
+        AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId);
         TicketDataTable GetReplaceTickets(int routeTicketId);
     }
     public class TicketService : ITicketService
@@ -222,12 +229,10 @@ namespace Service.Services
         {
             param = param ?? "";
             var completedTickets = _ticketRepository.GetAllQueryable()
-                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == TicketStatus.Completed || t.Status == TicketStatus.RenamedFail)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             var totalCompletedTickets = _ticketRepository.GetAllQueryable()
-                .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == TicketStatus.Completed || t.Status == TicketStatus.RenamedFail).Count();
             var ticketRowViewModels = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(completedTickets);
@@ -856,6 +861,17 @@ namespace Service.Services
             }
 
             return ticketDataTable;
+        }
+
+        public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId)
+        {
+            List<AvailableTicketViewModel> replaceTickets = GetTicketAvailableForRouteTicket(failRouteTicketId);
+            AvailableTicketDataTable resultDataTable = new AvailableTicketDataTable()
+            {
+                Data = replaceTickets,
+                Total = replaceTickets.Count()
+            };
+            return resultDataTable;
         }
     }
 }

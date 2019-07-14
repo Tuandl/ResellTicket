@@ -52,7 +52,10 @@ class SellerTicketComponent {
 
     render() {
         const ticket = this.ticket;
-        if (moment(new Date()).isAfter(ticket.expiredDateTime)) {
+        if ((ticket.status === ticketStatus.Pending ||
+            ticket.status === ticketStatus.Valid ||
+            ticket.status === ticketStatus.Bought) 
+            && moment(new Date()).isAfter(ticket.expiredDateTime)) {
             ticket.status = 0
         }
         this.html.innerHTML =

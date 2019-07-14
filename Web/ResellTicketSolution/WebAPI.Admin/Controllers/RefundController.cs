@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Core.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
@@ -22,18 +23,19 @@ namespace WebAPI.Admin.Controllers
 
         [HttpPost]
         [Route("one-ticket")]
-        public IActionResult MakeRefundOneTicket(int ticketId)
+        public IActionResult MakeRefundOneTicket(int ticketId, ResolveOption? resolveOption = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
-            //var username = User.Identity.Name;
-            var refund = _refundService.RefundMoneyToCustomer(ticketId);
-
-            if (refund == "Not found route ticket")
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, refund);
+                _refundService.RefundFailTicketMoneyToCustomer(ticketId, resolveOption);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
             }
 
             return Ok();
@@ -41,14 +43,14 @@ namespace WebAPI.Admin.Controllers
 
         [HttpPost]
         [Route("all-ticket")]
-        public IActionResult MakeRefundAllTicket(int ticketId)
+        public IActionResult MakeRefundAllTicket(int ticketId, ResolveOption? resolveOption = null)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
             //var username = User.Identity.Name;
-            var refund = _refundService.RefundMoneyToCustomer(ticketId);
+            var refund = _refundService.RefundToTalMoneyToCustomer(ticketId, resolveOption);
 
             if (refund == "Not found route ticket")
             {

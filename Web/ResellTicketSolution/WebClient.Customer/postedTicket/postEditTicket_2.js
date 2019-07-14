@@ -27,7 +27,7 @@ function postEditTicketController() {
 
     var model = {};
     const ticketId = window.location.search.substr(10);
-    
+
     init();
     getTicketDetail();
 
@@ -47,7 +47,7 @@ function postEditTicketController() {
         initEmailBookingInputField();
         initSellingPriceInputField();
     }
-    
+
 
     async function getTicketDetail() {
         if (ticketId !== '') {
@@ -77,7 +77,7 @@ function postEditTicketController() {
                     inputTags[i].setAttribute('readonly', '');
                 }
             }
-            if(data.status === TicketStatus.Invalid) {
+            if (data.status === TicketStatus.Invalid) {
                 displayInvalidField(data)
             }
         }
@@ -134,7 +134,7 @@ function postEditTicketController() {
         btn.setAttribute('class', 'btn-view-now');
         btn.setAttribute('onclick', event);
         divBtn.appendChild(btn);
-    }    
+    }
 
     function initBtnEvent() {
         if (ticketId === '') {
@@ -148,9 +148,11 @@ function postEditTicketController() {
                     createBtn('DELETE', () => deleteTicket())
                     break
                 case TicketStatus.Valid:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
                     createBtn('DELETE', () => deleteTicket())
                     break
                 case TicketStatus.Invalid:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
                     createBtn('DELETE', () => deleteTicket())
                     break
                 case TicketStatus.Bought:
@@ -158,6 +160,15 @@ function postEditTicketController() {
                     createBtn('BUYER INFO', () => viewPassengerInfo());
                     createBtn('CONFIRM', () => confirmTicketRename());
                     createBtn('REFUSE', () => refuseTicketRename());
+                    break;
+                case TicketStatus.Completed:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break;
+                case TicketStatus.RenamedFail:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break
             }
         }
     }
@@ -193,7 +204,7 @@ function postEditTicketController() {
     function viewPassengerInfo() {
         renderCustomerDetail(ticketId);
     }
-    
+
     async function renderCustomerDetail(ticketId) {
         var customerDetailContainer = document.getElementById(id.customerDetailContainer);
         commonService.removeAllChildren(customerDetailContainer);
@@ -204,7 +215,7 @@ function postEditTicketController() {
         // passengerComponent.passengerDetail();
         $(`#${'customer-detail-modal'}`).modal();
     }
-    
+
 
     async function refuseTicketRename() {
         const res = await apiService.putParams(appConfig.apiUrl.ticketRefuseRenamed, { id: ticketId });

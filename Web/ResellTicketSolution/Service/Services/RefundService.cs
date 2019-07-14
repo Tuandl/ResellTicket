@@ -18,11 +18,14 @@ namespace Service.Services
 {
     public interface IRefundService
     {
-        string RefundMoneyToCustomer(int TicketId);
+        string RefundToTalMoneyToCustomer(int TicketId, ResolveOption? resolveOption = null);
+
+        void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption? resolveOption = null);
     }
     public class RefundService : IRefundService
     {
         private readonly IRefundRepository _refundRepository;
+        private readonly IPayoutRepository _payoutRespository;
         private readonly IRouteTicketRepository _routeTicketRepository;
         private readonly IPaymentRepository _paymentRepository;
         private readonly ITicketRepository _ticketRepository;
@@ -36,7 +39,8 @@ namespace Service.Services
         }
 
         public RefundService(IRefundRepository refundRepository, IRouteTicketRepository routeTicketRepository, ITicketRepository ticketRepository,
-        IPaymentRepository paymentRepository, IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options, IOneSignalService oneSignalService)
+        IPaymentRepository paymentRepository, IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options,
+        IOneSignalService oneSignalService, IPayoutRepository payoutRespository)
         {
             _refundRepository = refundRepository;
             _routeTicketRepository = routeTicketRepository;
@@ -46,17 +50,18 @@ namespace Service.Services
             _unitOfWork = unitOfWork;
             SETTING = options;
             _oneSignalService = oneSignalService;
+            _payoutRespository = payoutRespository;
         }
 
-        public string RefundMoneyToCustomer(int TicketId)
+        public string RefundToTalMoneyToCustomer(int TicketId, ResolveOption? resolveOption = null)
         {
-            // lấy route ứng vs ticketId 
+            // lấy routeTicket ứng vs ticketId 
             var routeTicket = _routeTicketRepository.Get(x => 
                 x.TicketId == TicketId &
                 x.Deleted == false & 
                 x.Route.Status == RouteStatus.Bought
             );
-            
+
             //lấy Lịch sử chagre tiền
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeTicket.RouteId && x.Route.Deleted == false);
 
@@ -77,10 +82,10 @@ namespace Service.Services
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
             _refundRepository.Add(refundAddIntoData);
 
-            foreach(var boughtTicket in routeTicket.Route.RouteTickets)
+            foreach (var boughtTicket in routeTicket.Route.RouteTickets)
             {
                 var ticket = boughtTicket.Ticket;
-                if(ticket.Status == TicketStatus.Bought)
+                if (ticket.Status == TicketStatus.Bought)
                 {
                     ticket.Status = TicketStatus.Valid;
                     //ticket.BuyerId = null;
@@ -92,6 +97,7 @@ namespace Service.Services
             }
             var route = routeTicket.Route;
             route.Status = RouteStatus.Completed;
+            route.ResolveOption = resolveOption;
 
             _unitOfWork.CommitChanges();
             return "";
@@ -112,6 +118,51 @@ namespace Service.Services
                 }
             }
             return deviceIds;
+        }
+
+        public void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption? resolveOption = null)
+        {
+            // lấy routeTicket ứng vs ticketId 
+            var failRouteTicket = _routeTicketRepository.Get(x =>
+                x.TicketId == failTicketId &
+                x.Deleted == false &
+                x.Route.Status == RouteStatus.Bought
+            );
+            var paymentDetail = _paymentRepository.Get(x => x.RouteId == failRouteTicket.RouteId && x.Route.Deleted == false);
+            var failTicket = _ticketRepository.Get(x => x.Id == failTicketId && x.Deleted == false);
+            StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
+
+            //số tiền vé fail chuyền về lại cho buyer
+            var refundOptions = new RefundCreateOptions()
+            {
+                ChargeId = paymentDetail.StripeChargeId,
+                Amount = Convert.ToInt64(failTicket.SellingPrice * 100)
+            };
+            var refundService = new Stripe.RefundService();
+            Stripe.Refund refund = refundService.Create(refundOptions);
+            Core.Models.Refund refundAddIntoData = new Core.Models.Refund();
+            refundAddIntoData.PaymentId = paymentDetail.Id;
+            refundAddIntoData.StripeRefundId = refund.Id;
+            refundAddIntoData.Amount = failTicket.SellingPrice;
+            refundAddIntoData.Status = RefundStatus.Success;
+            _refundRepository.Add(refundAddIntoData);
+
+            var route = failRouteTicket.Route;
+            var failTickets = 0;
+            var refundFailTickets = 0;
+            foreach(var routeTicket in route.RouteTickets)
+            {
+                if (routeTicket.Ticket.Status == TicketStatus.RenamedFail) failTickets++;
+                if (_payoutRespository.Get(x => x.TicketId == routeTicket.TicketId 
+                    && x.Ticket.Status == TicketStatus.RenamedFail) != null) refundFailTickets++;
+            }
+            if(failTickets == refundFailTickets)
+            {
+                route.Status = RouteStatus.Completed;
+                route.ResolveOption = resolveOption;
+            }
+
+            _unitOfWork.CommitChanges();
         }
     }
 }
