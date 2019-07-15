@@ -4,7 +4,6 @@ import { StyleSheet, Text } from 'react-native';
 import { RNToasty } from 'react-native-toasty';
 import { Icon, Input } from 'react-native-elements';
 import api from '../../service/Api';
-import Dialog from "react-native-dialog";
 
 export default class RouteBuyerInfoScreen extends Component {
 
@@ -18,31 +17,15 @@ export default class RouteBuyerInfoScreen extends Component {
             buyerPassengerName: params.buyerPassengerName,
             buyerPassengerEmail: params.buyerPassengerEmail,
             buyerPassengerPhone: params.buyerPassengerPhone,
-            buyerPassengerIdentify: '',
-            dialogVisibleConfirmBuy: false
+            buyerPassengerIdentify: ''
         };
 
         // this.onDateOfBirthChanged = this.onDateOfBirthChanged.bind(this);
         this.onBtnConfirmPressed = this.onBtnConfirmPressed.bind(this);
-        this.onBtnConfirmCallApiPressed = this.onBtnConfirmCallApiPressed.bind(this);
-        this.showDialogConfirmBuy = this.showDialogConfirmBuy.bind(this);
     }
-
-    showDialogConfirmBuy() {
-        this.setState({
-            dialogVisibleConfirmBuy: true
-        });
-    }
-
-    handleConfirmBuyCANCEL = () => {
-        this.setState({
-            dialogVisibleConfirmBuy: false
-        });
-    }
-
 
     componentDidMount() {
-
+        
     }
 
     // onDateOfBirthChanged(value) {
@@ -51,44 +34,36 @@ export default class RouteBuyerInfoScreen extends Component {
     //     })
     // }
 
-    onBtnConfirmPressed() {
-        if (this.state.buyerPassengerName === '' || this.state.buyerPassengerEmail === '' || this.state.buyerPassengerPhone === '' || this.state.buyerPassengerIdentify === '') {
+    async onBtnConfirmPressed () {
+        if(this.state.buyerPassengerName === '' || this.state.buyerPassengerEmail === '' || this.state.buyerPassengerPhone === '' || this.state.buyerPassengerIdentify === '') {
             RNToasty.Error({
                 title: 'Buy route Fail, please input all field!'
             })
         } else {
-            this.showDialogConfirmBuy();
-        }
-    }
-
-    async onBtnConfirmCallApiPressed() {
-        var params = {
-            routeId: this.state.routeId,
-            buyerPassengerEmail: this.state.buyerPassengerEmail,
-            buyerPassengerName: this.state.buyerPassengerName,
-            buyerPassengerPhone: this.state.buyerPassengerPhone,
-            buyerPassengerIdentify: this.state.buyerPassengerIdentify
-        };
-        const resBuyRoute = await api.post('api/route/buy-route', params);
-        const { navigation } = this.props;
-        if (resBuyRoute.status === 200) {
-            this.setState({
-                dialogVisibleConfirmBuy: false
-            });
-            RNToasty.Success({
-                title: 'Buy route Successfully'
-            })
-            navigation.navigate('Route');
-        }
-        else {
-            RNToasty.Error({
-                title: 'Buy route Fail, All tickets in route must be valid!'
-            })
+            var params = { 
+                routeId: this.state.routeId,
+                buyerPassengerEmail: this.state.buyerPassengerEmail,
+                buyerPassengerName: this.state.buyerPassengerName,
+                buyerPassengerPhone: this.state.buyerPassengerPhone,
+                buyerPassengerIdentify: this.state.buyerPassengerIdentify };
+            const resBuyRoute = await api.post('api/route/buy-route', params);
+            const { navigation } = this.props;
+            if (resBuyRoute.status === 200) {
+                RNToasty.Success({
+                    title: 'Buy route Successfully'
+                })
+                navigation.navigate('Route');
+            }
+            else {
+                RNToasty.Error({
+                    title: 'Buy route Fail, All tickets in route must be valid!'
+                })
+            }
         }
     }
 
     render() {
-        const {
+        const { 
             buyerPassengerName,
             buyerPassengerEmail,
             buyerPassengerPhone,
@@ -115,46 +90,46 @@ export default class RouteBuyerInfoScreen extends Component {
                     </Right>
                 </Header>
                 <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
-                    {/* <Label style={styles.label}>Last name:</Label>
+                {/* <Label style={styles.label}>Last name:</Label>
                     <Input
                         onChangeText={lastName => this.setState({ lastName })}
                         placeholder="Enter Last Name"
                         value={lastName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     /> */}
-                    <Label style={styles.label}>New Passenger Name:</Label>
+                <Label style={styles.label}>New Passenger Name:</Label>
                     <Input
                         onChangeText={buyerPassengerName => this.setState({ buyerPassengerName })}
                         placeholder="Enter Your Name"
                         value={buyerPassengerName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Email:</Label>
+                <Label style={styles.label}>New Passenger Email:</Label>
                     <Input
                         onChangeText={buyerPassengerEmail => this.setState({ buyerPassengerEmail })}
                         placeholder="Enter Email"
                         value={buyerPassengerEmail}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Phone:</Label>
+                <Label style={styles.label}>New Passenger Phone:</Label>
                     <Input
                         onChangeText={buyerPassengerPhone => this.setState({ buyerPassengerPhone })}
                         placeholder="Enter Phone"
                         value={buyerPassengerPhone}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Identify:</Label>
+                <Label style={styles.label}>New Passenger Identify:</Label>
                     <Input
 
-                        onChangeText={buyerPassengerIdentify => this.setState({ buyerPassengerIdentify })}
-                        placeholder="Enter Identify Number"
-                        value={buyerPassengerIdentify}
-                        inputStyle={{ fontSize: 15, color: 'black' }}
+                            onChangeText={buyerPassengerIdentify => this.setState({ buyerPassengerIdentify })}
+                            placeholder="Enter Identify Number"
+                            value={buyerPassengerIdentify}
+                            inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-
-                    {/* <Label style={styles.label}>Date Of Birth:</Label> */}
+                
+            {/* <Label style={styles.label}>Date Of Birth:</Label> */}
                     {/* Select Date Of Birth */}
-                    {/* <Item>
+                {/* <Item>
                     <DatePicker
                         defaultDate={dateOfBirth}
                         locale={"en"}
@@ -176,14 +151,6 @@ export default class RouteBuyerInfoScreen extends Component {
                         onPress={this.onBtnConfirmPressed}>
                         <Text style={styles.buttonText}>Confirm</Text>
                     </Button>
-                    <Dialog.Container visible={this.state.dialogVisibleConfirmBuy}>
-                        <Dialog.Title>Confirm Buy Route</Dialog.Title>
-                        <Dialog.Description>
-                            Do you want to buy this Route and Confirm your Information ?
-                        </Dialog.Description>
-                        <Dialog.Button label="Cancel" onPress={this.handleConfirmBuyCANCEL} />
-                        <Dialog.Button label="Confirm" onPress={this.onBtnConfirmCallApiPressed} />
-                    </Dialog.Container>
                 </Content>
             </Container>
         );

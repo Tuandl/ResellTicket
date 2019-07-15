@@ -1,12 +1,11 @@
 import { appConfig } from '../../constant/appConfig.js';
 import commonService from '../service/commonService.js';
 import routeStatus from '../enum/routeStatus.js';
-import { ConfirmDialogComponent } from "./../../js/component/ConfirmDialogComponent.js";
 
 
 class CreditCardComponent {
 
-    constructor(creditCard, customerId, onBtnDeleteClicked, onBtnSetDefault, showConfirmDialog) {
+    constructor(creditCard, customerId, onBtnDeleteClicked, onBtnSetDefault) {
         this.creditCard = creditCard;
         this.customerId = customerId;
         this.html = document.createElement('tr');
@@ -15,7 +14,6 @@ class CreditCardComponent {
         this.event = {
             onBtnDeleteClicked,
             onBtnSetDefault,
-            showConfirmDialog
         };
     }
 
@@ -48,7 +46,7 @@ class CreditCardComponent {
 
     renderButton(isdefault) {
         if (!isdefault) {
-            return `<td class="col-sm-1"><button type="button" id="btn-delete"  class="btn btn-info btn-sm">Delete</button></td>
+            return `<td class="col-sm-1"><button type="button" id="btn-delete" class="btn btn-info btn-sm">Delete</button></td>
             <td class="col-sm-1"><button type="button" id="btn-set-default" class="btn btn-info btn-sm">Set Default</button></td>`;
         } else {
             return `<td class="col-sm-1"><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-info btn-sm"></button></td>
@@ -76,7 +74,7 @@ class CreditCardComponent {
             //mà biến thís trong này là button delete á
             //nên ông muốn gọi thí.event.onBtnDeleteClicked thì ông phải làm vậy nè
 
-            self.event.showConfirmDialog(self.creditCard.id);
+            self.event.onBtnDeleteClicked(self.creditCard.id);
         });
 
         this.html.querySelector('#btn-set-default').addEventListener('click', function() {
