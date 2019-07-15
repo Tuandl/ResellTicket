@@ -212,8 +212,8 @@ class RouteDetailScreen extends Component {
                                 <Dialog.Description>
                                     Do you want to Delete this Route ?
                                         </Dialog.Description>
-                                <Dialog.Button label="Cancel" onPress={this.handleDeleteCANCEL} />
                                 <Dialog.Button label="Delete Route" onPress={this.onBtnDeletePressed} />
+                                <Dialog.Button label="Cancel" onPress={this.handleDeleteCANCEL} />
                             </Dialog.Container>
                         </View>
                     </View>

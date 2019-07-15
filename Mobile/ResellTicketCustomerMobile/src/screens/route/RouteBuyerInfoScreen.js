@@ -181,8 +181,8 @@ export default class RouteBuyerInfoScreen extends Component {
                         <Dialog.Description>
                             Do you want to buy this Route and Confirm your Information ?
                         </Dialog.Description>
-                        <Dialog.Button label="Cancel" onPress={this.handleConfirmBuyCANCEL} />
                         <Dialog.Button label="Confirm" onPress={this.onBtnConfirmCallApiPressed} />
+                        <Dialog.Button label="Cancel" onPress={this.handleConfirmBuyCANCEL} />
                     </Dialog.Container>
                 </Content>
             </Container>

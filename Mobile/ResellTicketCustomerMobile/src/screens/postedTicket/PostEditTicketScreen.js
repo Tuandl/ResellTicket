@@ -448,8 +448,8 @@ export default class PostEditTicket extends Component {
                                 <Dialog.Description>
                                     Do you want to Delete this Ticket ?
                                         </Dialog.Description>
-                                <Dialog.Button label="Cancel" onPress={this.handleDeletePostedTicketCANCEL} />
                                 <Dialog.Button label="Delete" onPress={this.deletePostedTicket} />
+                                <Dialog.Button label="Cancel" onPress={this.handleDeletePostedTicketCANCEL} />
                             </Dialog.Container>
                         </Content>
                     }
