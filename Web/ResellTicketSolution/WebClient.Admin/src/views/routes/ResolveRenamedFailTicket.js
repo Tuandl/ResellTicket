@@ -91,7 +91,7 @@ export default class ResolveRenamedFailTicket extends Component {
         var { routeTickets } = this.state;
         var optionValue = parseInt(event.target.value);
         switch (optionValue) {
-            case 1:
+            case 1: 
                 this.props.onOptionChange(optionValue)
                 //this.getReplaceTicket();
                 var failTickets = 0;

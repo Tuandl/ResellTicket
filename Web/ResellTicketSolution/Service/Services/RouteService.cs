@@ -854,8 +854,8 @@ namespace Service.Services
             route.TotalAmount = route.TotalAmount - (failTicketPrice - replaceTicketPrice);
             _routeRepository.Update(route);
 
-            paymentDetail.Amount = paymentDetail.Amount - (failTicketPrice - replaceTicketPrice);
-            _paymentRepository.Update(paymentDetail);
+            //paymentDetail.Amount = paymentDetail.Amount - (failTicketPrice - replaceTicketPrice);
+            //_paymentRepository.Update(paymentDetail);
 
             _unitOfWork.CommitChanges();
 
