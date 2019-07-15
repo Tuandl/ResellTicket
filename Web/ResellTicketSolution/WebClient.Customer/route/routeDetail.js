@@ -4,6 +4,8 @@ import { appConfig } from "../constant/appConfig.js";
 import TicketComponent from "../js/component/TicketComponent.js";
 import CustomerComponent from "../js/component/CustomerComponent.js";
 import toastService from "../js/service/toastService.js";
+import { ConfirmDialogDeleteRouteDetail } from '../js/component/dialogComponent/ConfirmDialogDeleteRouteDetail.js';
+import { ConfirmDialogConfirmBuyerDetail } from '../js/component/dialogComponent/ConfirmDialogConfirmBuyerDetail.js';
 
 function routeDetail() {
 
@@ -19,6 +21,9 @@ function routeDetail() {
         changeTicketContainer: 'tickets-container',
         changeTicketEmpty: 'tickets-empty-container',
         btnUpdateRoute: 'btnUpdateRoute',
+        //Confirm dialog
+        dialogDeleteRouteDetail: 'dialog-delete-route-detail',
+        dialogConfirmBuyerDetail: 'dialog-confirm-buyer-detail'
     };
     const elements = {
         customerDetailContainer: document.getElementById(id.customerDetailContainer),
@@ -32,6 +37,8 @@ function routeDetail() {
         availableTicketElements: [],
         btnUpdateRoute: document.getElementById(id.btnUpdateRoute),
         changeTicketEmpty: document.getElementById(id.changeTicketEmpty),
+        dialogDeleteRouteDetail: document.getElementById(id.dialogDeleteRouteDetail),
+        dialogConfirmBuyerDetail: document.getElementById(id.dialogConfirmBuyerDetail),
     };
 
     const routeId = commonService.getQueryParam('routeId');
@@ -41,7 +48,13 @@ function routeDetail() {
         selectedAvailableTicketId: null,
     }, onWatchObjChanged);
 
+    const modelConfirmDialog = {
+        dialogDeleteRouteDetailBox: [],
+        dialogConfirmBuyerDetailBox: []
+    }
+
     init();
+    initConfirmDialog();
 
     async function init() {
         model.route = await apiService.get(appConfig.apiUrl.route + routeId);
@@ -50,7 +63,8 @@ function routeDetail() {
         renderTickets(model.route.routeTickets);
         const customerComponent = new CustomerComponent(model.route);
 
-        elements.btnDelete.addEventListener('click', onBtnDeleteClicked);
+        //elements.btnDelete.addEventListener('click', onBtnDeleteClicked);
+        elements.btnDelete.addEventListener('click', showConfirmDialogDeleteRouteDetail);
         elements.btnBuy.addEventListener('click', onBtnBuyClicked);
         elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
         // customerComponent.domElement.addEventListener('click', function(e) {
@@ -59,7 +73,34 @@ function routeDetail() {
         elements.btnUpdateRoute.addEventListener('click', onBtnUpdateRouteTicketClicked);
     }
 
-    
+    function initConfirmDialog() {
+        commonService.removeAllChildren(elements.dialogDeleteRouteDetail);
+        commonService.removeAllChildren(elements.dialogConfirmBuyerDetail);
+        //
+        const confirmDialogDeleteRouteDetail = new
+        ConfirmDialogDeleteRouteDetail("Delete Route", "Do you want to delete this Route ?",
+                "Delete", showConfirmDialogDeleteRouteDetail, onBtnDeleteClicked);
+        modelConfirmDialog.dialogDeleteRouteDetailBox.push(confirmDialogDeleteRouteDetail);
+        confirmDialogDeleteRouteDetail.render();
+        elements.dialogDeleteRouteDetail.appendChild(confirmDialogDeleteRouteDetail.domElement);
+        //
+        const confirmDialogConfirmBuyerDetail = new
+        ConfirmDialogConfirmBuyerDetail("Confirm And Buy Route", "Do you want to delete this Route and Confirm your information ?",
+                "Confirm", onBtnConfirmClickedCallApi);
+        modelConfirmDialog.dialogConfirmBuyerDetailBox.push(confirmDialogConfirmBuyerDetail);
+        confirmDialogConfirmBuyerDetail.render();
+        elements.dialogConfirmBuyerDetail.appendChild(confirmDialogConfirmBuyerDetail.domElement);
+    }
+
+    function showConfirmDialogDeleteRouteDetail() {
+        $('#delete-route-detail').modal();
+    }
+
+    function showConfirmDialogConfirmBuyerDetail() {
+        $('#confirm-buyer-detail').modal();
+    }
+
+
     function renderRouteCode(routeCode) {
         commonService.removeAllChildren(elements.routeCode);
         elements.routeCode.innerHTML = routeCode;
@@ -75,35 +116,40 @@ function routeDetail() {
 
     async function onBtnDeleteClicked() {
         await apiService.delete(appConfig.apiUrl.route + routeId);
-        window.history.back();
+        window.location.href = appConfig.url.home;
     }
 
-    async function onBtnConfirmClicked() {
-        if(customerComponent.passengerDetail.buyerPassengerName === '' 
-        || customerComponent.passengerDetail.buyerPassengerEmail === '' 
-        || customerComponent.passengerDetail.buyerPassengerPhone === '' 
-        || customerComponent.passengerDetail.buyerPassengerIdentify === '') {
+    function onBtnConfirmClicked() {
+        if (customerComponent.passengerDetail.buyerPassengerName === ''
+            || customerComponent.passengerDetail.buyerPassengerEmail === ''
+            || customerComponent.passengerDetail.buyerPassengerPhone === ''
+            || customerComponent.passengerDetail.buyerPassengerIdentify === '') {
             toastService.error('Please input all field!');
         } else {
-            const params = {
-                routeId: routeId,
-                buyerPassengerName: customerComponent.passengerDetail.buyerPassengerName,
-                buyerPassengerEmail: customerComponent.passengerDetail.buyerPassengerEmail,
-                buyerPassengerPhone: customerComponent.passengerDetail.buyerPassengerPhone,
-                buyerPassengerIdentify: customerComponent.passengerDetail.buyerPassengerIdentify
+            showConfirmDialogConfirmBuyerDetail();
+        }
+    }
+
+    async function onBtnConfirmClickedCallApi() {
+
+        // window.location.replace('/index.html');
+        const params = {
+            routeId: routeId,
+            buyerPassengerName: customerComponent.passengerDetail.buyerPassengerName,
+            buyerPassengerEmail: customerComponent.passengerDetail.buyerPassengerEmail,
+            buyerPassengerPhone: customerComponent.passengerDetail.buyerPassengerPhone,
+            buyerPassengerIdentify: customerComponent.passengerDetail.buyerPassengerIdentify
+        }
+        try {
+            var routeResponse = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
+            if (routeResponse.status === 200) {
+                // toastService.success('Buy route successfully!');
+                window.location.replace('/index.html');
+            } else {
+                toastService.error('error');
             }
-                try {
-                    var routeResponse = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
-                    if(routeResponse.status === 200) {
-                        // toastService.success('Buy route successfully!');
-                        window.location.replace('/index.html');
-                    } else {
-                        toastService.error('error');
-                    }
-                } catch (ex) {
-                    toastService.error('error');
-                }
-                
+        } catch (ex) {
+            toastService.error('error');
         }
     }
 
@@ -113,9 +159,9 @@ function routeDetail() {
 
     async function renderCustomerDetail(routeId) {
         commonService.removeAllChildren(elements.customerDetailContainer);
-            // const customerComponent = new CustomerComponent(routeId);
-            elements.customerDetailContainer.appendChild(customerComponent.render());
-            await customerComponent.AutoFillCustomerDetail();
+        // const customerComponent = new CustomerComponent(routeId);
+        elements.customerDetailContainer.appendChild(customerComponent.render());
+        await customerComponent.AutoFillCustomerDetail();
         $(`#${id.customerDetailModal}`).modal();
     }
 
@@ -126,7 +172,7 @@ function routeDetail() {
         renderAvailableTickets(model.availableTickets);
         watchObj.selectedAvailableTicketId = null;
 
-        if(model.availableTickets.length === 0) {
+        if (model.availableTickets.length === 0) {
             elements.changeTicketEmpty.classList.remove('hidden');
         } else {
             elements.changeTicketEmpty.classList.add('hidden');
@@ -138,7 +184,7 @@ function routeDetail() {
     function renderAvailableTickets(availableTickets) {
         elements.availableTicketElements.length = 0;
         commonService.removeAllChildren(elements.changeTicketContainer);
-        
+
         availableTickets.forEach(ticket => {
             const ticketElement = new TicketComponent(ticket, onAvailableTicketClicked);
             elements.changeTicketContainer.appendChild(ticketElement.render());
@@ -155,13 +201,13 @@ function routeDetail() {
     }
 
     function onWatchObjChanged(key) {
-        switch(key) {
-            case 'selectedAvailableTicketId' : renderUpdateRouteTicket()
+        switch (key) {
+            case 'selectedAvailableTicketId': renderUpdateRouteTicket()
         }
     }
 
     function renderUpdateRouteTicket() {
-        if(watchObj.selectedAvailableTicketId) {
+        if (watchObj.selectedAvailableTicketId) {
             elements.btnUpdateRoute.classList.remove('disabled');
         } else {
             elements.btnUpdateRoute.classList.add('disabled');
@@ -178,12 +224,12 @@ function routeDetail() {
             toastService.success('Update Route Ticket Successfully');
             $(`#${id.changeTicketModal}`).modal('hide');
             init();
-        } 
-        catch(ex) {
+        }
+        catch (ex) {
             console.log(ex);
             toastService.error('Cannot update Route Ticket');
         }
-        
+
     }
 }
 
