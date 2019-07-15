@@ -26,8 +26,7 @@ class RouteDetailScreen extends Component {
         this.routeId = this.navigation.getParam('routeId');
         this.state = {
             route: {},
-            dialogVisibleDelete: false,
-            dialogVisibleBuyRoute: false
+            dialogVisibleDelete: false
         };
 
         this.onBtnBuyRoutePressed = this.onBtnBuyRoutePressed.bind(this);
@@ -37,18 +36,6 @@ class RouteDetailScreen extends Component {
         this.initRoute = this.initRoute.bind(this);
         this.deleteRoute = this.deleteRoute.bind(this);
         this.onRouteTicketPressed = this.onRouteTicketPressed.bind(this);
-    }
-
-    handleBuyRouteCANCEL = () => {
-        this.setState({
-            dialogVisibleBuyRoute: false
-        });
-    }
-
-    showDialogBuyRoute = () => {
-        this.setState({
-            dialogVisibleBuyRoute: true
-        });
     }
 
     handleDeleteCANCEL = () => {
@@ -212,17 +199,9 @@ class RouteDetailScreen extends Component {
 
                     <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
                         <View style={{ paddingTop: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
-                            <Button success onPress={this.showDialogBuyRoute} block>
+                            <Button success onPress={this.onBtnBuyRoutePressed} block>
                                 <Text>Buy Route</Text>
                             </Button>
-                            <Dialog.Container visible={this.state.dialogVisibleBuyRoute}>
-                                <Dialog.Title>Buy Route</Dialog.Title>
-                                <Dialog.Description>
-                                    Do you want to Buy this Route ?
-                                        </Dialog.Description>
-                                <Dialog.Button label="Cancel" onPress={this.handleBuyRouteCANCEL} />
-                                <Dialog.Button label="Buy Route" onPress={this.onBtnBuyRoutePressed} />
-                            </Dialog.Container>
                         </View>
                         <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
                             <Button danger onPress={this.showDialogDelete} block>
