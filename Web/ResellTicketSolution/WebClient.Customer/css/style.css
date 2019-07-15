@@ -4027,3 +4027,7 @@ span.last {
 .dropdown-menu li b:hover {
     color: #424242
 }
+
+.text-capitalize {
+    text-transform: capitalize !important;
+}

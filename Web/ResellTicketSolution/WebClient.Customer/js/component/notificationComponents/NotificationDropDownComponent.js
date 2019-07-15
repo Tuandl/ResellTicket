@@ -11,9 +11,8 @@ export default class NotificationDropDownComponent {
     data = [];
     total = 0;
 
-    constructor(containerId) {
-        this.containerId = containerId;
-        this.containerElement = document.getElementById(containerId);
+    constructor(containerElement) {
+        this.containerElement = containerElement;
 
         this.getNotificationDataTable = this.getNotificationDataTable.bind(this);
         this.render = this.render.bind(this);
@@ -44,13 +43,16 @@ export default class NotificationDropDownComponent {
     }
 
     render() {
-        const wrapper = commonService.htmlToElement(`<div class="btn-group top-head-dropdown"></div>`);
+        const headerWrapper = commonService.htmlToElement(`<h4></h4>`);
+        const divWrapper = commonService.htmlToElement(`<div class="btn-group top-head-dropdown"></div>`);
 
-        wrapper.appendChild(this.generateDropDownButtonElement());
-        wrapper.appendChild(this.generateDropDownMenuElement());
+        divWrapper.appendChild(this.generateDropDownButtonElement());
+        divWrapper.appendChild(this.generateDropDownMenuElement());
+
+        headerWrapper.appendChild(divWrapper);
         
         commonService.removeAllChildren(this.containerElement);
-        this.containerElement.appendChild(wrapper);
+        this.containerElement.appendChild(headerWrapper);
     }
 
     generateDropDownButtonElement() {

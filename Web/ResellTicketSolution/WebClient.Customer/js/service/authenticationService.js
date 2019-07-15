@@ -29,11 +29,21 @@ function logout(){
     localStorage.clear();
 }
 
+function getUserInformation() {
+    return {
+        username: localStorage.getItem('USERNAME'),
+        fullName: localStorage.getItem('FULLNAME'),
+        phoneNumber: localStorage.getItem('PHONENUMBER'),
+        userId: localStorage.getItem('ID'),
+    }
+}
+
 const authenticationService = {
     checkLogin,
     checkLoginProfile,
     logout,
     isLogedin: isLogedin,
+    getUserInformation,
 }
 
 export {
