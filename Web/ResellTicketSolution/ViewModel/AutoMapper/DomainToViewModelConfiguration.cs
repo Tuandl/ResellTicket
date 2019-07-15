@@ -14,7 +14,8 @@ namespace ViewModel.AutoMapper
             CreateMap<User, UserRowViewModel>();
             CreateMap<Ticket, TicketRowViewModel>()
                 .ForMember(dest => dest.DepartureCity, option => option.MapFrom(source => source.DepartureStation.City.Name))
-                .ForMember(dest => dest.ArrivalCity, option => option.MapFrom(source => source.ArrivalStation.City.Name));
+                .ForMember(dest => dest.ArrivalCity, option => option.MapFrom(source => source.ArrivalStation.City.Name))
+                .ForMember(dest => dest.SellerPhone, option => option.MapFrom(source => source.Seller.PhoneNumber));
             CreateMap<Ticket, CustomerTicketViewModel>()
                 .ForMember(dest => dest.DepartureCityName, option => option.MapFrom(source => source.DepartureStation.City.Name))
                 .ForMember(dest => dest.ArrivalCityName, option => option.MapFrom(source => source.ArrivalStation.City.Name))
@@ -30,7 +31,8 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.ArrivalCityName, option => option.MapFrom(source => source.ArrivalStation.City.Name))
                 .ForMember(dest => dest.ArrivalCityId, option => option.MapFrom(source => source.ArrivalStation.CityId))
                 .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name))
-                .ForMember(dest => dest.ExpiredBefore, option => option.MapFrom(source => source.Transportation.ExpiredBefore));
+                .ForMember(dest => dest.ExpiredBefore, option => option.MapFrom(source => source.Transportation.ExpiredBefore))
+                .ForMember(dest => dest.SellerPhone, option => option.MapFrom(source => source.Seller.PhoneNumber));
 
             CreateMap<Ticket, AvailableTicketViewModel>()
                 .ForMember(dest => dest.VehicleName, option => option.MapFrom(source => source.Transportation.Vehicle.Name))

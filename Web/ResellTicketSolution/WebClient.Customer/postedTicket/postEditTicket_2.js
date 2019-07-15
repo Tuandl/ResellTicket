@@ -196,20 +196,31 @@ function postEditTicketController() {
                     createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Valid:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL';
                     createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Invalid:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL';
                     createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Bought:
                     document.getElementById('title').innerHTML = 'CONFIRM TIKCET RENAMING'
                     createBtn('BUYER INFO', () => viewPassengerInfo());
                     createBtn('CONFIRM', () => showConfirmDialogConfirmTicketRename());
-                    // createBtn('REFUSE', () => refuseTicketRename());
                     createBtn('REFUSE', () => showConfirmDialogRefuseTicketRename());
+                    break;
+                case TicketStatus.Completed:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break;
+                case TicketStatus.RenamedFail:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break
             }
         }
     }
+
     ////pending + valid + Invalid
     function showConfirmDialogDeletePendingPostedTicket() {
         $('#delete-pending-posted-ticket').modal();
