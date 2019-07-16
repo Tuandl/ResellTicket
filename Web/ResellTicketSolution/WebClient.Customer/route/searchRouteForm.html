@@ -26,42 +26,20 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<script src="./../js/jstarbox.js"></script>
 	<script type="text/javascript" src="./../js/authen.js"></script>
 	<script type="text/javascript" src="./../js/moment.js"></script>
+	<script type="module" src="/js/top-bar.js"></script>
 	<script type="module" src="./searchRouteForm.js"></script>
     <script src="./../js/bootstrap-datetimepicker.min.js"></script>
 	<!-- //js -->
 </head>
 
-<body onload="checkLogin()">
+<body onload="">
 	<div class="header">
 		<div class="container">
 			<div class="logo">
 				<h1><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
 				</h1>
 			</div>
-			<div class="head-t" id="isLoggin">
-				<ul class="card">
-					<li>
-						<h4><a href="login.html"><i class="fa fa-sign-in" aria-hidden="true"></i>Login</a></h4>
-					</li>
-					<li>
-						<h4><a href="checkPhoneNo.html"><i class="fa fa-key" aria-hidden="true"></i>Register</a></h4>
-					</li>
-				</ul>
-			</div>
-			<div class="head-t" id="showing-option">
-				<ul class="card">
-					<li>
-						<h4>Welcome <span id="welcome-name"></span>!!!</h4>
-					</li>
-					<li>
-						<h4><a href="updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
-						</h4>
-					</li>
-					<li>
-						<h4><a onclick="logout()" href="index.html"><i class="fa fa-sign-out"
-									aria-hidden="true"></i>Logout</a></h4>
-					</li>
-				</ul>
+			<div class="head-t" id="top-bar-container">
 			</div>
 
 			<div class="header-ri">

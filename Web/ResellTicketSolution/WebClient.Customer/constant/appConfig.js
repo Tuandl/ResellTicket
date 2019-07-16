@@ -20,7 +20,9 @@ const appConfig = {
         setDefaultCard: 'api/credit-card/set-default-card',
         addBankConnectAccount: 'api/customer/add-bank-connect-account',
         checkIsConnectedBank: 'api/customer/check-existed-connect-bank-account',
-        getLinkConnectBank: 'api/customer/view-connect-account'
+        getLinkConnectBank: 'api/customer/view-connect-account',
+        notificationDataTable: 'api/notification/data-table',
+        notification: 'api/notification',
     },
     url: {
         home: '/index.html',
@@ -50,6 +52,7 @@ const appConfig = {
         date: 'ddd, MMM DD, YYYY',
         time: 'HH:mm',
         datetimeISO: 'YYYY-MM-DD HH:mm',
+        datetimeNotification: 'HH:mm - MMM DD, YYYY',
     },
     MAX_RANDOM_ID: 9999999,
     OneSignalAppId: '2c3cad5d-d711-4abb-b25a-5f5cf2c9b5d1',
