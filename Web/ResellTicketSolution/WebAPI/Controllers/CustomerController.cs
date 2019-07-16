@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Service.EmailService;
 using Service.Services;
 using System.Net;
 using ViewModel.ViewModel.Customer;
@@ -10,10 +11,12 @@ namespace WebAPI.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
+        private readonly ISendGridService _sendGridService;
         private readonly IOTPService _oTPService;
-        public CustomerController(ICustomerService customerService, IOTPService oTPService)
+        public CustomerController(ICustomerService customerService, ISendGridService sendGridService, IOTPService oTPService)
         {
             _customerService = customerService;
+            _sendGridService = sendGridService;
             _oTPService = oTPService;
         }
         [HttpPost]
@@ -222,5 +225,25 @@ namespace WebAPI.Controllers
             var customer = _customerService.GetCustomerDetail(username);
             return Ok(customer);
         }
+
+        [HttpPost]
+        [Route("send-email-receipt-for-buyer")]
+        public IActionResult SendEmailReceiptForBuyer()
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest("Invalid Request");
+            //}
+
+            var username = User.Identity.Name;
+            _sendGridService.SendEmailReceiptForBuyer(username);
+
+            //if (!string.IsNullOrEmpty(sendResult))
+            //{
+            //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
+            //}
+            return Ok();
+        }
+
     }
 }
