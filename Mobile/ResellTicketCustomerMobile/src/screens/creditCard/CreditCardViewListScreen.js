@@ -160,8 +160,8 @@ export default class CreditCardViewListScreen extends Component {
                         <Dialog.Description>
                             Do you want to delete this credit card?
                             </Dialog.Description>
-                        <Dialog.Button label="Cancel" onPress={() => this.handleCancel()} />
                         <Dialog.Button label="Delete" onPress={() => this.deleteCreditCard(creditCardId)} />
+                        <Dialog.Button label="Cancel" onPress={() => this.handleCancel()} />
                     </Dialog.Container>
                 {/* </Content> */}
             </Container>

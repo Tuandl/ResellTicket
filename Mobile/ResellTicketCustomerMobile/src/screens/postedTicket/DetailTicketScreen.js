@@ -242,8 +242,8 @@ export default class DetailTicketScreen extends Component {
                                         <Dialog.Description>
                                             Do you want to Confirm Renamed this Ticket?
                                         </Dialog.Description>
-                                        <Dialog.Button label="Cancel" onPress={this.handleConfirmTicketRenamedCANCEL} />
                                         <Dialog.Button label="Rename" onPress={this.confirmTicketRenamed} />
+                                        <Dialog.Button label="Cancel" onPress={this.handleConfirmTicketRenamedCANCEL} />
                                     </Dialog.Container>
                                     <Button rounded block danger
                                         style={{ marginTop: 20, marginBottom: 0 }}
@@ -256,8 +256,8 @@ export default class DetailTicketScreen extends Component {
                                         <Dialog.Description>
                                             Do you want to Refuse to rename this Ticket ?
                                         </Dialog.Description>
-                                        <Dialog.Button label="Cancel" onPress={this.handleRefuseTicketRenamedCANCEL} />
                                         <Dialog.Button label="Refuse" onPress={this.RefuseTicket} />
+                                        <Dialog.Button label="Cancel" onPress={this.handleRefuseTicketRenamedCANCEL} />
                                     </Dialog.Container>
                                 </Container>
                                 : <Button rounded block danger
@@ -271,8 +271,8 @@ export default class DetailTicketScreen extends Component {
                                 <Dialog.Description>
                                     Do you want to Delete this Ticket ?
                                         </Dialog.Description>
-                                <Dialog.Button label="Cancel" onPress={this.handleDeleteTicketCANCEL} />
                                 <Dialog.Button label="Delete" onPress={this.deletePostedTicket} />
+                                <Dialog.Button label="Cancel" onPress={this.handleDeleteTicketCANCEL} />
                             </Dialog.Container>
                         </Content>
                     }
