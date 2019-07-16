@@ -22,7 +22,7 @@ namespace Service.Services
         }
         public void AddAdminDevice(string userId, string deviceId)
         {
-            var adminDevice = _adminDeviceRepository.Get(x => x.DeviceId == deviceId);
+            var adminDevice = _adminDeviceRepository.Get(x => x.Deleted == false && x.DeviceId == deviceId);
             if(adminDevice == null)
             {
                 adminDevice = new AdminDevice()

@@ -75,6 +75,7 @@ namespace WebAPI.Controllers
                 loginReturn.Username = customer.Username;
                 loginReturn.Id = customer.Id;
                 loginReturn.Token = token;
+                loginReturn.FullName = customer.FullName;
                 return Ok(loginReturn);
             }
             catch (Exception e)

@@ -1,4 +1,5 @@
-﻿using Core.Infrastructure;
+﻿using Core.Enum;
+using Core.Infrastructure;
 
 namespace Core.Models
 {
@@ -9,6 +10,7 @@ namespace Core.Models
         public int DepartureStationId { get; set; }
         public int ArrivalStationId { get; set; }
         public int Order { get; set; }
+        //public ResolveOption? ResolveOrder { get; set; }
         public virtual Ticket Ticket { get; set; }
         public virtual Station DepartureStation { get; set; }
         public virtual Station ArrivalStation { get; set; }

@@ -20,6 +20,7 @@ import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import FlipCard from "react-native-flip-card";
 import { Input, } from 'react-native-elements';
+import Dialog from "react-native-dialog";
 const BASE_SIZE = { width: 300, height: 190 };
 
 /* eslint react/prop-types: 0 */ // https://github.com/yannickcr/eslint-plugin-react/issues/106
@@ -28,7 +29,9 @@ export default class CreditCardViewListScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            creditCard: []
+            creditCard: [],
+            dialogVisible: false,
+            creditCardId: null
         }
         //this.deleteCreditCard = this.deleteCreditCard.bind(this);
     }
@@ -50,7 +53,7 @@ export default class CreditCardViewListScreen extends Component {
                 creditCard: creditCardResponse.data
             });
         } catch (error) {
-            toastr.error('Error', 'Error on Load CreditData Data');
+            toastr.error('Error', 'Error on Load Credit Card Data');
         }
     }
 
@@ -58,6 +61,12 @@ export default class CreditCardViewListScreen extends Component {
 
         try {
             var creditCardResponse = await Api.put('api/credit-card?id=' + id);
+            this.setState({
+                dialogVisible: false
+            });
+            RNToasty.Success({
+                title: 'Delete Credit Card successfully',
+            });
             this.componentDidMount();
         } catch (error) {
             toastr.error('Error', 'Error Delete Credit Data');
@@ -68,10 +77,27 @@ export default class CreditCardViewListScreen extends Component {
 
         try {
             var creditCardResponse = await Api.put('api/credit-card/set-default-card?Id=' + id + '&CustomerId=' + customerId);
+            RNToasty.Success({
+                title: 'Set Credit Card as default successfully',
+            });
             this.componentDidMount();
         } catch (error) {
             toastr.error('Error', 'Error Delete Credit Data');
         }
+    }
+
+    handleCancel = () => {
+        this.setState({
+            dialogVisible: false,
+            creditCardId: null
+        });
+    }
+    handleDelete = (id) => {
+        
+        this.setState({
+            dialogVisible: true,
+            creditCardId: id
+        });
     }
 
 
@@ -87,7 +113,7 @@ export default class CreditCardViewListScreen extends Component {
                     {console.log("qa:", item.isdefault)}
                     <TouchableOpacity onPress={() => this.setDefaultCard(item.id, item.customerId)}>
                         <Text maxLength={10}>{item.last4DigitsHash} </Text></TouchableOpacity>
-                    {item.isdefault === false ? <Button onPress={() => this.deleteCreditCard(item.id)} style={[s.buton]} >
+                    {item.isdefault === false ? <Button onPress={() => this.handleDelete(item.id)} style={[s.buton]} >
                         <Icon style={[s.smallIcon]} name="minus-circle-outline" type="material-community" color="#fff" />
                     </Button> : null}
 
@@ -101,7 +127,7 @@ export default class CreditCardViewListScreen extends Component {
     };
 
     render() {
-        const { creditCard, isLoading } = this.state;
+        const { creditCard, isLoading, creditCardId } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
@@ -129,6 +155,14 @@ export default class CreditCardViewListScreen extends Component {
                     keyExtractor={item => item.id}
                     stickyHeaderIndices={this.state.stickyHeaderIndices}
                 />
+                <Dialog.Container visible={this.state.dialogVisible}>
+                        <Dialog.Title>Delete Credit card</Dialog.Title>
+                        <Dialog.Description>
+                            Do you want to delete this credit card?
+                            </Dialog.Description>
+                        <Dialog.Button label="Delete" onPress={() => this.deleteCreditCard(creditCardId)} />
+                        <Dialog.Button label="Cancel" onPress={() => this.handleCancel()} />
+                    </Dialog.Container>
                 {/* </Content> */}
             </Container>
 

@@ -95,15 +95,15 @@ namespace Service.Services
 
 
             //
-            var paymentDetail = _paymentRepository.Get(x => x.RouteId == route.Id);
-            var ticket = _ticketRepository.Get(x => x.Id == TicketId);
+            var paymentDetail = _paymentRepository.Get(x => x.RouteId == route.Id && x.Deleted == false);
+            var ticket = _ticketRepository.Get(x => x.Id == TicketId && x.Deleted == false);
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
             var amount = ticket.SellingPrice * (100 - ticket.CommissionPercent) / 100;
 
             //số tiền chuyển đi
             var options = new TransferCreateOptions
             {
-                Amount = Convert.ToInt64(amount) * 100,
+                Amount = Convert.ToInt64(amount * 100),
                 Currency = "usd",
                 Destination = ticket.Seller.StripeConnectAccountId,
                 SourceTransaction = paymentDetail.StripeChargeId

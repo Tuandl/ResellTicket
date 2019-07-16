@@ -31,7 +31,7 @@ namespace WebAPI.Admin.Controllers
             //var username = User.Identity.Name;
             var payout = _payoutService.MakePayoutToCustomer(ticketId);
 
-            if (payout == "Not found route ticket")
+            if (!string.IsNullOrEmpty(payout))
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, payout);
             }

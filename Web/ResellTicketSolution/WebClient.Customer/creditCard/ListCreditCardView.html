@@ -60,45 +60,24 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             });
         });
     </script>
+	<script type="text/javascript" src="/js/moment.js"></script>
+	<script type="module" src="/js/top-bar.js"></script>
 
 </head>
 
-<body onload="checkLoginProfile();checkLogin()">
+<body onload="checkLoginProfile();">
+    <div id="dialog-confirm-credit-card"></div>
     <div class="header">
 
         <div class="container">
 
             <div class="logo">
-                <h1><a href="./../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                <h1><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
                             marketplace</span></a>
                 </h1>
             </div>
-            <div class="head-t" id="isLoggin">
-                <ul class="card">
-                    <li>
-                        <h4><a href="./../login.html"><i class="fa fa-user" aria-hidden="true"></i>Login</a></h4>
-                    </li>
-                    <li>
-                        <h4><a href="./../checkPhoneNo.html"><i class="fa fa-key" aria-hidden="true"></i>Register</a>
-                        </h4>
-                    </li>
-                </ul>
-            </div>
-            <div class="head-t" id="showing-option">
-                <ul class="card">
-                    <li>
-                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
-                    </li>
-                    <li>
-                        <h4><a href="./../index.html"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
-                        </h4>
-                    </li>
-                    <li>
-                        <h4><a onclick="logout()" href="./../index.html"><i class="fa fa-sign-out"
-                                    aria-hidden="true"></i>Logout</a></h4>
-                    </li>
-                </ul>
-            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
 
             <div class="header-ri">
                 <ul class="social-top">
@@ -135,7 +114,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                             </li>
                             <li id="btn-reload"><a id="link-connect" class="hyper"><span id="value-link"></span></a>
                             </li>
-                            <li class="active"><a href="/creditCard/ListCreditCardView.html" class="hyper"> <span>Credit Card</span></a></li>
+                            <li class="active"><a href="/creditCard/ListCreditCardView.html" class="hyper"> <span>Credit
+                                        Card</span></a></li>
                             <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
                         </ul>
                     </div>
@@ -152,7 +132,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <div class="banner-top">
         <div class="container">
             <h3>List Credit Card</h3>
-            <h4><a href="./../index.html">Home</a><label>/</label>My Credit Card</h4>
+            <h4><a href="/index.html">Home</a><label>/</label>My Credit Card</h4>
             <div class="clearfix"> </div>
         </div>
     </div>
@@ -163,7 +143,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
     </script>
     <div class="login">
-
         <div class="main-agileits" style="width: 45%;">
             <div class="form-w3agile form">
                 <h3>View List Credit card</h3>
@@ -171,7 +150,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     <tbody id="credit-card-list">
                     </tbody>
                 </table>
-                <a style="text-decoration: none" href="./createCreditCardView.html"><button type="button" class="btn btn-large btn-block btn-warning">Add Credit
+                <a style="text-decoration: none" href="/creditCard/createCreditCardView.html"><button type="button"
+                        class="btn btn-large btn-block btn-warning">Add Credit
                         Card</button></a>
                 </form>
             </div>
@@ -182,7 +162,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <div class="footer">
         <div class="container">
             <div class="footer-bottom">
-                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                <h2><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
                 </h2>
                 <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
                     last-minute deals. Welcome to a world of opportunities.</p>

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace ViewModel.ViewModel.Ticket
 {
-    public class TicketDataTable : DataTableBase<TicketRowViewModel> 
+    public class TicketDataTable : DataTableBase<TicketRowViewModel>
     {
-
+        
     }
 }

@@ -6,13 +6,18 @@ import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import PaginationView from '../Pagination/PaginationComponent';
+import TicketStatus from './TicketStatus';
 
 function TicketRow(props) {
     const { ticket } = props;
     const getBadge = (status) => {
-        if (status === 6) {
+        if (status === TicketStatus.Completed) {
             return (
-                <Badge color="success">Completed</Badge>
+                <Badge color="success">RenamedSuccess</Badge>
+            )
+        } else if(status === TicketStatus.RenamedFail) {
+            return (
+                <Badge color="danger">RenamedFail</Badge>
             )
         }
     }

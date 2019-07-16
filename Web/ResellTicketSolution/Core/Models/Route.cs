@@ -9,6 +9,7 @@ namespace Core.Models
         public string Code { get; set; }
         public decimal TotalAmount { get; set; }
         public RouteStatus Status { get; set; }
+        public ResolveOption? ResolveOption { get; set; }
         public int CustomerId { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<RouteTicket> RouteTickets { get; set; }

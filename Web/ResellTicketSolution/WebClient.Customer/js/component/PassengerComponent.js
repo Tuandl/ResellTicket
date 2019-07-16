@@ -32,7 +32,7 @@ class PassengerComponent {
                                 <div class="form-group">
 									<label class="control-label col-sm-3">New Passenger Name:</label>
 									<div class="col-sm-9">
-										<input type="text" class="form-control" value=${this.html.info.buyerPassengerName} id="buyerPassengerName"/>
+										<input type="text" class="form-control" value="${this.html.info.buyerPassengerName}" id="buyerPassengerName"/>
 									</div>	
 								</div>
                             </div>
@@ -40,7 +40,7 @@ class PassengerComponent {
                                 <div class="form-group">
 									<label class="control-label col-sm-3">New Passenger Email:</label>
 									<div class="col-sm-9">
-										<input type="text" class="form-control" value=${this.html.info.buyerPassengerEmail} id="buyerPassengerEmail"/>
+										<input type="text" class="form-control" value="${this.html.info.buyerPassengerEmail}" id="buyerPassengerEmail"/>
 									</div>	
 								</div>
                             </div>
@@ -48,7 +48,7 @@ class PassengerComponent {
                                 <div class="form-group">
 									<label class="control-label col-sm-3">New Passenger Phone:</label>
 									<div class="col-sm-9">
-										<input type="text" class="form-control" value=${this.html.info.buyerPassengerPhone} id="buyerPassengerPhone"/>
+										<input type="text" class="form-control" value="${this.html.info.buyerPassengerPhone}" id="buyerPassengerPhone"/>
 									</div>	
 								</div>
                             </div>
@@ -56,7 +56,7 @@ class PassengerComponent {
                                 <div class="form-group">
 									<label class="control-label col-sm-3">New Passenger Identify:</label>
 									<div class="col-sm-9">
-										<input type="text" class="form-control" value=${this.html.info.buyerPassengerIdentify} id="buyerPassengerIdentify"/>
+										<input type="text" class="form-control" value="${this.html.info.buyerPassengerIdentify}" id="buyerPassengerIdentify"/>
 									</div>	
 								</div>
                             </div>

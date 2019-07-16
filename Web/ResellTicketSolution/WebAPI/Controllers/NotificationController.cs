@@ -76,5 +76,24 @@ namespace WebAPI.Controllers
                 return BadRequest(ex.GetBaseException().Message);
             }
         }
+
+        /// <summary>
+        /// Mark all notification for this user as read
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("read-all")]
+        public IActionResult ReadAllNotification()
+        {
+            try
+            {
+                _notificationService.ReadAllNotification(User.Identity.Name);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.GetBaseException().Message);
+            }
+        }
     }
 }

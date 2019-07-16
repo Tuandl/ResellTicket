@@ -4,6 +4,9 @@ import commonService from '../js/service/commonService.js';
 import AutoSuggestComponent from "../js/component/AutoSuggestComponent.js";
 import TicketStatus from '../js/enum/ticketStatus.js';
 import PassengerComponent from "../js/component/PassengerComponent.js";
+import { ConfirmDialogDeletePendingPostedTicket } from "./../js/component/dialogComponent/ConfirmDialogDeletePendingPostedTicket.js";
+import { ConfirmDialogConfirmTicketRename } from "./../js/component/dialogComponent/ConfirmDialogConfirmTicketRename.js";
+import { ConfirmDialogRefuseTicketRename } from "./../js/component/dialogComponent/ConfirmDialogRefuseTicketRename.js";
 
 function postEditTicketController() {
 
@@ -22,12 +25,28 @@ function postEditTicketController() {
         emailBooking: 'emailBooking',
         sellingPrice: 'sellingPrice',
         btnEvent: 'btnEvent',
-        customerDetailContainer: 'customer-detail-container'
+        customerDetailContainer: 'customer-detail-container',
+        //confirmdialog
+        dialogDeletePendingPostedTicket: 'dialog-delete-pending-posted-ticket',
+        dialogConfirmTicketRename: 'dialog-confirm-ticket-rename',
+        dialogRefuseTicketRename: 'dialog-refuse-ticket-rename'
     };
 
+    const elements = {
+        dialogDeletePendingPostedTicket: document.getElementById(id.dialogDeletePendingPostedTicket),
+        dialogConfirmTicketRename: document.getElementById(id.dialogConfirmTicketRename),
+        dialogRefuseTicketRename: document.getElementById(id.dialogRefuseTicketRename)
+    }
+
+    const modelConfirmDialog = {
+        dialogDeletePendingPostedTicketBox: [],
+        dialogConfirmTicketRenameBox: [],
+        dialogRefuseTicketRenameBox: []
+    }
+
     var model = {};
-    const ticketId = parseInt(window.location.search.substr(10));
-    
+    const ticketId = window.location.search.substr(10);
+
     init();
     getTicketDetail();
 
@@ -46,8 +65,9 @@ function postEditTicketController() {
         initPassengerNameInputField();
         initEmailBookingInputField();
         initSellingPriceInputField();
+        initConfirmDialog();
     }
-    
+
 
     async function getTicketDetail() {
         if (ticketId !== '') {
@@ -77,7 +97,7 @@ function postEditTicketController() {
                     inputTags[i].setAttribute('readonly', '');
                 }
             }
-            if(data.status === TicketStatus.Invalid) {
+            if (data.status === TicketStatus.Invalid) {
                 displayInvalidField(data)
             }
         }
@@ -134,9 +154,37 @@ function postEditTicketController() {
         btn.setAttribute('class', 'btn-view-now');
         btn.setAttribute('onclick', event);
         divBtn.appendChild(btn);
-    }    
+    }
+
+    function initConfirmDialog() {
+        commonService.removeAllChildren(elements.dialogDeletePendingPostedTicket);
+        commonService.removeAllChildren(elements.dialogConfirmTicketRename);
+        commonService.removeAllChildren(elements.dialogRefuseTicketRename);
+        //
+        const confirmDialogDeletePendingPostedTicket = new
+            ConfirmDialogDeletePendingPostedTicket("Delete Ticket", "Do you want to delete this ticket ?",
+                "Delete", showConfirmDialogDeletePendingPostedTicket, deleteTicket);
+        modelConfirmDialog.dialogDeletePendingPostedTicketBox.push(confirmDialogDeletePendingPostedTicket);
+        confirmDialogDeletePendingPostedTicket.render();
+        elements.dialogDeletePendingPostedTicket.appendChild(confirmDialogDeletePendingPostedTicket.domElement);
+        //
+        const confirmDialogConfirmTicketRename = new
+            ConfirmDialogConfirmTicketRename("Confirm Rename Ticket", "Do you want to confirm this ticket renamed ?",
+                "Confirm", showConfirmDialogConfirmTicketRename, confirmTicketRename);
+        modelConfirmDialog.dialogConfirmTicketRenameBox.push(confirmDialogConfirmTicketRename);
+        confirmDialogConfirmTicketRename.render();
+        elements.dialogConfirmTicketRename.appendChild(confirmDialogConfirmTicketRename.domElement);
+        //
+        const confirmDialogRefuseTicketRename = new
+            ConfirmDialogRefuseTicketRename("Refuse Ticket Rename", "Do you want to refuse to rename this ticket ?",
+                "Refuse", showConfirmDialogRefuseTicketRename, refuseTicketRename);
+        modelConfirmDialog.dialogRefuseTicketRenameBox.push(confirmDialogRefuseTicketRename);
+        confirmDialogRefuseTicketRename.render();
+        elements.dialogRefuseTicketRename.appendChild(confirmDialogRefuseTicketRename.domElement);
+    }
 
     function initBtnEvent() {
+
         if (ticketId === '') {
             document.getElementById('title').innerHTML = 'POST TICKET'
             createBtn('POST NOW', () => postTicket())
@@ -145,21 +193,54 @@ function postEditTicketController() {
                 case TicketStatus.Pending:
                     document.getElementById('title').innerHTML = 'EDIT TICKET'
                     createBtn('SAVE', () => editTicket())
-                    createBtn('DELETE', () => deleteTicket())
+                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Valid:
-                    createBtn('DELETE', () => deleteTicket())
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL';
+                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Invalid:
-                    createBtn('DELETE', () => deleteTicket())
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL';
+                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Bought:
                     document.getElementById('title').innerHTML = 'CONFIRM TIKCET RENAMING'
                     createBtn('BUYER INFO', () => viewPassengerInfo());
-                    createBtn('CONFIRM', () => confirmTicketRename());
-                    createBtn('REFUSE', () => refuseTicketRename());
+                    createBtn('CONFIRM', () => showConfirmDialogConfirmTicketRename());
+                    createBtn('REFUSE', () => showConfirmDialogRefuseTicketRename());
+                    break;
+                case TicketStatus.Completed:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break;
+                case TicketStatus.RenamedFail:
+                    document.getElementById('title').innerHTML = 'TICKET DETAIL'
+                    createBtn('DELETE', () => deleteTicket())
+                    break
             }
         }
+    }
+
+    ////pending + valid + Invalid
+    function showConfirmDialogDeletePendingPostedTicket() {
+        $('#delete-pending-posted-ticket').modal();
+    }
+    // ////valid
+    // function showConfirmDialogDeleteValidPostedTicket() {
+    //     $('#delete-valid-posted-ticket').modal();
+    // }
+    // ////Invalid
+    // function showConfirmDialogDeleteInvalidPostedTicket() {
+    //     $('#delete-invalid-posted-ticket').modal();
+    // }
+    ////Bought
+    //confirm
+    function showConfirmDialogConfirmTicketRename() {
+        $('#confirm-ticket-rename').modal();
+    }
+    //refuse
+    function showConfirmDialogRefuseTicketRename() {
+        $('#refuse-ticket-rename').modal();
     }
 
     async function postTicket() {
@@ -193,7 +274,7 @@ function postEditTicketController() {
     function viewPassengerInfo() {
         renderCustomerDetail(ticketId);
     }
-    
+
     async function renderCustomerDetail(ticketId) {
         var customerDetailContainer = document.getElementById(id.customerDetailContainer);
         commonService.removeAllChildren(customerDetailContainer);
@@ -204,7 +285,7 @@ function postEditTicketController() {
         // passengerComponent.passengerDetail();
         $(`#${'customer-detail-modal'}`).modal();
     }
-    
+
 
     async function refuseTicketRename() {
         const res = await apiService.putParams(appConfig.apiUrl.ticketRefuseRenamed, { id: ticketId });

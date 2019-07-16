@@ -61,45 +61,24 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             });
         });
     </script>
+	<script type="text/javascript" src="/js/moment.js"></script>
+	<script type="module" src="/js/top-bar.js"></script>
 
 </head>
 
-<body onload="checkLoginProfile();checkLogin()">
+<body onload="checkLoginProfile();">
     <div class="header">
 
         <div class="container">
 
             <div class="logo">
-                <h1><a href="./../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                <h1><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
                             marketplace</span></a>
                 </h1>
             </div>
-            <div class="head-t" id="isLoggin">
-                <ul class="card">
-                    <li>
-                        <h4><a href="./../login.html"><i class="fa fa-user" aria-hidden="true"></i>Login</a></h4>
-                    </li>
-                    <li>
-                        <h4><a href="./../checkPhoneNo.html"><i class="fa fa-key" aria-hidden="true"></i>Register</a>
-                        </h4>
-                    </li>
-                </ul>
-            </div>
-            <div class="head-t" id="showing-option">
-                <ul class="card">
-                    <li>
-                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
-                    </li>
-                    <li>
-                        <h4><a href="./../index.html"><i class="fa fa-home" aria-hidden="true"></i>Home</a>
-                        </h4>
-                    </li>
-                    <li>
-                        <h4><a onclick="logout()" href="./../index.html"><i class="fa fa-sign-out"
-                                    aria-hidden="true"></i>Logout</a></h4>
-                    </li>
-                </ul>
-            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
+
 
             <div class="header-ri">
                 <ul class="social-top">
@@ -162,11 +141,37 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <!--login-->
     <script type="text/javascript">
 
-
+        
     </script>
 
     <div class="login">
         <div class="main-agileits">
+            <!-- Button trigger modal -->
+            <button class="btn btn-primary" onclick="myFunction()">
+                Launch demo modal
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="confirmDialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            ...
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="form-w3agile form1">
                 <h3>Create Credit Card</h3>
                 <div class='card-wrapper'></div>
@@ -224,6 +229,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         }
                     });
                     console.log("card", card);
+
+                    function myFunction() {
+                        $('#confirmDialog').modal();
+                    }
                 </script>
             </div>
 
@@ -233,7 +242,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <div class="footer">
         <div class="container">
             <div class="footer-bottom">
-                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                <h2><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
                 </h2>
                 <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
                     last-minute deals. Welcome to a world of opportunities.</p>

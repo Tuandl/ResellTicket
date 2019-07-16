@@ -36,7 +36,7 @@ namespace Service.Services
 
         public bool RemoveTicketInRoute(int TicketId, int RouteId)
         {
-            var ticketInRoute = _routeTicketRepository.Get(x => x.RouteId == RouteId & x.TicketId == TicketId);
+            var ticketInRoute = _routeTicketRepository.Get(x => x.Deleted == false && x.RouteId == RouteId & x.TicketId == TicketId);
             if(ticketInRoute == null)
             {
                 return false;

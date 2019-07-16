@@ -35,7 +35,7 @@ namespace Service.Services
         public bool CreateTicketType(TicketTypeCreateViewModel model)
         {
             var ticketType = _mapper.Map<TicketTypeCreateViewModel, TicketType>(model);
-            if (_ticketTypeRepository.Get(x => x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) == null)
+            if (_ticketTypeRepository.Get(x => x.Deleted == false && x.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)) == null)
             {
                 ticketType.CreatedAtUTC = DateTime.UtcNow;
                 ticketType.UpdatedAtUTC = DateTime.UtcNow;
@@ -48,7 +48,7 @@ namespace Service.Services
 
         public TicketTypeRowViewModel FindTicketTypeById(int id)
         {
-            var ticketType = _ticketTypeRepository.Get(x => x.Id == id);
+            var ticketType = _ticketTypeRepository.Get(x => x.Deleted == false && x.Id == id);
             var ticketTypeRow = _mapper.Map<TicketType, TicketTypeRowViewModel>(ticketType);
             return ticketTypeRow;
         }
@@ -97,7 +97,7 @@ namespace Service.Services
 
         public string UpdateTicketType(TicketTypeRowViewModel model)
         {
-            var existedTicketType = _ticketTypeRepository.Get(x => x.Id == model.Id);
+            var existedTicketType = _ticketTypeRepository.Get(x => x.Deleted == false && x.Id == model.Id);
             if (existedTicketType == null)
             {
                 return "Ticket Type Not Found";

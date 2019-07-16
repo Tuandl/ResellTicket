@@ -46,17 +46,18 @@
             });
             OneSignal.on('notificationDisplay', function (event) {
                 alert(event.content);
-                //console.log(event);
+                //console.log(event.content);
             });
         });
     </script>
+	<script type="module" src="/js/top-bar.js"></script>
     <!-- //js -->
 </head>
 <!-- <script src="./postedTicket.js" type="text/babel"></script> -->
 <script src="./postedTicket_2.js" type="module"></script>
 <script src="../helper/Api.js"></script>
 
-<body onload="checkLogin()">
+<body onload="checkLoginProfile();">
     <div class="header">
         <div class="container">
             <div class="logo">
@@ -64,22 +65,8 @@
                             marketplace</span></a>
                 </h1>
             </div>
-            <div class="head-t" id="isLoggin"></div>
-            <div class="head-t" id="showing-option">
-                <ul class="card">
-                    <li>
-                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
-                    </li>
-                    <li>
-                        <h4><a href="../updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
-                        </h4>
-                    </li>
-                    <li>
-                        <h4><a onclick="logout()" href="../index.html"><i class="fa fa-sign-out"
-                                    aria-hidden="true"></i>Logout</a></h4>
-                    </li>
-                </ul>
-            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
 
             <div class="header-ri">
                 <ul class="social-top">

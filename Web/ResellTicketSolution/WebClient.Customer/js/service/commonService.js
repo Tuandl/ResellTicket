@@ -56,6 +56,10 @@ function createWatch(object, onObjChanged) {
     return new Proxy(object, handler);
 }
 
+function replaceElementItself(oldElement, newElement) {
+    oldElement.parentNode.replaceChild(newElement, oldElement);
+}
+
 const commonService = {
     generateRandomId: generateRandomId,
     removeAllChildren: removeAllChildren,
@@ -64,6 +68,11 @@ const commonService = {
     getQueryString,
     getQueryParam,
     createWatch,
+
+    /**
+     * replace old element in parent dom by new element
+     */
+    replaceElementItself,
 };
 
 export default commonService

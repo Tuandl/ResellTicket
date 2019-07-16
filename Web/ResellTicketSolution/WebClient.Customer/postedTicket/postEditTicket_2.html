@@ -38,7 +38,7 @@
     <script src="../js/babel.min.js"></script>
     <!-- Load React. -->
 
-    <script type="text/javascript" src="../js/authen.js"></script>
+    <script type="text/javascript" src="/js/authen.js"></script>
     <script src="../js/jstarbox.js" type="text/jQuery"></script>
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/moment.js"></script>
@@ -61,42 +61,27 @@
             });
             OneSignal.on('notificationDisplay', function (event) {
                 alert(event.content);
-                //console.log(event);
             });
         });
     </script>
     <!-- <script src="./postedTicket.js" type="text/babel"></script> -->
     <!-- <script src="../helper/Api.js"></script> -->
     <script src="./postEditTicket_2.js" type="module"></script>
+	<script type="module" src="/js/top-bar.js"></script>
     <!-- //js -->
 </head>
 
 
-<body>
+<body onload="checkLogin();checkLoginProfile();">
     <div class="header">
         <div class="container">
             <div class="logo">
-                <h1><a href="../index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                <h1><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
                             marketplace</span></a>
                 </h1>
             </div>
-            <div class="head-t" id="isLoggin"></div>
-
-            <div class="head-t" id="showing-option">
-                <ul class="card">
-                    <li>
-                        <h4>Welcome <span id="welcome-name"></span>!!!</h4>
-                    </li>
-                    <li>
-                        <h4><a href="../updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
-                        </h4>
-                    </li>
-                    <li>
-                        <h4><a onclick="logout()" href="../index.html"><i class="fa fa-sign-out"
-                                    aria-hidden="true"></i>Logout</a></h4>
-                    </li>
-                </ul>
-            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
 
             <div class="header-ri">
                 <ul class="social-top">
@@ -154,6 +139,11 @@
 
     <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
     <script src="../js/jquery.vide.min.js"></script>
+
+    <!-- Confirm Dialog -->
+    <div id="dialog-delete-pending-posted-ticket"></div>
+    <div id="dialog-confirm-ticket-rename"></div>
+    <div id="dialog-refuse-ticket-rename"></div>
 
     <!--content-->
     <div class="content-top">
