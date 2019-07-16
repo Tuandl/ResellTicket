@@ -630,7 +630,7 @@ namespace Service.Services
                      CustomerId = ROUTE.CustomerId,
                      Status = ROUTE.Status,
                      TotalAmount = ROUTE.TotalAmount,
-                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                     TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
             var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
@@ -722,7 +722,7 @@ namespace Service.Services
                      CustomerId = ROUTE.CustomerId,
                      Status = ROUTE.Status,
                      TotalAmount = ROUTE.TotalAmount,
-                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                     TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
             var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Status);
@@ -779,7 +779,7 @@ namespace Service.Services
                      CustomerId = ROUTE.CustomerId,
                      Status = ROUTE.Status,
                      TotalAmount = ROUTE.TotalAmount,
-                     TicketQuantity = ROUTE.RouteTickets.Count(),
+                     TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
             var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Status);
@@ -827,7 +827,7 @@ namespace Service.Services
             _routeTicketRepository.Add(replaceRouteTicket);
             failRouteTicket.Deleted = true;
             _routeTicketRepository.Update(failRouteTicket);
-           
+
 
             replaceTicket.Status = TicketStatus.Bought;
             replaceTicket.BuyerPassengerName = failRouteTicket.Ticket.BuyerPassengerName;

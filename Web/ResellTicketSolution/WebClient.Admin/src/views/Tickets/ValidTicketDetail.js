@@ -91,6 +91,7 @@ export default class ValidTicketDetail extends Component {
     }
 
     onConfirm = async () => {
+        toastr.info('Updating', 'Waiting for valid');
         const ticketId = this.props.match.params.id;
         var { validCount, commissionFee, expiredBefore, expiredDateTime, invalidField } = this.state;
 

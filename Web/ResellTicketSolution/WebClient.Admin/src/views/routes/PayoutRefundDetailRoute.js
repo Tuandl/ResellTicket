@@ -59,11 +59,13 @@ function TicketRow(props) {
     }
 
     function tranferMoneyToSeller() {
+        
         props.tranferMoneyToSeller(ticket.ticketId)
 
     }
 
     function refundFailTicketMoneyToBuyer() {
+        
         props.refundFailTicketMoneyToBuyer(ticket.ticketId);
     }
 
@@ -138,28 +140,31 @@ class PayoutRefundDetailRoute extends Component {
     }
 
     tranferMoneyToSeller = (ticketId) => {
+        toastr.info('Processing, Waiting for tranfer');
         Axios.post('api/payout?ticketId=' + ticketId).then(res => {
             if (res.status === 200) {
-                toastr.success('Payout Success', 'Tranfer money successfully.');
+                toastr.success('Successfully', 'Tranfer money successfully.');
                 this.getRouteDetail();
             }
         })
     }
 
     refundFailTicketMoneyToBuyer = (ticketId) => {
+        toastr.info('Processing, Waiting for refund');
         Axios.post('api/refund/one-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
             if(res.status === 200) {
-                toastr.success('Refund Success', 'Refund money successfully.');    
+                toastr.success('Successfully', 'Refund money successfully.');    
                 this.getRouteDetail();          
             }
         })
     }
 
     refundTotalAmountToBuyer = () => {
+        toastr.info('Processing', 'Waiting for refund')
         const ticketId = this.state.routeTickets[0].ticketId;
         Axios.post('api/refund/all-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
             if (res.status === 200) {
-                toastr.success('Refund Success', 'Refund money successfully.');
+                toastr.success('Successfully', 'Refund money successfully.');
                 this.props.history.push('/boughtRoutes');
                 //this.getRouteDetail();          
             }
@@ -170,6 +175,10 @@ class PayoutRefundDetailRoute extends Component {
         this.setState({
             resolveOption: value
         })
+    }
+
+    goBack = () => {
+        this.props.history.goBack();
     }
 
     render() {
@@ -230,6 +239,7 @@ class PayoutRefundDetailRoute extends Component {
                                                     <i className="fa fa-dollar fa-lg mr-1"></i>Refund Total Amount
                                                 </Button> : ''
                                         }
+                                        <Button color="secondary" className="ml-1" onClick={() => this.goBack()}>Back</Button>
                                     </Col>
                                 </Row>
                             </CardBody>
