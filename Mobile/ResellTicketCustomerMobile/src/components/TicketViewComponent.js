@@ -20,22 +20,55 @@ export default class TicketViewComponent extends Component {
     }
 
     componentDidMount() {
-        var {postedTicket} = this.props
+        var { postedTicket } = this.props
         if (moment(new Date()).isAfter(moment(postedTicket.expiredDateTime))) {
             this.state.statusColor = 'lightgrey'
             this.setState({
                 statusTemp: 0
-            })
+            }, () => this.setStatusColor())
         } else {
             this.setState({
                 statusTemp: postedTicket.status
-            })
+            }, () => this.setStatusColor())
         }
     }
 
     componentWillReceiveProps(props) {
         
     }
+
+    setStatusColor = () => {
+        var { statusTemp } = this.state;
+        switch (statusTemp) {
+            case convertTicketStatus.ticketStatus.PENDING:
+                this.setState({
+                    statusColor: 'orange'
+                })
+                break;
+            case convertTicketStatus.ticketStatus.INVALID:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case convertTicketStatus.ticketStatus.RENAMEDFAIL:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case convertTicketStatus.ticketStatus.EXPIRED:
+                this.setState({
+                    statusColor: 'lightgrey'
+                })
+                break;
+            default:
+                this.setState({
+                    statusColor: '#28a745'
+                })
+                break;
+        }
+    }
+
+    
 
     editTicketOrViewTicketDetails = () => {
         const { postedTicket, navigate, refreshPostedTicket } = this.props;
@@ -58,13 +91,13 @@ export default class TicketViewComponent extends Component {
             vehicle,
             ticketCode } = this.props.postedTicket;
         var { statusTemp, statusColor } = this.state;
-        {   //check hết hạn vé
-            statusTemp === 1 ? statusColor = 'orange'
-                : statusTemp === 3 ? statusColor = 'red'
-                    : statusTemp === 0 ? statusColor = 'lightgrey' :
-                        statusColor = '#28a745';
+        // {   //check hết hạn vé
+        //     statusTemp === 1 ? statusColor = 'orange'
+        //         : statusTemp === 3 ? statusColor = 'red'
+        //             : statusTemp === 0 ? statusColor = 'lightgrey' :
+        //                 statusColor = '#28a745';
 
-        }
+        // }
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>

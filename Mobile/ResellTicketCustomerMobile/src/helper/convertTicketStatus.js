@@ -5,7 +5,9 @@ const TicketStatus = {
     BOUGHT: 4,
     RENAMED: 5,
     COMPLETED: 6,
-    REFUSED: 7
+    RENAMEDSUCESS: 7,
+    RENAMEDFAIL: 8,
+    EXPIRED: 0,
 };
 
 function toString(status) {
@@ -22,8 +24,10 @@ function toString(status) {
             return 'Renamed';
         case TicketStatus.COMPLETED:
             return 'RenamedSuccess';
-        case TicketStatus.REFUSED:
-            return 'Refused';
+        case TicketStatus.RENAMEDSUCESS:
+            return 'RenamedSuccess';
+        case TicketStatus.RENAMEDFAIL:
+            return 'RenamedFail';
         default:
             return 'Expired';
     }

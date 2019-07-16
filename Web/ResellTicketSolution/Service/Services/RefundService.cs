@@ -148,19 +148,28 @@ namespace Service.Services
             _refundRepository.Add(refundAddIntoData);
 
             var route = failRouteTicket.Route;
-            var failTickets = 0;
-            var refundFailTickets = 0;
-            foreach(var routeTicket in route.RouteTickets)
-            {
-                if (routeTicket.Ticket.Status == TicketStatus.RenamedFail) failTickets++;
-                if (_payoutRespository.Get(x => x.TicketId == routeTicket.TicketId 
-                    && x.Ticket.Status == TicketStatus.RenamedFail) != null) refundFailTickets++;
-            }
-            if(failTickets == refundFailTickets)
+            //var failTickets = 0;
+            //var refundFailTickets = 0;
+            var routeTickets = route.RouteTickets.Where(x => x.Deleted == false);
+            if(routeTickets.Count() == 2)
             {
                 route.Status = RouteStatus.Completed;
                 route.ResolveOption = resolveOption;
             }
+            failRouteTicket.Deleted = true;
+            _routeTicketRepository.Update(failRouteTicket);
+            //foreach(var routeTicket in route.RouteTickets.Where(x => x.Deleted == false))
+            //{
+            //    if (routeTicket.Ticket.Status == TicketStatus.RenamedFail) failTickets++;
+            //    //if (_refundRepository.Get(x => x.TicketId == routeTicket.TicketId 
+            //    //    && x.Ticket.Status == TicketStatus.RenamedFail) != null) refundFailTickets++;
+
+            //}
+            //if(failTickets == refundFailTickets)
+            //{
+            //    route.Status = RouteStatus.Completed;
+            //    route.ResolveOption = resolveOption;
+            //}
 
             _unitOfWork.CommitChanges();
         }

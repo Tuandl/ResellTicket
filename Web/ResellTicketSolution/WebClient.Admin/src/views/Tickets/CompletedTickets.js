@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
 // import { toastr } from 'react-redux-toastr';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
@@ -15,12 +15,13 @@ function TicketRow(props) {
             return (
                 <Badge color="success">RenamedSuccess</Badge>
             )
-        } else if(status === TicketStatus.RenamedFail) {
+        } else if (status === TicketStatus.RenamedFail) {
             return (
                 <Badge color="danger">RenamedFail</Badge>
             )
         }
     }
+    const ticketLink = `/CompletedTicket/${ticket.id}`
     return (
         <tr>
             <th>{props.index + 1}</th>
@@ -32,6 +33,14 @@ function TicketRow(props) {
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
+            <td>
+                <Link to={ticketLink}>
+                    {/* onClick={() => { parent.onInValidSaveChanges(ticket.id) }} */}
+                    <Button color="success" className="mr-2">
+                        <i className="fa fa-edit fa-lg mr-1"></i>Details
+                    </Button>
+                </Link>
+            </td>
         </tr>
     )
 }
@@ -164,7 +173,7 @@ class CompletedTickets extends Component {
                                                 {/* <th>Seller Phone</th> */}
                                                 <th>Price</th>
                                                 <th>Status</th>
-                                                {/* <th>Action</th> */}
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>

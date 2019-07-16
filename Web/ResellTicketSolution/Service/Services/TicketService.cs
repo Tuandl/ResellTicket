@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
+using Core.Enum;
 using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.AspNetCore.Identity;
+using Service.Helpers;
 using Service.NotificationService;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Ticket;
-using Core.Enum;
-using Service.Helpers;
-using ViewModel.ViewModel.Route;
 
 namespace Service.Services
 {
@@ -106,7 +105,7 @@ namespace Service.Services
         }
         public TicketDetailViewModel GetTicketDetail(int ticketId)
         {
-            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId && x.Deleted == false);
+            var ticketDetail = _ticketRepository.Get(x => x.Id == ticketId);
             var ticketDetailVM = _mapper.Map<Ticket, TicketDetailViewModel>(ticketDetail);
             return ticketDetailVM;
         }
@@ -783,16 +782,19 @@ namespace Service.Services
             existedTicket.PassengerName = model.PassengerName;
             existedTicket.EmailBooking = model.EmailBooking;
             existedTicket.SellingPrice = model.SellingPrice;
+            existedTicket.ExpiredDateTime = model.DepartureDateTime;
 
             //convert time into UTC time
             var departureStation = existedTicket.DepartureStation;
             if (departureStation.City.TimeZoneId != null)
             {
                 existedTicket.DepartureDateTimeUTC = model.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
+                existedTicket.ExpiredDateTimeUTC = model.DepartureDateTime.ToSpecifiedTimeZone(departureStation.City.TimeZoneId);
             }
             else
             {
                 existedTicket.DepartureDateTimeUTC = model.DepartureDateTime;
+                existedTicket.ExpiredDateTimeUTC = model.DepartureDateTime;
             }
 
             var arrivalStation = existedTicket.ArrivalStation;

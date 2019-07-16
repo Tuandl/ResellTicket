@@ -17,7 +17,7 @@ function TicketRow(props) {
             )
         }
     }
-    const ticketLink = `/boughtRoute/replaceTicket/${ticket.id}`;
+    const ticketLink = `/boughtRoute/${props.routeId}/${ticket.id}`;
 
     function replaceTicket() {
         props.selectTicket(ticket.id);
@@ -35,9 +35,11 @@ function TicketRow(props) {
             <td>{ticket.vehicleName}</td>
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>
-                <Button color="success">
-                    <i className="fa fa-edit fa-lg mr-1"></i>Details
+                <Link to={ticketLink}>
+                    <Button color="success">
+                        <i className="fa fa-edit fa-lg mr-1"></i>Details
                 </Button>
+                </Link>
             </td>
             <td style={{ paddingLeft: 50 }}>
                 <Input type="radio" name="replace" value={ticket.id} onChange={() => replaceTicket()} />
@@ -91,7 +93,7 @@ export default class ResolveRenamedFailTicket extends Component {
         var { routeTickets } = this.state;
         var optionValue = parseInt(event.target.value);
         switch (optionValue) {
-            case 1: 
+            case ResolveOption.REPLACE:
                 this.props.onOptionChange(optionValue)
                 //this.getReplaceTicket();
                 var failTickets = 0;
@@ -105,13 +107,13 @@ export default class ResolveRenamedFailTicket extends Component {
                     this.getReplaceTicketForFailTicket(this.failRouteTicketId);
                 }
                 break;
-            case 2:
+            case ResolveOption.REFUNDFAILTICKET:
                 this.setState({
                     replaceTickets: []
                 })
                 this.props.onOptionChange(optionValue)
                 break;
-            case 3:
+            case ResolveOption.REFUNDTOTALAMOUNT:
                 this.setState({
                     replaceTickets: []
                 })
@@ -138,10 +140,11 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     onReplaceTicket = async () => {
+        toastr.info('Processing', 'Waiting for replace')
         var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
             '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
         if (res.status === 200) {
-            toastr.success('Replace Success', 'Replace ticket successfully.');
+            toastr.success('Successfully', 'Replace ticket successfully.');
             this.props.getRouteDetail()
         }
 
@@ -177,7 +180,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                         </thead>
                                         <tbody>
                                             {replaceTickets.map((ticket, index) => (
-                                                <TicketRow key={index} ticket={ticket} index={index} selectTicket={this.onSelectTicket} />
+                                                <TicketRow key={index} ticket={ticket} index={index} selectTicket={this.onSelectTicket} routeId={this.routeId}/>
                                             ))}
                                         </tbody>
                                     </Table>
