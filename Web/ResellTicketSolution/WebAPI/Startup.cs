@@ -17,6 +17,7 @@ namespace WebAPI
         private const string CONFIG_STRINGEE_SETTING = "StringeeSetting";
         private const string CONFIG_CREDITCARD_SETTING = "CrediCardSetting";
         private const string CONFIG_ONESIGNAL_SETTING = "OneSignalSetting";
+        private const string CONFIG_SENDGRID_SETTING = "SendGridSetting";
 
         public Startup(IConfiguration configuration)
         {
@@ -34,6 +35,7 @@ namespace WebAPI
             services.Configure<StringeeSetting>(Configuration.GetSection(CONFIG_STRINGEE_SETTING));
             services.Configure<CrediCardSetting>(Configuration.GetSection(CONFIG_CREDITCARD_SETTING));
             services.Configure<OneSignalSetting>(Configuration.GetSection(CONFIG_ONESIGNAL_SETTING));
+            services.Configure<SendGridSetting>(Configuration.GetSection(CONFIG_SENDGRID_SETTING));
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
 
             //Add EntityFramework Configuration
