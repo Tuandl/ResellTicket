@@ -2,7 +2,10 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Redirect } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import {
+    Badge, Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table,
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import PaginationView from '../Pagination/PaginationComponent';
@@ -32,7 +35,7 @@ function TicketRow(props) {
                 {/* <Button color="success" className="mr-2" onClick={() => {parent.onValidSaveChanges(ticket.id)}}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Valid
                 </Button> */}
-                <Button color="danger" className="mr-2" onClick={() => { parent.onInValidSaveChanges(ticket.id) }}>
+                <Button color="danger" className="mr-2" onClick={() => { parent.showDialogConfirm(ticket.id) }}>
                     <i className="fa fa-edit fa-lg mr-1"></i>Invalid
                 </Button>
             </td>
@@ -53,8 +56,12 @@ class BoughtTickets extends Component {
             searchParam: '',
             currentPage: 1,
             pageSize: 5,
-            pageCount: 1
+            pageCount: 1,
+            ticketIdDialog: null,
+            isShowConfirmDiaLog: false
         }
+        this.showDialogConfirm = this.showDialogConfirm.bind(this);
+        this.closeDialogConfirm = this.closeDialogConfirm.bind(this);
     }
 
     componentWillMount() {
@@ -80,6 +87,20 @@ class BoughtTickets extends Component {
                 })
             }
         }
+    }
+
+    showDialogConfirm(id){
+        this.setState({
+            isShowConfirmDiaLog: true,
+            ticketIdDialog: id
+        });
+    }
+
+    closeDialogConfirm(){
+        this.setState({
+            isShowConfirmDiaLog: false,
+            ticketIdDialog: null
+        });
     }
 
     getBoughtTickets = () => {
@@ -111,6 +132,7 @@ class BoughtTickets extends Component {
 
     onInValidSaveChanges = (id) => {
         Axios.put('api/ticket/reject/' + id).then(res => {
+            this.closeDialogConfirm();
             if (res.status === 200) {
                 toastr.success('Reject Success', 'Ticket has been rejected.');
                 // this.props.history.push('/ticket');
@@ -132,7 +154,7 @@ class BoughtTickets extends Component {
     }
 
     render() {
-        var { tickets, isLogin, userRole, currentPage, pageCount } = this.state
+        var { tickets, isLogin, userRole, currentPage, pageCount, ticketIdDialog } = this.state
         return (
             isLogin ? userRole === 'Staff' ?
                 <div className="animated fadeIn">
@@ -179,6 +201,17 @@ class BoughtTickets extends Component {
                             </Card>
                         </Col>
                     </Row>
+                    <Modal isOpen={this.state.isShowConfirmDiaLog} 
+                        className="modal-danger">
+                        <ModalHeader toggle={this.closeDialogConfirm}>Confirm Invalid Ticket</ModalHeader>
+                        <ModalBody>
+                            Do you want to invalid this ticket ?
+                </ModalBody>
+                        <ModalFooter>
+                            <Button color="danger" onClick={() => this.onInValidSaveChanges(ticketIdDialog)}>Invalid</Button>
+                            <Button color="secondary" onClick={this.closeDialogConfirm}>Cancel</Button>
+                        </ModalFooter>
+                    </Modal>
                 </div>
                 : ''
                 : <Redirect to="/login" />
