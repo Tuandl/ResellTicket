@@ -32,7 +32,7 @@ class ConfirmDialogConfirmTicketRename {
                     ${bodyTitle}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" data-dismiss="modal" id="btn-confirm-ticket-rename" class="btn btn-danger">${buttonName}</button>
+                    <button type="button" data-dismiss="modal" id="btn-confirm-ticket-rename" class="btn btn-success">${buttonName}</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                 </div>
             </div>

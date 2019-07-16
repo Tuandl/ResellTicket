@@ -146,6 +146,26 @@ function postEditTicketController() {
         divBtn.appendChild(btn);
     }
 
+    function createBtnDelete(btnValue, event) {
+        var divBtn = document.getElementById('btnEvent');
+        var btn = document.createElement('INPUT');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('value', btnValue);
+        btn.setAttribute('class', 'btn-delete-now');
+        btn.addEventListener('click', event);
+        divBtn.appendChild(btn);
+    }
+
+    function createBtnConfirm(btnValue, event) {
+        var divBtn = document.getElementById('btnEvent');
+        var btn = document.createElement('INPUT');
+        btn.setAttribute('type', 'button');
+        btn.setAttribute('value', btnValue);
+        btn.setAttribute('class', 'btn-confirm-now');
+        btn.addEventListener('click', event);
+        divBtn.appendChild(btn);
+    }
+
     function createBtnView(btnValue, event) {
         var divBtn = document.getElementById('btnEvent');
         var btn = document.createElement('INPUT');
@@ -193,29 +213,29 @@ function postEditTicketController() {
                 case TicketStatus.Pending:
                     document.getElementById('title').innerHTML = 'EDIT TICKET'
                     createBtn('SAVE', () => editTicket())
-                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
+                    createBtnDelete('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Valid:
                     document.getElementById('title').innerHTML = 'TICKET DETAIL';
-                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
+                    createBtnDelete('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Invalid:
                     document.getElementById('title').innerHTML = 'TICKET DETAIL';
-                    createBtn('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
+                    createBtnDelete('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
                 case TicketStatus.Bought:
-                    document.getElementById('title').innerHTML = 'CONFIRM TIKCET RENAMING'
+                    document.getElementById('title').innerHTML = 'CONFIRM TICKET RENAMING'
                     createBtn('BUYER INFO', () => viewPassengerInfo());
-                    createBtn('CONFIRM', () => showConfirmDialogConfirmTicketRename());
-                    createBtn('REFUSE', () => showConfirmDialogRefuseTicketRename());
+                    createBtnConfirm('CONFIRM', () => showConfirmDialogConfirmTicketRename());
+                    createBtnDelete('REFUSE', () => showConfirmDialogRefuseTicketRename());
                     break;
                 case TicketStatus.Completed:
                     document.getElementById('title').innerHTML = 'TICKET DETAIL'
-                    createBtn('DELETE', () => deleteTicket())
+                    createBtnDelete('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break;
                 case TicketStatus.RenamedFail:
                     document.getElementById('title').innerHTML = 'TICKET DETAIL'
-                    createBtn('DELETE', () => deleteTicket())
+                    createBtnDelete('DELETE', () => showConfirmDialogDeletePendingPostedTicket())
                     break
             }
         }
