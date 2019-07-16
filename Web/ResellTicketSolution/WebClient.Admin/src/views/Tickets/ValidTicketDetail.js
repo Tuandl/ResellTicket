@@ -1,7 +1,10 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
-import { Button, Card, CardBody, CardHeader, Col, FormGroup, Label, Input, Row } from 'reactstrap';
+import {
+    Button, Card, CardBody, CardHeader, Col, FormGroup, Label, Input,
+    Row, Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 // import NumberFormat from 'react-number-format';
 
@@ -18,13 +21,26 @@ export default class ValidTicketDetail extends Component {
             commissionFee: 10,
             expiredBefore: '0', //hours
             expiredDateTime: '',
-            sellerPhone: ''
+            sellerPhone: '',
+            isShowConfirmDialog: false
         }
 
     }
 
     componentDidMount() {
         this.getTicketDetail();
+    }
+
+    showConfirmDialog = () => {
+        this.setState({
+            isShowConfirmDialog: true
+        });
+    }
+
+    closeConfirmDialog = () => {
+        this.setState({
+            isShowConfirmDialog: false
+        });
     }
 
     getTicketDetail = async () => {
@@ -96,7 +112,10 @@ export default class ValidTicketDetail extends Component {
         var { validCount, commissionFee, expiredBefore, expiredDateTime, invalidField } = this.state;
 
         expiredDateTime.subtract({ hours: expiredBefore })
-        expiredDateTime = moment(expiredDateTime._d).format('YYYY-MM-DD HH:mm')
+        expiredDateTime = moment(expiredDateTime._d).format('YYYY-MM-DD HH:mm');
+        this.setState({
+            isShowConfirmDialog: false
+        });
         if (validCount === 8) {
             var res = await Axios.put('api/ticket/approve/' + ticketId + "?commissionFee=" + commissionFee + "&expiredDateTime=" + expiredDateTime);
             if (res.status === 200) {
@@ -211,16 +230,26 @@ export default class ValidTicketDetail extends Component {
                                 </Row>
                                 <Row className="float-right">
                                     <Col xs="12">
-                                        <Button type="button" color="primary" onClick={this.onConfirm} disabled={(validCount + invalidCount) !== 8}>Confirm</Button>
+                                        <Button type="button" color="primary" onClick={this.showConfirmDialog} disabled={(validCount + invalidCount) !== 8}>Confirm</Button>
                                         <Button color="secondary" className="ml-1" onClick={() => { this.props.history.push('/newPostedTicket') }}>Cancel</Button>
                                     </Col>
                                 </Row>
-
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-            </div >
+                <Modal isOpen={this.state.isShowConfirmDialog} 
+                    className="modal-success">
+                    <ModalHeader toggle={this.closeConfirmDialog}>Confirm Valid Ticket</ModalHeader>
+                    <ModalBody>
+                        Do you want to make this ticket become valid ?
+                </ModalBody>
+                    <ModalFooter>
+                        <Button color="success" onClick={this.onConfirm}>Confirm</Button>
+                        <Button color="secondary" onClick={this.closeConfirmDialog}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
         )
     }
 }
