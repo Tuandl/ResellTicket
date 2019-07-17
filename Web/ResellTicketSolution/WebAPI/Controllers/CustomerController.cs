@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.EmailService;
 using Service.Services;
+using System.Collections.Generic;
 using System.Net;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Transaction;
 
 namespace WebAPI.Controllers
 {
@@ -245,5 +247,13 @@ namespace WebAPI.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        [Route("get-transaction")]
+        public ActionResult<List<TransactionDataTable>> GetListTransactions(int page, int pageSize)
+        {
+            var username = User.Identity.Name;
+            var listTransaction = _customerService.GetTransactions(username, page, pageSize);
+            return listTransaction;
+        }
     }
 }
