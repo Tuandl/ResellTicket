@@ -3,6 +3,7 @@ using Service.EmailService;
 using Service.Services;
 using System.Net;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Route;
 
 namespace WebAPI.Controllers
 {
@@ -228,15 +229,15 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [Route("send-email-receipt-for-buyer")]
-        public IActionResult SendEmailReceiptForBuyer()
+        public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
         {
             //if (!ModelState.IsValid)
             //{
             //    return BadRequest("Invalid Request");
             //}
 
-            var username = User.Identity.Name;
-            _sendGridService.SendEmailReceiptForBuyer(username);
+            //var username = User.Identity.Name;
+            _sendGridService.SendEmailReceiptForBuyer(model);
 
             //if (!string.IsNullOrEmpty(sendResult))
             //{
