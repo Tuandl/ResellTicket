@@ -32,6 +32,8 @@ function indexController() {
 
     function onStatusChanged(newStatus) {
         model.searchStatus = newStatus;
+        model.page = 1;
+        model.total = 0;
         renderBtnStatuses();
         renderRoutes();
     }
