@@ -29,6 +29,7 @@ function postedTicketController() {
     function onStatusChanged(newStatus) {
         model.page = 1;
         model.searchStatus = newStatus;
+        model.isLoadAll = false;
         renderBtnStatuses();
         commonService.removeAllChildren(document.getElementById(id.ticketContainer));
         renderTickets();
