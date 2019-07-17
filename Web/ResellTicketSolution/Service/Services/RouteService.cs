@@ -369,7 +369,7 @@ namespace Service.Services
 
             //Get k shortest path
             var paths = new List<Path>();
-            for (int count = (page - 1) * pageSize; count < page * pageSize; count++)
+            for (int count = 0; count < page * pageSize; count++)
             {
                 var path = graph.FindNextShortestPath().Trim();
                 if (!path.IsValid)
