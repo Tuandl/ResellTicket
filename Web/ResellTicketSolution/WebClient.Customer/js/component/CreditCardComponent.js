@@ -48,10 +48,10 @@ class CreditCardComponent {
 
     renderButton(isdefault) {
         if (!isdefault) {
-            return `<td class="col-sm-1"><button type="button" id="btn-delete"  class="btn btn-info btn-sm">Delete</button></td>
+            return `<td class="col-sm-1"><button type="button" id="btn-delete"  class="btn btn-danger btn-sm">Delete</button></td>
             <td class="col-sm-1"><button type="button" id="btn-set-default" class="btn btn-info btn-sm">Set Default</button></td>`;
         } else {
-            return `<td class="col-sm-1"><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-info btn-sm"></button></td>
+            return `<td class="col-sm-1"><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-danger btn-sm"></button></td>
             <td class="col-sm-1"><button type="button" id="btn-set-default" style="visibility: hidden" class="btn btn-info btn-sm"></button></td>`;
         }
     }

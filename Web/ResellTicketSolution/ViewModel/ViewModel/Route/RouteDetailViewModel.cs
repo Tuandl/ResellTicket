@@ -11,6 +11,7 @@ namespace ViewModel.ViewModel.Route
         public RouteStatus Status { get; set; }
         public ResolveOption? ResolveOption { get; set; }
         public int CustomerId { get; set; }
+        public string BuyerName { get; set; }
         public string BuyerPhone { get; set; }
         public List<RouteTicketDetailViewModel> RouteTickets { get; set; }
     }

@@ -22,7 +22,7 @@ class ConfirmDialogDeleteRouteDetail {
         this.html.innerHTML = `<div class="modal fade" id="delete-route-detail" role="dialog" >
         <div class="modal-dialog" style="width: 440px">
             <div class="modal-content">
-                <div class="modal-header" style="background-color: #5cb85c;border-top-right-radius: 5px;border-top-left-radius: 5px;" >
+                <div class="modal-header" style="background-color: #d9534f;border-top-right-radius: 5px;border-top-left-radius: 5px;" >
                     <h3 class="modal-title" style="color: white;font-weight: bold">${headerTitle}</h3>
                     <button type="button" style="position: absolute;right: 10px;top: 10px;" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>

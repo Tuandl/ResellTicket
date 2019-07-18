@@ -2,6 +2,7 @@
 using Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service.EmailService;
 using Service.Services;
 using System;
 using ViewModel.ErrorViewModel;
@@ -18,16 +19,19 @@ namespace WebAPI.Controllers
         private readonly IRouteService _routeService;
         private readonly ITicketService _ticketService;
         private readonly IPaymentService _paymentService;
+        private readonly ISendGridService _sendGridService;
 
         public RouteController(
                 IRouteService routeService,
                 ITicketService ticketService,
-                IPaymentService paymentService
+                IPaymentService paymentService,
+                ISendGridService sendGridService
             )
         {
             _routeService = routeService;
             _ticketService = ticketService;
             _paymentService = paymentService;
+            _sendGridService = sendGridService;
         }
 
         /// <summary>
@@ -231,6 +235,7 @@ namespace WebAPI.Controllers
             {
                 _routeService.BuyRoute(model, username);
                 _paymentService.MakePayment(model.RouteId);
+                _sendGridService.SendEmailReceiptForBuyer(model.RouteId);
                 return Ok();
             }
             catch (Exception ex)
