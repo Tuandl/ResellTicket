@@ -3,6 +3,7 @@ using Service.EmailService;
 using Service.Services;
 using System.Net;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Route;
 
 namespace WebAPI.Controllers
 {
@@ -226,24 +227,24 @@ namespace WebAPI.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
-        [Route("send-email-receipt-for-buyer")]
-        public IActionResult SendEmailReceiptForBuyer()
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest("Invalid Request");
-            //}
+        //[HttpPost]
+        //[Route("send-email-receipt-for-buyer")]
+        //public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
+        //{
+        //    //if (!ModelState.IsValid)
+        //    //{
+        //    //    return BadRequest("Invalid Request");
+        //    //}
 
-            var username = User.Identity.Name;
-            _sendGridService.SendEmailReceiptForBuyer(username);
+        //    //var username = User.Identity.Name;
+        //    _sendGridService.SendEmailReceiptForBuyer(model);
 
-            //if (!string.IsNullOrEmpty(sendResult))
-            //{
-            //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
-            //}
-            return Ok();
-        }
+        //    //if (!string.IsNullOrEmpty(sendResult))
+        //    //{
+        //    //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
+        //    //}
+        //    return Ok();
+        //}
 
     }
 }
