@@ -13,6 +13,7 @@ namespace Core.Models
         public decimal Amount { get; set; }
         public decimal FeeAmount { get; set; }
         public string StripeChargeId { get; set; }
+        public string Description { get; set; }
         public PaymentStatus Status { get; set; }
         public virtual Route Route { get; set; }
         public virtual CreditCard CreditCard { get; set; }

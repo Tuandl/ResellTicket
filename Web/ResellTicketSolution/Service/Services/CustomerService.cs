@@ -17,6 +17,8 @@ using System.Security.Cryptography;
 using System.Text;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Transaction;
+using ViewModel.ViewModel.CreditCard;
 
 namespace Service.Services
 {
@@ -50,6 +52,8 @@ namespace Service.Services
         /// <returns></returns>
         string ChangePasswordWithOTPConfirm(CustomerChangePasswordWithOTPConfirm customerChangePasswordWithOTPConfirm);
         string ChangePasswordWithNoOTPConfirm(CustomerChangePasswordViewModel model);
+
+        List<TransactionDataTable> GetTransactions(string username, int page, int pageSize);
     }
 
     public class CustomerService : ICustomerService
@@ -61,6 +65,10 @@ namespace Service.Services
         public const string ERROR_EXISTED_ACCOUNT_BANK = "Customer have already account bank.";
 
         private readonly ICustomerRepository _customerRepository;
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly IPayoutRepository _payoutRepository;
+        private readonly IRefundRepository _refundRepository;
+        private readonly ICreditCardRepository _creditCardRepository;
         private readonly IOTPRepository _oTPRepository;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -70,12 +78,20 @@ namespace Service.Services
 
         public CustomerService(ICustomerRepository customerRepository,
             IOTPRepository oTPRepository,
+            IPaymentRepository paymentRepository,
+            IPayoutRepository payoutRepository,
+            IRefundRepository refundRepository,
+            ICreditCardRepository creditCardRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IOTPService oTPService,
             IOptions<CrediCardSetting> options)
         {
             _customerRepository = customerRepository;
+            _paymentRepository = paymentRepository;
+            _payoutRepository = payoutRepository;
+            _refundRepository = refundRepository;
+            _creditCardRepository = creditCardRepository;
             _oTPRepository = oTPRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
@@ -399,6 +415,98 @@ namespace Service.Services
             var customer = _customerRepository.Get(c => c.Username == username);
             var customerRowViewModel = _mapper.Map<Core.Models.Customer, CustomerRowViewModel>(customer);
             return customerRowViewModel;
+        }
+
+        public List<TransactionDataTable> GetTransactions(string username, int page, int pageSize)
+        {
+            var transactionAllRecord =
+                (from PM in _paymentRepository.GetAllQueryable()
+                 join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+                 join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+                 where Cus.Username == username
+                 select new TransactionDataTable()
+                 {
+                     Amount = PM.Amount,
+                     Description = PM.Description,
+                     CreatedAtUTC = PM.CreatedAtUTC,
+                     Type = "PAYMENT"
+                 }
+                ).Union(
+                    from RP in _refundRepository.GetAllQueryable()
+                    join PM in _paymentRepository.GetAllQueryable() on RP.PaymentId equals PM.Id
+                    join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+                    join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+                    where Cus.Username == username
+                    select new TransactionDataTable()
+                    {
+                        Amount = RP.Amount,
+                        Description = RP.Description,
+                        CreatedAtUTC = RP.CreatedAtUTC,
+                        Type = "REFUND"
+                    }
+                    )
+                .Union(
+                    from PO in _payoutRepository.GetAllQueryable()
+                    join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
+                    join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+                    join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+                    where Cus.Username == username
+                    select new TransactionDataTable()
+                    {
+                        Amount = PO.Amount,
+                        Description = PO.Description,
+                        CreatedAtUTC = PO.CreatedAtUTC,
+                        Type = "PAYOUT"
+                    }
+                    ).OrderByDescending(x => x.CreatedAtUTC).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+               
+            ////var listRefund =
+            ////    (from RP in _refundRepository.GetAllQueryable()
+            ////     join PM in _paymentRepository.GetAllQueryable() on RP.PaymentId equals PM.Id
+            ////     join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+            ////     join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+            ////     where Cus.Username == username
+            ////     select new TransactionDataTable()
+            ////     {
+            ////         Amount = RP.Amount,
+            ////         Description = RP.Description,
+            ////         CreatedAtUTC = RP.CreatedAtUTC
+            ////     }
+            ////    );
+            ////var listPayout =
+            ////    (from PO in _payoutRepository.GetAllQueryable()
+            ////     join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
+            ////     join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+            ////     join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+            ////     where Cus.Username == username
+            ////     select new TransactionDataTable()
+            ////     {
+            ////         Amount = PO.Amount,
+            ////         Description = PO.Description,
+            ////         CreatedAtUTC = PO.CreatedAtUTC
+            ////     }
+            ////    );
+
+            //////add 3 list thành 1 list
+            ////List<TransactionDataTable> transactionAllRecord = null;
+            ////foreach(var item in listPayment)
+            ////{
+            ////    var paymentItem = _mapper.Map<PaymentTransactionViewModel, TransactionDataTable>(item);
+            ////    transactionAllRecord.Add(paymentItem);
+            ////}
+            ////foreach (var item in listPayout)
+            ////{
+            ////    var payoutItem = _mapper.Map<PayoutTransactionViewModel, TransactionDataTable>(item);
+            ////    transactionAllRecord.Add(payoutItem);
+            ////}
+            ////foreach (var item in listRefund)
+            ////{
+            ////    var refundItem = _mapper.Map<RefundTransactionViewModel, TransactionDataTable>(item);
+            ////    transactionAllRecord.Add(refundItem);
+            ////}
+
+            return transactionAllRecord;
         }
     }
 }

@@ -106,7 +106,8 @@ namespace Service.Services
                 Amount = Convert.ToInt64(amount * 100),
                 Currency = "usd",
                 Destination = ticket.Seller.StripeConnectAccountId,
-                SourceTransaction = paymentDetail.StripeChargeId
+                SourceTransaction = paymentDetail.StripeChargeId,
+                Description = "Transfer for Ticket Code: " + ticket.TicketCode
             };
 
             var service = new TransferService();
@@ -117,6 +118,7 @@ namespace Service.Services
             payoutCreateIntoDatabase.TicketId = TicketId;
             payoutCreateIntoDatabase.PaymentId = paymentDetail.Id;
             payoutCreateIntoDatabase.Amount = Transfer.Amount;
+            payoutCreateIntoDatabase.Description = Transfer.Description;
             payoutCreateIntoDatabase.FeeAmount = ticket.CommissionPercent;
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);

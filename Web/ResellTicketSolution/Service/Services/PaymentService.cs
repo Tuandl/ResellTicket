@@ -76,6 +76,7 @@ namespace Service.Services
             PaymentCreateViewModel model = new PaymentCreateViewModel();
             model.RouteId = routeToMakePayment.Id;
             model.CreditCartId = creditCardToMakePayment.Id;
+            model.Description = charge.Description;
             model.Amount = routeToMakePayment.TotalAmount;
             model.Status = PaymentStatus.Success;
             model.StripeChargeId = charge.Id;
