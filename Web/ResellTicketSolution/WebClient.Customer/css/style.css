@@ -503,9 +503,9 @@ ul.multi-column-dropdown h6 {
     background-color: transparent;
 }
 
-.navbar-default .navbar-nav>li>a:focus {
+/* .navbar-default .navbar-nav>li>a:focus {
     color: #fff;
-}
+} */
 
 .navbar {
     min-height: auto;

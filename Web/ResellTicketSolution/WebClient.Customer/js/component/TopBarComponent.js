@@ -50,7 +50,7 @@ export default class TopBarComponent {
         const logoutItem = commonService.htmlToElement(`
             <li>
                 <h4>
-                    <a>
+                    <a style="cursor: pointer">
                         <i class="fa fa-sign-out" aria-hidden="true"></i>Logout
                     </a>
                 </h4>

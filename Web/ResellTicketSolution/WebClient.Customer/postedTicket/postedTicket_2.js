@@ -29,6 +29,7 @@ function postedTicketController() {
     function onStatusChanged(newStatus) {
         model.page = 1;
         model.searchStatus = newStatus;
+        model.isLoadAll = false;
         renderBtnStatuses();
         commonService.removeAllChildren(document.getElementById(id.ticketContainer));
         renderTickets();
@@ -39,17 +40,6 @@ function postedTicketController() {
         commonService.removeAllChildren(container);
         const ticketFilterStatus = new TicketFilterStatusComponent(model.searchStatus, onStatusChanged);
         container.appendChild(ticketFilterStatus.render());
-    }
-
-    function renderBtnLoadMore() {
-        const container = document.getElementById(id.btnLoadMore);
-        var btnLoadMore = commonService.htmlToElement('<input type="button" value="LOAD MORE" class="btn-post-now">');
-        btnLoadMore.addEventListener('click', () => {
-            model.page += 1;
-            renderTickets();
-        });
-        commonService.removeAllChildren(container);
-        container.appendChild(btnLoadMore);
     }
 
     async function renderTickets() {
@@ -71,22 +61,32 @@ function postedTicketController() {
             containerElement.appendChild(ticketComponent.domElement);
         });
         if(response.length !== model.pageSize) {
+            model.isLoadAll = true;
             commonService.removeAllChildren(document.getElementById(id.btnLoadMore))
-        } else {
-            renderBtnLoadMore();
         }
         
+        model.isLoadingMore = false;
     }
 
     function bindEvent() {
         var btnPostTicket = document.getElementById(id.btnPostTicket);
         btnPostTicket.addEventListener('click', function () {
-            window.location.href = appConfig.url.ticket.postEditForm_2;
+            window.location.href = appConfig.url.postedTicket.postEditForm_2;
         });
+
+        $(window).scroll(function() {
+            if($(window).scrollTop() + $(window).height() >= ($(document).height() - $('.footer').height())) {
+                if(!model.isLoadAll && !model.isLoadingMore) {
+                    model.isLoadingMore = true;
+                    model.page += 1;
+                    renderTickets();
+                } 
+            }
+        });  
     }
 
     function onTicketClicked(ticket) {
-        window.location.href = appConfig.url.ticket.postEditForm_2 + '?ticketId=' + ticket.id;
+        window.location.href = appConfig.url.postedTicket.postEditForm_2 + '?ticketId=' + ticket.id;
     }
 }
 

@@ -16,9 +16,11 @@ function indexController() {
     const model = {
         page: 1,
         pageSize: 10,
+        total: 0,
         routes: [],
         searchStatus: routeStatus.New,
         routeComponents: [],
+        isLoadingMore: false,
     }
 
     if (authenticationService.isLogedin()) {
@@ -30,6 +32,8 @@ function indexController() {
 
     function onStatusChanged(newStatus) {
         model.searchStatus = newStatus;
+        model.page = 1;
+        model.total = 0;
         renderBtnStatuses();
         renderRoutes();
     }
@@ -41,7 +45,7 @@ function indexController() {
         container.appendChild(routeFilterStatusComponent.render());
     }
 
-    async function renderRoutes() {
+    async function renderRoutes(doNotRemoveChildren) {
         const params = {
             page: model.page,
             pageSize: model.pageSize,
@@ -50,7 +54,10 @@ function indexController() {
 
         const response = await apiService.get(appConfig.apiUrl.route + 'data-table', params);
         const containerElement = document.getElementById(id.routeContainer);
-        commonService.removeAllChildren(containerElement);
+        
+        if(!doNotRemoveChildren) {
+            commonService.removeAllChildren(containerElement);
+        }
 
         response.data.forEach(route => {
             const routeComponent = new RouteComponent(route, onRouteClicked);
@@ -59,6 +66,8 @@ function indexController() {
             routeComponent.render();
             containerElement.appendChild(routeComponent.domElement);
         });
+        model.total = response.total;
+        model.isLoadingMore = false;
     }
 
     function bindEvent() {
@@ -66,6 +75,17 @@ function indexController() {
         btnSearchRoute.addEventListener('click', function() {
             window.location.href = appConfig.url.route.searchForm;
         });
+
+        $(window).scroll(function() {
+            if($(window).scrollTop() + $(window).height() >= ($(document).height() - $('.footer').height())) {
+                if(model.page * model.pageSize < model.total && model.isLoadingMore == false) {
+                    model.isLoadingMore = true;
+
+                    model.page++;
+                    renderRoutes(true);
+                } 
+            }
+        });  
     }
 
     function onRouteClicked(route) {

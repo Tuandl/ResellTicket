@@ -22,11 +22,14 @@ function searchResult() {
         maxTicketCombination: commonService.getQueryParam('maxTicketCombination'),
         departureDate: moment(commonService.getQueryParam('departureDate')).format(appConfig.format.datetimeISO),
         arrivalDate: moment(commonService.getQueryParam('arrivalDate')).format(appConfig.format.datetimeISO),
-        page: commonService.getQueryParam('page'),
-        pageSize: commonService.getQueryParam('pageSize'),
+        page: 1,
+        pageSize: 10,
     };
 
-    const model = {};
+    const model = {
+        isLoadingMore: false,
+        isLoadAll: false,
+    };
     init();
     
     async function init() {
@@ -35,6 +38,24 @@ function searchResult() {
         mapRoute(routeSearchResults);
 
         renderRoutes();
+
+        $(window).scroll(async function() {
+            if($(window).scrollTop() + $(window).height() >= ($(document).height() - $('.footer').height())) {
+                if(!model.isLoadAll && !model.isLoadingMore) {
+                    model.isLoadingMore = true;
+                    params.page++;
+
+                    const response = await apiService.get(appConfig.apiUrl.route + 'search', params);
+                    mapRoute(response);
+                    renderRoutes(true);
+
+                    if(response.length < params.pageSize) {
+                        model.isLoadAll = true;
+                    }
+                    model.isLoadingMore = false;
+                } 
+            }
+        });  
     }
 
     function mapRoute(routes) {
@@ -56,8 +77,10 @@ function searchResult() {
         });
     }
 
-    function renderRoutes() {
-        commonService.removeAllChildren(routesContainer);
+    function renderRoutes(doNotDeleteChildren) {
+        if(!doNotDeleteChildren) {
+            commonService.removeAllChildren(routesContainer);
+        }
 
         model.routes.forEach(route => {
             const routeComponent = new RouteComponent(route);
