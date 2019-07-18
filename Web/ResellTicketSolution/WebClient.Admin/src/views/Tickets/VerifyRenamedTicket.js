@@ -1,7 +1,10 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
-import { Button, Card, CardBody, CardHeader, Col, FormGroup, Label, Input, Row } from 'reactstrap';
+import {
+    Button, Card, CardBody, CardHeader, Col, FormGroup, Label, Input, Row,
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 // import NumberFormat from 'react-number-format';
 
@@ -22,9 +25,35 @@ export default class VerifyRenamedTicket extends Component {
                 buyerPassengerIdentify: '',
                 buyerPassengerName: '',
                 buyerPassengerEmail: '',
-                buyerPassengerPhone: ''
+                buyerPassengerPhone: '',
+                isShowConfirmDialogSuccess: false,
+                isShowConfirmDialogFail: false
             }
         }
+    }
+
+    showConfirmDialogSuccess = () => {
+        this.setState({
+            isShowConfirmDialogSuccess: true
+        });
+    }
+
+    closeConfirmDialogSuccess = () => {
+        this.setState({
+            isShowConfirmDialogSuccess: false
+        });
+    }
+
+    showConfirmDialogFail = () => {
+        this.setState({
+            isShowConfirmDialogFail: true
+        });
+    }
+
+    closeConfirmDialogFail = () => {
+        this.setState({
+            isShowConfirmDialogFail: false
+        });
     }
 
     componentDidMount() {
@@ -59,6 +88,7 @@ export default class VerifyRenamedTicket extends Component {
         toastr.info('Processing', 'Waiting for valid')
         var ticketId = this.props.match.params.id;
         var renamedSuccess = true;
+        this.closeConfirmDialogSuccess();
         Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Ticket has been updated.');
@@ -74,6 +104,7 @@ export default class VerifyRenamedTicket extends Component {
         toastr.info('Processing', 'Waiting for valid')
         var ticketId = this.props.match.params.id;
         var renamedSuccess = false;
+        this.closeConfirmDialogFail();
         Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Ticket has been updated.');
@@ -205,11 +236,33 @@ export default class VerifyRenamedTicket extends Component {
                                 </Row>
                                 <Row className="float-right">
                                     <Col xs="12">
-                                        <Button color="success" className="ml-1" onClick={this.onRenamedSuccess}>Renamed Success</Button>
-                                        <Button color="danger" className="ml-1" onClick={this.onRenamedFail}>Renamed Fail</Button>
-                                        <Button color="secondary" className="ml-1" onClick={() => {this.props.history.push('/renamedTicket')}}>Cancel</Button>
+                                        <Button color="success" className="ml-1" onClick={this.showConfirmDialogSuccess}>Renamed Success</Button>
+                                        <Button color="danger" className="ml-1" onClick={this.showConfirmDialogFail}>Renamed Fail</Button>
+                                        <Button color="secondary" className="ml-1" onClick={() => { this.props.history.push('/renamedTicket') }}>Cancel</Button>
                                     </Col>
                                 </Row>
+                                <Modal isOpen={this.state.isShowConfirmDialogSuccess}
+                                    className="modal-success">
+                                    <ModalHeader toggle={this.closeConfirmDialogSuccess}>Confirm Renamed Ticket Success</ModalHeader>
+                                    <ModalBody>
+                                        Do you want to confirm this ticket renamed successfully ?
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="success" onClick={this.onRenamedSuccess}>Confirm</Button>
+                                        <Button color="secondary" onClick={this.closeConfirmDialogSuccess}>Cancel</Button>
+                                    </ModalFooter>
+                                </Modal>
+                                <Modal isOpen={this.state.isShowConfirmDialogFail}
+                                    className="modal-danger">
+                                    <ModalHeader toggle={this.closeConfirmDialogFail}>Confirm Renamed Ticket Fail</ModalHeader>
+                                    <ModalBody>
+                                        Do you want to confirm this ticket renamed fail ?
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="danger" onClick={this.onRenamedFail}>Confirm</Button>
+                                        <Button color="secondary" onClick={this.closeConfirmDialogFail}>Cancel</Button>
+                                    </ModalFooter>
+                                </Modal>
                             </CardBody>
                         </Card>
                     </Col>

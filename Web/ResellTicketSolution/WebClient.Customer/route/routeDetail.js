@@ -85,7 +85,7 @@ function routeDetail() {
         elements.dialogDeleteRouteDetail.appendChild(confirmDialogDeleteRouteDetail.domElement);
         //
         const confirmDialogConfirmBuyerDetail = new
-        ConfirmDialogConfirmBuyerDetail("Confirm And Buy Route", "Do you want to delete this Route and Confirm your information ?",
+        ConfirmDialogConfirmBuyerDetail("Confirm And Buy Route", "Do you want to buy this route and confirm your information ?",
                 "Confirm", onBtnConfirmClickedCallApi);
         modelConfirmDialog.dialogConfirmBuyerDetailBox.push(confirmDialogConfirmBuyerDetail);
         confirmDialogConfirmBuyerDetail.render();
