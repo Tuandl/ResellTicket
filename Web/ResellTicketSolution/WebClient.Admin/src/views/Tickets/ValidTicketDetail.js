@@ -230,8 +230,8 @@ export default class ValidTicketDetail extends Component {
                                 </Row>
                                 <Row className="float-right">
                                     <Col xs="12">
-                                        <Button type="button" color="primary" onClick={this.showConfirmDialog} disabled={(validCount + invalidCount) !== 8}>Confirm</Button>
-                                        <Button color="secondary" className="ml-1" onClick={() => { this.props.history.push('/newPostedTicket') }}>Cancel</Button>
+                                        <Button type="button" color="success" onClick={this.showConfirmDialog} disabled={(validCount + invalidCount) !== 8}>Confirm</Button>
+                                        <Button color="secondary" className="ml-1" onClick={() => { this.props.history.push('/newPostedTicket') }}>Back</Button>
                                     </Col>
                                 </Row>
                             </CardBody>

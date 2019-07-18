@@ -28,8 +28,8 @@ namespace WebAPI.Admin.Controllers
             {
                 return BadRequest("Invalid Request");
             }
-            //var username = User.Identity.Name;
-            var payout = _payoutService.MakePayoutToCustomer(ticketId);
+            string username = User.Identity.Name;
+            var payout = _payoutService.MakePayoutToCustomer(ticketId, username);
 
             if (!string.IsNullOrEmpty(payout))
             {

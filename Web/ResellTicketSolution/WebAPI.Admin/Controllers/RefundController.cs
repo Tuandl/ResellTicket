@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Core.Enum;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Services;
@@ -12,6 +13,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/refund")]
     [ApiController]
+    [Authorize(Roles = "Staff")]
     public class RefundController : ControllerBase
     {
         private readonly IRefundService _refundService;
@@ -23,7 +25,8 @@ namespace WebAPI.Admin.Controllers
 
         [HttpPost]
         [Route("one-ticket")]
-        public IActionResult MakeRefundOneTicket(int ticketId, ResolveOption? resolveOption = null)
+        [Authorize(Roles = "Staff")]
+        public IActionResult MakeRefundOneTicket(int ticketId, ResolveOption resolveOption)
         {
             if (!ModelState.IsValid)
             {
@@ -31,7 +34,8 @@ namespace WebAPI.Admin.Controllers
             }
             try
             {
-                _refundService.RefundFailTicketMoneyToCustomer(ticketId, resolveOption);
+                string userName = User.Identity.Name;
+                _refundService.RefundFailTicketMoneyToCustomer(ticketId, resolveOption, userName);
             }
             catch (Exception e)
             {
@@ -43,14 +47,15 @@ namespace WebAPI.Admin.Controllers
 
         [HttpPost]
         [Route("all-ticket")]
-        public IActionResult MakeRefundAllTicket(int ticketId, ResolveOption? resolveOption = null)
+        [Authorize(Roles = "Staff")]
+        public IActionResult MakeRefundAllTicket(int ticketId, ResolveOption resolveOption)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest("Invalid Request");
             }
-            //var username = User.Identity.Name;
-            var refund = _refundService.RefundToTalMoneyToCustomer(ticketId, resolveOption);
+            var username = User.Identity.Name;
+            var refund = _refundService.RefundToTalMoneyToCustomer(ticketId, resolveOption, username);
 
             if (refund == "Not found route ticket")
             {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Core.Models;
+using ViewModel.ViewModel.ResolveOptionLog;
 using ViewModel.ViewModel.Route;
 using ViewModel.ViewModel.Station;
 using ViewModel.ViewModel.Ticket;
@@ -59,6 +60,7 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.TicketTypeId, otp => otp.MapFrom(src => src.Ticket.TicketTypeId))
                 .ForMember(dest => dest.TicketTypeName, otp => otp.MapFrom(src => src.Ticket.TicketType.Name))
                 .ForMember(dest => dest.VehicleName, otp => otp.MapFrom(src => src.Ticket.Transportation.Vehicle.Name));
+            CreateMap<ResolveOptionLog, ResolveOptionLogViewModel>();
 
             CreateMap<Station, StationRowViewModel>()
                 .ForMember(dest => dest.CityId, option => option.MapFrom(src => src.CityId))

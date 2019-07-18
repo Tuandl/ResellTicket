@@ -13,14 +13,15 @@ using Microsoft.Extensions.Options;
 using System.Linq;
 using Core.Enum;
 using Service.NotificationService;
+using Microsoft.AspNetCore.Identity;
 
 namespace Service.Services
 {
     public interface IRefundService
     {
-        string RefundToTalMoneyToCustomer(int TicketId, ResolveOption? resolveOption = null);
+        string RefundToTalMoneyToCustomer(int TicketId, ResolveOption resolveOption, string username);
 
-        void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption? resolveOption = null);
+        void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption resolveOption, string userName);
     }
     public class RefundService : IRefundService
     {
@@ -33,6 +34,9 @@ namespace Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOptions<CrediCardSetting> SETTING;
         private readonly IOneSignalService _oneSignalService;
+        private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IRouteRepository _routeRepository;
 
         public RefundService()
         {
@@ -40,7 +44,8 @@ namespace Service.Services
 
         public RefundService(IRefundRepository refundRepository, IRouteTicketRepository routeTicketRepository, ITicketRepository ticketRepository,
         IPaymentRepository paymentRepository, IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options,
-        IOneSignalService oneSignalService, IPayoutRepository payoutRespository)
+        IOneSignalService oneSignalService, IPayoutRepository payoutRespository, IResolveOptionLogRepository resolveOptionLogRepository,
+        IUserRepository userRepository, IRouteRepository routeRepository)
         {
             _refundRepository = refundRepository;
             _routeTicketRepository = routeTicketRepository;
@@ -51,10 +56,14 @@ namespace Service.Services
             SETTING = options;
             _oneSignalService = oneSignalService;
             _payoutRespository = payoutRespository;
+            _resolveOptionLogRepository = resolveOptionLogRepository;
+            _userRepository = userRepository;
+            _routeRepository = routeRepository;
         }
 
-        public string RefundToTalMoneyToCustomer(int TicketId, ResolveOption? resolveOption = null)
+        public string RefundToTalMoneyToCustomer(int TicketId, ResolveOption resolveOption, string username)
         {
+            string staffId = _userRepository.Get(x => x.UserName == username).Id;
             // lấy routeTicket ứng vs ticketId 
             var routeTicket = _routeTicketRepository.Get(x => 
                 x.TicketId == TicketId &
@@ -64,13 +73,20 @@ namespace Service.Services
 
             //lấy Lịch sử chagre tiền
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeTicket.RouteId && x.Route.Deleted == false);
-
+            var refundFromPayments = _refundRepository.GetAllQueryable().Where(x => x.PaymentId == paymentDetail.Id);
+            decimal totalRefund = 0;
+            foreach(var refundFromPayment in refundFromPayments)
+            {
+                totalRefund = totalRefund + refundFromPayment.Amount;
+            }
             //refund lại tiền
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
+            //cmt để test
             var refundOptions = new RefundCreateOptions()
             {
-                ChargeId = paymentDetail.StripeChargeId
+                ChargeId = paymentDetail.StripeChargeId,
+                Amount = Convert.ToInt64(totalRefund * 100)
             };
             var refundService = new Stripe.RefundService();
             Stripe.Refund refund = refundService.Create(refundOptions);
@@ -97,7 +113,26 @@ namespace Service.Services
             }
             var route = routeTicket.Route;
             route.Status = RouteStatus.Completed;
-            route.ResolveOption = resolveOption;
+            route.IsRefundAll = true;
+            //route.ResolveOption = resolveOption;
+            _routeRepository.Update(route);
+
+            var routeTickets = route.RouteTickets;
+            foreach(var rt in routeTickets)
+            {
+                var resolveOptionLog = _resolveOptionLogRepository.Get(x => x.RouteId == rt.RouteId && x.TicketId == rt.TicketId);
+                if(resolveOptionLog == null || resolveOptionLog.Option == ResolveOption.PAYOUT)
+                {
+                    ResolveOptionLog newLog = new ResolveOptionLog()
+                    {
+                        RouteId = rt.RouteId,
+                        TicketId = rt.TicketId,
+                        StaffId = staffId,
+                        Option = ResolveOption.REFUNDTOTALAMOUNT
+                    };
+                    _resolveOptionLogRepository.Add(newLog);
+                }
+            }
 
             _unitOfWork.CommitChanges();
             return "";
@@ -120,8 +155,9 @@ namespace Service.Services
             return deviceIds;
         }
 
-        public void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption? resolveOption = null)
+        public void RefundFailTicketMoneyToCustomer(int failTicketId, ResolveOption resolveOption, string userName)
         {
+            string staffId = _userRepository.Get(x => x.UserName == userName).Id;
             // lấy routeTicket ứng vs ticketId 
             var failRouteTicket = _routeTicketRepository.Get(x =>
                 x.TicketId == failTicketId &
@@ -132,6 +168,7 @@ namespace Service.Services
             var failTicket = _ticketRepository.Get(x => x.Id == failTicketId && x.Deleted == false);
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
+            //cmt để test
             //số tiền vé fail chuyền về lại cho buyer
             var refundOptions = new RefundCreateOptions()
             {
@@ -148,30 +185,36 @@ namespace Service.Services
             _refundRepository.Add(refundAddIntoData);
 
             var route = failRouteTicket.Route;
-            //var failTickets = 0;
-            //var refundFailTickets = 0;
-            var routeTickets = route.RouteTickets.Where(x => x.Deleted == false);
-            if(routeTickets.Count() == 2)
+            _unitOfWork.StartTransaction();
+            ResolveOptionLog log = new ResolveOptionLog()
+            {
+                Option = resolveOption,
+                RouteId = route.Id,
+                TicketId = failTicket.Id,
+                StaffId = staffId
+            };
+            _resolveOptionLogRepository.Add(log);
+            _unitOfWork.CommitChanges();
+
+            if (route.ResolveOptionLogs.Count() == route.RouteTickets.Count())
             {
                 route.Status = RouteStatus.Completed;
-                route.ResolveOption = resolveOption;
+                _routeRepository.Update(route);
             }
-            failRouteTicket.Deleted = true;
-            _routeTicketRepository.Update(failRouteTicket);
-            //foreach(var routeTicket in route.RouteTickets.Where(x => x.Deleted == false))
-            //{
-            //    if (routeTicket.Ticket.Status == TicketStatus.RenamedFail) failTickets++;
-            //    //if (_refundRepository.Get(x => x.TicketId == routeTicket.TicketId 
-            //    //    && x.Ticket.Status == TicketStatus.RenamedFail) != null) refundFailTickets++;
 
+            //var refundFailTickets = 0;
+            //var routeTickets = route.RouteTickets.Where(x => x.Deleted == false && x.Ticket.Status == TicketStatus.RenamedFail);
+            //foreach(var routeTicket in routeTickets)
+            //{
+            //    if (_resolveOptionLogRepository.Get(x => x.TicketId == routeTicket.TicketId) != null) refundFailTickets++;
             //}
-            //if(failTickets == refundFailTickets)
+            //if(refundFailTickets == routeTickets.Count())
             //{
             //    route.Status = RouteStatus.Completed;
-            //    route.ResolveOption = resolveOption;
+            //    _routeRepository.Update(route);
             //}
 
-            _unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
         }
     }
 }

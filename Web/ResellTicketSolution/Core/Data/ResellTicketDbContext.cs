@@ -32,6 +32,7 @@ namespace Core.Data
         public virtual DbSet<CustomerDevice> CustomerDevices { get; set; }
         public virtual DbSet<AdminDevice> AdminDevices { get; set; }
         public virtual DbSet<NotificationMessage> NotificationMessages { get; set; }
+        public virtual DbSet<ResolveOptionLog> ResolveOptionLogs { get; set; }
         /// <summary>
         /// Config Models using Fluent API
         /// </summary>
@@ -57,6 +58,7 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new CustomerDeviceMap());
             modelBuilder.ApplyConfiguration(new AdminDeviceMap());
             modelBuilder.ApplyConfiguration(new NotificationMessageMap());
+            modelBuilder.ApplyConfiguration(new ResolveOptionLogMap());
 
             modelBuilder.Entity<User>().ToTable("User");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRole");

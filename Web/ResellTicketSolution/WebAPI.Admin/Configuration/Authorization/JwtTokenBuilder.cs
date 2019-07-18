@@ -23,6 +23,7 @@ namespace WebAPI.Admin.Configuration.Authorization
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, user.UserName)
             }; //payload
 
             claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));

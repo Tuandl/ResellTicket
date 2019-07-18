@@ -25,9 +25,14 @@ function RouteRow(props) {
             {/* <td>{getBadge(route.status)}</td> */}
             <td>
                 <Link to={routeLink}>
-                    <Button color="success" className="mr-2">
-                        <i className="fa fa-edit fa-lg mr-1"></i>Details
-                    </Button>
+                    {route.isLiability ?
+                        <Button color="info" className="mr-2">
+                            <i className="fa fa-edit fa-lg mr-1"></i>Resolve
+                        </Button> :
+                        <Button color="secondary" className="mr-2">
+                            <i className="fa fa-edit fa-lg mr-1"></i>Details
+                        </Button>
+                    }
                 </Link>
             </td>
         </tr>
@@ -50,7 +55,7 @@ class BoughtRoutes extends Component {
             liabilityPageCount: 1,
             boughtPageCount: 1,
             liabilitySearchValue: '',
-            boughtSearchValue: ''
+            boughtSearchValue: '',
         }
     }
 
@@ -59,7 +64,7 @@ class BoughtRoutes extends Component {
 
     componentDidMount() {
         this.getBoughtRoutes();
-        this.getLiabilityRoutes();
+        //this.getLiabilityRoutes();
     }
 
     getBoughtRoutes = () => {
@@ -74,17 +79,17 @@ class BoughtRoutes extends Component {
         })
     }
 
-    getLiabilityRoutes = () => {
-        var { liabilitySearchValue, liabilityCurrentPage, pageSize } = this.state
-        Axios.get('api/route/liability?param=' + liabilitySearchValue + '&page=' + liabilityCurrentPage + '&pageSize=' + pageSize).then(res => {
-            if (res.status === 200) {
-                this.setState({
-                    liabilityRoutes: res.data.data,
-                    liabilityPageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
-                })
-            }
-        })
-    }
+    // getLiabilityRoutes = () => {
+    //     var { liabilitySearchValue, liabilityCurrentPage, pageSize } = this.state
+    //     Axios.get('api/route/liability?param=' + liabilitySearchValue + '&page=' + liabilityCurrentPage + '&pageSize=' + pageSize).then(res => {
+    //         if (res.status === 200) {
+    //             this.setState({
+    //                 liabilityRoutes: res.data.data,
+    //                 liabilityPageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
+    //             })
+    //         }
+    //     })
+    // }
 
     onChange = (event) => {
         var { name, value } = event.target;
@@ -93,7 +98,7 @@ class BoughtRoutes extends Component {
         })
     }
 
-    onBoughtSearch =(event) => {
+    onBoughtSearch = (event) => {
         event.preventDefault();
         this.setState({
             boughtCurrentPage: 1
@@ -102,24 +107,24 @@ class BoughtRoutes extends Component {
         })
     }
 
-    onLiabilitySearch = (event) => {
-        event.preventDefault();
-        this.setState({
-            liabilityCurrentPage: 1
-        }, () => {
-            this.getLiabilityRoutes()
-        })
-    }
+    // onLiabilitySearch = (event) => {
+    //     event.preventDefault();
+    //     this.setState({
+    //         liabilityCurrentPage: 1
+    //     }, () => {
+    //         this.getLiabilityRoutes()
+    //     })
+    // }
 
-    liabilityGoPage = (pageNumber) => {
-        this.setState({
-            liabilityCurrentPage: pageNumber === 'prev' ? this.state.liabilityCurrentPage - 1 :
-                pageNumber === 'next' ? this.state.liabilityCurrentPage + 1 :
-                    pageNumber
-        }, () => {
-            this.getLiabilityRoutes();
-        })
-    }
+    // liabilityGoPage = (pageNumber) => {
+    //     this.setState({
+    //         liabilityCurrentPage: pageNumber === 'prev' ? this.state.liabilityCurrentPage - 1 :
+    //             pageNumber === 'next' ? this.state.liabilityCurrentPage + 1 :
+    //                 pageNumber
+    //     }, () => {
+    //         this.getLiabilityRoutes();
+    //     })
+    // }
 
     boughtGoPage = (pageNumber) => {
         this.setState({
@@ -132,7 +137,7 @@ class BoughtRoutes extends Component {
     }
 
     render() {
-        var { liabilityRoutes, boughtRoutes, liabilityCurrentPage, liabilityPageCount, boughtCurrentPage, boughtPageCount } = this.state;
+        var { boughtRoutes, boughtCurrentPage, boughtPageCount } = this.state;
         return (
             <div className="animated fadeIn">
                 <Row>
@@ -174,13 +179,13 @@ class BoughtRoutes extends Component {
                                 <div style={{ float: 'right' }}>
                                     <PaginationView currentPage={boughtCurrentPage} pageCount={boughtPageCount} goPage={this.boughtGoPage} />
                                 </div>
-                                
+
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
 
-                <Row>
+                {/* <Row>
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
@@ -206,7 +211,7 @@ class BoughtRoutes extends Component {
                                             <th>Arrival Time</th>
                                             <th>Total Amount</th>
                                             <th>Ticket Quantity</th>
-                                            {/* <th>Status</th> */}
+                                            <th>Status</th> 
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -222,9 +227,7 @@ class BoughtRoutes extends Component {
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-
-
+                </Row> */}
             </div>
         )
     }
