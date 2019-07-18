@@ -34,18 +34,24 @@ const appConfig = {
             searchResult: '/route/searchResult.html',
             detail: '/route/routeDetail.html',
         },
-        ticket: {
+        postedTicket: {
             postEditForm_2: '/postedTicket/postEditTicket_2.html',
             postEditForm: '/postedTicket/postEditTicket.html',
             //detail: ''
+            postedTicketList: '/postedTicket/postedTicket.html',
         },
         creditCard: {
-            viewListCreditCard: '/creditCard/ListCreditCardView.html'
+            viewListCreditCard: '/creditCard/ListCreditCardView.html',
+            createCreditCard: '/creditCard/createCreditCardView.html',
         },
         bank: {
             success: '/bank/createSuccessBankAccount.html',
             fail: '/bank/createFailedBankAccount.html'
-        }
+        },
+        updateProfile: '/updateProfile.html',
+        updatePasswordWhenLogedIn: '/changePasswordProfile.html',
+        register: '/register.html',
+        resetPassword: '/ResetPassword.html',
     },
     format: {
         datetime: 'ddd, MMM DD, YYYY HH:mm',

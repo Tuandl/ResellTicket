@@ -32,7 +32,7 @@
     <script src="../js/numeral.min.js"></script>
     <link rel="manifest" href="/manifest.json">
     <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
-    <script type="module" src="/bank/displayConnectBankButton.js"></script>
+    <!-- <script type="module" src="/bank/displayConnectBankButton.js"></script> -->
     <script type="module">
         import { appConfig } from '../constant/appConfig.js';
         var OneSignal = window.OneSignal || [];
@@ -80,37 +80,9 @@
                                 aria-hidden="true"></i><span></span></a></li>
                 </ul>
             </div>
-
-            <div class="nav-top">
-                <nav class="navbar navbar-default">
-
-                    <div class="navbar-header nav_2">
-                        <button type="button" class="navbar-toggle collapsed navbar-toggle1" data-toggle="collapse"
-                            data-target="#bs-megadropdown-tabs">
-                            <span class="sr-only">Toggle navigation</span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-
-
-                    </div>
-                    <div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
-                        <ul class="nav navbar-nav ">
-                            <li><a href="/updateProfile.html" class="hyper"><span>Profile</span></a>
-                            </li>
-                            <li class="active"><a href="/postedTicket/postedTicket.html" class="hyper"><span>My Tickets</span></a>
-                            </li>
-                            <li id="btn-reload"><a id="link-connect" class="hyper"><span id="value-link"></span></a>
-                            </li>
-                            <li><a href="/creditCard/ListCreditCardView.html" class="hyper"><span>Credit
-                                        Card</span></a></li>
-                            <li><a href="#" class="hyper"> <span>Transactions</span></a></li>
-                        </ul>
-                    </div>
-                </nav>
-
-                <div class="clearfix"></div>
-            </div>
+            
+			<div class="nav-top" id="nav-bar-container">
+			</div>
 
         </div>
     </div>

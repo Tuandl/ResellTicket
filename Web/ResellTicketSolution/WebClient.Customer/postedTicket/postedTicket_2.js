@@ -71,7 +71,7 @@ function postedTicketController() {
     function bindEvent() {
         var btnPostTicket = document.getElementById(id.btnPostTicket);
         btnPostTicket.addEventListener('click', function () {
-            window.location.href = appConfig.url.ticket.postEditForm_2;
+            window.location.href = appConfig.url.postedTicket.postEditForm_2;
         });
 
         $(window).scroll(function() {
@@ -86,7 +86,7 @@ function postedTicketController() {
     }
 
     function onTicketClicked(ticket) {
-        window.location.href = appConfig.url.ticket.postEditForm_2 + '?ticketId=' + ticket.id;
+        window.location.href = appConfig.url.postedTicket.postEditForm_2 + '?ticketId=' + ticket.id;
     }
 }
 
