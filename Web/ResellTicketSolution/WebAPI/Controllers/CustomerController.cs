@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Service.EmailService;
 using Service.Services;
+using System.Collections.Generic;
 using System.Net;
 using ViewModel.ViewModel.Customer;
+using ViewModel.ViewModel.Transaction;
+using ViewModel.ViewModel.Route;
 
 namespace WebAPI.Controllers
 {
@@ -226,24 +229,32 @@ namespace WebAPI.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
-        [Route("send-email-receipt-for-buyer")]
-        public IActionResult SendEmailReceiptForBuyer()
+        //[HttpPost]
+        //[Route("send-email-receipt-for-buyer")]
+        //public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
+        //{
+        //    //if (!ModelState.IsValid)
+        //    //{
+        //    //    return BadRequest("Invalid Request");
+        //    //}
+
+        //    //var username = User.Identity.Name;
+        //    _sendGridService.SendEmailReceiptForBuyer(model);
+
+        //    //if (!string.IsNullOrEmpty(sendResult))
+        //    //{
+        //    //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
+        //    //}
+        //    return Ok();
+        //}
+
+        [HttpGet]
+        [Route("get-transaction")]
+        public ActionResult<List<TransactionDataTable>> GetListTransactions(int page, int pageSize)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest("Invalid Request");
-            //}
-
             var username = User.Identity.Name;
-            _sendGridService.SendEmailReceiptForBuyer(username);
-
-            //if (!string.IsNullOrEmpty(sendResult))
-            //{
-            //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
-            //}
-            return Ok();
+            var listTransaction = _customerService.GetTransactions(username, page, pageSize);
+            return listTransaction;
         }
-
     }
 }

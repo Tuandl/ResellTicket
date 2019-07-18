@@ -10,6 +10,7 @@ namespace ViewModel.ViewModel.Refund
         public int PaymentId { get; set; }
         public decimal Amount { get; set; }
         public string StripeRefundId { get; set; }
+        public string Description { get; set; }
         public RefundStatus Status { get; set; }
     }
 }

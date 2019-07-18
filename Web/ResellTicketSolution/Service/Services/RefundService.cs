@@ -93,6 +93,7 @@ namespace Service.Services
             RefundCreateViewModel refundCreate = new RefundCreateViewModel();
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
+            refundCreate.Description = refund.Description;
             refundCreate.Amount = paymentDetail.Amount;
             refundCreate.Status = RefundStatus.Success;
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
