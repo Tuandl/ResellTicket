@@ -37,6 +37,15 @@
     <ProjectReference Include="..\ViewModel\ViewModel.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="EmailTemplate\EmailTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="EmailTemplate\TicketsTemplate.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="AfterBuild">
     <MSBuild Condition="'$(DeployOnBuild)'=='true' AND '$(PublishProfile)'!=''" Projects="$(MSBuildProjectFullPath)" Properties="DeployOnBuild=true;PublishProfile=$(PublishProfile);BuildingInsideVisualStudio=False" />
   </Target>
