@@ -17,7 +17,7 @@ namespace Service.EmailService
 {
     public interface ISendGridService
     {
-        void SendEmailReceiptForBuyer(RouteDetailViewModel model);
+        void SendEmailReceiptForBuyer(int routeId);
     }
     public class SendGridService : ISendGridService
     {
@@ -41,7 +41,7 @@ namespace Service.EmailService
             _stationRepository = stationRepository;
         }
 
-        public void SendEmailReceiptForBuyer(RouteDetailViewModel model)
+        public void SendEmailReceiptForBuyer(int routeId)
         {
             var apiKey = SETTING.Value.SendGridKey;
             var client = new SendGridClient(apiKey);
@@ -49,19 +49,20 @@ namespace Service.EmailService
             string ticketTemplatehtml = _hostingEnvironment.ContentRootPath + "\\EmailTemplate\\TicketsTemplate.html";
             string body = string.Empty;
             string ticketList = string.Empty;
+            var route = _routeRepository.Get(r => r.Id == routeId);
+            var customer = _customerRepository.Get(c => c.Id == route.CustomerId);
             //using streamreader for reading my htmltemplate   
-
             using (StreamReader reader = new StreamReader(emailTemplateHtml))
             {
                 body = reader.ReadToEnd();
             }
-            var customerEmail = _customerRepository.Get(c => c.Id == model.CustomerId).Email;
-            var customerName = model.BuyerName;
-            var customerPhone = model.BuyerPhone;
-            var routeCode = model.Code;
-            var totalAmount = model.TotalAmount;
-            var date = DateTime.Now;
-            var routeTickets = _routeTicketRepository.GetAllQueryable().Where(r => r.RouteId == model.Id);
+            var customerEmail = _customerRepository.Get(c => c.Id == route.CustomerId).Email;
+            var customerName = customer.FullName;
+            var customerPhone = customer.PhoneNumber;
+            var routeCode = route.Code;
+            var totalAmount = route.TotalAmount;
+            var date = DateTime.UtcNow;
+            var routeTickets = _routeTicketRepository.GetAllQueryable().Where(r => r.RouteId == routeId);
             List<TicketRowViewModel> tickets = new List<TicketRowViewModel>();
             foreach (var routeTicket in routeTickets)
             {
@@ -110,7 +111,7 @@ namespace Service.EmailService
             body = body.Replace("{ticketList}", ticketList);
             
             var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-            var subject = "Hi!" + customerName + ",";
+            var subject = routeCode + " - Receipt";
             var to = new EmailAddress(customerEmail, customerName);
             var plainTextContent = "";
             var htmlContent = body;

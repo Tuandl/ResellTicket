@@ -227,24 +227,24 @@ namespace WebAPI.Controllers
             return Ok(customer);
         }
 
-        [HttpPost]
-        [Route("send-email-receipt-for-buyer")]
-        public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return BadRequest("Invalid Request");
-            //}
+        //[HttpPost]
+        //[Route("send-email-receipt-for-buyer")]
+        //public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
+        //{
+        //    //if (!ModelState.IsValid)
+        //    //{
+        //    //    return BadRequest("Invalid Request");
+        //    //}
 
-            //var username = User.Identity.Name;
-            _sendGridService.SendEmailReceiptForBuyer(model);
+        //    //var username = User.Identity.Name;
+        //    _sendGridService.SendEmailReceiptForBuyer(model);
 
-            //if (!string.IsNullOrEmpty(sendResult))
-            //{
-            //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
-            //}
-            return Ok();
-        }
+        //    //if (!string.IsNullOrEmpty(sendResult))
+        //    //{
+        //    //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
+        //    //}
+        //    return Ok();
+        //}
 
     }
 }
