@@ -15,5 +15,6 @@ namespace Core.Models
         public virtual Station DepartureStation { get; set; }
         public virtual Station ArrivalStation { get; set; }
         public virtual Route Route { get; set; }
+        public bool? IsReplaced { get; set; }
     }
 }

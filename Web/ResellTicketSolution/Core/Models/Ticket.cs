@@ -47,5 +47,6 @@ namespace Core.Models
         public virtual Station ArrivalStation { get; set; }
         public virtual ICollection<Payout> Payouts { get; set; }
         public virtual ICollection<RouteTicket> RouteTickets { get; set; }
+        public virtual ICollection<ResolveOptionLog> ResolveOptionLogs { get; set; }
     }
 }

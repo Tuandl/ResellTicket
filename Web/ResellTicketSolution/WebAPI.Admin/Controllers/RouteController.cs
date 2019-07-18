@@ -90,7 +90,8 @@ namespace WebAPI.Admin.Controllers
         {
             try
             {
-                _routeService.ReplaceOneFailTicket(routeId, failRouteTicketId, replaceTicketId);
+                string username = User.Identity.Name;
+                _routeService.ReplaceOneFailTicket(routeId, failRouteTicketId, replaceTicketId, username);
             } catch (Exception e)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);

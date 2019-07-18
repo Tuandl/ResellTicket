@@ -18,7 +18,7 @@ namespace Service.Services
 
     public interface IPayoutService
     {
-        string MakePayoutToCustomer(int TicketId);
+        string MakePayoutToCustomer(int TicketId, string username);
     }
     public class PayoutService : IPayoutService
     {
@@ -32,9 +32,12 @@ namespace Service.Services
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOptions<CrediCardSetting> SETTING;
+        private readonly IUserRepository _userRepository;
+        private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
         public PayoutService(IPayoutRepository payoutRepository, ITicketRepository ticketRepository, IMapper mapper, IUnitOfWork unitOfWork,
             ICustomerRepository customerRepository, ICreditCardRepository creditCardRepository, IRouteTicketRepository routeTicketRepository,
-            IPaymentRepository paymentRepository, IRouteRepository routeRepository, IOptions<CrediCardSetting> options)
+            IPaymentRepository paymentRepository, IRouteRepository routeRepository, IOptions<CrediCardSetting> options, IUserRepository userRepository,
+            IResolveOptionLogRepository resolveOptionLogRepository)
         {
             _payoutRepository = payoutRepository;
             _ticketRepository = ticketRepository;
@@ -46,13 +49,13 @@ namespace Service.Services
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             SETTING = options;
+            _userRepository = userRepository;
+            _resolveOptionLogRepository = resolveOptionLogRepository;
         }
 
-        public string MakePayoutToCustomer(int TicketId)
+        public string MakePayoutToCustomer(int TicketId, string username)
         {
-
-            bool isRouteValid = true;
-            int routeId = -1;
+            string staffId = _userRepository.Get(x => x.UserName == username).Id;
 
             //lấy all routeTicke ứng vs cái Ticket
             ///// CÁCH 1
@@ -125,14 +128,25 @@ namespace Service.Services
 
             ticket.Status = TicketStatus.Completed;
             _ticketRepository.Update(ticket);
-            int renanmedSuccessTickets = route.RouteTickets.Where(x => x.Ticket.Status == TicketStatus.Completed && x.Deleted == false).Count();
-            if (renanmedSuccessTickets == route.RouteTickets.Count(x => x.Deleted == false))
+
+            //var route = ticket.Route;
+            _unitOfWork.StartTransaction();
+            ResolveOptionLog log = new ResolveOptionLog()
+            {
+                Option = ResolveOption.PAYOUT,
+                RouteId = route.Id,
+                TicketId = TicketId,
+                StaffId = staffId
+            };
+            _resolveOptionLogRepository.Add(log);
+            _unitOfWork.CommitChanges();
+
+            if(route.ResolveOptionLogs.Count() == route.RouteTickets.Count())
             {
                 route.Status = RouteStatus.Completed;
                 _routeRepository.Update(route);
             }
-
-            _unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
 
             return "";
         }

@@ -1,6 +1,7 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
+import { Link } from 'react-router-dom';
 import { Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table, FormGroup, Label } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
@@ -8,7 +9,7 @@ import TicketStatus from '../Tickets/TicketStatus';
 import ResolveRenamedFailTicket from './ResolveRenamedFailTicket';
 
 function TicketRow(props) {
-    const { ticket, routeStatus, resolveOption, isRefund } = props;
+    const { routeTicket, routeStatus, resolveOption, isRefund } = props;
     const getBadge = (status) => {
         switch (status) {
             case TicketStatus.RenamedFail:
@@ -59,29 +60,31 @@ function TicketRow(props) {
     }
 
     function tranferMoneyToSeller() {
-        
-        props.tranferMoneyToSeller(ticket.ticketId)
+        props.tranferMoneyToSeller(routeTicket.ticketId)
 
     }
 
     function refundFailTicketMoneyToBuyer() {
-        
-        props.refundFailTicketMoneyToBuyer(ticket.ticketId);
+        props.refundFailTicketMoneyToBuyer(routeTicket.ticketId);
     }
+
+    const ticketLink = `/boughtRoute/${props.routeId}/${routeTicket.ticketId}`;
 
     return (
         <tr>
             <th>{props.index + 1}</th>
-            <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureCityName}</td>
-            <td>{moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{ticket.arrivalCityName}</td>
-            <td>{moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{ticket.vehicleName}</td>
-            <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} decimalScale={2} />}</td>
-            <td>{getBadge(ticket.status)}</td>
+            <td>{routeTicket.ticketCode}</td>
+            <td>{routeTicket.departureCityName} - {moment(routeTicket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{routeTicket.arrivalCityName} - {moment(routeTicket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{<NumberFormat value={routeTicket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} decimalScale={2} />}</td>
+            <td>{getBadge(routeTicket.status)}</td>
             <td>
-                {getButton(ticket.status)}
+                <Link to={ticketLink}>
+                    <Button color="secondary mr-1">
+                        <i className="fa fa-edit fa-lg mr-1"></i>Details
+                    </Button>
+                </Link>
+                {getButton(routeTicket.status)}
             </td>
         </tr>
     )
@@ -98,6 +101,8 @@ class PayoutRefundDetailRoute extends Component {
             resolveOption: 0,
             routeStatus: 0,
             isRefund: false,
+            resolveOptionLogs: [],
+            isRefundedAll: false
         }
     }
 
@@ -117,7 +122,8 @@ class PayoutRefundDetailRoute extends Component {
                 routeId: res.data.id,
                 routeStatus: res.data.status,
                 routeTickets: res.data.routeTickets,
-                resolveOption: res.data.resolveOption
+                resolveOptionLogs: res.data.resolveOptionLogs,
+                isRefundedAll: res.data.isRefundAll
             }, () => this.checkRefundAll())
         });
     }
@@ -152,9 +158,9 @@ class PayoutRefundDetailRoute extends Component {
     refundFailTicketMoneyToBuyer = (ticketId) => {
         toastr.info('Processing, Waiting for refund');
         Axios.post('api/refund/one-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
-            if(res.status === 200) {
-                toastr.success('Successfully', 'Refund money successfully.');    
-                this.getRouteDetail();          
+            if (res.status === 200) {
+                toastr.success('Successfully', 'Refund money successfully.');
+                this.getRouteDetail();
             }
         })
     }
@@ -182,14 +188,21 @@ class PayoutRefundDetailRoute extends Component {
     }
 
     render() {
-        const { routeDetail, routeTickets, isRefund, routeStatus, resolveOption, routeId } = this.state;
+        const { routeDetail, 
+            routeTickets, 
+            isRefund, 
+            routeStatus, 
+            resolveOption, 
+            routeId, 
+            resolveOptionLogs, 
+            isRefundedAll } = this.state;
         return (
             <div className="animated fadeIn">
                 <Row>
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                <strong><i className="icon-info pr-1"></i>Route Detail</strong>
+                                <strong>Route Detail</strong>
                             </CardHeader>
                             <CardBody>
                                 {routeDetail.map((detail, index) => (
@@ -212,21 +225,18 @@ class PayoutRefundDetailRoute extends Component {
                                             <th>No.</th>
                                             <th>Code</th>
                                             <th>Departure</th>
-                                            <th>Departure Time</th>
                                             <th>Arrival</th>
-                                            <th>Arrival Time</th>
-                                            <th>Vehicle</th>
                                             <th>Price</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {routeTickets.map((ticket, index) => (
-                                            <TicketRow key={index} ticket={ticket} index={index} routeStatus={routeStatus}
+                                        {routeTickets.map((routeTicket, index) => (
+                                            <TicketRow key={index} routeTicket={routeTicket} index={index} routeStatus={routeStatus}
                                                 tranferMoneyToSeller={this.tranferMoneyToSeller}
                                                 refundFailTicketMoneyToBuyer={this.refundFailTicketMoneyToBuyer}
-                                                resolveOption={resolveOption} isRefund={isRefund}
+                                                resolveOption={resolveOption} isRefund={isRefund} routeId={routeId}
                                             />
                                         ))}
                                     </tbody>
@@ -250,7 +260,7 @@ class PayoutRefundDetailRoute extends Component {
 
                 <ResolveRenamedFailTicket routeTickets={routeTickets} resolveOption={resolveOption}
                     routeStatus={routeStatus} onOptionChange={this.onOptionChange} routeId={routeId}
-                    getRouteDetail={this.getRouteDetail}/>
+                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll}/>
 
             </div>
         )

@@ -20,5 +20,7 @@ namespace Core.Enum
         /// refund toàn bộ số tiền của route đó cho buyer
         /// </summary>
         REFUNDTOTALAMOUNT = 3,
+
+        PAYOUT = 4,
     }
 }

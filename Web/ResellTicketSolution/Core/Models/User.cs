@@ -8,5 +8,6 @@ namespace Core.Models
         public string FullName { get; set; }
         public bool IsActive { get; set; }
         public virtual ICollection<AdminDevice> AdminDevices { get; set; }
+        public virtual ICollection<ResolveOptionLog> ResolveOptionLogs { get; set; }
     }
 }
