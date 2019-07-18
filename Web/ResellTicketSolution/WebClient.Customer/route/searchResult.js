@@ -101,24 +101,25 @@ function searchResult() {
             renderRouteDetail(route);
 
         } else {
-            const newRoute = await saveRoute(route);
-            newRoute.saved = true;
-            const routes = model.routes.map(route => {
-                return route.id == routeId ? newRoute : route;
-            });
-            mapRoute(routes);
-            renderRoutes();
-            route = model.routes.find(route => route.id == newRoute.id);
-            renderRouteDetail(route);
+            const routeId = await saveRoute(route);
+            window.location.href = `${appConfig.url.route.detail}?routeId=${routeId}`;
+            // newRoute.saved = true;
+            // const routes = model.routes.map(route => {
+            //     return route.id == routeId ? newRoute : route;
+            // });
+            // mapRoute(routes);
+            // // renderRoutes();
+            // route = model.routes.find(route => route.id == newRoute.id);
+            // renderRouteDetail(route);
         }
     }
 
     async function saveRoute(route) {
         const response = await apiService.post(appConfig.apiUrl.route, route.rawData);
         const routeId = await response.json();
-        const newRoute = await apiService.get(appConfig.apiUrl.route + routeId);
+        // const newRoute = await apiService.get(appConfig.apiUrl.route + routeId);
         // toastService.success('Saved');
-        return newRoute;
+        return routeId;
     }
 
     function renderRouteDetail(route) {

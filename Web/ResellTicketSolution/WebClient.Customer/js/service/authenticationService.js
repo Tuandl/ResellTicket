@@ -39,7 +39,6 @@ function getUserInformation() {
 }
 
 const authenticationService = {
-    checkLogin,
     checkLoginProfile,
     logout,
     isLogedin: isLogedin,
