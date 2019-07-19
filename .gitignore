@@ -25,3 +25,9 @@ Mobile/ResellTicketCustomerMobile/package-lock.json
 /Web/ResellTicketSolution/Algorithm/bin/
 /Web/ResellTicketSolution/AlgorithmTest/bin
 /Web/ResellTicketSolution/AlgorithmTest/obj
+/Web/ResellTicketSolution/WebAPI/Properties/PublishProfiles/api-resellticket.PublishSettings
+/Web/ResellTicketSolution/WebAPI/Properties/PublishProfiles/api-resellticket - Web Deploy.pubxml.user
+/Web/ResellTicketSolution/WebAPI/Properties/PublishProfiles/api-resellticket - Web Deploy.pubxml
+/Web/ResellTicketSolution/WebAPI.Admin/Properties/PublishProfiles/api-admin-resellticket - Web Deploy.pubxml.user
+/Web/ResellTicketSolution/WebAPI.Admin/Properties/PublishProfiles/api-admin-resellticket - Web Deploy.pubxml
+/Web/ResellTicketSolution/WebClient.Customer/.vscode/settings.json
