@@ -62,7 +62,7 @@ namespace Service.Services
             {
                 Amount = Convert.ToInt64(routeToMakePayment.TotalAmount * 100),
                 Currency = "usd",
-                Description = customerInfor.FullName + "-" + customerInfor.Email + "-" +customerInfor.PhoneNumber + 
+                Description = customerInfor.FullName.ToUpper() + "-" + customerInfor.Email + "-" +customerInfor.PhoneNumber + 
                     " buy Route Code: " + routeToMakePayment.Code,
                 SourceId = creditCardToMakePayment.CardId, // obtained with Stripe.js,
                 CustomerId = customerInfor.StripeId,
@@ -76,7 +76,7 @@ namespace Service.Services
             PaymentCreateViewModel model = new PaymentCreateViewModel();
             model.RouteId = routeToMakePayment.Id;
             model.CreditCartId = creditCardToMakePayment.Id;
-            model.Description = charge.Description;
+            model.Description = "You bought route " + routeToMakePayment.Code + ". Thank you for using our service.";
             model.Amount = routeToMakePayment.TotalAmount;
             model.Status = PaymentStatus.Success;
             model.StripeChargeId = charge.Id;
