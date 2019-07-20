@@ -805,7 +805,8 @@ namespace Service.Services
             foreach (var route in routeDataTable.Data)
             {
                 var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
-                    x.RouteId == route.Id
+                    x.RouteId == route.Id &&
+                    x.IsReplaced != true
                 ).OrderBy(x => x.Order);
 
                 var firstRouteTicket = routeTickets.FirstOrDefault();

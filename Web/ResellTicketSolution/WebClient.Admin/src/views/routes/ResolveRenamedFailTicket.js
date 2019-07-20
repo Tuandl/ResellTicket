@@ -2,7 +2,8 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table } from 'reactstrap';
+import { Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table,
+    Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import TicketStatus from '../Tickets/TicketStatus';
@@ -27,10 +28,8 @@ function TicketRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureCityName}</td>
-            <td>{moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{ticket.arrivalCityName}</td>
-            <td>{moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{ticket.departureCityName} - {moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{ticket.arrivalCityName} - {moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{ticket.vehicleName}</td>
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
@@ -51,6 +50,7 @@ function TicketRow(props) {
 export default class ResolveRenamedFailTicket extends Component {
 
     failRouteTicketId = 0;
+    failRouteTicketCode = '';
     routeId = 0;
 
 
@@ -65,7 +65,8 @@ export default class ResolveRenamedFailTicket extends Component {
             routeStatus: 0,
             replaceTicketId: 0,
             resolveOptionLogs: [],
-            isRefundedAll: false
+            isRefundedAll: false,
+            isOpenConfirmReplaceDialog: false
         }
     }
 
@@ -77,14 +78,25 @@ export default class ResolveRenamedFailTicket extends Component {
             resolveOption: props.resolveOption,
             routeStatus: props.routeStatus,
             resolveOptionLogs: props.resolveOptionLogs,
-            isRefundedAll : props.isRefundedAll
+            isRefundedAll: props.isRefundedAll
         }, () => {
             if (props.routeStatus === 2) this.checkResovleNeed(this.state.routeTickets);
         })
     }
 
     componentDidMount() {
-        //this.getReplaceTicketForFailTicket();
+        // var failTickets = 0;
+        // for (var i = 0; i < routeTickets.length; i++) {
+        //     if (routeTickets[i].status === TicketStatus.RenamedFail) {
+        //         failTickets++;
+        //         this.failRouteTicketCode = routeTickets[i].ticketCode;
+        //         this.failRouteTicketId = routeTickets[i].id;
+        //         break;
+        //     }
+        // }
+        // if (failTickets === 1) {
+        //     this.getReplaceTicketForFailTicket(this.failRouteTicketId);
+        // }
     }
 
     checkResovleNeed = (routeTickets) => {
@@ -108,7 +120,9 @@ export default class ResolveRenamedFailTicket extends Component {
                 for (var i = 0; i < routeTickets.length; i++) {
                     if (routeTickets[i].status === TicketStatus.RenamedFail) {
                         failTickets++;
+                        this.failRouteTicketCode = routeTickets[i].ticketCode;
                         this.failRouteTicketId = routeTickets[i].id;
+                        break;
                     }
                 }
                 if (failTickets === 1) {
@@ -137,7 +151,9 @@ export default class ResolveRenamedFailTicket extends Component {
         if (res.status === 200) {
             this.setState({
                 replaceTickets: res.data.data
+
             })
+
         }
     }
 
@@ -148,12 +164,17 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     onReplaceTicket = async () => {
+        this.closeConfirmReplaceDialog()
         toastr.info('Processing', 'Waiting for replace')
         var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
             '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
         if (res.status === 200) {
             toastr.success('Successfully', 'Replace ticket successfully.');
-            this.props.getRouteDetail() 
+            this.props.getRouteDetail();
+            this.setState({
+                resolveOption: 0,
+                replaceTickets: []
+            })
         }
 
     }
@@ -163,6 +184,7 @@ export default class ResolveRenamedFailTicket extends Component {
             <div>
                 {this.renderResolveOption()}
                 {this.renderResolveOptionLogs()}
+                {this.renderConfirmReplaceDialog()}
             </div>
         )
     }
@@ -176,20 +198,20 @@ export default class ResolveRenamedFailTicket extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" onChange={this.optionChange}/>
+                                &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" onChange={this.optionChange} 
+                                    />
                                 <strong>OPTION 1: Replace fail ticket to a new ticket.</strong>
                             </CardHeader>
                             {replaceTickets.length > 0 ?
                                 <CardBody>
+                                    <span>Replace For Ticket <strong>{this.failRouteTicketCode}</strong></span>
                                     <Table responsive hover>
                                         <thead>
                                             <tr>
                                                 <th>No.</th>
                                                 <th>Code</th>
                                                 <th>Departure</th>
-                                                <th>Departure Time</th>
                                                 <th>Arrival</th>
-                                                <th>Arrival Time</th>
                                                 <th>Vehicle</th>
                                                 <th>Price</th>
                                                 <th>Action</th>
@@ -205,7 +227,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                     {replaceTicketId !== 0 ?
                                         <Row className="float-right">
                                             <Col xs="12">
-                                                <Button type="button" color="primary" onClick={this.onReplaceTicket}>Replace Ticket</Button>
+                                                <Button type="button" color="success" onClick={this.openConfirmReplaceDialog}>Replace Ticket</Button>
                                             </Col>
                                         </Row>
                                         : null
@@ -247,7 +269,7 @@ export default class ResolveRenamedFailTicket extends Component {
                         <Card>
                             <CardHeader>
                                 <strong>Resolved Tickets History </strong>
-                                {isRefundedAll ? <Badge color="danger" style={{float:'right', fontSize:15}}>This route was refunded all</Badge> : null}
+                                {isRefundedAll ? <Badge color="danger" style={{ float: 'right', fontSize: 15 }}>This route was refunded all</Badge> : null}
                             </CardHeader>
                             <CardBody>
                                 <Table responsive hover>
@@ -302,64 +324,33 @@ export default class ResolveRenamedFailTicket extends Component {
             )
         }
     }
-}
 
-//Completed Routes
-                // <Row>
-                //     {resolveOption === ResolveOption.REPLACE ?
-                //         <Col xl={12}>
-                //             <Card>
-                //                 <CardHeader>
-                //                     &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" checked="checked" disabled />
-                //                     <strong>OPTION 1: Replace fail ticket to a new ticket.</strong>
-                //                 </CardHeader>
-                //                 {replaceTickets.length > 0 ?
-                //                     <CardBody>
-                //                         <Table responsive hover>
-                //                             <thead>
-                //                                 <tr>
-                //                                     <th>No.</th>
-                //                                     <th>Code</th>
-                //                                     <th>Departure</th>
-                //                                     <th>Departure Time</th>
-                //                                     <th>Arrival</th>
-                //                                     <th>Arrival Time</th>
-                //                                     <th>Vehicle</th>
-                //                                     <th>Price</th>
-                //                                     <th>Action</th>
-                //                                     <th>Select</th>
-                //                                 </tr>
-                //                             </thead>
-                //                             <tbody>
-                //                                 {replaceTickets.map((ticket, index) => (
-                //                                     <TicketRow key={index} ticket={ticket} index={index} replaceTicket={this.replaceTicket} />
-                //                                 ))}
-                //                             </tbody>
-                //                         </Table>
-                //                     </CardBody> : null
-                //                 }
-                //             </Card>
-                //         </Col> : null
-                //     }
-                //     {resolveOption === ResolveOption.REFUNDFAILTICKET ?
-                //         <Col xl={12}>
-                //             <Card>
-                //                 <CardHeader>
-                //                     &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="2" checked="checked" disabled />
-                //                     <strong>OPTION 2: Refund the fail ticket's price to buyer and buyer will buy a new ticket by themselves.</strong>
-                //                 </CardHeader>
-                //             </Card>
-                //         </Col> : null
-                //     }
-                //     {resolveOption === ResolveOption.REFUNDTOTALAMOUNT ?
-                //         <Col xl={12}>
-                //             <Card>
-                //                 <CardHeader>
-                //                     &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="3" onChange={this.optionChange} checked="checked" disabled />
-                //                     <strong>OPTION 3: Refund the route's total amount to buyer.</strong>
-                //                 </CardHeader>
-                //             </Card>
-                //         </Col> : null
-                //     }
-                // </Row>
-            //Completed Routes
+    openConfirmReplaceDialog = () => {
+        //this.resolvedTicketId = ticketId;
+        this.setState({
+            isOpenConfirmReplaceDialog: true
+        })
+    }
+
+    closeConfirmReplaceDialog = () => {
+        this.setState({
+            isOpenConfirmReplaceDialog: false
+        })
+    }
+
+    renderConfirmReplaceDialog = () => {
+        return (
+            <Modal isOpen={this.state.isOpenConfirmReplaceDialog}
+                className="modal-success">
+                <ModalHeader toggle={this.closeConfirmReplaceDialog}>Confirm Replace</ModalHeader>
+                <ModalBody>
+                    Do you want to replace this ticket?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="success" onClick={this.onReplaceTicket}>Confirm</Button>
+                    <Button color="secondary" onClick={this.closeConfirmReplaceDialog}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+        )
+    }
+}

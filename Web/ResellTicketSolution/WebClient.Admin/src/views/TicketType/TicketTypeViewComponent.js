@@ -80,10 +80,10 @@ class TicketTypeViewComponent extends Component {
     async onBtnSaveChangesClicked() {
         let data = this.state.ticketType;
 
-        toastr.info('Infomation', 'Please wait while we processing your request.');
+        toastr.info('Processing', 'Wating for update');
         var updateResponse = await Axios.put('api/tickettype', data);
         if(updateResponse.status === 200) {
-            toastr.success('Update Success', 'Transportation has been updated successfully.');
+            toastr.success('Successfully', 'Transportation has been updated.');
             this.props.history.push('/tickettype');
         } else {
             toastr.error('Error', 'Error when update Transportation');

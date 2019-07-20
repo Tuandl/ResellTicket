@@ -92,13 +92,14 @@ class TransportationCreateComponent extends Component {
     }
 
     async onBtnCreateClicked() {
+        toastr.info('Processing', 'Wating for create');
         var { nameError, phoneError, emailError } = this.state
         if (nameError === '' && phoneError === '' && emailError === '') {
             let data = this.state.transportation;
-            toastr.info('Infomation', 'Please wait while we processing your request.');
+            //toastr.info('Infomation', 'Please wait while we processing your request.');
             var updateResponse = await Axios.post('api/transportation', data);
             if (updateResponse.status === 200) {
-                toastr.success('Create Success', 'Transportstion has been created successfully.');
+                toastr.success('Successfully', 'Transportstion has been created.');
                 this.props.history.push('/transportation');
             } else {
                 toastr.error('Error', 'Error when create Transportstion');

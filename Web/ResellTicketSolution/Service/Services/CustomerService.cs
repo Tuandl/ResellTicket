@@ -429,7 +429,7 @@ namespace Service.Services
                      Amount = PM.Amount,
                      Description = PM.Description,
                      CreatedAtUTC = PM.CreatedAtUTC,
-                     Type = "PAYMENT"
+                     Type = "Payment"
                  }
                 ).Union(
                     from RP in _refundRepository.GetAllQueryable()
@@ -442,7 +442,7 @@ namespace Service.Services
                         Amount = RP.Amount,
                         Description = RP.Description,
                         CreatedAtUTC = RP.CreatedAtUTC,
-                        Type = "REFUND"
+                        Type = "Refund"
                     }
                     )
                 .Union(
@@ -456,7 +456,7 @@ namespace Service.Services
                         Amount = PO.Amount,
                         Description = PO.Description,
                         CreatedAtUTC = PO.CreatedAtUTC,
-                        Type = "PAYOUT"
+                        Type = "Payout"
                     }
                     ).OrderByDescending(x => x.CreatedAtUTC).Skip((page - 1) * pageSize).Take(pageSize).ToList();
 

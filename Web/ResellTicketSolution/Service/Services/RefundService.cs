@@ -83,18 +83,20 @@ namespace Service.Services
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
             //cmt để test
+            decimal remainRefund = paymentDetail.Amount - totalRefund;
             var refundOptions = new RefundCreateOptions()
             {
                 ChargeId = paymentDetail.StripeChargeId,
-                Amount = Convert.ToInt64(totalRefund * 100)
+                Amount = Convert.ToInt64(remainRefund * 100)
             };
             var refundService = new Stripe.RefundService();
             Stripe.Refund refund = refundService.Create(refundOptions);
             RefundCreateViewModel refundCreate = new RefundCreateViewModel();
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
-            refundCreate.Description = refund.Description;
-            refundCreate.Amount = paymentDetail.Amount;
+            refundCreate.Amount = remainRefund; //refund all 
+            refundCreate.Description = "You have a refund for route " + routeTicket.Route.Code + ". We are sorry for the inconvenience.";
+
             refundCreate.Status = RefundStatus.Success;
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
             _refundRepository.Add(refundAddIntoData);
@@ -181,6 +183,8 @@ namespace Service.Services
             Core.Models.Refund refundAddIntoData = new Core.Models.Refund();
             refundAddIntoData.PaymentId = paymentDetail.Id;
             refundAddIntoData.StripeRefundId = refund.Id;
+            refundAddIntoData.Description = "You have a refund for ticket " + failRouteTicket.Ticket.TicketCode + " in route " + failRouteTicket.Route.Code
+                                    + ". We sorry for the inconvenience."; 
             refundAddIntoData.Amount = failTicket.SellingPrice;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);

@@ -52,13 +52,14 @@ function searchRouteForm() {
         );
 
         $(`#${id.departureDate}`).datetimepicker({
-            format: appConfig.format.datetime,
-            minDate: new Date()
+            format: appConfig.format.date,
+            minDate: new Date(),
+
         });
 
         $(`#${id.arrivalDate}`).datetimepicker({
-            format: appConfig.format.datetime,
-            minDate: new Date()
+            format: appConfig.format.date,
+            minDate: new Date(),
         });
 
         const btnSearch = document.getElementById(id.btnSearch);

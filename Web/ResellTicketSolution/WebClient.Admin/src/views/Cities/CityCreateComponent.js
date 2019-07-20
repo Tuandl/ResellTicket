@@ -41,10 +41,11 @@ class CityCreateComponent extends Component {
     }
 
     onSaveChanges = () => {
+        toastr.info('Processing', 'Waiting for create');
         var { city } = this.state;
         Axios.post('api/city/', city).then(res => {
             if (res.status === 200) {
-                toastr.success('Create Success', 'City has been created successfully.');
+                toastr.success('Successfully', 'City has been created.');
                 this.props.history.push('/city');
             } else {
                 toastr.error('Error', 'Error when create City');

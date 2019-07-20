@@ -6,11 +6,13 @@ using System.Net;
 using ViewModel.ViewModel.Customer;
 using ViewModel.ViewModel.Transaction;
 using ViewModel.ViewModel.Route;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
     [Route("api/customer")]
     [ApiController]
+    [Authorize]
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;

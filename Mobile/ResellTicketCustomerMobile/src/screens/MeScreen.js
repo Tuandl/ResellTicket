@@ -39,7 +39,7 @@ export default class MeScreen extends Component {
     async isExistedConnectAccount() {
         try {
             var response = await Api.get('api/customer/check-existed-connect-bank-account');
-            if(response.status === 200){
+            if (response.status === 200) {
                 this.setState({
                     isExistConnectAccount: false
                 })
@@ -48,7 +48,7 @@ export default class MeScreen extends Component {
                     isExistConnectAccount: true
                 })
             }
-            
+
         } catch (error) {
             RNToasty.Error({
                 title: 'Error on Load Connect Bank Account Data',
@@ -111,7 +111,7 @@ export default class MeScreen extends Component {
 
 
 
-                            <TouchableNativeFeedback>
+                            <TouchableNativeFeedback onPress={() => navigate('TransactionViewList')}  >
                                 <ListItem style={{ borderBottomWidth: 0.5 }}>
                                     <Left><Text>Transaction History</Text></Left>
                                     <Right style={{ opacity: 0.5 }}>

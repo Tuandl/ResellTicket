@@ -53,10 +53,11 @@ class CityViewComponent extends Component {
     }
 
     onSaveChanges = () => {
+        toastr.info('Processing', 'Waiting for update');
         var { city } = this.state;
         Axios.put('api/city/', city).then(res => {
             if (res.status === 200) {
-                toastr.success('Update Success', 'City has been updated successfully.');
+                toastr.success('Successfully', 'City has been updated.');
                 this.props.history.push('/city');
             } else {
                 toastr.error('Error', 'Error when update City');
