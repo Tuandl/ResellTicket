@@ -17,7 +17,7 @@ class UserViewComponent extends Component {
                 email: '',
                 phoneNumber: '',
                 isActive: 'true',
-            }
+            },
         }
 
         this.handleOnChanged = this.handleOnChanged.bind(this);
@@ -47,6 +47,12 @@ class UserViewComponent extends Component {
             var roleResponse = await Axios.get('api/role');
             this.setState({
                 roles: roleResponse.data.data,
+                // user: {
+                //     roleId: this.state.user.roleId ?
+                //         this.state.user.roleId :
+                //         roleResponse.data.data[0].id,
+                //     ...this.state.user,
+                // }
             });
         } catch(error) {
             toastr.error('Error', 'Error on Load Roles Data');
@@ -79,6 +85,11 @@ class UserViewComponent extends Component {
         let data = this.state.user;
 
         toastr.info('Processing', 'Waiting for update.');
+
+        if(data.roleId === null) {
+            data.roleId = this.state.roles[0].id;
+        }
+        
         var updateResponse = await Axios.put('api/user', data);
         if(updateResponse.status === 200) {
             toastr.success('Successfully', 'User has been updated.');
