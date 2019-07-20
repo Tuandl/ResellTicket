@@ -15,6 +15,7 @@ function Get(url, params) {
             }
         }).then((response) => {
             if (response.status === 401) {
+                localStorage.clear();
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
@@ -42,6 +43,7 @@ function Post(url, data) {
             body: JSON.stringify(data)
         }).then((response) => {
             if (response.status === 401) {
+                localStorage.clear();
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
@@ -69,6 +71,7 @@ function Put(url, data) {
             body: JSON.stringify(data)
         }).then((response) => {
             if (response.status === 401) {
+                localStorage.clear();
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
@@ -95,6 +98,7 @@ function PutParams(url, params) {
             },
         }).then((response) => {
             if (response.status === 401) {
+                localStorage.clear();
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }
@@ -121,6 +125,7 @@ function Delete(url, params) {
             }
         }).then((response) => {
             if (response.status === 401) {
+                localStorage.clear();
                 window.location.replace(appConfig.url.login);
                 reject(response);
             }

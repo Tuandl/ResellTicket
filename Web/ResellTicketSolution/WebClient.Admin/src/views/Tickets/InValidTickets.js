@@ -22,10 +22,8 @@ function TicketRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{ticket.ticketCode}</td>
-            <td>{ticket.departureCity}</td>
-            <td>{moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{ticket.arrivalCity}</td>
-            <td>{moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{ticket.departureCity} - {moment(ticket.departureDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{ticket.arrivalCity} - {moment(ticket.arrivalDateTime).format('ddd, MMM DD YYYY, HH:mm')}</td>
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
             <td>{getBadge(ticket.status)}</td>
@@ -139,9 +137,7 @@ class InValidTickets extends Component {
                                                 <th>No.</th>
                                                 <th>Code</th>
                                                 <th>Departure</th>
-                                                <th>Departure Time</th>
                                                 <th>Arrival</th>
-                                                <th>Arrival Time</th>
                                                 {/* <th>Seller Phone</th> */}
                                                 <th>Price</th>
                                                 <th>Status</th>

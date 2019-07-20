@@ -100,14 +100,15 @@ class UserCreateComponent extends Component {
     }
 
     async onBtnCreateClicked() {
+        toastr.info('Processing', 'Waiting for create');
         var {userNameError, phoneError, emailError, fullNameError} = this.state
         if (userNameError === '' && phoneError === '' && fullNameError === '' && emailError === '') {
             let data = this.state.user;
 
-            toastr.info('Infomation', 'Please wait while we processing your request.');
+            //toastr.info('Infomation', 'Please wait while we processing your request.');
             var updateResponse = await Axios.post('api/user', data);
             if (updateResponse.status === 200) {
-                toastr.success('Create Success', 'User has been created successfully.');
+                toastr.success('Successfully', 'User has been created.');
                 this.props.history.push('/user');
             } else {
                 toastr.error('Error', 'Error when create User');

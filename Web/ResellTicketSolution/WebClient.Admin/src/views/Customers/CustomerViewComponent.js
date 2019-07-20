@@ -45,10 +45,11 @@ class CustomerViewComponent extends Component {
     }
 
     onSaveChanges = async () => {
+        toastr.info('Processing', 'Waiting for update');
         var {customer} = this.state;
         await Axios.put('api/customer/', customer).then(res => {
             if(res.status === 200) {
-                toastr.success('Update Success', 'Customer has been updated successfully.');
+                toastr.success('Successfully', 'Customer has been updated.');
                 this.props.history.push('/customer');
             } else {
                 toastr.error('Error', 'Error when update Customer');

@@ -77,11 +77,12 @@ class StationViewComponent extends Component {
     }
 
     onSaveChanges = () => {
+        toastr.info('Processing', 'Wating for update');
         var { station } = this.state;
         console.log("123", station);
         Axios.put('api/station/', station).then(res => {
             if (res.status === 200) {
-                toastr.success('Update Success', 'Station has been updated successfully.');
+                toastr.success('Successfully', 'Station has been updated.');
                 this.props.history.push('/station');
             } else {
                 toastr.error('Error', 'Error when update Station');

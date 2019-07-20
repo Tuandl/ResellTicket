@@ -2,7 +2,10 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table, FormGroup, Label } from 'reactstrap';
+import {
+    Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table, FormGroup, Label,
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import TicketStatus from '../Tickets/TicketStatus';
@@ -60,12 +63,13 @@ function TicketRow(props) {
     }
 
     function tranferMoneyToSeller() {
-        props.tranferMoneyToSeller(routeTicket.ticketId)
-
+        //props.tranferMoneyToSeller(routeTicket.ticketId)
+        props.openConfirmPayoutDialog(routeTicket.ticketId)
     }
 
     function refundFailTicketMoneyToBuyer() {
-        props.refundFailTicketMoneyToBuyer(routeTicket.ticketId);
+        //props.refundFailTicketMoneyToBuyer(routeTicket.ticketId);
+        props.openConfirmRefundDialog(routeTicket.ticketId)
     }
 
     const ticketLink = `/boughtRoute/${props.routeId}/${routeTicket.ticketId}`;
@@ -91,6 +95,7 @@ function TicketRow(props) {
 }
 
 class PayoutRefundDetailRoute extends Component {
+    resolvedTicketId = 0;
 
     constructor(props) {
         super(props);
@@ -102,7 +107,11 @@ class PayoutRefundDetailRoute extends Component {
             routeStatus: 0,
             isRefund: false,
             resolveOptionLogs: [],
-            isRefundedAll: false
+            isRefundedAll: false,
+
+            isOpenConfirmPayoutDialog: false,
+            isOpenConfirmRefundDialog: false,
+            isOpenConfirmRefundAllDialog: false
         }
     }
 
@@ -145,9 +154,10 @@ class PayoutRefundDetailRoute extends Component {
 
     }
 
-    tranferMoneyToSeller = (ticketId) => {
+    tranferMoneyToSeller = () => {
+        this.closeConfirmPayoutDialog();
         toastr.info('Processing, Waiting for tranfer');
-        Axios.post('api/payout?ticketId=' + ticketId).then(res => {
+        Axios.post('api/payout?ticketId=' + this.resolvedTicketId).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Tranfer money successfully.');
                 this.getRouteDetail();
@@ -155,9 +165,10 @@ class PayoutRefundDetailRoute extends Component {
         })
     }
 
-    refundFailTicketMoneyToBuyer = (ticketId) => {
+    refundFailTicketMoneyToBuyer = () => {
+        this.closeConfirmRefundDialog();
         toastr.info('Processing, Waiting for refund');
-        Axios.post('api/refund/one-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
+        Axios.post('api/refund/one-ticket?ticketId=' + this.resolvedTicketId + '&resolveOption=' + this.state.resolveOption).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Refund money successfully.');
                 this.getRouteDetail();
@@ -166,13 +177,14 @@ class PayoutRefundDetailRoute extends Component {
     }
 
     refundTotalAmountToBuyer = () => {
+        this.closeConfirmRefundAllDialog();
         toastr.info('Processing', 'Waiting for refund')
         const ticketId = this.state.routeTickets[0].ticketId;
         Axios.post('api/refund/all-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Refund money successfully.');
                 this.props.history.push('/boughtRoutes');
-                //this.getRouteDetail();          
+                this.getRouteDetail();
             }
         })
     }
@@ -188,13 +200,13 @@ class PayoutRefundDetailRoute extends Component {
     }
 
     render() {
-        const { routeDetail, 
-            routeTickets, 
-            isRefund, 
-            routeStatus, 
-            resolveOption, 
-            routeId, 
-            resolveOptionLogs, 
+        const { routeDetail,
+            routeTickets,
+            isRefund,
+            routeStatus,
+            resolveOption,
+            routeId,
+            resolveOptionLogs,
             isRefundedAll } = this.state;
         return (
             <div className="animated fadeIn">
@@ -218,34 +230,37 @@ class PayoutRefundDetailRoute extends Component {
                                         </Col>
                                     </Row>
                                 ))}
-
-                                <Table responsive hover>
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Code</th>
-                                            <th>Departure</th>
-                                            <th>Arrival</th>
-                                            <th>Price</th>
-                                            <th>Status</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {routeTickets.map((routeTicket, index) => (
-                                            <TicketRow key={index} routeTicket={routeTicket} index={index} routeStatus={routeStatus}
-                                                tranferMoneyToSeller={this.tranferMoneyToSeller}
-                                                refundFailTicketMoneyToBuyer={this.refundFailTicketMoneyToBuyer}
-                                                resolveOption={resolveOption} isRefund={isRefund} routeId={routeId}
-                                            />
-                                        ))}
-                                    </tbody>
-                                </Table>
+                                {routeTickets.length > 0 ?
+                                    <Table responsive hover>
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>Code</th>
+                                                <th>Departure</th>
+                                                <th>Arrival</th>
+                                                <th>Price</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {routeTickets.map((routeTicket, index) => (
+                                                <TicketRow key={index} routeTicket={routeTicket} index={index} routeStatus={routeStatus}
+                                                    // tranferMoneyToSeller={this.tranferMoneyToSeller}
+                                                    // refundFailTicketMoneyToBuyer={this.refundFailTicketMoneyToBuyer}
+                                                    resolveOption={resolveOption} isRefund={isRefund} routeId={routeId}
+                                                    openConfirmPayoutDialog={this.openConfirmPayoutDialog}
+                                                    openConfirmRefundDialog={this.openConfirmRefundDialog}
+                                                />
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                    : null}
                                 <Row className="float-right">
                                     <Col xs="12">
                                         {
                                             routeStatus !== 3 && resolveOption === 3 && isRefund ?
-                                                <Button color="danger" className="mr-2" onClick={this.refundTotalAmountToBuyer}>
+                                                <Button color="danger" className="mr-2" onClick={this.openConfirmRefundAllDialog}>
                                                     <i className="fa fa-dollar fa-lg mr-1"></i>Refund Total Amount
                                                 </Button> : ''
                                         }
@@ -260,9 +275,102 @@ class PayoutRefundDetailRoute extends Component {
 
                 <ResolveRenamedFailTicket routeTickets={routeTickets} resolveOption={resolveOption}
                     routeStatus={routeStatus} onOptionChange={this.onOptionChange} routeId={routeId}
-                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll}/>
+                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll} />
+
+                <div>
+                    {this.renderConfirmPayoutDialog()}
+                    {this.renderConfirmRefundDialog()}
+                    {this.renderConfirmRefundAllDialog()}
+                </div>
 
             </div>
+        )
+    }
+
+    openConfirmPayoutDialog = (ticketId) => {
+        this.resolvedTicketId = ticketId;
+        this.setState({
+            isOpenConfirmPayoutDialog: true
+        })
+    }
+
+    closeConfirmPayoutDialog = () => {
+        this.setState({
+            isOpenConfirmPayoutDialog: false
+        })
+    }
+
+    openConfirmRefundDialog = (ticketId) => {
+        this.resolvedTicketId = ticketId;
+        this.setState({
+            isOpenConfirmRefundDialog: true
+        })
+    }
+
+    closeConfirmRefundDialog = () => {
+        this.setState({
+            isOpenConfirmRefundDialog: false
+        })
+    }
+
+    openConfirmRefundAllDialog = () => {
+        //this.resolvedTicketId = ticketId;
+        this.setState({
+            isOpenConfirmRefundAllDialog: true
+        })
+    }
+
+    closeConfirmRefundAllDialog = () => {
+        this.setState({
+            isOpenConfirmRefundAllDialog: false
+        })
+    }
+
+    renderConfirmPayoutDialog = () => {
+        return (
+            <Modal isOpen={this.state.isOpenConfirmPayoutDialog}
+                className="modal-success">
+                <ModalHeader toggle={this.closeConfirmPayoutDialog}>Confirm Payout</ModalHeader>
+                <ModalBody>
+                    Do you want to confirm payout this ticket?
+                                    </ModalBody>
+                <ModalFooter>
+                    <Button color="success" onClick={this.tranferMoneyToSeller}>Confirm</Button>
+                    <Button color="secondary" onClick={this.closeConfirmPayoutDialog}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+        )
+    }
+
+    renderConfirmRefundDialog = () => {
+        return (
+            <Modal isOpen={this.state.isOpenConfirmRefundDialog}
+                className="modal-danger">
+                <ModalHeader toggle={this.closeConfirmRefundDialog}>Confirm Refund</ModalHeader>
+                <ModalBody>
+                    Do you want to refund this ticket ?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={this.refundFailTicketMoneyToBuyer}>Confirm</Button>
+                    <Button color="secondary" onClick={this.closeConfirmRefundDialog}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+        )
+    }
+
+    renderConfirmRefundAllDialog = () => {
+        return (
+            <Modal isOpen={this.state.isOpenConfirmRefundAllDialog}
+                className="modal-danger">
+                <ModalHeader toggle={this.closeConfirmRefundAllDialog}>Confirm Refund Total Amount</ModalHeader>
+                <ModalBody>
+                    Do you want to refund this route ?
+                </ModalBody>
+                <ModalFooter>
+                    <Button color="danger" onClick={this.refundTotalAmountToBuyer}>Confirm</Button>
+                    <Button color="secondary" onClick={this.closeConfirmRefundAllDialog}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
         )
     }
 }

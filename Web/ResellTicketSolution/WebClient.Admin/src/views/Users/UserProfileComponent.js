@@ -52,9 +52,10 @@ class UserProfileComponent extends Component {
     }
 
     async onSaveChanges() {
+        toastr.info('Processing', 'Waiting for update.');
         await Axios.put('api/user/profile', this.state.user).then(res => {
             if (res.status === 200) {
-                toastr.success('Update Success', 'Your profile has been updated successfully.');
+                toastr.success('Successfully', 'Your profile has been updated.');
                 // this.props.history.push('/user');
             } else {
                 toastr.error('Error', 'Error when update User');
@@ -99,6 +100,7 @@ class UserProfileComponent extends Component {
     }
 
     onSaveChangePass() {
+        
         if(this.state.newPass !== this.state.confirmPass) {
             toastr.error('Change Fail', 'New Password and Confirm Password are not match');
         } else {
@@ -108,9 +110,10 @@ class UserProfileComponent extends Component {
                 newPass : this.state.confirmPass
             }
 
+            toastr.info('Processing', 'Waiting for change password');
             Axios.put('api/user/password', userChangePass).then(res => {
                 if(res.status === 200) {
-                    toastr.success('Change Success', 'Your password has been changed successfully.');
+                    toastr.success('Successfully', 'Your password has been changed.');
                 }else if(res.response.status === 406) {
                     toastr.error('Change Fail', res.response.data);
                 }

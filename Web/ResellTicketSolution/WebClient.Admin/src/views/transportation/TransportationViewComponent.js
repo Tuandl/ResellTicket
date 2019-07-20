@@ -81,10 +81,10 @@ class TransportationViewComponent extends Component {
     async onBtnSaveChangesClicked() {
         let data = this.state.transportation;
 
-        toastr.info('Infomation', 'Please wait while we processing your request.');
+        toastr.info('Processing', 'Wating for update');
         var updateResponse = await Axios.put('api/transportation', data);
         if (updateResponse.status === 200) {
-            toastr.success('Update Success', 'Transportation has been updated successfully.');
+            toastr.success('Successfully', 'Transportation has been updated.');
             this.props.history.push('/transportation');
         } else {
             toastr.error('Error', 'Error when update Transportation');

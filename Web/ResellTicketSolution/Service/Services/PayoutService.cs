@@ -120,9 +120,10 @@ namespace Service.Services
             payoutCreateIntoDatabase.StripePayoutId = Transfer.Id;
             payoutCreateIntoDatabase.TicketId = TicketId;
             payoutCreateIntoDatabase.PaymentId = paymentDetail.Id;
-            payoutCreateIntoDatabase.Amount = Transfer.Amount;
+            payoutCreateIntoDatabase.Amount = amount;
+            payoutCreateIntoDatabase.FeeAmount = ticket.SellingPrice * (ticket.CommissionPercent / 100);
             payoutCreateIntoDatabase.Description = "You receive money for ticket " + ticket.TicketCode + ". Thank you for using our service.";
-            payoutCreateIntoDatabase.FeeAmount = ticket.CommissionPercent;
+            
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
 

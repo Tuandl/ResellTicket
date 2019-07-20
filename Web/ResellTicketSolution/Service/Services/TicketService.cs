@@ -230,6 +230,7 @@ namespace Service.Services
             var completedTickets = _ticketRepository.GetAllQueryable()
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == TicketStatus.Completed || t.Status == TicketStatus.RenamedFail)
+                .OrderByDescending(t => t.UpdatedAtUTC)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
             var totalCompletedTickets = _ticketRepository.GetAllQueryable()
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
