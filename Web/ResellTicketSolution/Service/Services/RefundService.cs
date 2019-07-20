@@ -94,8 +94,9 @@ namespace Service.Services
             RefundCreateViewModel refundCreate = new RefundCreateViewModel();
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
-            refundCreate.Description = refund.Description;
             refundCreate.Amount = remainRefund; //refund all 
+            refundCreate.Description = "You have a refund for route " + routeTicket.Route.Code + ". We are sorry for the inconvenience.";
+
             refundCreate.Status = RefundStatus.Success;
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
             _refundRepository.Add(refundAddIntoData);
@@ -182,6 +183,8 @@ namespace Service.Services
             Core.Models.Refund refundAddIntoData = new Core.Models.Refund();
             refundAddIntoData.PaymentId = paymentDetail.Id;
             refundAddIntoData.StripeRefundId = refund.Id;
+            refundAddIntoData.Description = "You have a refund for ticket " + failRouteTicket.Ticket.TicketCode + " in route " + failRouteTicket.Route.Code
+                                    + ". We sorry for the inconvenience."; 
             refundAddIntoData.Amount = failTicket.SellingPrice;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
