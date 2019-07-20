@@ -83,13 +83,16 @@ class UserViewComponent extends Component {
 
     async onBtnSaveChangesClicked() {
         let data = this.state.user;
+
+        toastr.info('Processing', 'Waiting for update.');
+
         if(data.roleId === null) {
             data.roleId = this.state.roles[0].id;
         }
-        toastr.info('Infomation', 'Please wait while we processing your request.');
+        
         var updateResponse = await Axios.put('api/user', data);
         if(updateResponse.status === 200) {
-            toastr.success('Update Success', 'User has been updated successfully.');
+            toastr.success('Successfully', 'User has been updated.');
             this.props.history.push('/user');
         } else {
             toastr.error('Error', 'Error when update User');
@@ -116,9 +119,9 @@ class UserViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="userName">Username</Label>
-                                    <Input type="text" id="userName" 
-                                        placeholder="Enter Username..." disabled 
-                                        value={user.userName} 
+                                    <Input type="text" id="userName"
+                                        placeholder="Enter Username..." disabled
+                                        value={user.userName}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -126,9 +129,9 @@ class UserViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="fullName">Full Name</Label>
-                                    <Input type="text" id="fullName" 
-                                        placeholder="Enter Full Name..." disabled 
-                                        value={user.fullName} 
+                                    <Input type="text" id="fullName"
+                                        placeholder="Enter Full Name..." disabled
+                                        value={user.fullName}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -138,9 +141,9 @@ class UserViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="email">Email</Label>
-                                    <Input type="email" id="email" 
-                                        placeholder="Enter email..." disabled 
-                                        value={user.email} 
+                                    <Input type="email" id="email"
+                                        placeholder="Enter email..." disabled
+                                        value={user.email}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -148,9 +151,9 @@ class UserViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="phoneNumber">Phone Number</Label>
-                                    <Input type="text" id="phoneNumber" 
-                                        placeholder="Enter Phone number..." disabled 
-                                        value={user.phoneNumber} 
+                                    <Input type="text" id="phoneNumber"
+                                        placeholder="Enter Phone number..." disabled
+                                        value={user.phoneNumber}
                                         onChange={this.handleOnChanged}
                                     />
                                 </FormGroup>
@@ -160,20 +163,20 @@ class UserViewComponent extends Component {
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="isActive">Status</Label>
-                                    <Input type="select" id="isActive" 
-                                        value={user.isActive} 
+                                    <Input type="select" id="isActive"
+                                        value={user.isActive}
                                         onChange={this.handleOnChanged}
                                     >
-                                        <option value={true}>Active</option>
-                                        <option value={false}>Inactive</option>
+                                          <option value={true}>Active</option>
+                                          <option value={false}>Inactive</option>
                                     </Input>
                                 </FormGroup>
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="roleId">Role</Label>
-                                    <Input type="select" id="roleId" 
-                                        value={user.roleId}  
+                                    <Input type="select" id="roleId"
+                                        value={user.roleId}
                                         onChange={this.handleOnChanged}
                                     >
                                         {roleOptions}

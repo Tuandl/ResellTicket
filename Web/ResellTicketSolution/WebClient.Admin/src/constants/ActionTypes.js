@@ -2,4 +2,14 @@
 export const CREATE_USER = 'CREATE_USER';
 export const LOGIN = 'LOGIN';
 export const GET_USERS = 'GET_USERS';
-export const EDIT_USER = 'EDIT_USER'
+export const EDIT_USER = 'EDIT_USER';
+
+//
+export const GET_TRANSPORTATION = 'GET_TRANSPORTATION';
+export const EDIT_TRANSPORTATION = 'EDIT_TRANSPORTATION';
+export const CREATE_TRANSPORTATION = 'CREATE_TRANSPORTATION';
+
+//api ticket type
+export const GET_TICKETTYPE = 'GET_TICKETTYPE';
+export const EDIT_TICKETTYPE = 'EDIT_TICKETTYPE';
+export const CREATE_TICKETTYPE = 'CREATE_TICKETTYPE';

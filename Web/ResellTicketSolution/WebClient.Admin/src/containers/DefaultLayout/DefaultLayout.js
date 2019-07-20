@@ -16,7 +16,9 @@ import {
   AppSidebarNav2 as AppSidebarNav,
 } from '@coreui/react';
 // sidebar nav config
-import navigation from '../../_nav';
+// import navigation from '../../_nav';
+import navigationStaff from '../../_navStaff';
+import navigationManager from '../../_navManager';
 // routes config
 import routes from '../../routes';
 
@@ -26,10 +28,22 @@ const DefaultHeader = React.lazy(() => import('./DefaultHeader'));
 
 class DefaultLayout extends Component {
 
+  userRole = '';
+  constructor(props) {
+    super(props);
+    var token = localStorage.getItem('userToken');
+    if (token) {
+      var jwt = require('jwt-decode');
+      var decode = jwt(token);
+      this.userRole = decode['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    }
+  }
+
   loading = () => <div className="animated fadeIn pt-1 text-center">Loading...</div>
 
   signOut(e) {
     e.preventDefault()
+    localStorage.clear();
     this.props.history.push('/login')
   }
 
@@ -38,7 +52,7 @@ class DefaultLayout extends Component {
       <div className="app">
         <AppHeader fixed>
           <Suspense fallback={this.loading()}>
-            <DefaultHeader onLogout={e=>this.signOut(e)}/>
+            <DefaultHeader onLogout={e => this.signOut(e)} />
           </Suspense>
         </AppHeader>
         <div className="app-body">
@@ -46,13 +60,14 @@ class DefaultLayout extends Component {
             <AppSidebarHeader />
             <AppSidebarForm />
             <Suspense>
-            <AppSidebarNav navConfig={navigation} {...this.props} router={router}/>
+              {this.userRole === 'Staff' ? <AppSidebarNav navConfig={navigationStaff} {...this.props} router={router} />
+                : <AppSidebarNav navConfig={navigationManager} {...this.props} router={router} />}
             </Suspense>
             <AppSidebarFooter />
             <AppSidebarMinimizer />
           </AppSidebar>
           <main className="main">
-            <AppBreadcrumb appRoutes={routes} router={router}/>
+            <AppBreadcrumb appRoutes={routes} router={router} />
             <Container fluid>
               <Suspense fallback={this.loading()}>
                 <Switch>
@@ -64,12 +79,12 @@ class DefaultLayout extends Component {
                         exact={route.exact}
                         name={route.name}
                         render={props => (
-                          <route.component {...props} 
-                          />)} 
-                        />
+                          <route.component {...props}
+                          />)}
+                      />
                     ) : (null);
                   })}
-                  <Redirect from="/" to="/login"/>
+                  <Redirect from="/" to="/login" />
                 </Switch>
               </Suspense>
             </Container>

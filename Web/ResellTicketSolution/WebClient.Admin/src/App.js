@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { history } from './../src/helper/history';
+// import { toastr } from 'react-redux-toastr';
 // import { renderRoutes } from 'react-router-config';
 import './App.scss';
 
@@ -21,6 +22,23 @@ class App extends Component {
     super(props);
     history.listen((location, action) => {
         // clear alert on location change
+    });
+    const OneSignalAppId = 'bcc5a63f-d900-4eb0-af8d-6a85c8dbd01b';
+    const SubDomainName = 'webadmin.OS.TC';
+
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      OneSignal.init({
+        appId: OneSignalAppId,
+        subdomainName: SubDomainName,
+        notifyButton: {
+          enable: false,
+        }
+      });
+      OneSignal.on('notificationDisplay', function (event) {
+        // toastr.success('Notifications', event.content);
+      });
+      OneSignal.setSubscription(true);
     });
 }
   render() {

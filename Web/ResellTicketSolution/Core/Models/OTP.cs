@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Core.Infrastructure;
+﻿using Core.Infrastructure;
+using System;
 
 namespace Core.Models
 {
@@ -9,6 +7,6 @@ namespace Core.Models
     {
         public string PhoneNo { get; set; }
         public string Code { get; set; }
-        public DateTime ExpiredAt { get; set; }
+        public DateTime ExpiredAtUTC { get; set; }
     }
 }

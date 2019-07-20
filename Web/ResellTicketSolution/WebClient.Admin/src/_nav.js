@@ -10,10 +10,89 @@ export default {
       },
     },
     {
-      name: 'User Management',
+      title: true,
+      name: 'MANAGER',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
+      name: 'User',
       url: '/user',
       icon: 'icon-user'
     },
+    {
+      name: 'Customer',
+      url: '/customer',
+      icon: 'icon-people'
+    },
+    {
+      name: 'City',
+      url: '/city',
+      icon: 'icon-user'
+    },
+    {
+      name: 'Station',
+      url: '/station',
+      icon: 'icon-user'
+    },
+    {
+      name: 'Transportation',
+      url: '/transportation',
+      icon: 'icon-user'
+    },
+    {
+      name: 'Ticket Type',
+      url: '/tickettype',
+      icon: 'icon-user'
+    },
+    {
+      title: true,
+      name: 'STAFF',
+      wrapper: {            // optional wrapper object
+        element: '',        // required valid HTML5 element tag
+        attributes: {}        // optional valid JS object with JS API naming ex: { className: "my-class", style: { fontFamily: "Verdana" }, id: "my-id"}
+      },
+      class: ''             // optional class names space delimited list for title item ex: "text-center"
+    },
+    {
+      name: 'New Posted Tickets',
+      url: '/newPostedTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Valid Tickets',
+      url: '/validTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'InValid Tickets',
+      url: '/invalidTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Bought Tickets',
+      url: '/boughtTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Renamed Tickets',
+      url: '/renamedTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Liability Tickets',
+      url: '/liabilityTicket',
+      icon: 'fa fa-ticket'
+    },
+    {
+      name: 'Completed Tickets',
+      url: '/completedTicket',
+      icon: 'fa fa-ticket'
+    },
+    
     // {
     //   title: true,
     //   name: 'Theme',

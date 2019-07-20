@@ -1,15 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Core.Enum;
 using Core.Infrastructure;
 
 namespace Core.Models
 {
     public class Notification : EntityBase
     {
-        public string Content { get; set; }
-        public bool IsRead { get; set; }
-        public int UserId { get; set; } //Sửa lại thành UserId
+        public NotificationType Type { get; set; }
+
+        public string Data { get; set; }
+
+        public bool Read { get; set; }
+
         public int CustomerId { get; set; }
+
+        public virtual Customer Customer { get; set; }
+
+        public virtual NotificationMessage Message { get; set; }
     }
 }

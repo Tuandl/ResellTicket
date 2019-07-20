@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Button, Card, CardBody, CardHeader, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 
+
 class UserCreateComponent extends Component {
     constructor(props) {
         super(props);
@@ -10,13 +11,18 @@ class UserCreateComponent extends Component {
         this.state = {
             user: {
                 userName: '',
-                password: '',
+                //password: '',
                 email: '',
                 phoneNumber: '',
                 fullName: '',
                 isActive: 'true',
             },
             roles: [],
+            userNameError: '*',
+            emailError: '*',
+            phoneError: '*',
+            fullNameError: '*'
+            
         };
 
         this.handleOnChanged = this.handleOnChanged.bind(this);
@@ -38,7 +44,7 @@ class UserCreateComponent extends Component {
                     roleId: roleResponse.data.data[0].id,
                 },
             });
-        } catch(error) {
+        } catch (error) {
             toastr.error('Error', 'Error on Load Roles Data');
         }
     }
@@ -57,6 +63,30 @@ class UserCreateComponent extends Component {
 
     handleOnChanged = (event) => {
         const { id, value } = event.target;
+        if (id === 'phoneNumber') {
+            var regex = '[0-9]{10,11}';
+            if (!value.match(regex)) {
+                this.setState({
+                    phoneError: 'Phone required 10 - 11 digit numbers',
+                })
+            } else {
+                this.setState({
+                    phoneError: '',
+                })
+            }
+        } else if(id === 'userName') {
+            this.setState({
+                userNameError: '',
+            })
+        } else if(id === 'fullName') {
+            this.setState({
+                fullNameError: '',
+            })
+        } else if(id === 'email') {
+            this.setState({
+                emailError: '',
+            })
+        }
         this.setState({
             user: {
                 ...this.state.user,
@@ -70,16 +100,21 @@ class UserCreateComponent extends Component {
     }
 
     async onBtnCreateClicked() {
-        let data = this.state.user;
+        toastr.info('Processing', 'Waiting for create');
+        var {userNameError, phoneError, emailError, fullNameError} = this.state
+        if (userNameError === '' && phoneError === '' && fullNameError === '' && emailError === '') {
+            let data = this.state.user;
 
-        toastr.info('Infomation', 'Please wait while we processing your request.');
-        var updateResponse = await Axios.post('api/user', data);
-        if(updateResponse.status === 200) {
-            toastr.success('Create Success', 'User has been created successfully.');
-            this.props.history.push('/user');
-        } else {
-            toastr.error('Error', 'Error when create User');
+            //toastr.info('Infomation', 'Please wait while we processing your request.');
+            var updateResponse = await Axios.post('api/user', data);
+            if (updateResponse.status === 200) {
+                toastr.success('Successfully', 'User has been created.');
+                this.props.history.push('/user');
+            } else {
+                toastr.error('Error', 'Error when create User');
+            }
         }
+
     }
 
     render() {
@@ -100,20 +135,22 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="userName">Username</Label>
                                     <Input type="text" id="userName"
-                                        placeholder="Enter Username..." 
+                                        placeholder="Enter Username..."
                                         value={user.userName}
                                         onChange={this.handleOnChanged}
                                     />
+                                    <div style={{ color: 'red', float: 'right' }}>{this.state.userNameError}</div>
                                 </FormGroup>
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="fullName">Full Name</Label>
                                     <Input type="text" id="fullName"
-                                        placeholder="Enter Full Name..." 
+                                        placeholder="Enter Full Name..."
                                         value={user.fullName}
                                         onChange={this.handleOnChanged}
                                     />
+                                    <div style={{ color: 'red', float: 'right' }}>{this.state.fullNameError}</div>
                                 </FormGroup>
                             </Col>
                         </Row>
@@ -122,20 +159,22 @@ class UserCreateComponent extends Component {
                                 <FormGroup>
                                     <Label htmlFor="email">Email</Label>
                                     <Input type="email" id="email"
-                                        placeholder="Enter email..." 
+                                        placeholder="Enter email..."
                                         value={user.email}
                                         onChange={this.handleOnChanged}
                                     />
+                                    <div style={{ color: 'red', float: 'right' }}>{this.state.emailError}</div>
                                 </FormGroup>
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="phoneNumber">Phone Number</Label>
                                     <Input type="text" id="phoneNumber"
-                                        placeholder="Enter Phone number..." 
+                                        placeholder="Enter Phone number..."
                                         value={user.phoneNumber}
                                         onChange={this.handleOnChanged}
                                     />
+                                    <div style={{ color: 'red', float: 'right' }}>{this.state.phoneError}</div>
                                 </FormGroup>
                             </Col>
                         </Row>

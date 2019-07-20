@@ -1,0 +1,227 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Big store a Ecommerce Online Shopping Category Flat Bootstrap Responsive Website Template | Login ::
+		w3layouts</title>
+	<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<link href="css/style.css" rel='stylesheet' type='text/css' />
+	<link href="css/font-awesome.css" rel="stylesheet">
+	<link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" />
+	<link rel="manifest" href="/manifest.json">
+
+	<!-- js -->
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/bootstrap.js"></script>
+	<script src="/js/lib/pace.min.js"></script>
+	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+	<script src="./constant/BasrUrl.js"></script>
+	<script type="module">
+		import { appConfig } from './constant/appConfig.js';
+		var OneSignal = window.OneSignal || [];
+		OneSignal.push(function () {
+			OneSignal.init({
+				appId: appConfig.OneSignalAppId,
+				subdomainName: appConfig.SubdomainName,
+				notifyButton: {
+					enable: false,
+				}
+			});
+			OneSignal.on('notificationDisplay', function (event) {
+				alert(event.content);
+			});
+		});
+	</script>
+	<style>
+		::placeholder {
+			color: #999;
+			opacity: 1;
+			/* Firefox */
+		}
+
+		:-ms-input-placeholder {
+			/* Internet Explorer 10-11 */
+			color: #999;
+		}
+
+		::-ms-input-placeholder {
+			/* Microsoft Edge */
+			color: #999;
+		}
+
+		#form-messages {
+			background-color: rgb(255, 232, 232);
+			border: 2px solid red;
+			color: red;
+			display: none;
+			font-size: 12px;
+			font-weight: bold;
+			margin-bottom: 10px;
+			padding: 10px 25px;
+			max-width: 400px;
+		}
+	</style>
+	<script type="text/javascript" src="/js/moment.js"></script>
+	<script type="module" src="/js/top-bar.js"></script>
+</head>
+
+<body>
+	<div class="header">
+
+		<div class="container">
+
+			<div class="logo">
+				<h1><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+				</h1>
+			</div>
+			<div class="head-t" id="top-bar-container">
+			</div>
+
+			<div class="header-ri">
+				<ul class="social-top">
+					<li><a href="#" class="icon facebook"><i class="fa fa-facebook"
+								aria-hidden="true"></i><span></span></a></li>
+					<li><a href="#" class="icon twitter"><i class="fa fa-twitter"
+								aria-hidden="true"></i><span></span></a></li>
+					<li><a href="#" class="icon pinterest"><i class="fa fa-pinterest-p"
+								aria-hidden="true"></i><span></span></a></li>
+					<li><a href="#" class="icon dribbble"><i class="fa fa-dribbble"
+								aria-hidden="true"></i><span></span></a></li>
+				</ul>
+			</div>
+			<div class="nav-top" id="nav-bar-container">
+			</div>
+
+		</div>
+	</div>
+	<!---->
+	<!--banner-->
+	<div class="banner-top">
+		<div class="container">
+			<h3>Login</h3>
+			<h4><a href="index.html">Home</a><label>/</label>Login</h4>
+			<div class="clearfix"> </div>
+		</div>
+	</div>
+	<!--login-->
+	<script type="text/javascript">
+		async function checkLogin() {
+			var txtUsename = document.getElementsByName("username")[0].value;
+			var txtPassword = document.getElementsByName("password")[0].value;
+			var alert = document.getElementById('form-messages');
+
+			var deviceId = '';
+			var OneSignal = window.OneSignal || [];
+			await OneSignal.getUserId(function (userId) {
+				deviceId = userId;
+			});
+			
+
+			const data = {
+				username: txtUsename,
+				password: txtPassword,
+				deviceId: deviceId
+			}
+
+			var respone = await fetch(baseUrl() + 'api/Authentication/customer', {
+				method: "POST",
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(data)
+			});
+			if (respone.status === 406 || respone.status === 400) {
+				alert.style.display = 'block';
+			} else {
+				var responeData = await respone.json();
+				console.log("responeData: ", responeData.token);
+				localStorage.setItem('USERNAME', responeData.username);
+				localStorage.setItem('FULLNAME', responeData.fullName);
+				localStorage.setItem('TOKEN', responeData.token);
+				localStorage.setItem('PHONENUMBER', responeData.phoneNumber);
+				localStorage.setItem('ID', responeData.id.toString());
+				window.location.href = 'index.html';
+			}
+		}
+	</script>
+	<div class="login">
+
+		<div class="main-agileits">
+			<div class="form-w3agile">
+				<h3>Login</h3>
+				<form>
+					<ul id="form-messages">
+						<span>Invalid Username or Password!!!</span>
+					</ul>
+					<label>Username or Phone:</label>
+					<div class="key">
+						<i class="fa fa-phone" aria-hidden="true"></i>
+						<input type="text" name="username" type="hidden" placeholder="Username or Phone" />
+						<div class="clearfix"></div>
+					</div>
+					<label>Password:</label>
+					<div class="key">
+						<i class="fa fa-lock" aria-hidden="true"></i>
+						<input type="password" type="hidden" placeholder="Password" name="password">
+						<div class="clearfix"></div>
+					</div>
+					<button type="button" onclick="checkLogin()" class="btn btn-warning">Log In</button>
+				</form>
+			</div>
+			<div class="forg">
+				<a href="ForgotPassword.html" class="forg-left">Forgot Password</a>
+				<a href="checkPhoneNo.html" class="forg-right">Register</a>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</div>
+	<!--footer-->
+	<div class="footer">
+		<div class="container">
+			<div class="footer-bottom">
+				<h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+				</h2>
+				<p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
+					last-minute deals. Welcome to a world of opportunities.</p>
+				<ul class="social-fo">
+					<li><a href="#" class=" face"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+					<li><a href="#" class=" twi"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+					<li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+					<li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+				</ul>
+				<div class=" address">
+					<div class="col-md-4 fo-grid1">
+						<p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
+								- P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
+					</div>
+					<div class="col-md-4 fo-grid1">
+						<p><i class="fa fa-phone" aria-hidden="true"></i>+840916512300</p>
+					</div>
+					<div class="col-md-4 fo-grid1">
+						<p><a href="mailto:info@example.com"><i class="fa fa-envelope-o"
+									aria-hidden="true"></i>dark5695@gmail.com</a></p>
+					</div>
+					<div class="clearfix"></div>
+
+				</div>
+			</div>
+			<div class="copy-right">
+				<p> &copy; 2016 Resell Ticket. All Rights Reserved | Design by <a href="http://w3layouts.com/">
+						W3layouts</a></p>
+			</div>
+		</div>
+	</div>
+	<!-- //footer-->
+	<a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+
+</body>
+
+</html>

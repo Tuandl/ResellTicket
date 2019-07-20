@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Resell Ticket</title>
+
+    <!-- css -->
+    <link href="../css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="../css/style.css" rel='stylesheet' type='text/css' />
+    <link href="../css/font-awesome.css" rel="stylesheet">
+    <!-- <link href="../css/jquery-ui.css" rel="stylesheet"> -->
+    <link href="../css/rt-style.css" rel='stylesheet' type='text/css' />
+    <link rel="stylesheet" href="../css/bootstrap-datetimepicker.css" />
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        ::placeholder {
+            color: #999;
+            opacity: 1;
+            /* Firefox */
+        }
+
+        :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #999;
+        }
+
+        ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #999;
+        }
+    </style>
+    <!-- css -->
+
+    <!-- js -->
+    <!-- Load React. -->
+    <script src="../js/react.development.js" crossorigin></script>
+    <script src="../js/react-dom.development.js" crossorigin></script>
+    <script src="../js/babel.min.js"></script>
+    <!-- Load React. -->
+
+    <script type="text/javascript" src="/js/authen.js"></script>
+    <script src="../js/jstarbox.js" type="text/jQuery"></script>
+    <script src="../js/jquery-1.11.1.min.js"></script>
+    <script src="../js/moment.js"></script>
+    <script src="../js/bootstrap.js"></script>
+	<script src="/js/lib/pace.min.js"></script>
+    <script src="../helper/convertStatus.js"></script>
+    <script src="../js/numeral.min.js"></script>
+    <script src="../js/bootstrap-datetimepicker.min.js"></script>
+    <!-- <script type="module" src="/bank/displayConnectBankButton.js"></script> -->
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script type="module">
+        import { appConfig } from '../constant/appConfig.js';
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: appConfig.OneSignalAppId,
+                subdomainName: appConfig.SubdomainName,
+                notifyButton: {
+                    enable: false,
+                }
+            });
+            OneSignal.on('notificationDisplay', function (event) {
+                alert(event.content);
+            });
+        });
+    </script>
+    <!-- <script src="./postedTicket.js" type="text/babel"></script> -->
+    <!-- <script src="../helper/Api.js"></script> -->
+    <script src="./postEditTicket_2.js" type="module"></script>
+	<script type="module" src="/js/top-bar.js"></script>
+    <!-- //js -->
+</head>
+
+
+<body onload="checkLoginProfile();">
+    <div class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="/index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel
+                            marketplace</span></a>
+                </h1>
+            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
+
+            <div class="header-ri">
+                <ul class="social-top">
+                    <li><a href="#" class="icon facebook"><i class="fa fa-facebook"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon twitter"><i class="fa fa-twitter"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon pinterest"><i class="fa fa-pinterest-p"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon dribbble"><i class="fa fa-dribbble"
+                                aria-hidden="true"></i><span></span></a></li>
+                </ul>
+            </div>
+
+			<div class="nav-top" id="nav-bar-container">
+			</div>
+
+        </div>
+    </div>
+    <!---->
+    <div data-vide-bg="../images/index-background.png">
+        <div class="container">
+            <div class="banner-info">
+                <h3 style="color: #c7ad71">RESELL TICKET</h3>
+            </div>
+        </div>
+    </div>
+
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
+    <script src="../js/jquery.vide.min.js"></script>
+
+    <!-- Confirm Dialog -->
+    <div id="dialog-delete-pending-posted-ticket"></div>
+    <div id="dialog-confirm-ticket-rename"></div>
+    <div id="dialog-refuse-ticket-rename"></div>
+
+    <!--content-->
+    <div class="content-top">
+        <div class="container">
+            <div class="main-agileits form-post-ticket" style="margin-bottom: 100px">
+                <div class="form-w3agile form1">
+                    <h3 id="title"></h3>
+                    <span id="invalidField"></span>
+                    <form autocomplete="off" class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label>Vehicle</label>
+                                <!-- <i class="fa fa-" aria-hidden="true"></i> -->
+                                <select class="form-control" id="select-vehicle" style="height: 34px; width: 100%; ">
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Transportation</label>
+                                <div class="autocomplete" id="transportation">
+                                    <!-- onkeyup="getTransportation()" -->
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Ticket Type</label>
+                                <div class="autocomplete" id="ticketType">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-4">
+                                <label>Departure City</label>
+                                <div class="autocomplete" id="departureCity">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Departure Station</label>
+                                <div class="autocomplete" id="departureStation">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Departure Date:</label>
+                                <input type="text" placeholder="Departure Date" id="departureDate"
+                                    class="form-control" />
+                                <!-- onblur="setDepartureDate()" -->
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-4">
+                                <label>Arrival City:</label>
+                                <div class="autocomplete" id="arrivalCity">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Arrival Station:</label>
+                                <div class="autocomplete" id="arrivalStation">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label>Arrival Date:</label>
+                                <input type="text" placeholder="Arrival Date" id="arrivalDate" class="form-control"
+                                    disabled>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 30px">
+                            <div class="col-md-3">
+                                <label>Ticket Code:</label>
+                                <input type="text" placeholder="Ticket Code" id="ticketCode" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Passenger Name:</label>
+                                <input type="text" placeholder="Passenger Name" id="passengerName"
+                                    class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Email Booking:</label>
+                                <input type="text" placeholder="Email Booking" id="emailBooking" class="form-control" />
+                            </div>
+                            <div class="col-md-3">
+                                <label>Selling Price:</label>
+                                <input type="text" placeholder="Selling Price" id="sellingPrice" class="form-control" />
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top: 30px; text-align: center" id="btnEvent">
+
+                            <!-- <input type="button" value="POST NOW" class="btn-post-now" onclick="postTicket()" /> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="customer-detail-modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content modal-lg">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Customer Detail</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="padding-15">
+                        <div id="customer-detail-container" class="padding-5">
+                        </div>
+                    </div>
+                </div>
+					<div class="row margin-bottom-20">
+						<div class="col-sm-12 text-center">
+								<button type="button" class="btn text-center" data-dismiss="modal" id="btn-close">Close</button>
+						</div>
+					</div>	
+            </div>
+        </div>
+    </div>
+    
+    <!--footer-->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                </h2>
+                <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
+                    last-minute deals. Welcome to a world of opportunities.</p>
+                <ul class="social-fo">
+                    <li><a href="#" class=" face"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" twi"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+                </ul>
+                <div class="address">
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
+                                - P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-phone" aria-hidden="true"></i>+840916512300</p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><a href="mailto:info@example.com"><i class="fa fa-envelope-o"
+                                    aria-hidden="true"></i>dark5695@gmail.com</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <div class="copy-right">
+                <p> &copy; 2016 Resell Ticket. All Rights Reserved | Design by <a href="http://w3layouts.com/">
+                        W3layouts</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- //footer-->
+    <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+</body>
+
+</html>

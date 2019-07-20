@@ -1,0 +1,6 @@
+export default {
+    REPLACE: 1,
+    REFUNDFAILTICKET: 2,
+    REFUNDTOTALAMOUNT: 3,
+    PAYOUT: 4
+}

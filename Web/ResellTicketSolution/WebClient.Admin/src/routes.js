@@ -36,8 +36,39 @@ const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
 const Users = React.lazy(() => import('./views/Users/UsersComponent'));
 const UserView = React.lazy(() => import('./views/Users/UserViewComponent'));
 const UserCreate = React.lazy(() => import('./views/Users/UserCreateComponent'));
+const UserProfile = React.lazy(() => import('./views/Users/UserProfileComponent'));
+const NewPostedTickets = React.lazy(() => import('./views/Tickets/NewPostedTickets'));
+const Customers = React.lazy(() => import('./views/Customers/CustomersComponent'));
+const CustomerView = React.lazy(() => import('./views/Customers/CustomerViewComponent'));
+const Transportations = React.lazy(() => import('./views/transportation/TransportationsComponent'));
+const TransportationView = React.lazy(() => import('./views/transportation/TransportationViewComponent'));
+const TransportationCreateView = React.lazy(() => import('./views/transportation/TransportationCreateComponent'));
+const Cities = React.lazy(() => import('./views/Cities/CitiesComponent'));
+const CityView = React.lazy(() => import('./views/Cities/CityViewComponent'));
+const CityCreate = React.lazy(() => import('./views/Cities/CityCreateComponent'));
+const TicketTypes = React.lazy(() => import('./views/TicketType/TicketTypeComponent'));
+const TicketTypeView = React.lazy(() => import('./views/TicketType/TicketTypeViewComponent'));
+const TicketTypeCreateView = React.lazy(() => import('./views/TicketType/TicketTypeCreateComponent'));
+const Stations = React.lazy(() => import('./views/Stations/StationsComponent'));
+const StationView = React.lazy(() => import('./views/Stations/StationViewComponent'));
+const StationCreate = React.lazy(() => import('./views/Stations/StationCreateComponent'));
+const ValidTickets = React.lazy(() => import('./views/Tickets/ValidTickets'));
+const InValidTickets = React.lazy(() => import('./views/Tickets/InValidTickets'));
+
+const RenamedTickets = React.lazy(() => import('./views/Tickets/RenamedTickets'));
+const BoughtTickets = React.lazy(() => import('./views/Tickets/BoughtTickets'));
+const CompletedTickets = React.lazy(() => import('./views/Tickets/CompletedTickets'));
+
+const TicketDetail = React.lazy(() => import('./views/Tickets/TicketDetail'));
+const VerifyRenamedTicket = React.lazy(() => import('./views/Tickets/VerifyRenamedTicket'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
+
+const ValidTicketDetail = React.lazy(() => import('./views/Tickets/ValidTicketDetail'));
+const BoughtRoutes = React.lazy(() => import('./views/routes/BoughtRoutes'));
+const PayoutRefundDetailRoute = React.lazy(() => import('./views/routes/PayoutRefundDetailRoute'));
+
+const CompletedRoutes = React.lazy(() => import('./views/routes/CompletedRoutes'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
@@ -78,9 +109,56 @@ const routes = [
   { path: '/notifications/modals', name: 'Modals', component: Modals },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/charts', name: 'Charts', component: Charts },
-  { path: '/user', exact: true,  name: 'Users', component: Users },
-  { path: '/user/add', exact: true, name: 'Register', component: UserCreate},
-  { path: '/user/:id', name: 'User Details', component: UserView},
+  { path: '/user', exact: true, name: 'Users', component: Users },
+  { path: '/user/add', exact: true, name: 'Register', component: UserCreate },
+  { path: '/user/:id', name: 'User Details', component: UserView },
+
+  { path: '/profile', name: 'User Profile', component: UserProfile },
+
+  { path: '/newPostedTicket', exact: true, name: 'New Posted Tickets', component: NewPostedTickets },
+
+  { path: '/customer', exact: true, name: 'Customers', component: Customers },
+  { path: '/customer/:id', name: 'Customer Details', component: CustomerView },
+
+  { path: '/transportation', exact: true, name: 'Transportations', component: Transportations },
+  { path: '/transportation/add', exact: true, name: 'Create Transportation', component: TransportationCreateView },
+  { path: '/transportation/:id', name: 'Transportation Detail', component: TransportationView },
+
+  { path: '/city', exact: true, name: 'Cities', component: Cities },
+  { path: '/city/add', exact: true, name: 'Add City', component: CityCreate },
+  { path: '/city/:id', name: 'City Details', component: CityView },
+  { path: '/tickettype', exact: true, name: 'Ticket Types', component: TicketTypes },
+
+  { path: '/tickettype/add', exact: true, name: 'Create Ticket Type', component: TicketTypeCreateView },
+  { path: '/tickettype/:id', name: 'Ticket Type Details', component: TicketTypeView },
+
+  { path: '/station', exact: true, name: 'Stations', component: Stations },
+  { path: '/station/add', exact: true, name: 'Add Station', component: StationCreate },
+  { path: '/station/:id', name: 'Station Details', component: StationView },
+
+  { path: '/validTicket', exact: true, name: 'Valid Tickets', component: ValidTickets },
+  { path: '/validTicket/:id', exact: true, name: 'Ticket Detail', component: TicketDetail },
+
+  { path: '/invalidTicket', exact: true, name: 'InValid Tickets', component: InValidTickets },
+  { path: '/invalidTicket/:id', exact: true, name: 'Ticket Detail', component: TicketDetail },
+
+  { path: '/renamedTicket', exact: true, name: 'Renamed Tickets', component: RenamedTickets },
+  { path: '/renamedTicket/:id', exact: true, name: 'Verify Renamed Ticket', component: VerifyRenamedTicket },
+
+  { path: '/boughtTicket', exact: true, name: 'Bought Tickets', component: BoughtTickets },
+  { path: '/boughtTicket/:id', exact: true, name: 'Ticket Detail', component: TicketDetail },
+
+  { path: '/completedTicket', exact: true, name: 'Completed Tickets', component: CompletedTickets },
+  { path: '/completedTicket/:id', exact: true, name: 'Completed Tickets', component: TicketDetail },
+
+  { path: '/newPostedTicket/:id', exact: true, name: 'Valid Ticket Detail', component: ValidTicketDetail },
+
+  { path: '/boughtRoute', exact: true, name: 'Bought Routes', component: BoughtRoutes },
+  { path: '/boughtRoute/:id', exact: true, name: 'Payout-Refund Tickets', component: PayoutRefundDetailRoute },
+  { path: '/boughtRoute/:routeId/:id', exact: true, name: 'Ticket Detail', component: TicketDetail },
+
+  { path: '/completedRoute', exact: true, name: 'Completed Routes', component: CompletedRoutes },
+  { path: '/completedRoute/:id', exact: true, name: 'Route Detail', component: PayoutRefundDetailRoute },
 ];
 
 export default routes;

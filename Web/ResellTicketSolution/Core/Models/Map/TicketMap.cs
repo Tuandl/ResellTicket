@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Core.Models.Map
 {
@@ -12,8 +9,41 @@ namespace Core.Models.Map
         {
             builder.HasKey(x => x.Id);
 
-            //builder.Property(x => x.CreatedAt)
-            //    .HasColumnType("date");
+            builder.HasOne(x => x.Buyer)
+                .WithMany(x => x.BoughtTickets)
+                .HasForeignKey(x => x.BuyerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.Seller)
+                .WithMany(x => x.SoldTickets)
+                .HasForeignKey(x => x.SellerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.TicketType)
+                .WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.TicketTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.Transportation)
+                .WithMany(x => x.Tickets)
+                .HasForeignKey(x => x.TransportationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(x => x.DepartureStation)
+                .WithMany(x => x.DepartureTickets)
+                .HasForeignKey(x => x.DepartureStationId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasOne(x => x.ArrivalStation)
+                .WithMany(x => x.ArrivalTickets)
+                .HasForeignKey(x => x.ArrivalStationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(x => x.CommissionPercent)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Property(x => x.SellingPrice)
+                .HasColumnType("decimal(18,2)");
+
+            builder.ToTable("Ticket");
         }
     }
 }

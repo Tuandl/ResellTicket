@@ -1,13 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Service.Services;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Core.Models;
+using Core.Repository;
 using ViewModel.AppSetting;
 using ViewModel.ViewModel.Authentication;
 using WebAPI.Admin.Configuration.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebAPI.Admin.Controllers
 {
@@ -19,14 +24,20 @@ namespace WebAPI.Admin.Controllers
         //AuthSetting from appSettings.json
         private readonly IOptions<AuthSetting> AUTH_SETTING;
         private readonly IAuthenticationService _authenticationService;
+        private readonly UserManager<User> _userManager;
+        private readonly IAdminDeviceService _adminDeviceService;
 
         public AuthenticationController(
             IOptions<AuthSetting> options,
-            IAuthenticationService authenticationService
-            )
+            IAuthenticationService authenticationService,
+            UserManager<User> userManager,
+            IAdminDeviceService adminDeviceService
+        )
         {
             AUTH_SETTING = options;
             _authenticationService = authenticationService;
+            _userManager = userManager;
+            _adminDeviceService = adminDeviceService;
         }
 
         /// <summary>
@@ -49,14 +60,17 @@ namespace WebAPI.Admin.Controllers
             //Call Service asynchronous to check login
             var user = await _authenticationService.CheckLoginAsync(model);
 
-            if (user == null)
+            if (user == null || !user.IsActive)
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, "Invalid Username or password");
             }
-
+            _adminDeviceService.AddAdminDevice(user.Id, model.DeviceId);
+            var roles = _userManager.GetRolesAsync(user);
             //Get Value from appSetting.json
-            var token = user.BuildToken(AUTH_SETTING.Value); 
+            var token = user.BuildToken(AUTH_SETTING.Value, roles.Result); 
             return Ok(token);
         }
+
+        
     }
 }

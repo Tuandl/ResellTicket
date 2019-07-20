@@ -13,7 +13,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/user")]
     [ApiController]
-    [Authorize]
+    
     public class UserController : ControllerBase
     {
         private readonly IOptions<AuthSetting> AUTH_SETTING;
@@ -29,13 +29,15 @@ namespace WebAPI.Admin.Controllers
         /// <summary>
         /// Get All Users
         /// </summary>
-        /// <param name="orderBy"></param>
         /// <param name="param"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
         /// <returns>Return List admins</returns>
         /// <response code="200">Return List users</response>
         [HttpGet]
-        public ActionResult<IEnumerable<UserRowViewModel>> GetUsers(string orderBy, string param) { //Lấy all admin users
-            var userRowViewModels = _userService.GetUsers(orderBy, param); 
+        [Authorize(Roles = "Manager")]
+        public ActionResult<UserDataTable> GetUsers(string param, int page, int pageSize) { //Lấy all admin users
+            var userRowViewModels = _userService.GetUsers(param, page, pageSize); 
             return userRowViewModels; 
             
         }
@@ -49,6 +51,7 @@ namespace WebAPI.Admin.Controllers
         /// <response code="400">Missing Parameter</response>
         /// <response code="404">Not found User</response>
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<UserRowViewModel>> FindUserById(string id)
         { //Lấy all admin users
             if(string.IsNullOrEmpty(id))
@@ -75,6 +78,7 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Create Error</response>
         [HttpPost]
         [Route("")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult> Register(UserRegisterViewModel model)  //object truyền từ client tự động map với object tham số 
         {
             if (!ModelState.IsValid)
@@ -109,6 +113,7 @@ namespace WebAPI.Admin.Controllers
         /// <response code="406">Update Error</response>
         [HttpPut]
         [Route("")]
+        [Authorize(Roles = "Manager")]
         public async Task<ActionResult> UpdateUser(UserUpdateViewModel model)  
         {
             if (!ModelState.IsValid)
@@ -126,6 +131,38 @@ namespace WebAPI.Admin.Controllers
             return Ok();
         }
 
+        [HttpPut("profile")]
+        [Authorize]
+        public async Task<ActionResult> UpdateUserProfile(UserProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
 
+            var updateResult = await _userService.UpdateUserProfile(model);
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+            return Ok();
+        }
+
+        [HttpPut("password")]
+        [Authorize]
+        public async Task<ActionResult> ChangePassword(UserPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid Request");
+            }
+
+            var result = await _userService.ChangePassword(model);
+            if (!string.IsNullOrEmpty(result))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, result);
+            }
+            return Ok();
+        }
     }
 }

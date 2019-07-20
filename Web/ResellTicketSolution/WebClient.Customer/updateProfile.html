@@ -1,0 +1,303 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Big store a Ecommerce Online Shopping Category Flat Bootstrap Responsive Website Template | Register ::
+        w3layouts</title>
+    <link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="css/style.css" rel='stylesheet' type='text/css' />
+    <link href="css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        ::placeholder {
+            color: #999;
+            opacity: 1;
+            /* Firefox */
+        }
+
+        :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #999;
+        }
+
+        ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #999;
+        }
+    </style>
+    <!-- js -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="js/jstarbox.js"></script>
+    <script type="text/javascript" src="constant/BasrUrl.js"></script>
+    <script type="text/javascript" src="js/authen.js"></script>
+    <script src="js/bootstrap.js"></script>
+	<script src="/js/lib/pace.min.js"></script>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script type="module" src="/bank/createSttripeConnectBankAccount.js"></script>
+    <!-- <script type="module" src="/bank/displayConnectBankButton.js"></script> -->
+	<script type="text/javascript" src="/js/moment.js"></script>
+	<script type="module" src="/js/top-bar.js"></script>
+    <script type="module">
+        import { appConfig } from './constant/appConfig.js';
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: appConfig.OneSignalAppId,
+                subdomainName: appConfig.SubdomainName,
+                notifyButton: {
+                    enable: false,
+                }
+            });
+            OneSignal.on('notificationDisplay', function (event) {
+                alert(event.content);
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        async function getCustomerProfile() {
+
+            var usernameDefault = localStorage.getItem("USERNAME");
+            var respone = await fetch(baseUrl() + 'api/customer/getCustomerByUsename?usename=' + usernameDefault, {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (respone.status === 204) {
+                alert("There are some error when loading your profile detail!!");
+                window.location.href = 'index.html';
+            } else {
+                var responeData = await respone.json();
+                document.getElementsByName("txtUsername")[0].value = usernameDefault;
+                document.getElementsByName("txtFullname")[0].value = responeData.fullName;
+                document.getElementsByName("txtPhoneNumber")[0].value = responeData.phoneNumber;
+                document.getElementsByName("txtEmail")[0].value = responeData.email;
+                document.getElementsByName("txtAddress")[0].value = responeData.address;
+            }
+        }
+    </script>
+</head>
+
+<body onload="checkLoginProfile();getCustomerProfile();">
+    <div class="header">
+
+        <div class="container">
+
+            <div class="logo">
+                <h1><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                </h1>
+            </div>
+			<div class="head-t" id="top-bar-container">
+			</div>
+
+            <div class="header-ri">
+                <ul class="social-top">
+                    <li><a href="#" class="icon facebook"><i class="fa fa-facebook"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon twitter"><i class="fa fa-twitter"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon pinterest"><i class="fa fa-pinterest-p"
+                                aria-hidden="true"></i><span></span></a></li>
+                    <li><a href="#" class="icon dribbble"><i class="fa fa-dribbble"
+                                aria-hidden="true"></i><span></span></a></li>
+                </ul>
+            </div>
+
+			<div class="nav-top" id="nav-bar-container">
+			</div>
+
+        </div>
+    </div>
+    <!---->
+
+    <!--banner-->
+    <div class="banner-top">
+        <div class="container">
+            <h3>Update Profile</h3>
+            <h4><a href="index.html">Home</a><label>/</label>Update Profile</h4>
+            <div class="clearfix"> </div>
+        </div>
+    </div>
+
+    <!--login-->
+    <script type="text/javascript">
+
+        function checkValidFullname() {
+            var txtFullname = document.getElementsByName("txtFullname")[0].value;
+            var patt = /^[a-zA-Z ]{6,100}$/;
+            var fullnameAlert = document.getElementById("fullname-alert");
+            if (patt.test(txtFullname)) {
+                fullnameAlert.style.display = 'none';
+                return true;
+            } else {
+                fullnameAlert.style.display = 'block';
+                return false;
+            }
+        }
+
+        function checkValidEmail() {
+            var txtEmail = document.getElementsByName("txtEmail")[0].value;
+            console.log("email: ", txtEmail);
+            var patt = /^[a-z0-9_\.]{5,32}@[a-z0-9]{2,}.[a-z0-9]{2,}$/;
+            var emailAlert = document.getElementById("email-alert");
+            console.log("is email: ", patt.test(txtEmail));
+            if (patt.test(txtEmail)) {
+                emailAlert.style.display = 'none';
+                return true;
+            } else {
+                emailAlert.style.display = 'block';
+                return false;
+            }
+        }
+
+        async function updateProfile() {
+            var txtAddress = document.getElementsByName("txtAddress")[0].value;
+            var txtEmail = document.getElementsByName("txtEmail")[0].value;
+            var txtUsername = document.getElementsByName("txtUsername")[0].value;
+            var txtFullname = document.getElementsByName("txtFullname")[0].value;
+            var successAlert = document.getElementById("success-alert");
+            var alertInvalid = document.getElementById("update-alert");
+            const data = {
+                username: txtUsername,
+                fullName: txtFullname,
+                email: txtEmail,
+                address: txtAddress
+            };
+            //console.log("fun", checkValidEmail());
+            successAlert.style.display = 'none';
+            if (checkValidFullname() && checkValidEmail()) {
+                var respone = await fetch(baseUrl() + 'api/customer', {
+                    method: "PUT",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                if (respone.status === 406 || respone.status === 400) {
+                    successAlert.style.display = 'none';
+                    alertInvalid.style.display = 'block';
+                } else {
+                    alertInvalid.style.display = 'none';
+                    successAlert.style.display = 'block';
+                    //window.location.href = 'index.html';
+                }
+            } else {
+                //alert("Something wrong!!");
+            }
+        }
+    </script>
+
+    <div class="login">
+        <div class="main-agileits">
+            <div class="form-w3agile form1">
+                <h3>Update Profile</h3>
+                <form action>
+                    <label>User Name:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Username" name="txtUsername" readonly>
+                        <div class="clearfix"></div>
+                    </div>
+                    <label>Full Name:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Full Name" name="txtFullname">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="fullname-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Full name must have 6 - 100 digits!!
+                    </div>
+
+                    <label>Email:</label>
+                    <div class="key">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <input type="text" placeholder="Email" name="txtEmail">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="email-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Please enter a valid email !!!
+                    </div>
+                    <label>Address:</label>
+                    <div class="key">
+                        <i class="fa fa-pinterest-p" aria-hidden="true"></i>
+                        <input type="text" placeholder="Address" name="txtAddress">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="address-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Address must be valid !!
+                    </div>
+                    <label>Phone Number:</label>
+                    <div class="key">
+                        <i class="fa fa-phone" aria-hidden="true"></i>
+                        <input type="text" placeholder="Phone Number" name="txtPhoneNumber" readonly>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="update-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Username is existed or OTP number is wrong!!
+                    </div>
+                    <div id="success-alert" style="display: none" class="alert alert-success" role="alert">
+                        Update Profile success !!
+                    </div>
+                    <button type="button" onclick="updateProfile()" class="btn btn-large btn-block btn-warning">Update
+                        Profile</button>
+                    <a href="changePasswordProfile.html" style="text-decoration: none;">
+                        <input type="button" class="btn btn-large btn-block btn-warning" value="Change Password" />
+                    </a>
+                </form>
+            </div>
+
+        </div>
+    </div>
+    <!--footer-->
+    <div class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <h2><a href="index.html"><b>T<br>H<br>E</b>Resell Ticket<span>The world's travel marketplace</span></a>
+                </h2>
+                <p class="fo-para">Bringing people with unwanted travel plans together with those wanting incredible
+                    last-minute deals. Welcome to a world of opportunities.</p>
+                <ul class="social-fo">
+                    <li><a href="#" class=" face"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" twi"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" pin"><i class="fa fa-pinterest-p" aria-hidden="true"></i></a></li>
+                    <li><a href="#" class=" dri"><i class="fa fa-dribbble" aria-hidden="true"></i></a></li>
+                </ul>
+                <div class=" address">
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-home" aria-hidden="true">Lầu 2, toà nhà Innovation, lô 24 - CVPM Quang Trung
+                                - P. Tân Chánh Hiệp, Quận 12, TP. HCM</i></p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><i class="fa fa-phone" aria-hidden="true"></i>+840916512300</p>
+                    </div>
+                    <div class="col-md-4 fo-grid1">
+                        <p><a href="mailto:info@example.com"><i class="fa fa-envelope-o"
+                                    aria-hidden="true"></i>dark5695@gmail.com</a></p>
+                    </div>
+                    <div class="clearfix"></div>
+
+                </div>
+            </div>
+            <div class="copy-right">
+                <p> &copy; 2016 Resell Ticket. All Rights Reserved | Design by <a href="http://w3layouts.com/">
+                        W3layouts</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- //footer-->
+    <a href="#" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+
+
+</body>
+
+</html>

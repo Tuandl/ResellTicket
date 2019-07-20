@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Text;
 
 namespace Core.Models.Map
 {
@@ -9,6 +8,9 @@ namespace Core.Models.Map
         public void Configure(EntityTypeBuilder<OTP> builder)
         {
             builder.HasKey(x => x.Id);
+
+
+            builder.ToTable("OTP");
         }
     }
 }
