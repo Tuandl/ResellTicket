@@ -72,13 +72,14 @@ class TicketTypeCreateComponent extends Component {
     }
 
     async onBtnCreateClicked() {
+        toastr.info('Processing', 'Wating for create');
         var { nameError } = this.state;
         if (nameError === '') {
             let data = this.state.ticketType;
-            toastr.info('Infomation', 'Please wait while we processing your request.');
+            //toastr.info('Infomation', 'Please wait while we processing your request.');
             var updateResponse = await Axios.post('api/tickettype', data);
             if (updateResponse.status === 200) {
-                toastr.success('Create Success', 'Ticket Type has been created successfully.');
+                toastr.success('Successfully', 'Ticket Type has been created.');
                 this.props.history.push('/tickettype');
             } else {
                 toastr.error('Error', 'Error when create Ticket Type');

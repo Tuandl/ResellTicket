@@ -67,13 +67,13 @@ class StationCreateComponent extends Component {
     }
 
     onSaveChanges = () => {
-
+        toastr.info('Processing', 'Waiting for create');
         var { stationNameError } = this.state;
         if (stationNameError === '') {
             var { station } = this.state;
             Axios.post('api/station/', station).then(res => {
                 if (res.status === 200) {
-                    toastr.success('Create Success', 'Station has been created successfully.');
+                    toastr.success('Successfully', 'Station has been created.');
                     this.props.history.push('/station');
                 } else {
                     toastr.error('Error', 'Error when create Station');

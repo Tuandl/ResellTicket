@@ -78,10 +78,10 @@ class UserViewComponent extends Component {
     async onBtnSaveChangesClicked() {
         let data = this.state.user;
 
-        toastr.info('Infomation', 'Please wait while we processing your request.');
+        toastr.info('Processing', 'Waiting for update.');
         var updateResponse = await Axios.put('api/user', data);
         if(updateResponse.status === 200) {
-            toastr.success('Update Success', 'User has been updated successfully.');
+            toastr.success('Successfully', 'User has been updated.');
             this.props.history.push('/user');
         } else {
             toastr.error('Error', 'Error when update User');
