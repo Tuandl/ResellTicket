@@ -25,6 +25,7 @@ namespace WebAPI.Controllers
             _oTPService = oTPService;
         }
         [HttpPost]
+        [AllowAnonymous]
         [Route("")]
         public IActionResult Register(CustomerRegisterViewModel model)
         {
@@ -44,6 +45,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("checkPhone")]
         public IActionResult CheckPhoneNumber(CustomerCheckPhoneNumberViewModel model)
         {
@@ -72,6 +74,7 @@ namespace WebAPI.Controllers
         /// <response code="200">Send OTP success (Dev OTP = "123456")</response>
         /// <response code="406">Not found customer with model Phone Number</response>
         [HttpPost]
+        [AllowAnonymous]
         [Route("forget-password")]
         public IActionResult SendOTPWhenForgotPassword(CustomerForgotPasswordViewModel model)
         {
@@ -94,6 +97,7 @@ namespace WebAPI.Controllers
         /// <response code="400">Invalid OTP</response>
         /// <response code="406">Not found Customer</response>
         [HttpPost]
+        [AllowAnonymous]
         [Route("reset-password")]
         public IActionResult ResetPassword(CustomerChangePasswordWithOTPConfirm model)
         {

@@ -1,3 +1,4 @@
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 apply plugin: "com.android.application"
 
 import com.android.build.OutputFile
@@ -116,19 +117,30 @@ def enableSeparateBuildPerCPUArchitecture = false
  */
 def enableProguardInReleaseBuilds = false
 
-subprojects {
-    afterEvaluate {project ->
-        if (project.hasProperty("android")) {
-            android {
-                compileSdkVersion rootProject.ext.compileSdkVersion
-                buildToolsVersion rootProject.ext.buildToolsVersion
-            }
-        }
-    }
-}
+// subprojects {
+//    afterEvaluate {project ->
+//        if (project.hasProperty("android")) {
+//            android {
+//                compileSdkVersion rootProject.ext.compileSdkVersion
+//                buildToolsVersion rootProject.ext.buildToolsVersion
+//            }
+//        }
+//    }
+// }
+// subprojects { subproject ->
+//     afterEvaluate{
+//         if((subproject.plugins.hasPlugin('android') || subproject.plugins.hasPlugin('android-library'))) {
+//             android {
+//                 compileSdkVersion rootProject.ext.compileSdkVersion
+//                 buildToolsVersion rootProject.ext.buildToolsVersion
+//             }
+//         }
+//     }
+// }
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
