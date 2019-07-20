@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, FlatList, Text } from "react-native";
+import { StyleSheet, View, FlatList, Text, ActivityIndicator } from "react-native";
 import { Left, Body, Right, Title } from "native-base";
 import { Container, Header, Button } from 'native-base';
 import Api from '../../service/Api';
@@ -11,34 +11,71 @@ import formatConstant from '../../constants/formatConstant';
 
 
 export default class TransactionViewListScreen extends Component {
-
+    currentPage = 1;
+    pageSize = 7;
     constructor(props) {
         super(props);
         this.state = {
             transaction: [],
+            isLoading: false,
+            isStill: false
         }
-        
+
     }
 
-    componentDidMount(){
+    componentDidMount() {
         this.getTransactionList();
     }
 
     async getTransactionList() {
+        this.setState({
+            isLoading: true,
+            isStill: false
+        })
+        const params = {
+            page: this.currentPage,
+            pageSize: this.pageSize
+        }
         try {
-            var transactionResponse = await Api.get('/api/customer/get-transaction?page=1&pageSize=20');
+            var transactionResponse = await Api.get('/api/customer/get-transaction', params);
             console.log('repone', transactionResponse);
-            this.setState({
-                transaction: transactionResponse.data
-            });
+            if (transactionResponse.status === 200) {
+                // this.isStill = res.data.length === this.pageSize ? true : false
+                this.setState({
+                    isStill: transactionResponse.data.length === this.pageSize ? true : false,
+                })
+                console.log('isStill', this.state.isStill);
+                this.setState({
+                    transaction: [...this.state.transaction, ...transactionResponse.data],
+                    isLoading: false,
+                })
+            }
         } catch (error) {
-            toastr.error('Error', 'Error when Load Transaction Data');
+            RNToasty.Error({
+                title: 'Error when Load Transaction Data'
+            });
+        }
+    }
+
+    refreshTransaction = () => {
+        this.setState({
+            transaction: [],
+            page: 1
+        }, () => {
+            this.getTransactionList();
+        })
+    }
+
+    onEndReached = () => {
+        if (this.state.isStill) {
+            this.currentPage += 1;
+            this.getTransactionList();
         }
     }
 
 
     render() {
-        const { transaction } = this.state;
+        const { transaction, isLoading } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
@@ -54,36 +91,40 @@ export default class TransactionViewListScreen extends Component {
                         </Title>
                     </Body>
                 </Header>
-            <View style={[styles.root, this.props.style]}>
-                <FlatList
-                    data={transaction}
-                    renderItem={({ item, separators }) => (
-                        <View style={styles.rect}>
-                            <Text style={styles.rowTitle}>{item.type}</Text>
-                            <Text style={styles.rowSubTitle}>
-                                {item.description}
-                            </Text>
+                <View style={[styles.root, this.props.style]}>
+                    <FlatList
+                        onEndReached={this.onEndReached}
+                        onEndReachedThreshold={0.1}
+                        data={transaction}
+                        renderItem={({ item, separators }) => (
+                            <View style={styles.rect}>
+                                <Text style={styles.rowTitle}>{item.type}</Text>
+                                <Text style={styles.rowSubTitle}>
+                                    {item.description}
+                                </Text>
 
-                            {item.type == "Payment" ? <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
-                                decimalScale={2} decimalSeparator={'.'} allowNegative={false}
-                                renderText={value => (
-                                    <Text style={styles.text}>- ${value}</Text>
-                                )}
-                            /> : <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
-                                decimalScale={2} decimalSeparator={'.'} allowNegative={false}
-                                renderText={value => (
-                                    <Text style={styles.plus}>+ ${value}</Text>
-                                )}
-                            />}
-                            
-                            
-                            <Text style={styles.text2}>{moment(item.createdAtUTC).format(formatConstant.NOTIFICATION_TIME)}</Text>
-                        </View>
-                    )}
-                    ItemSeparatorComponent={() => <View style={styles.rect2} />}
-                    style={styles.list}
-                />
-            </View>
+                                {item.type == "Payment" ? <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
+                                    decimalScale={2} decimalSeparator={'.'} allowNegative={false}
+                                    renderText={value => (
+                                        <Text style={styles.text}>- ${value}</Text>
+                                    )}
+                                /> : <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
+                                    decimalScale={2} decimalSeparator={'.'} allowNegative={false}
+                                    renderText={value => (
+                                        <Text style={styles.plus}>+ ${value}</Text>
+                                    )}
+                                    />}
+
+
+                                <Text style={styles.text2}>{moment(item.createdAtUTC).format(formatConstant.NOTIFICATION_TIME)}</Text>
+                            </View>
+                        )}
+                        ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}
+                        ItemSeparatorComponent={() => <View style={styles.rect2} />}
+                        style={styles.list}
+                        // ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}></FlatList>
+                    />
+                </View>
             </Container>
         );
     }
@@ -128,7 +169,7 @@ const styles = StyleSheet.create({
         width: 200,
         color: "rgba(183,28,28,1)",
         position: "absolute",
-        fontSize: 20, 
+        fontSize: 20,
         right: 30,
         fontWeight: "bold",
         textAlign: "right"
@@ -138,7 +179,7 @@ const styles = StyleSheet.create({
         width: 200,
         color: "#1faa00",
         position: "absolute",
-        fontSize: 20, 
+        fontSize: 20,
         right: 30,
         fontWeight: "bold",
         textAlign: "right"
