@@ -23,6 +23,7 @@ const appConfig = {
         getLinkConnectBank: 'api/customer/view-connect-account',
         notificationDataTable: 'api/notification/data-table',
         notification: 'api/notification',
+        transaction: 'api/customer/get-transaction',
     },
     url: {
         home: '/index.html',
@@ -52,6 +53,7 @@ const appConfig = {
         updatePasswordWhenLogedIn: '/changePasswordProfile.html',
         register: '/register.html',
         resetPassword: '/ResetPassword.html',
+        transaction: '/transaction/transaction.html'
     },
     format: {
         datetime: 'ddd, MMM DD, YYYY HH:mm',

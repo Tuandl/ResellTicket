@@ -53,7 +53,7 @@ export default class NavigationComponent {
                             <a id="${this.connectToStripeLinkId}" class="hyper"><span id="value-link">Stripe Account</span></a>
                         </li>
                         <li class="${this.isCurrentGroup(this.navBarGroup.transaction) ? 'active' : ''}">
-                            <a href="#" class="hyper"> <span>Transactions</span></a>
+                            <a href="${appConfig.url.transaction}" class="hyper"> <span>Transactions</span></a>
                         </li>
                     </ul>
                 </div>
