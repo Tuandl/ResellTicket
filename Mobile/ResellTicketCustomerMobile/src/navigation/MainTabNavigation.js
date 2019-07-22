@@ -31,7 +31,8 @@ const RouteStack = createStackNavigator(
     RouteSearchResult: RouteSearchResultScreen,
     RouteDetail: RouteDetailScreen,
     RouteTicketUpdate: RouteTicketUpdateScreen,
-    RouteBuyerInfo: RouteBuyerInfoScreen
+    RouteBuyerInfo: RouteBuyerInfoScreen,
+    DetailTicket: DetailTicketScreen,
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',
@@ -59,6 +60,17 @@ const MeStack = createStackNavigator(
   }
 )
 
+const TicketStack = createStackNavigator(
+  {
+    PostedTicket: PostedTicketScreen,
+    PostEditTicket: PostEditTicketScreen,
+    DetailTicket: DetailTicketScreen,
+  }, {
+    initialRouteName: 'PostedTicket',
+    headerMode: 'none',
+  }
+)
+
 
 export default createBottomTabNavigator(
   {
@@ -72,21 +84,22 @@ export default createBottomTabNavigator(
         tabBarVisible: navigation.state.index > 0 ? false: true
       }),
     },
-    Tour: {
-      screen: TourScreen,
-      navigationOptions: {
-        tabBarLabel: 'Tour',
+    Ticket: {
+      screen: TicketStack,
+      navigationOptions: ({ navigation }) => ({
+        tabBarLabel: 'Ticket',
         tabBarIcon: ({ }) => {
-          return <Icon name="exchange" type="font-awesome" />
-        }
-      }
+          return <Icon name="ticket" type="font-awesome" />
+        },
+        tabBarVisible: navigation.state.index > 0 ? false: true
+      })
     },
     Notification: {
       screen: NotificationScreen,
       navigationOptions: {
         tabBarLabel: 'Notification',
         tabBarIcon: ({ }) => {
-          return <Icon name="bell-o" type="font-awesome" />
+          return <Icon name="bell-o" type="font-awesome"/>
         }
       }
     },
@@ -95,7 +108,7 @@ export default createBottomTabNavigator(
       navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Me',
         tabBarIcon: ({ }) => {
-          return <Icon name="user-o" type="font-awesome" />
+          return <Icon name="user-o" type="font-awesome"/>
         },
         tabBarVisible: navigation.state.index > 0 ? false: true
       })

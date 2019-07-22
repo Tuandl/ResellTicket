@@ -133,7 +133,7 @@ export default class ChangePasswordScreen extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => this.props.navigation.navigate('ProfileDetail')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
@@ -249,7 +249,7 @@ export default class ChangePasswordScreen extends Component {
                             />
 
                         </View>
-                        <Button rounded block primary
+                        <Button block primary
                             title="Change Password"
                             activeOpacity={1}
                             underlayColor="transparent"
@@ -259,7 +259,7 @@ export default class ChangePasswordScreen extends Component {
                             style={{
                                 marginTop: 10
                             }}
-                            
+
                         ><Text style={{ color: '#fff', fontSize: 20 }}>Change Password</Text></Button>
                     </View>
                 </ImageBackground>
@@ -283,8 +283,8 @@ const styles = StyleSheet.create({
     registerView: {
         //marginTop: 0,
         backgroundColor: 'transparent',
-        width: 250,
-        height: 600,
+        width: SCREEN_WIDTH / 1.2,
+        height: SCREEN_HEIGHT / 1.1,
     },
     registerTitle: {
         //flex: 0.3,

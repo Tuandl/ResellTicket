@@ -34,6 +34,7 @@ namespace ViewModel.ViewModel.Ticket
         public decimal SellingPrice { get; set; }
         public string SellerPhone { get; set; }
         public int ExpiredBefore { get; set; }
+        public DateTime ExpiredDateTime { get; set; }
 
         public bool? IsTicketCodeValid { get; set; }
         public bool? IsVehicleValid { get; set; }

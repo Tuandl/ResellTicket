@@ -6,6 +6,7 @@ import { Icon } from 'react-native-elements';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import convertTicketStatus from '../helper/convertTicketStatus';
+import TicketStatus from '../constants/TicketStatus';
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
@@ -91,13 +92,6 @@ export default class TicketViewComponent extends Component {
             vehicle,
             ticketCode } = this.props.postedTicket;
         var { statusTemp, statusColor } = this.state;
-        // {   //check hết hạn vé
-        //     statusTemp === 1 ? statusColor = 'orange'
-        //         : statusTemp === 3 ? statusColor = 'red'
-        //             : statusTemp === 0 ? statusColor = 'lightgrey' :
-        //                 statusColor = '#28a745';
-
-        // }
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
@@ -140,7 +134,11 @@ export default class TicketViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
+                        {statusTemp !== TicketStatus.COMPLETED && statusTemp !== TicketStatus.RENAMEDFAIL && statusTemp !== TicketStatus.RENAMEDSUCESS? 
                         <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
+                        : null    
+                    }
+                        
                     </View>
                 </View>
             </TouchableNativeFeedback>

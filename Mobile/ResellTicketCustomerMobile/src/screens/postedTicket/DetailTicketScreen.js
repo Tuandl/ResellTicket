@@ -8,6 +8,7 @@ import NumberFormat from 'react-number-format';
 import { ScrollView } from 'react-native-gesture-handler';
 import { RNToasty } from 'react-native-toasty';
 import Dialog from "react-native-dialog";
+import TicketStatus from '../../constants/TicketStatus';
 
 export default class DetailTicketScreen extends Component {
     constructor(props) {
@@ -30,6 +31,7 @@ export default class DetailTicketScreen extends Component {
             isLoading: false,
             isConfirmLoading: false,
             isRefuseLoading: false,
+            isDeleteLoading: false,
             invalidField: {
                 isTicketCodeValid: true,
                 isVehicleValid: true,
@@ -103,8 +105,8 @@ export default class DetailTicketScreen extends Component {
                 departureStationName: ticketDetail.departureStationName,
                 arrivalCityName: ticketDetail.arrivalCityName,
                 arrivalStationName: ticketDetail.arrivalStationName,
-                departureDateTime: moment(ticketDetail.departureDateTime).format('YYYY-MM-DD HH:mm'),
-                arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('YYYY-MM-DD HH:mm'),
+                departureDateTime: moment(ticketDetail.departureDateTime).format('ddd, MMM DD YYYY HH:mm'),
+                arrivalDateTime: moment(ticketDetail.arrivalDateTime).format('ddd, MMM DD YYYY HH:mm'),
                 ticketCode: ticketDetail.ticketCode,
                 passengerName: ticketDetail.passengerName,
                 emailBooking: ticketDetail.emailBooking,
@@ -143,15 +145,17 @@ export default class DetailTicketScreen extends Component {
             isLoading,
             isConfirmLoading,
             isRefuseLoading,
+            isDeleteLoading,
             invalidField
         } = this.state
-        const { navigate } = this.props.navigation;
+        const { navigation } = this.props;
+        const isBuyer = this.props.navigation.getParam('isBuyer')
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
-                            onPress={() => navigate('PostedTicket')}>
+                        <Button transparent
+                            onPress={() => navigation.pop()}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
                     </Left>
@@ -167,55 +171,55 @@ export default class DetailTicketScreen extends Component {
                             <Text style={{ color: 'red', marginBottom: 10, marginTop: 10 }}>
                                 There are some information of your ticket are invalid(red inputs). Please post a new ticket and check all inputs carefully.
                             </Text> : null} */}
-                            <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle:</Label>
+                            <Label style={!invalidField.isVehicleValid && status === 3 ? styles.invalidLabel : styles.label}>Vehicle</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{vehicleName}</Text>
                             </Item>
-                            <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation:</Label>
+                            <Label style={!invalidField.isTransportationValid && status === 3 ? styles.invalidLabel : styles.label}>Transportation</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{transportationName}</Text>
                             </Item>
-                            <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type:</Label>
+                            <Label style={!invalidField.isTicketTypeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Type</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{ticketTypeName}</Text>
                             </Item>
-                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure City</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{departureCityName}</Text>
                             </Item>
-                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Station</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{departureStationName}</Text>
                             </Item>
-                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival City</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{arrivalCityName}</Text>
                             </Item>
-                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Station</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{arrivalStationName}</Text>
                             </Item>
-                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date:</Label>
+                            <Label style={!invalidField.isDepartureValid && status === 3 ? styles.invalidLabel : styles.label}>Departure Date</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{departureDateTime}</Text>
                             </Item>
-                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date:</Label>
+                            <Label style={!invalidField.isArrivalValid && status === 3 ? styles.invalidLabel : styles.label}>Arrival Date</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{arrivalDateTime}</Text>
                             </Item>
-                            <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code:</Label>
+                            <Label style={!invalidField.isTicketCodeValid && status === 3 ? styles.invalidLabel : styles.label}>Ticket Code</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{ticketCode}</Text>
                             </Item>
-                            <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name:</Label>
+                            <Label style={!invalidField.isPassengerNameValid && status === 3 ? styles.invalidLabel : styles.label}>Passenger Name</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{passengerName}</Text>
                             </Item>
-                            <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>emailBooking:</Label>
+                            <Label style={!invalidField.isEmailBookingValid && status === 3 ? styles.invalidLabel : styles.label}>Email Booking</Label>
                             <Item style={styles.detail}>
                                 <Text style={{ color: 'black' }}>{emailBooking}</Text>
                             </Item>
-                            <Label style={styles.label}>Selling Price:</Label>
+                            <Label style={styles.label}>Selling Price</Label>
                             <Item style={styles.detail}>
                                 <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
                                     suffix={' $'}
@@ -224,15 +228,15 @@ export default class DetailTicketScreen extends Component {
                                     )}
                                 />
                             </Item>
-                            {status == 4 ?
+                            {status == TicketStatus.BOUGHT ?
                                 <Container>
-                                    <Button rounded block success
-                                        style={{ margin: 20, marginBottom: 0 }}
+                                    <Button block primary
+                                        style={{ margin: 10, marginTop: 40 }}
                                         onPress={this.PassengerInformation}>
                                         <Text style={styles.buttonText}>View Passenger Information</Text>
                                     </Button>
-                                    <Button rounded block success
-                                        style={{ margin: 20, marginBottom: 0 }}
+                                    <Button block primary
+                                        style={{ margin: 10, marginTop: 10 }}
                                         onPress={this.showDialogConfirmTicketRenamed}>
                                         {isConfirmLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                             : <Text style={styles.buttonText}>Confirm Ticket Renamed</Text>}
@@ -245,8 +249,8 @@ export default class DetailTicketScreen extends Component {
                                         <Dialog.Button label="Rename" onPress={this.confirmTicketRenamed} />
                                         <Dialog.Button label="Cancel" onPress={this.handleConfirmTicketRenamedCANCEL} />
                                     </Dialog.Container>
-                                    <Button rounded block danger
-                                        style={{ marginTop: 20, marginBottom: 0 }}
+                                    <Button block danger
+                                        style={{ margin: 10, marginTop: 10}}
                                         onPress={this.showDialogRefuseTicketRenamed}>
                                         {isRefuseLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                             : <Text style={styles.buttonText}>Refuse Ticket Renamed</Text>}
@@ -260,12 +264,13 @@ export default class DetailTicketScreen extends Component {
                                         <Dialog.Button label="Cancel" onPress={this.handleRefuseTicketRenamedCANCEL} />
                                     </Dialog.Container>
                                 </Container>
-                                : <Button rounded block danger
-                                    style={{ margin: 40, marginBottom: 0 }}
+                                : isBuyer === undefined && status !== TicketStatus.RENAMED && status !== TicketStatus.RENAMEDSUCESS ?
+                                <Button block danger
+                                    style={{ margin: 10, marginTop: 40 }}
                                     onPress={this.showDialogDeleteTicket}>
-                                    {isLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                    {isDeleteLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Delete</Text>}
-                                </Button>}
+                                </Button> : null}
                             <Dialog.Container visible={this.state.dialogVisibleDeleteTicket}>
                                 <Dialog.Title>Delete Ticket</Dialog.Title>
                                 <Dialog.Description>
@@ -292,7 +297,8 @@ export default class DetailTicketScreen extends Component {
 
     confirmTicketRenamed = async () => {
         this.setState({
-            isConfirmLoading: true
+            isConfirmLoading: true,
+            showDialogConfirmTicketRenamed: false
         })
         const ticketId = this.props.navigation.getParam('ticketId');
         const resConfirmRenamedTicket = await Api.put('api/ticket/confirm-rename?id=' + ticketId);
@@ -300,7 +306,6 @@ export default class DetailTicketScreen extends Component {
         if (resConfirmRenamedTicket.status === 200) {
             this.setState({
                 isConfirmLoading: false,
-                showDialogConfirmTicketRenamed: false
             })
             RNToasty.Success({
                 title: 'Confirm Renamed Ticket Successfully'
@@ -312,7 +317,8 @@ export default class DetailTicketScreen extends Component {
 
     RefuseTicket = async () => {
         this.setState({
-            isRefuseLoading: true
+            isRefuseLoading: true,
+            dialogVisibleRefuseTicketRenamed: false
         })
         const ticketId = this.props.navigation.getParam('ticketId');
         const resRefuseTicket = await Api.put('api/ticket/refuse?id=' + ticketId);
@@ -320,7 +326,7 @@ export default class DetailTicketScreen extends Component {
         if (resRefuseTicket.status === 200) {
             this.setState({
                 isRefuseLoading: false,
-                dialogVisibleRefuseTicketRenamed: false
+                
             })
             RNToasty.Success({
                 title: 'Refuse Ticket Successfully'
@@ -332,7 +338,8 @@ export default class DetailTicketScreen extends Component {
 
     deletePostedTicket = async () => {
         this.setState({
-            isLoading: true
+            isDeleteLoading: true,
+            dialogVisibleDeleteTicket: false
         })
         const ticketId = this.props.navigation.getParam('ticketId');
         const index = this.props.navigation.getParam('index');
@@ -340,8 +347,7 @@ export default class DetailTicketScreen extends Component {
         const { navigation } = this.props;
         if (resDeleteTicket.status === 200) {
             this.setState({
-                isLoading: false,
-                dialogVisibleDeleteTicket: false
+                isDeleteLoading: false,
             })
             RNToasty.Success({
                 title: 'Delete Ticket Successfully'

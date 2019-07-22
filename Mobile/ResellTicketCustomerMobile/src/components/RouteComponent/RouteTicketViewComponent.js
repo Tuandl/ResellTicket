@@ -7,6 +7,7 @@ import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 import NumberFormat from 'react-number-format';
 import formatConstant from '../../constants/formatConstant';
 import convertTicketStatus from './../../helper/convertTicketStatus';
+import TicketStatus from '../../constants/TicketStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -18,13 +19,49 @@ export default class RouteTicketViewComponent extends Component {
         this.state = {
             statusColor: '',
             routeTicket: props.routeTicket,
+            //statusTemp: props.routeTicket.status
         };
 
         this.onPress = this.onPress.bind(this);
     }
 
+    componentDidMount() {
+        this.setStatusColor()
+    }
+
     onPress() {
         this.props.onPress(this.state.routeTicket); 
+    }
+
+    setStatusColor = () => {
+        var { status } = this.state.routeTicket;
+        switch (status) {
+            case TicketStatus.PENDING:
+                this.setState({
+                    statusColor: 'orange'
+                })
+                break;
+            case TicketStatus.INVALID:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case TicketStatus.RENAMEDFAIL:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case TicketStatus.EXPIRED:
+                this.setState({
+                    statusColor: 'lightgrey'
+                })
+                break;
+            default:
+                this.setState({
+                    statusColor: '#28a745'
+                })
+                break;
+        }
     }
 
     render() {
@@ -36,12 +73,6 @@ export default class RouteTicketViewComponent extends Component {
             status,
             vehicleName,
             ticketCode } = this.state.routeTicket;
-
-        {   //check hết hạn vé
-            status === 1 ? this.state.statusColor = 'orange' 
-            : status === 3 ? this.state.statusColor = 'red' 
-            : this.state.statusColor = '#28a745'
-        } 
 
         return (
             <TouchableNativeFeedback onPress={this.onPress}>

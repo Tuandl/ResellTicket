@@ -142,7 +142,7 @@ export default class ProfileDetailScreen extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => this.props.navigation.navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
@@ -302,27 +302,23 @@ export default class ProfileDetailScreen extends Component {
                             />
                             
                         </View>
-                        <Button rounded block primary
+                        <Button primary block
                             //activeOpacity={1}
+                            style={{ marginTop: 20 }}
                             underlayColor="transparent"
                             onPress={this.submitRegisterCredentials}
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: '#fff' }}
-                            style={{
-                                marginTop: 10
-                            }}
                             titleStyle={{ fontSize: 20, color: '#fff' }}
                         ><Text style={{ color: '#fff', fontSize: 20 }}>Update Profile</Text></Button>
 
-                        <Button rounded block primary
+                        <Button primary block
                             //activeOpacity={1}
+                            style={{ marginTop: 10 }}
                             underlayColor="transparent"
                             onPress={() => this.props.navigation.navigate('ChangePassword')}
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: '#fff' }}
-                            style={{
-                                marginTop: 10
-                            }}
                         >
                             <Text style={{ color: '#fff', fontSize: 20 }}>Change Password</Text>
                         </Button>
@@ -348,8 +344,8 @@ const styles = StyleSheet.create({
     registerView: {
         //marginTop: 0,
         backgroundColor: 'transparent',
-        width: 250,
-        height: 600,
+        width: SCREEN_WIDTH / 1.2,
+        height: SCREEN_HEIGHT / 1.1,
     },
     registerTitle: {
         //flex: 0.3,

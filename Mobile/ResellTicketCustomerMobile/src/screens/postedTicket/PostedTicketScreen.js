@@ -114,7 +114,7 @@ export default class PostedTicket extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
@@ -125,7 +125,7 @@ export default class PostedTicket extends Component {
                         </Title>
                     </Body>
                     <Right>
-                        <Button onPress={() => navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })}>
+                        <Button transparent onPress={() => navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })}>
                             <Icon name="plus-circle-outline" type="material-community" color="#fff" />
                         </Button>
                     </Right>

@@ -57,7 +57,7 @@ namespace Service.Services
         /// <param name="status">optional. Status of routes</param>
         /// <returns>Route data table (route information and tickets in that route</returns>
         RouteDataTable GetRouteDataTable(int page, int pageSize,
-            RouteStatus? status, string userName);
+            RouteStatus? status, string userName); //admin
 
         RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize); // liability - admin
 
@@ -185,14 +185,14 @@ namespace Service.Services
                 {
                     Id = x.Id,
                     Code = x.Code,
-                    CreatedAt = x.CreatedAtUTC,
+                    CreatedAt = x.UpdatedAtUTC ?? x.CreatedAtUTC,
                     CustomerId = x.CustomerId,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
-                    TicketQuantity = x.RouteTickets.Count(),
+                    TicketQuantity = x.RouteTickets.Count(t => t.IsReplaced != true),
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
-                    IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
+                    //IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -215,12 +215,9 @@ namespace Service.Services
             foreach (var route in result.Data)
             {
                 var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
-                    x.RouteId == route.Id 
+                    x.RouteId == route.Id &&
+                    x.IsReplaced != true
                 ).OrderBy(x => x.Order);
-                //if (status == RouteStatus.Completed && route.ResolveOption == ResolveOption.REPLACE)
-                //{
-                //    routeTickets.Where(x => x.Deleted == false);
-                //}
                 var firstRouteTicket = routeTickets.FirstOrDefault();
                 route.DepartureCityName = firstRouteTicket.DepartureStation.City.Name;
                 route.DepartureDate = firstRouteTicket.Ticket.DepartureDateTime;
@@ -252,7 +249,7 @@ namespace Service.Services
 
             //Parse route ticket into viewmodel
 
-            foreach (var routeTicket in route.RouteTickets)
+            foreach (var routeTicket in route.RouteTickets.Where(x=>x.IsReplaced != true))
             {
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
                 routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
@@ -632,7 +629,6 @@ namespace Service.Services
         public RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize)
         {
             param = param ?? "";
-            //var liabilityRoutes = new List<RouteRowViewModel>();
 
             var routeVMs =
                 (from ROUTE in _routeRepository.GetAllQueryable()
@@ -715,20 +711,19 @@ namespace Service.Services
                      CustomerId = ROUTE.CustomerId,
                      Status = ROUTE.Status,
                      TotalAmount = ROUTE.TotalAmount,
-                     TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
+                     TicketQuantity = ROUTE.RouteTickets.Count(),
                      IsLiability = false
                  }).Distinct();
 
             var routeOrderedVMs = routeVMs.OrderByDescending(x => x.IsLiability);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
 
-
             var routeDataTable = new RouteDataTable()
             {
                 Data = routePagedVMs.ToList(),
                 Total = routeVMs.Count()
             };
-            foreach(var routeVM in routeDataTable.Data)
+            foreach(var routeVM in routeDataTable.Data) 
             {
                 var routeTickets = _routeRepository.Get(x => x.Id == routeVM.Id).RouteTickets;
                 foreach(var rt in routeTickets)

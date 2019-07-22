@@ -1,6 +1,6 @@
 import { Body, Button, Container, Content, Header, Left, Right, Text, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import NumberFormat from 'react-number-format';
@@ -8,6 +8,7 @@ import RouteTicketViewComponent from '../../components/RouteComponent/RouteTicke
 import api from '../../service/Api';
 import { withNavigationFocus } from 'react-navigation';
 import Dialog from "react-native-dialog";
+import RouteStatus from '../../constants/routeStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -26,7 +27,10 @@ class RouteDetailScreen extends Component {
         this.routeId = this.navigation.getParam('routeId');
         this.state = {
             route: {},
-            dialogVisibleDelete: false
+            dialogVisibleDelete: false,
+            isBuyLoading: false,
+            isDeleteLoading: false,
+            isLoading: false
         };
 
         this.onBtnBuyRoutePressed = this.onBtnBuyRoutePressed.bind(this);
@@ -73,6 +77,9 @@ class RouteDetailScreen extends Component {
     }
 
     async getRouteDetail(id) {
+        this.setState({
+            isLoading: true
+        })
         if (id === null || id === undefined) {
             this.navigation.navigate('Route');
             RNToasty.Error({ title: 'Invalid Route Id' });
@@ -82,6 +89,7 @@ class RouteDetailScreen extends Component {
                 this.initRoute(response.data);
                 this.setState({
                     route: response.data,
+                    isLoading: false
                 });
             } else {
                 RNToasty.Error({ title: 'Error when load route detail' });
@@ -93,16 +101,20 @@ class RouteDetailScreen extends Component {
         if (id === null || id === undefined) {
             RNToasty.Error({ title: 'Route Id is invalid' });
         } else {
+            this.setState({
+                isDeleteLoading: true,
+                dialogVisibleDelete: false
+            })
             const response = await api.delete(this.URL_ROUTE_DETAIL + id);
             if (response.status === 200) {
                 this.setState({
-                    dialogVisibleDelete: false
+                    isDeleteLoading: false
                 });
                 RNToasty.Success({ title: 'Delete Route Successfully' });
                 this.navigation.pop();
             } else {
                 this.setState({
-                    dialogVisibleDelete: false
+                    isDeleteLoading: false
                 });
                 RNToasty.Error({ title: 'Error when delete route.' });
             }
@@ -110,12 +122,18 @@ class RouteDetailScreen extends Component {
     }
 
     onRouteTicketPressed(routeTicket) {
-        const navigationData = {
-            route: this.state.route,
-            selectedRouteTicketId: routeTicket.id,
-        };
+        var { route } = this.state
+        if (route.status === RouteStatus.COMPLETED) {
+            this.props.navigation.navigate('DetailTicket', { ticketId: routeTicket.ticketId, isBuyer: true })
+        } else {
+            const navigationData = {
+                route: this.state.route,
+                selectedRouteTicketId: routeTicket.id,
+            };
 
-        this.props.navigation.navigate('RouteTicketUpdate', { data: navigationData });
+            this.props.navigation.navigate('RouteTicketUpdate', { data: navigationData });
+        }
+
     }
 
     renderTickets(routeTickets) {
@@ -127,6 +145,9 @@ class RouteDetailScreen extends Component {
 
 
     async onBtnBuyRoutePressed() {
+        this.setState({
+            isBuyLoading: true,
+        })
         const response = await api.get('api/customer/detail');
         if (response.status === 200) {
             var params = {
@@ -135,12 +156,13 @@ class RouteDetailScreen extends Component {
                 buyerPassengerEmail: response.data.email,
                 buyerPassengerPhone: response.data.phoneNumber
             };
-        }
-        this.setState({
-            dialogVisibleBuyRoute: false
-        });
+            this.setState({
+                isBuyLoading: false
+            });
 
-        this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+            this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+        }
+
     }
 
     onBtnDeletePressed() {
@@ -168,56 +190,67 @@ class RouteDetailScreen extends Component {
                     <Right>
                     </Right>
                 </Header>
-                <Content style={{ flex: 1, backgroundColor: 'white' }}
-                    contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
+                {this.state.isLoading ?
+                    <ActivityIndicator size="large" animating />
+                    :
+                    <Content style={{ flex: 1, backgroundColor: 'white' }}
+                        contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
 
-                    <View style={{ width: width, padding: 5 }}>
+                        <View style={{ width: width, padding: 5 }}>
+                            <View>
+                                <Text style={styles.ticketCode}>{route.code}</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text>{route.departureCityName} </Text>
+                                <Icon name="long-arrow-right" type="font-awesome" color="grey" />
+                                <Text>{route.arrivalCityName}</Text>
+                            </View>
+                        </View>
+
+                        <View styles={{ justifyContent: 'center', alignItems: 'center' }}>
+                            {this.renderTickets(route.routeTickets)}
+                        </View>
+
                         <View>
-                            <Text style={styles.ticketCode}>{route.code}</Text>
+                            <NumberFormat value={route.totalAmount}
+                                displayType={'text'}
+                                thousandSeparator={true}
+                                suffix={' $'}
+                                renderText={value => (
+                                    <Text style={{ fontSize: 20, color: '#d32f2f' }}>Total Amount: {value}</Text>
+                                )}
+                            />
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <Text>{route.departureCityName} </Text>
-                            <Icon name="long-arrow-right" type="font-awesome" color="grey" />
-                            <Text>{route.arrivalCityName}</Text>
-                        </View>
-                    </View>
 
-                    <View styles={{ justifyContent: 'center', alignItems: 'center' }}>
-                        {this.renderTickets(route.routeTickets)}
-                    </View>
+                        <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
+                            {route.status === RouteStatus.NEW ?
+                                <View style={{ paddingTop: 5, paddingLeft: 20, paddingRight: 20, borderRadius: 10, flex: 0.5 }}>
+                                    <Button primary onPress={this.onBtnBuyRoutePressed} block>
+                                        {this.state.isBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                            : <Text>Buy Route</Text>}
+                                    </Button>
+                                </View> : null
+                            }
 
-                    <View>
-                        <NumberFormat value={route.totalAmount}
-                            displayType={'text'}
-                            thousandSeparator={true}
-                            suffix={' $'}
-                            renderText={value => (
-                                <Text style={{ fontSize: 20, color: '#d32f2f' }}>Total Amount: {value}</Text>
-                            )}
-                        />
-                    </View>
-
-                    <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
-                        <View style={{ paddingTop: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
-                            <Button success onPress={this.onBtnBuyRoutePressed} block>
-                                <Text>Buy Route</Text>
-                            </Button>
+                            <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 20, paddingRight: 20, borderRadius: 10, flex: 0.5 }}>
+                                {route.status !== RouteStatus.BOUGHT ?
+                                    <Button danger onPress={this.showDialogDelete} block>
+                                        {this.state.isDeleteLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                                            : <Text>Delete</Text>}
+                                    </Button>
+                                    : null
+                                }
+                                <Dialog.Container visible={this.state.dialogVisibleDelete}>
+                                    <Dialog.Title>Delete Route</Dialog.Title>
+                                    <Dialog.Description>
+                                        Do you want to Delete this Route ?
+                                    </Dialog.Description>
+                                    <Dialog.Button label="Delete Route" onPress={this.onBtnDeletePressed} />
+                                    <Dialog.Button label="Cancel" onPress={this.handleDeleteCANCEL} />
+                                </Dialog.Container>
+                            </View>
                         </View>
-                        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 10, paddingRight: 10, borderRadius: 10, flex: 0.5 }}>
-                            <Button danger onPress={this.showDialogDelete} block>
-                                <Text>Delete</Text>
-                            </Button>
-                            <Dialog.Container visible={this.state.dialogVisibleDelete}>
-                                <Dialog.Title>Delete Route</Dialog.Title>
-                                <Dialog.Description>
-                                    Do you want to Delete this Route ?
-                                        </Dialog.Description>
-                                <Dialog.Button label="Delete Route" onPress={this.onBtnDeletePressed} />
-                                <Dialog.Button label="Cancel" onPress={this.handleDeleteCANCEL} />
-                            </Dialog.Container>
-                        </View>
-                    </View>
-                </Content>
+                    </Content>}
             </Container>
         );
     }
