@@ -38,38 +38,38 @@ class RouteComponent {
             </div>
             </br>
             <div class="row">
-                <div class="col-md-12 route">
+                <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 route">
                     <div class="routeHeader">
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Code</b></h4>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Departure</b></h4>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Arrival</b></h4>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Amount</b></h4>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Status</b></h4>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <h4><b>Price</b></h4>
                         </div>
                     </div>
                     <div class="routeBody" style="color: #b8891d">
-                        <div class="col-md-2"><span><b>${this.route.code || ''}</b></span></div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span><b>${this.route.code || ''}</b></span></div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <span>${moment(this.route.departureDate).format(appConfig.format.datetime)}</span>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                             <span>${moment(this.route.arrivalDate).format(appConfig.format.datetime)}</span>
                         </div>
-                        <div class="col-md-2"><span>${this.route.ticketQuantity} tickets</span></div>
-                        <div class="col-md-2">${this.renderStatus(this.route.status)}</div>
-                        <div class="col-md-2"><h3>${numeral(this.route.totalAmount).format('$0,0.00')} $</h3></div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span>${this.route.ticketQuantity} tickets</span></div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">${this.renderStatus(this.route.status)}</div>
+                        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><h3>${numeral(this.route.totalAmount).format('$0,0.00')}</h3></div>
                     </div>
                     <div class="routeFooter">
                         <span style="color: red">Expired Date: ${moment(this.route.departureDate).format(appConfig.format.datetime)}</span>

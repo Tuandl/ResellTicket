@@ -132,6 +132,9 @@ export default class NavigationComponent {
                 break;
                 
             case this.navBarGroup.transaction:
+                if(currentUrl.indexOf(appConfig.url.transaction) > -1){
+                    return true;
+                }
                 return false;
         }
 

@@ -46,12 +46,22 @@ class CreditCardComponent {
         }
     }
 
+    // renderButton(isdefault) {
+    //     if (!isdefault) {
+    //         return `<td class="col-sm-1"><button type="button" id="btn-delete"  class="btn btn-danger btn-sm">Delete</button></td>
+    //         <td class="col-sm-1"><button type="button" id="btn-set-default" class="btn btn-info btn-sm">Set Default</button></td>`;
+    //     } else {
+    //         return `<td class="col-sm-1"><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-danger btn-sm"></button></td>
+    //         <td class="col-sm-1"><button type="button" id="btn-set-default" style="visibility: hidden" class="btn btn-info btn-sm"></button></td>`;
+    //     }
+    // }
+
     renderButton(isdefault) {
         if (!isdefault) {
-            return `<td class="col-sm-1"><button type="button" id="btn-delete"  class="btn btn-danger btn-sm">Delete</button></td>
+            return `<td><button type="button" id="btn-delete"  class="btn btn-danger btn-sm">Delete</button></td>
             <td class="col-sm-1"><button type="button" id="btn-set-default" class="btn btn-info btn-sm">Set Default</button></td>`;
         } else {
-            return `<td class="col-sm-1"><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-danger btn-sm"></button></td>
+            return `<td><button type="button" id="btn-delete" style="visibility: hidden" class="btn btn-danger btn-sm"></button></td>
             <td class="col-sm-1"><button type="button" id="btn-set-default" style="visibility: hidden" class="btn btn-info btn-sm"></button></td>`;
         }
     }
@@ -59,10 +69,10 @@ class CreditCardComponent {
     render() {
         const creditCard = this.creditCard;
 
-        this.html.innerHTML = `<td style="font-size: 12pt" class="col-sm-6">${creditCard.last4DigitsHash} &nbsp;&nbsp;&nbsp;
+        this.html.innerHTML = `<td style="font-size: 12pt" class="">${creditCard.last4DigitsHash} &nbsp;&nbsp;&nbsp;
             ${this.renderCheck(creditCard.isdefault)}
         </td>
-        <td class="col-sm-1"><img alt="Credit Card Logos" title="Credit Card Logos"
+        <td><img alt="Credit Card Logos" title="Credit Card Logos"
                 src=${this.renderBrand(creditCard.brand)}
                 width="60" height="40" /></td>
         ${this.renderButton(creditCard.isdefault)}`;

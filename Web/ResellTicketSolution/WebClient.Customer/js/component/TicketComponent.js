@@ -71,40 +71,40 @@ class TicketComponent {
                         </div>
                     </h3>
 
-                    <div class="route">
+                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 route">
                         <input type="hidden" value=${ticket.ticketId} />
                         <div class="routeHeader">
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
                                 <h4><b>Ticket</b></h4>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Departure</b></h4>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Arrival</b></h4>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Transportation</b></h4>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-3 col-md-2 col-lg-2">
                                 <h4><b>Status</b></h4>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Price</b></h4>
                             </div>
                         </div>
                         <div class="routeBody" style="color: '#b8891d'">
-                            <div class="col-md-2"><span><b>${ticket.ticketCode}</b></span></div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticket.ticketCode}</b></span></div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <span>${moment(ticket.departureDateTime).format(appConfig.format.datetime)}</span>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <span>${moment(ticket.arrivalDateTime).format(appConfig.format.datetime)}</span>
                             </div>
-                            <div class="col-md-2"><span>${ticket.transportationName}</span></div>
-                            <div class="col-md-2">${this.renderStatus(ticket.status)}</div>
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span>${ticket.transportationName}</span></div>
+                            <div class="col-xs-2 col-sm-3 col-md-2 col-lg-2">${this.renderStatus(ticket.status)}</div>
 
-                            <div class="col-md-2">
+                            <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h3>${numeral(ticket.sellingPrice).format('$0,0.00')}</h3>
                             </div>
                         </div>

@@ -27,7 +27,7 @@ a:hover {
 }
 
 .routeBody {
-    height: 55%;
+    height: 60%;
     width: 100%;
     border-bottom: 0.5px solid #B2B2B2;
     padding-top: 35px
@@ -39,7 +39,7 @@ a:hover {
 
 .routeFooter {
     float: right;
-    padding-top: 10px
+    padding-top: 4px
 }
 
 /*post, edit ticket*/

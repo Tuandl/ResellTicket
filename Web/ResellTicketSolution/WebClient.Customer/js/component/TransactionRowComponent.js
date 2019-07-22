@@ -12,11 +12,22 @@ class TransactionRowComponent {
         this.html = document.createElement('tr');
     }
 
+    renderType(type) {
+        switch (type) {
+            case "Payment":
+                return `<span class="label label-danger" style="font-size: 17px;" >${type}</span>`;
+            case "Payout":
+                return `<span class="label label-success" style="font-size: 17px;" >${type}</span>`;
+            case "Refund":
+                return `<span class="label label-success" style="font-size: 17px;" >${type}</span>`;
+        }
+    }
+
     render() {
         const transaction = this.transaction;
         const index = this.index;
         this.html.innerHTML = `<td>${index}</td>
-        <td>${transaction.type}</td>
+        <td>${this.renderType(transaction.type)}</td>
         <td>${transaction.description}</td>
         <td>${moment(transaction.createdAtUTC).format(appConfig.format.datetimeNotification)}</td>
         <td>${numeral(transaction.amount).format('$0,0.00')}</td>`;

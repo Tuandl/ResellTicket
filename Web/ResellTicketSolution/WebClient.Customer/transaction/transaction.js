@@ -30,8 +30,9 @@ function Transaction(){
 
         const transactions = await apiService.get(appConfig.apiUrl.transaction, params);
         const transactionListComponent = document.getElementById(id.transactionList);
-        transactions.forEach((transaction, index) => {
-            const transactionRow = new TransactionRowComponent(transaction, model.total + index + 1);
+        transactions.forEach(transaction => {
+            model.total += 1;
+            const transactionRow = new TransactionRowComponent(transaction, model.total);
             model.transactions.push(transactionRow);
 
             transactionRow.render();
@@ -49,7 +50,7 @@ function Transaction(){
             if($(window).scrollTop() + $(window).height() >= ($(document).height() - $('.footer').height())) {
                 if(!model.isLoadAll && !model.isLoadingMore) {
                     model.isLoadingMore = true;
-                    model.total = model.page * model.pageSize;
+                    //model.total = model.page * model.pageSize;
                     model.page += 1;
                     renderTransaction();
                 } 
