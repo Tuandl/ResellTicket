@@ -224,7 +224,7 @@ namespace Service.Services
             return ticketDataTable;
         }
 
-        public TicketDataTable GetCompletedTickets(string param, int page, int pageSize)
+        public TicketDataTable GetCompletedTickets(string param, int page, int pageSize) 
         {
             param = param ?? "";
             var completedTickets = _ticketRepository.GetAllQueryable()
@@ -251,26 +251,23 @@ namespace Service.Services
             var existedCustomer = _customerRepository.Get(x => x.Username == username && x.Deleted == false);
             var customerTickets = _ticketRepository.GetAllQueryable()
                 .Where(t => t.Deleted == false)
-                .Where(x => x.SellerId == existedCustomer.Id)
-                .Where(x => x.Deleted == false)
-                .OrderByDescending(x => x.UpdatedAtUTC ?? x.CreatedAtUTC)
-                .Skip((page - 1) * pageSize).Take(pageSize);
+                .Where(t => t.SellerId == existedCustomer.Id)
+                .OrderByDescending(t => t.UpdatedAtUTC ?? t.CreatedAtUTC);
+            var customerStatusTickets = customerTickets.ToList();
             switch (status)
             {
                 case TicketStatus.Bought:
-                    customerTickets = customerTickets.Where(x => x.Status == status);
+                    customerStatusTickets = customerTickets.Where(x => x.Status == status).ToList();
                     break;
                 case TicketStatus.Renamed:
-                    customerTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedSuccess);
+                    customerStatusTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedSuccess).ToList();
                     break;
                 case TicketStatus.Completed:
-                    customerTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedFail);
+                    customerStatusTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedFail).ToList();
                     break;
             }
-            //if (status != null && status != TicketStatus.Pending)
-            //{
-            //}
-            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerTickets.ToList());
+            var customerPagedTickets = customerStatusTickets.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerPagedTickets);
             return customerTicketVMs;
         }
 
@@ -291,57 +288,6 @@ namespace Service.Services
 
             return ticketRowViewModels;
         }
-
-        //public List<CustomerTicketViewModel> GetTicketAvailableForRouteTicket(int routeTicketId)
-        //{
-        //    var routeTicket = _routeTicketRepository.Get(x =>
-        //        x.Id == routeTicketId &&
-        //        x.Deleted == false
-        //    );
-
-        //    if (routeTicket == null) throw new NotFoundException();
-
-        //    DateTime? departureFromDate = null;
-        //    DateTime? arrivalToDate = null;
-        //    int departureCityId = routeTicket.DepartureStation.CityId;
-        //    int arrivalCityId = routeTicket.ArrivalStation.CityId;
-
-        //    var previousRouteTicket = _routeTicketRepository.Get(x =>
-        //        x.RouteId == routeTicket.RouteId &&
-        //        x.Deleted == false &&
-        //        x.Order == routeTicket.Order - 1
-        //    );
-
-        //    var nextRouteTicket = _routeTicketRepository.Get(x =>
-        //        x.RouteId == routeTicket.RouteId &&
-        //        x.Deleted == false &&
-        //        x.Order == routeTicket.Order + 1
-        //    );
-
-        //    if (previousRouteTicket != null)
-        //        //TODO: Add waiting time amount
-        //        departureFromDate = previousRouteTicket.Ticket.ArrivalDateTime;
-
-        //    if (nextRouteTicket != null)
-        //        //TODO: Add waiting time amount
-        //        arrivalToDate = nextRouteTicket.Ticket.DepartureDateTime;
-
-        //    //Get Tickets base on fromDate and toDate
-        //    var tickets = _ticketRepository.GetAllQueryable()
-        //        .Where(x => x.Deleted == false &&
-        //            x.Status == Core.Enum.TicketStatus.Valid &&
-        //            (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
-        //            (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
-        //            x.DepartureStation.CityId == departureCityId &&
-        //            x.ArrivalStation.CityId == arrivalCityId &&
-        //            x.Id != routeTicket.TicketId
-        //        );
-
-        //    var result = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(tickets.ToList());
-
-        //    return result;
-        //}
-        //Get
 
         public int PostTicket(string username, TicketPostViewModel model)
         {
@@ -390,14 +336,6 @@ namespace Service.Services
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id && x.Deleted == false);
             EditInfoTicket(existedTicket, model);
-            //if (CheckInvalidFieldRemain(existedTicket))
-            //{
-            //    existedTicket.Status = Core.Enum.TicketStatus.Pending;
-            //}
-            //else
-            //{
-            //    existedTicket.Status = Core.Enum.TicketStatus.Invalid;
-            //}
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
         }
@@ -461,24 +399,6 @@ namespace Service.Services
                 return "Not found ticket";
             }
 
-            //var routeTicket = _routeTicketRepository.Get(x => x.TicketId == existedTicket.Id & x.Deleted == false);
-            //List<RouteTicket> routeTickets = _routeTicketRepository.GetAllQueryable().Where(x => x.RouteId == routeTicket.RouteId).ToList();
-            ////set lại status cho ticket
-            //foreach (var routeticket in routeTickets)
-            //{
-            //    if (routeticket.Ticket.Id == existedTicket.Id)
-            //    {
-            //        routeticket.Ticket.Status = TicketStatus.Pending;
-            //    }
-            //    if (routeticket.Ticket.Id != existedTicket.Id && routeticket.Ticket.Status == TicketStatus.Bought)
-            //    {
-            //        routeticket.Ticket.Status = TicketStatus.Valid;
-            //    }
-
-            //    _ticketRepository.Update(routeticket.Ticket);
-            //    _unitOfWork.CommitChanges();
-            //}
-
             existedTicket.Status = Core.Enum.TicketStatus.Invalid;
             _ticketRepository.Update(existedTicket);
             existedTicket.IsTicketCodeValid = invalidField.ToLower().Contains("ticket code") ? false : true;
@@ -497,13 +417,6 @@ namespace Service.Services
             {
                 return ex.Message;
             }
-            //xóa tikcetId đó khỏi Route
-            //foreach (var routeticket in routeTickets)
-            //{
-            //    routeticket.Deleted = true;
-            //    _routeTicketRepository.Update(routeticket);
-            //    _unitOfWork.CommitChanges();
-            //}
             var message = "Ticket " + existedTicket.TicketCode + " is invalid. " + invalidField + " are incorrect.";
             List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
 
@@ -824,11 +737,6 @@ namespace Service.Services
 
         public TicketDataTable GetReplaceTickets(int routeTicketId)
         {
-            //int renamedFailTicketOrder = _routeTicketRepository.Get(x => x.Deleted == false
-            //                    && x.Id == routeTicketId && x.TicketId == ticketId
-            //                    && x.Route.Status == RouteStatus.Bought
-            //                    && x.Ticket.Status == TicketStatus.Bought).Order;
-
             var routeTickets = _routeTicketRepository.Get(
                                 x => x.Deleted == false && x.Id == routeTicketId 
                                 && x.Route.Status == RouteStatus.Bought)

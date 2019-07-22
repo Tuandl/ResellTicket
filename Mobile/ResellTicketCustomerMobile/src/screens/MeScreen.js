@@ -68,7 +68,7 @@ export default class MeScreen extends Component {
                     </View>
                     <View style={styles.profile}>
                         <List>
-                            <TouchableNativeFeedback onPress={() => navigate('PostedTicket', { username: username })}>
+                            {/* <TouchableNativeFeedback onPress={() => navigate('PostedTicket', { username: username })}>
                                 <ListItem style={{ borderBottomWidth: 0.5 }}>
                                     <Left>
                                         <Text>Posted Ticket</Text>
@@ -77,7 +77,7 @@ export default class MeScreen extends Component {
                                         <Icon name="chevron-right" type="font-awesome" size={15} />
                                     </Right>
                                 </ListItem>
-                            </TouchableNativeFeedback>
+                            </TouchableNativeFeedback> */}
                             <TouchableNativeFeedback onPress={() => navigate('CreditCardViewList')}  >
                                 <ListItem style={{ borderBottomWidth: 0.5 }}>
                                     <Left>

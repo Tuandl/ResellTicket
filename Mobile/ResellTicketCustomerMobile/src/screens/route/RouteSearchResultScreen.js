@@ -1,6 +1,6 @@
 import { Body, Button, Container, Content, Header, Left, Right, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import RouteViewComponent from '../../components/RouteComponent/RouteSearchViewComponent';
@@ -24,6 +24,7 @@ export default class RouteSearchResultScreen extends Component {
         this.navigation = this.props.navigation;
         this.state = {
             routes: [],
+            isLoading: false,
         };
 
         this.onRoutePressed = this.onRoutePressed.bind(this);
@@ -38,9 +39,13 @@ export default class RouteSearchResultScreen extends Component {
         if(params === null || params === undefined) {
             this.navigation.pop();
         } else {
+            this.setState({
+                isLoading: true
+            })
             const response = await api.get(this.URL_ROUTE_SEARCH, params);
             if(response.status === 200) {
                 this.setState({
+                    isLoading: false,
                     routes: response.data,
                 });
             } else {
@@ -75,6 +80,9 @@ export default class RouteSearchResultScreen extends Component {
     }
 
     renderRoutes(routes) {
+        if(this.state.isLoading) {
+            return <ActivityIndicator size="large" animating />
+        }
         return routes.map((route, index) => 
             <RouteViewComponent route={route} key={index} onRoutePressed={(route) => this.onRoutePressed(route)}/>
         );

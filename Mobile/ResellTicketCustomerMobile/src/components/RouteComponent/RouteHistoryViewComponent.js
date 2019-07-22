@@ -45,7 +45,7 @@ export default class RouteHistoryViewComponent extends Component {
         if(isValid) {
             return <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
         } else {
-            return <Text styles={{ fontSize: 12, color: 'red'}}>Not Available</Text>
+            return <Text style={{ fontSize: 12, color: 'red'}}>Not Available</Text>
         }
     }
 

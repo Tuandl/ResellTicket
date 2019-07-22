@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { Dimensions, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Container, Header, Body, Title, Item, Picker, Content, Button, Left, Label, Right } from 'native-base';
 import { Icon, Input } from 'react-native-elements';
 import Api from '../../service/Api';
@@ -10,6 +10,8 @@ import { TouchableNativeFeedback, TouchableOpacity, ScrollView } from 'react-nat
 import { RNToasty } from 'react-native-toasty';
 import Autocomplete from 'react-native-autocomplete-input';
 import Dialog from "react-native-dialog";
+
+const { width } = Dimensions.get('window');
 
 export default class PostEditTicket extends Component {
     constructor(props) {
@@ -165,7 +167,7 @@ export default class PostEditTicket extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => navigate('PostedTicket')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
@@ -215,7 +217,7 @@ export default class PostEditTicket extends Component {
                                             transportationName: item.name,
                                             transportationId: item.id
                                         })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -236,7 +238,7 @@ export default class PostEditTicket extends Component {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
                                         onPress={() => this.setState({ ticketTypes: [], ticketTypeName: item.name, ticketTypeId: item.id })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -262,7 +264,7 @@ export default class PostEditTicket extends Component {
                                             departureStationId: item.id === this.state.departureCityId ? this.state.departureStationId : -1,
                                             departureStationName: item.id === this.state.departureCityId ? departureStationName : ''
                                         })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -288,7 +290,7 @@ export default class PostEditTicket extends Component {
                                             departureCityId: item.cityId,
                                             departureCityName: item.cityName
                                         })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -314,7 +316,7 @@ export default class PostEditTicket extends Component {
                                             arrivalStationId: item.id === this.state.arrivalCityId ? this.state.arrivalStationId : -1,
                                             arrivalStationName: item.id === this.state.arrivalCityId ? arrivalStationName : ''
                                         })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -340,7 +342,7 @@ export default class PostEditTicket extends Component {
                                             arrivalCityId: item.cityId,
                                             arrivalCityName: item.cityName
                                         })}>
-                                        <Item>
+                                        <Item style={{height: 35}}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -425,20 +427,20 @@ export default class PostEditTicket extends Component {
                                 )}
                             />
                             {isEdit ?
-                                <Button rounded block primary
-                                    style={{ margin: 40, marginBottom: 0 }}
+                                <Button block primary
+                                    style={{ margin: 10, marginTop: 40 }}
                                     onPress={this.editTicket}>
                                     {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Save</Text>}
                                 </Button> :
-                                <Button rounded block primary
-                                    style={{ margin: 40 }}
+                                <Button block primary
+                                    style={{ margin: 10, marginTop: 40}}
                                     onPress={this.postTicket}>
                                     {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Post Now</Text>}
                                 </Button>}
-                            {isEdit ? <Button rounded block danger
-                                style={{ margin: 40, marginTop: 10, marginBottom: 0 }}
+                            {isEdit ? <Button block danger
+                                style={{ margin: 10, marginTop: 10 }}
                                 onPress={this.showDialogDeletePostedTicket}>
                                 {isDeleteLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                     : <Text style={styles.buttonText}>Delete</Text>}
@@ -616,12 +618,6 @@ export default class PostEditTicket extends Component {
         })
         const res = await Api.get('api/city?name=' + searchValue + '&ignoreCityId=' + this.state.arrivalCityId);
         if (res.status === 200) {
-            // for(var i = 0;i < res.data.length; i++) {
-            //     if(res.data[i].id === this.state.arrivalCityId) {
-            //         res.data.splice(i, 1)
-            //         break;
-            //     }
-            // }
             this.setState({
                 departureCities: res.data
             })
@@ -634,12 +630,6 @@ export default class PostEditTicket extends Component {
         })
         const res = await Api.get('api/station?cityId=' + this.state.departureCityId + '&name=' + searchValue + '&ignoreStationId=' + this.state.arrivalStationId);
         if (res.status === 200) {
-            // for(var i = 0;i < res.data.length; i++) {
-            //     if(res.data[i].id === this.state.departureStationId) {
-            //         res.data.splice(i, 1)
-            //         break;
-            //     }
-            // }
             this.setState({
                 departureStations: res.data
             })
@@ -652,12 +642,6 @@ export default class PostEditTicket extends Component {
         })
         const res = await Api.get('api/city?name=' + searchValue + '&ignoreCityId=' + this.state.departureCityId);
         if (res.status === 200) {
-            // for(var i = 0;i < res.data.length; i++) {
-            //     if(res.data[i].id === this.state.departureCityId) {
-            //         res.data.splice(i, 1)
-            //         break;
-            //     }
-            // }
             this.setState({
                 arrivalCities: res.data
             })
@@ -670,12 +654,6 @@ export default class PostEditTicket extends Component {
         })
         const res = await Api.get('api/station?cityId=' + this.state.arrivalCityId + '&name=' + searchValue + '&ignoreStationId=' + this.state.departureStationId);
         if (res.status === 200) {
-            // for(var i = 0;i < res.data.length; i++) {
-            //     if(res.data[i].id === this.state.departureStationId) {
-            //         res.data.splice(i, 1)
-            //         break;
-            //     }
-            // }
             this.setState({
                 arrivalStations: res.data
             })

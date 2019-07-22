@@ -66,13 +66,13 @@ export default class RouteSearchFormScreen extends Component {
 
     onDepartureDateChanged(value) {
         this.setState({
-            departureDate: value
+            departureDate: moment(value).format('ddd, MMM DD YYYY')
         })
     }
 
     onArrivalDateChanged(value) {
         this.setState({
-            arrivalDate: value
+            arrivalDate: moment(value).format('ddd, MMM DD YYYY')
         })
     }
 
@@ -126,7 +126,7 @@ export default class RouteSearchFormScreen extends Component {
                 </Header>
                 <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
                     {/* Get Departure City */}
-                    <Label style={styles.label}>Departure City:</Label>
+                    <Label style={styles.label}>Departure City</Label>
                     {/* <View style={styles.container}> */}
                         <Autocomplete
                             defaultValue={departureCityName}
@@ -141,7 +141,7 @@ export default class RouteSearchFormScreen extends Component {
                             renderItem={({ item }) => (
                                 <TouchableOpacity key={item.id}
                                     onPress={() => this.setState({ departureCityName: item.name, departureCityId: item.id, departureCitiesAutoSuggest: [] })}>
-                                    <Item>
+                                    <Item style={{height: 35}}>
                                         <Text>
                                             {item.name}
                                         </Text>
@@ -152,7 +152,7 @@ export default class RouteSearchFormScreen extends Component {
                     {/* </View> */}
 
                     {/* Get Arrival City */}
-                    <Label style={styles.label}>Arrival City:</Label>
+                    <Label style={styles.label}>Arrival City</Label>
                     {/* <View style={styles.container}> */}
                         <Autocomplete
                             defaultValue={arrivalCityName}
@@ -167,7 +167,7 @@ export default class RouteSearchFormScreen extends Component {
                             renderItem={({ item }) => (
                                 <TouchableOpacity key={item.id}
                                     onPress={() => this.setState({ arrivalCityName: item.name, arrivalCityId: item.id, arrivalCitiesAutoSuggest: [] })}>
-                                    <Item>
+                                    <Item style={{height: 35}}>
                                         <Text>
                                             {item.name}
                                         </Text>
@@ -179,7 +179,7 @@ export default class RouteSearchFormScreen extends Component {
 
 
                     {/* Select Departure date */}
-                    <Label style={styles.label}>Departure Date:</Label>
+                    <Label style={styles.label}>Departure Date</Label>
                     <DatePicker
                         defaultDate={departureDate}
                         minimumDate={new Date()}
@@ -195,7 +195,7 @@ export default class RouteSearchFormScreen extends Component {
                     />
 
                     {/* Select Arrival date */}
-                    <Label style={styles.label}>Arrival Date:</Label>
+                    <Label style={styles.label}>Arrival Date</Label>
                     <DatePicker
                         defaultDate={arrivalDate}
                         minimumDate={new Date()}
@@ -227,7 +227,8 @@ export default class RouteSearchFormScreen extends Component {
                     </Picker>
 
                     <View style={{ marginTop: 15 }}>
-                        <Button iconLeft full info
+                        <Button iconLeft block primary
+                            style={{margin: 10}}
                             onPress={this.onBtnSearchPress}
                         >
                             <Icon name="search" color="#fff"></Icon>

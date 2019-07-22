@@ -80,7 +80,7 @@ export default class TransactionViewListScreen extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => this.props.navigation.navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>

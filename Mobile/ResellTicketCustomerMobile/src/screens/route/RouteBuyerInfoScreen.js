@@ -1,6 +1,6 @@
 import { Body, Button, Container, Content, DatePicker, Header, Label, Left, View, Right, Title, Item } from 'native-base';
 import React, { Component } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, ActivityIndicator } from 'react-native';
 import { RNToasty } from 'react-native-toasty';
 import { Icon, Input } from 'react-native-elements';
 import api from '../../service/Api';
@@ -19,7 +19,8 @@ export default class RouteBuyerInfoScreen extends Component {
             buyerPassengerEmail: params.buyerPassengerEmail,
             buyerPassengerPhone: params.buyerPassengerPhone,
             buyerPassengerIdentify: '',
-            dialogVisibleConfirmBuy: false
+            dialogVisibleConfirmBuy: false,
+            isConfirmBuyLoading: false,
         };
 
         // this.onDateOfBirthChanged = this.onDateOfBirthChanged.bind(this);
@@ -62,6 +63,10 @@ export default class RouteBuyerInfoScreen extends Component {
     }
 
     async onBtnConfirmCallApiPressed() {
+        this.setState({
+            isConfirmBuyLoading: true,
+            dialogVisibleConfirmBuy: false,
+        })
         var params = {
             routeId: this.state.routeId,
             buyerPassengerEmail: this.state.buyerPassengerEmail,
@@ -73,7 +78,7 @@ export default class RouteBuyerInfoScreen extends Component {
         const { navigation } = this.props;
         if (resBuyRoute.status === 200) {
             this.setState({
-                dialogVisibleConfirmBuy: false
+                isConfirmBuyLoading: false
             });
             RNToasty.Success({
                 title: 'Buy route Successfully'
@@ -122,28 +127,28 @@ export default class RouteBuyerInfoScreen extends Component {
                         value={lastName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     /> */}
-                    <Label style={styles.label}>New Passenger Name:</Label>
+                    <Label style={styles.label}>New Passenger Name</Label>
                     <Input
                         onChangeText={buyerPassengerName => this.setState({ buyerPassengerName })}
                         placeholder="Enter Your Name"
                         value={buyerPassengerName}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Email:</Label>
+                    <Label style={styles.label}>New Passenger Email</Label>
                     <Input
                         onChangeText={buyerPassengerEmail => this.setState({ buyerPassengerEmail })}
                         placeholder="Enter Email"
                         value={buyerPassengerEmail}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Phone:</Label>
+                    <Label style={styles.label}>New Passenger Phone</Label>
                     <Input
                         onChangeText={buyerPassengerPhone => this.setState({ buyerPassengerPhone })}
                         placeholder="Enter Phone"
                         value={buyerPassengerPhone}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Identify:</Label>
+                    <Label style={styles.label}>New Passenger Identify</Label>
                     <Input
 
                         onChangeText={buyerPassengerIdentify => this.setState({ buyerPassengerIdentify })}
@@ -171,10 +176,11 @@ export default class RouteBuyerInfoScreen extends Component {
                             <Icon name="calendar-check" type="material-community" color="grey" />
                     </Right>
                 </Item> */}
-                    <Button rounded block success
-                        style={{ margin: 40, marginBottom: 0 }}
+                    <Button block primary
+                        style={{ margin: 10, marginTop:40, marginBottom: 0 }}
                         onPress={this.onBtnConfirmPressed}>
-                        <Text style={styles.buttonText}>Confirm</Text>
+                            {this.state.isConfirmBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                            : <Text style={styles.buttonText}>Confirm</Text>}
                     </Button>
                     <Dialog.Container visible={this.state.dialogVisibleConfirmBuy}>
                         <Dialog.Title>Confirm Buy Route</Dialog.Title>

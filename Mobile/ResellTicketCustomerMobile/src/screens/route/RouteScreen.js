@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View, ActivityIndicator, FlatList } from 'react-native';
 import { Icon, ButtonGroup } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
 import RouteHistoryView from '../../components/RouteComponent/RouteHistoryViewComponent';
@@ -28,6 +28,7 @@ class RouteScreen extends Component {
         this.state = {
             routes: [],
             selectedIndex: this.buttonIndexes.history,
+            isLoading: false
         };
         this.updateButtonGroupIndex = this.updateButtonGroupIndex.bind(this);
         this.onHistoryPressed = this.onHistoryPressed.bind(this);
@@ -47,6 +48,9 @@ class RouteScreen extends Component {
     }
 
     async getCustomerRoute(selectedIndex) {
+        this.setState({
+            isLoading: true
+        })
         const params = {
             page: this.currentPage,
             pageSize: this.pageSize,
@@ -57,17 +61,23 @@ class RouteScreen extends Component {
             if(selectedIndex === undefined) {
                 this.setState({
                     routes: response.data.data,
+                    isLoading: false
                 });
             } else {
                 this.setState({
                     routes: response.data.data,
                     selectedIndex: selectedIndex,
+                    isLoading: false
                 });
             }
         }
     }
 
     renderRoutes(routes) {
+        var {isLoading} = this.state;
+        if(isLoading) {
+            return <ActivityIndicator size="large" animating />
+        } 
         return routes.map((route) =>
             <RouteHistoryView route={route} key={route.id} onPress={this.onHistoryPressed}/>
         );
@@ -93,7 +103,7 @@ class RouteScreen extends Component {
     }
 
     render() {
-        const { routes, selectedIndex } = this.state;
+        const { routes, selectedIndex, isLoading } = this.state;
         const { navigate } = this.props.navigation;
 
         const buttonHistory = () => <Text>History</Text>
@@ -104,7 +114,6 @@ class RouteScreen extends Component {
 
         //  const BadgedIcon = withBadge(2)(Icon)
         return (
-
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left></Left>
@@ -128,6 +137,18 @@ class RouteScreen extends Component {
                 <Content style={{ flex: 1, backgroundColor: 'white' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                     {this.renderRoutes(routes)}
+                    {/* <FlatList onEndReached={this.onEndReached}
+                        onEndReachedThreshold={0.1}
+                        data={postedTickets}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item, index }) => (
+                            <RouteHistoryView
+                                route={route} key={route.id} 
+                                onPress={this.onHistoryPressed}
+                                navigate={navigate} />
+                        )}
+                        ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}>
+                    </FlatList> */}
                 </Content>
             </Container>
         );
