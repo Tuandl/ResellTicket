@@ -104,7 +104,9 @@ class SellerTicketComponent {
                         </div>
                     </div>
                     <div class="routeFooter">
-                        <span style="color: red">Expired Date: ${moment(ticket.expiredDateTime).format(appConfig.format.datetime)}</span>
+                        ${ticket.status != ticketStatus.Completed && ticket.status != ticketStatus.RenamedFail ? 
+                            `<span style="color: red">Expired Date: ${moment(ticket.expiredDateTime).format(appConfig.format.datetime)}</span>`
+                        : ''}
                     </div>
                 </div>
             </div>`;

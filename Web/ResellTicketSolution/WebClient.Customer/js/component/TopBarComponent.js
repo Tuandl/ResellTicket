@@ -1,14 +1,16 @@
 import toastService from "../service/toastService.js";
-import {authenticationService} from '../service/authenticationService.js';
+import { authenticationService } from '../service/authenticationService.js';
 import commonService from "../service/commonService.js";
 import NotificationDropDownComponent from "./notificationComponents/NotificationDropDownComponent.js";
+import apiService from '../service/apiService.js';
+import { appConfig } from '../../constant/appConfig.js';
 
 export default class TopBarComponent {
-    
+
     containerId = 'top-bar-container';
-    
+
     constructor(containerId) {
-        if(containerId) {
+        if (containerId) {
             this.containerId = containerId;
         }
 
@@ -16,11 +18,11 @@ export default class TopBarComponent {
     }
 
     render() {
-        if(!this.container) {
+        if (!this.container) {
             toastService.error('Not found container for Top bar');
         }
 
-        if(authenticationService.isLogedin()) {
+        if (authenticationService.isLogedin()) {
             this.renderLogedinTopbar();
         } else {
             this.renderAnnonymousTopbar();
@@ -36,7 +38,7 @@ export default class TopBarComponent {
                 <h4>Welcome <span class="text-capitalize">${currentUser.fullName}</span>!!!</h4>
             </li>`
         );
-        
+
         const profileItem = commonService.htmlToElement(`
             <li>
                 <h4><a href="/updateProfile.html"><i class="fa fa-user" aria-hidden="true"></i>Me</a>
@@ -83,8 +85,18 @@ export default class TopBarComponent {
         this.container.appendChild(element);
     }
 
-    onLogoutClicked() {
-        authenticationService.logout();
-        window.location.replace('/index.html');
+    async onLogoutClicked() {
+        var deviceId = ''
+        await OneSignal.getUserId(function (userId) {
+            deviceId = userId;
+        });
+        var params = {
+            deviceId : deviceId
+        }
+        var res = await apiService.putParams(appConfig.apiUrl.logout, params)
+        if (res.status === 200) {
+            authenticationService.logout();
+            window.location.replace('/index.html');
+        }
     }
 }

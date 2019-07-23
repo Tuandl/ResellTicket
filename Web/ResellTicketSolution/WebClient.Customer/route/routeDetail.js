@@ -6,6 +6,7 @@ import CustomerComponent from "../js/component/CustomerComponent.js";
 import toastService from "../js/service/toastService.js";
 import { ConfirmDialogDeleteRouteDetail } from '../js/component/dialogComponent/ConfirmDialogDeleteRouteDetail.js';
 import { ConfirmDialogConfirmBuyerDetail } from '../js/component/dialogComponent/ConfirmDialogConfirmBuyerDetail.js';
+import routeStatus from '../js/enum/routeStatus.js';
 
 function routeDetail() {
 
@@ -63,14 +64,22 @@ function routeDetail() {
         renderTickets(model.route.routeTickets);
         const customerComponent = new CustomerComponent(model.route);
 
+        if(model.route.status === routeStatus.New) {
+            elements.btnBuy.style.display = 'inline';
+            elements.btnBuy.addEventListener('click', onBtnBuyClicked);
+            elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
+            elements.btnUpdateRoute.addEventListener('click', onBtnUpdateRouteTicketClicked);
+        }
+        if(model.route.status != routeStatus.Bought) {
+            elements.btnDelete.style.display = 'inline';
+            elements.btnDelete.addEventListener('click', showConfirmDialogDeleteRouteDetail);
+            
+        }
+        
         //elements.btnDelete.addEventListener('click', onBtnDeleteClicked);
-        elements.btnDelete.addEventListener('click', showConfirmDialogDeleteRouteDetail);
-        elements.btnBuy.addEventListener('click', onBtnBuyClicked);
-        elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
         // customerComponent.domElement.addEventListener('click', function(e) {
         //     onBtnBuyClicked(model.route);
         // });
-        elements.btnUpdateRoute.addEventListener('click', onBtnUpdateRouteTicketClicked);
     }
 
     function initConfirmDialog() {

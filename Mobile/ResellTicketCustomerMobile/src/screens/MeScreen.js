@@ -5,6 +5,8 @@ import { Icon, Avatar } from 'react-native-elements';
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 import keyConstant from '../constants/keyConstant';
 import Api from '../../src/service/Api';
+import OneSignal from 'react-native-onesignal'; 
+import NavigationService from '../service/NavigationService';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -14,10 +16,26 @@ export default class MeScreen extends Component {
         super(props);
         this.state = {
             username: '',
-            isExistConnectAccount: false
+            isExistConnectAccount: false,
+            deviceId: '',
         };
     }
 
+    componentWillMount() {
+        OneSignal.addEventListener('ids', this.onIds);
+        OneSignal.configure()
+    }
+
+    componentWillUnmount() {
+        OneSignal.removeEventListener('ids', this.onIds);
+    }
+
+    onIds = (device) => {
+        console.log('Device info: ', device);
+        this.setState({
+            deviceId: device.userId
+        })
+    }
 
     componentDidMount() {
         this.getUsename();
@@ -128,14 +146,26 @@ export default class MeScreen extends Component {
                                     </Right>
                                 </ListItem>
                             </TouchableNativeFeedback>
-                            <ListItem style={{ borderBottomWidth: 0.5 }}>
-                                <Text>Logout</Text>
-                            </ListItem>
+                            <TouchableNativeFeedback onPress={this.logout}>
+                                <ListItem style={{ borderBottomWidth: 0.5 }}>
+                                    <Text>Logout</Text>
+                                </ListItem>
+                            </TouchableNativeFeedback>
                         </List>
                     </View>
                 </Content>
             </Container>
         );
+    }
+
+    logout = async () => {
+        var {deviceId} = this.state;
+        const res = await Api.put('api/customer/logout?deviceId=' + deviceId);
+        if(res.status === 200) {
+            //console.log(this.props.navigation)
+            NavigationService.navigate('Login');
+            AsyncStorage.clear();
+        }
     }
 }
 
