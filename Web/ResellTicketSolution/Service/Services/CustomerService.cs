@@ -517,9 +517,12 @@ namespace Service.Services
         {
             var existedCustomer = _customerRepository.Get(x => x.Username == username);
             var customerDevice = _customerDeviceRepository.Get(x => x.DeviceId == deviceId && x.CustomerId == existedCustomer.Id);
-            customerDevice.IsLogout = true;
-            _customerDeviceRepository.Update(customerDevice);
-            _unitOfWork.CommitChanges();
+            if (customerDevice != null)
+            {
+                customerDevice.IsLogout = true;
+                _customerDeviceRepository.Update(customerDevice);
+                _unitOfWork.CommitChanges();
+            }
         }
     }
 }

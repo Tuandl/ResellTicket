@@ -52,14 +52,18 @@ namespace Service.Services
             var customerDevice = _customerDeviceRepository.Get(x => x.DeviceId == loginViewModel.DeviceId);
             if(customerDevice == null)
             {
-                customerDevice = new CustomerDevice
+                if(!string.IsNullOrEmpty(loginViewModel.DeviceId))
                 {
-                    CustomerId = customer.Id,
-                    DeviceId = loginViewModel.DeviceId,
-                    IsLogout = false
-                };
-                _customerDeviceRepository.Add(customerDevice);
-            } else
+                    customerDevice = new CustomerDevice
+                    {
+                        CustomerId = customer.Id,
+                        DeviceId = loginViewModel.DeviceId,
+                        IsLogout = false
+                    };
+                    _customerDeviceRepository.Add(customerDevice);
+                }
+            } 
+            else
             {
                 customerDevice.IsLogout = false;
                 customerDevice.CustomerId = customer.Id;
