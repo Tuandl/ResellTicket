@@ -259,21 +259,10 @@ namespace WebAPI.Controllers
         }
 
         //[HttpPost]
-        //[Route("send-email-receipt-for-buyer")]
-        //public IActionResult SendEmailReceiptForBuyer(RouteDetailViewModel model)
+        //[Route("send-email-refund-for-seller")]
+        //public IActionResult SendEmailRefundForSeller(int ticketId)
         //{
-        //    //if (!ModelState.IsValid)
-        //    //{
-        //    //    return BadRequest("Invalid Request");
-        //    //}
-
-        //    //var username = User.Identity.Name;
-        //    _sendGridService.SendEmailReceiptForBuyer(model);
-
-        //    //if (!string.IsNullOrEmpty(sendResult))
-        //    //{
-        //    //    return StatusCode((int)HttpStatusCode.NotAcceptable, sendResult);
-        //    //}
+        //    _sendGridService.SendEmailRefundForSeller(ticketId);
         //    return Ok();
         //}
 
