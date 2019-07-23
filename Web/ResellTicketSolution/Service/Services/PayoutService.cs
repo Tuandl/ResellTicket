@@ -12,6 +12,7 @@ using ViewModel.AppSetting;
 using Microsoft.Extensions.Options;
 using System.Linq;
 using Core.Enum;
+using Service.EmailService;
 
 namespace Service.Services
 {
@@ -34,10 +35,11 @@ namespace Service.Services
         private readonly IOptions<CrediCardSetting> SETTING;
         private readonly IUserRepository _userRepository;
         private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
+        private readonly ISendGridService _sendGridService;
         public PayoutService(IPayoutRepository payoutRepository, ITicketRepository ticketRepository, IMapper mapper, IUnitOfWork unitOfWork,
             ICustomerRepository customerRepository, ICreditCardRepository creditCardRepository, IRouteTicketRepository routeTicketRepository,
             IPaymentRepository paymentRepository, IRouteRepository routeRepository, IOptions<CrediCardSetting> options, IUserRepository userRepository,
-            IResolveOptionLogRepository resolveOptionLogRepository)
+            IResolveOptionLogRepository resolveOptionLogRepository, ISendGridService sendGridService)
         {
             _payoutRepository = payoutRepository;
             _ticketRepository = ticketRepository;
@@ -51,6 +53,7 @@ namespace Service.Services
             SETTING = options;
             _userRepository = userRepository;
             _resolveOptionLogRepository = resolveOptionLogRepository;
+            _sendGridService = sendGridService;
         }
 
         public string MakePayoutToCustomer(int TicketId, string username)
@@ -148,6 +151,8 @@ namespace Service.Services
                 _routeRepository.Update(route);
             }
             _unitOfWork.CommitTransaction();
+
+            _sendGridService.SendEmailReceiptForSeller(TicketId);
 
             return "";
         }

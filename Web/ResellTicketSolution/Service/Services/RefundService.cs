@@ -14,6 +14,7 @@ using System.Linq;
 using Core.Enum;
 using Service.NotificationService;
 using Microsoft.AspNetCore.Identity;
+using Service.EmailService;
 
 namespace Service.Services
 {
@@ -37,6 +38,7 @@ namespace Service.Services
         private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
         private readonly IUserRepository _userRepository;
         private readonly IRouteRepository _routeRepository;
+        private readonly ISendGridService _sendGridService;
 
         public RefundService()
         {
@@ -45,7 +47,7 @@ namespace Service.Services
         public RefundService(IRefundRepository refundRepository, IRouteTicketRepository routeTicketRepository, ITicketRepository ticketRepository,
         IPaymentRepository paymentRepository, IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options,
         IOneSignalService oneSignalService, IPayoutRepository payoutRespository, IResolveOptionLogRepository resolveOptionLogRepository,
-        IUserRepository userRepository, IRouteRepository routeRepository)
+        IUserRepository userRepository, IRouteRepository routeRepository, ISendGridService sendGridService)
         {
             _refundRepository = refundRepository;
             _routeTicketRepository = routeTicketRepository;
@@ -59,6 +61,7 @@ namespace Service.Services
             _resolveOptionLogRepository = resolveOptionLogRepository;
             _userRepository = userRepository;
             _routeRepository = routeRepository;
+            _sendGridService = sendGridService;
         }
 
         public string RefundToTalMoneyToCustomer(int TicketId, ResolveOption resolveOption, string username)
@@ -138,6 +141,8 @@ namespace Service.Services
             }
 
             _unitOfWork.CommitChanges();
+
+            _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId);
             return "";
         }
 
@@ -220,6 +225,8 @@ namespace Service.Services
             //}
 
             _unitOfWork.CommitTransaction();
+
+            _sendGridService.SendEmailRefundForBuyerOneTicket(failTicketId);
         }
     }
 }
