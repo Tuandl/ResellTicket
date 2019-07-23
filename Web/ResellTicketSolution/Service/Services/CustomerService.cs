@@ -24,6 +24,7 @@ namespace Service.Services
 {
     public interface ICustomerService
     {
+        void Logout(string username, string deviceId);
         bool CreateCustomer(CustomerRegisterViewModel model);
         string ViewAccountConnect(string username);
         string AddAccountStripeToReceiveMoney(string usename, string accountId);
@@ -74,6 +75,7 @@ namespace Service.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOptions<CrediCardSetting> SETTING;
         private readonly IOTPService _oTPService;
+        private readonly ICustomerDeviceRepository _customerDeviceRepository;
 
 
         public CustomerService(ICustomerRepository customerRepository,
@@ -85,7 +87,8 @@ namespace Service.Services
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IOTPService oTPService,
-            IOptions<CrediCardSetting> options)
+            IOptions<CrediCardSetting> options,
+            ICustomerDeviceRepository customerDeviceRepository)
         {
             _customerRepository = customerRepository;
             _paymentRepository = paymentRepository;
@@ -97,6 +100,7 @@ namespace Service.Services
             _unitOfWork = unitOfWork;
             _oTPService = oTPService;
             SETTING = options;
+            _customerDeviceRepository = customerDeviceRepository;
         }
 
         public bool CreateCustomer(CustomerRegisterViewModel model)
@@ -460,7 +464,7 @@ namespace Service.Services
                     }
                     ).OrderByDescending(x => x.CreatedAtUTC).Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-               
+
             ////var listRefund =
             ////    (from RP in _refundRepository.GetAllQueryable()
             ////     join PM in _paymentRepository.GetAllQueryable() on RP.PaymentId equals PM.Id
@@ -507,6 +511,15 @@ namespace Service.Services
             ////}
 
             return transactionAllRecord;
+        }
+
+        public void Logout(string username, string deviceId)
+        {
+            var existedCustomer = _customerRepository.Get(x => x.Username == username);
+            var customerDevice = _customerDeviceRepository.Get(x => x.DeviceId == deviceId && x.CustomerId == existedCustomer.Id);
+            customerDevice.IsLogout = true;
+            _customerDeviceRepository.Update(customerDevice);
+            _unitOfWork.CommitChanges();
         }
     }
 }

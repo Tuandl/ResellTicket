@@ -35,7 +35,7 @@ export default class LoginScreen extends Component {
     }
 
     onIds = (device) => {
-        console.log('Device info: ', device);
+        //console.log('Device info: ', device);
         this.setState({
             deviceId: device.userId
         })

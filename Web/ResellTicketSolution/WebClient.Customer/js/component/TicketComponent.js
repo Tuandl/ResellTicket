@@ -32,7 +32,7 @@ class TicketComponent {
             case ticketStatus.RenamedSuccess:
                 return `<span class="label label-success">RenamedSuccess</span>`;
             case ticketStatus.RenamedFail:
-                return `<span class="label label-success">RenamedFail</span>`;
+                return `<span class="label label-danger">RenamedFail</span>`;
             default:
                 return `<span class="label label-default">Expired</span>`;
         }
@@ -109,7 +109,9 @@ class TicketComponent {
                             </div>
                         </div>
                         <div class="routeFooter">
-                            <span style="color: 'red'">Expired Date: ${moment(ticket.departureDateTime).format(appConfig.format.datetime)}</span>
+                            ${ticket.status != ticketStatus.Completed && ticket.status != ticketStatus.RenamedFail ? 
+                                `<span style="color: red">Expired Date: ${moment(ticket.expiredDateTime).format(appConfig.format.datetime)}</span>`
+                            : ''}
                         </div>
                     </div>
                 </div>

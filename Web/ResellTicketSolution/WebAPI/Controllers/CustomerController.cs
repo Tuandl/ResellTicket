@@ -7,6 +7,7 @@ using ViewModel.ViewModel.Customer;
 using ViewModel.ViewModel.Transaction;
 using ViewModel.ViewModel.Route;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace WebAPI.Controllers
 {
@@ -196,15 +197,22 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("Invalid Request");
             }
-            var username = User.Identity.Name;
-            var customer = _customerService.CheckIsExistedConnectBankAccount(username);
-
-            if (customer == false)
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
-            }
+                var username = User.Identity.Name;
+                var customer = _customerService.CheckIsExistedConnectBankAccount(username);
 
-            return Ok("");
+                if (customer == false)
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
+                }
+
+                return Ok();
+            }
+            catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
         }
 
         [HttpGet]
@@ -215,24 +223,39 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("Invalid Request");
             }
-            var username = User.Identity.Name;
-            var customer = _customerService.ViewAccountConnect(username);
 
-            if (customer == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, customer);
-            }
+                var username = User.Identity.Name;
+                var customer = _customerService.ViewAccountConnect(username);
 
-            return Ok(customer);
+                if (customer == CustomerService.ERROR_NOT_FOUND_CUSTOMER)
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, customer);
+                }
+
+                return Ok(customer);
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+           
         }
 
         [HttpGet]
         [Route("detail")]
         public ActionResult<CustomerRowViewModel> GetCustomerDetail()
         {
-            var username = User.Identity.Name;
-            var customer = _customerService.GetCustomerDetail(username);
-            return Ok(customer);
+            try
+            {
+                var username = User.Identity.Name;
+                var customer = _customerService.GetCustomerDetail(username);
+                return Ok(customer);
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+            
         }
 
         //[HttpPost]
@@ -258,9 +281,31 @@ namespace WebAPI.Controllers
         [Route("get-transaction")]
         public ActionResult<List<TransactionDataTable>> GetListTransactions(int page, int pageSize)
         {
-            var username = User.Identity.Name;
-            var listTransaction = _customerService.GetTransactions(username, page, pageSize);
-            return listTransaction;
+            try
+            {
+                var username = User.Identity.Name;
+                var listTransaction = _customerService.GetTransactions(username, page, pageSize);
+                return listTransaction;
+            }
+            catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("logout")]
+        public ActionResult Logout(string deviceId)
+        {
+            try
+            {
+                var username = User.Identity.Name;
+                _customerService.Logout(username, deviceId);
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+            return Ok();
         }
     }
 }

@@ -27,7 +27,8 @@ namespace ViewModel.ViewModel.Route
         public string VehicleName { get; set; }
         public int Order { get; set; }
         public string SellerPhone { get; set; }
-        
+        public DateTime? ExpiredDateTime { get; set; }
+
         //public ResolveOption? ResolveOption { get; set; }
     }
 }

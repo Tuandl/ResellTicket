@@ -23,6 +23,7 @@ import AccountConnectDetailScreen from '../screens/bank/AccountConnectDetailScre
 import RouteBuyerInfoScreen from '../screens/route/RouteBuyerInfoScreen';
 import PassengerInformationScreen from '../screens/postedTicket/PassengerInformationScreen';
 import TransactionViewListScreen from '../screens/transaction/TransactionViewListScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 const RouteStack = createStackNavigator(
   {
@@ -52,7 +53,8 @@ const MeStack = createStackNavigator(
     CreditCardCreate: CreditCardCreateScreen,
     CreateBankAccountToReceiveMoney: CreateBankAccountToReceiveMoneyScreen,
     AccountConnectDetail: AccountConnectDetailScreen,
-    TransactionViewList: TransactionViewListScreen
+    TransactionViewList: TransactionViewListScreen,
+    Login: LoginScreen
   },
   {
     initialRouteName: 'Me',

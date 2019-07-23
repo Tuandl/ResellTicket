@@ -252,7 +252,8 @@ namespace Service.Services
             foreach (var routeTicket in route.RouteTickets.Where(x=>x.IsReplaced != true))
             {
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
-                routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
+                //routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
+                routeTicketViewModel.ExpiredDateTime = routeTicket.Ticket.ExpiredDateTime;
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }
             routeViewModel.RouteTickets = routeViewModel.RouteTickets.OrderBy(x => x.Order).ToList();
