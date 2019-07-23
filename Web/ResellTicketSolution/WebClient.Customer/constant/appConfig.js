@@ -24,6 +24,7 @@ const appConfig = {
         notificationDataTable: 'api/notification/data-table',
         notification: 'api/notification',
         transaction: 'api/customer/get-transaction',
+        logout: 'api/customer/logout'
     },
     url: {
         home: '/index.html',
