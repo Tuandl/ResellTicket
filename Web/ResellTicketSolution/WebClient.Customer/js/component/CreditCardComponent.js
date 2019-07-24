@@ -40,9 +40,9 @@ class CreditCardComponent {
 
     renderCheck(isdefault) {
         if (isdefault) {
-            return `<span style="color: green" class="glyphicon glyphicon-ok" aria-hidden="true"></span>`;
+            return `<td><span style="color: green" class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>`;
         } else {
-            return ``;
+            return `<td></td>`;
         }
     }
 
@@ -69,9 +69,7 @@ class CreditCardComponent {
     render() {
         const creditCard = this.creditCard;
 
-        this.html.innerHTML = `<td style="font-size: 12pt" class="">${creditCard.last4DigitsHash} &nbsp;&nbsp;&nbsp;
-            ${this.renderCheck(creditCard.isdefault)}
-        </td>
+        this.html.innerHTML = `<td style="font-size: 12pt" class="">${creditCard.last4DigitsHash}</td>${this.renderCheck(creditCard.isdefault)}
         <td><img alt="Credit Card Logos" title="Credit Card Logos"
                 src=${this.renderBrand(creditCard.brand)}
                 width="60" height="40" /></td>
@@ -79,7 +77,7 @@ class CreditCardComponent {
         const self = this;
         //giờ ông bind event btn delete click nha
         //cau lenh nay la lay element co id = btn-delete trong this.html ak
-        this.html.querySelector('#btn-delete').addEventListener('click', function() {
+        this.html.querySelector('#btn-delete').addEventListener('click', function () {
             //khi btn duocj click thi ong trigger event o controller
             //trigger event o controller thi ong truyen them creditCardId 
             //Tuc la trong function event nay thì biến this nó không còn là CreditCardComponent nữa, maf laf 
@@ -89,7 +87,7 @@ class CreditCardComponent {
             self.event.showConfirmDialog(self.creditCard.id);
         });
 
-        this.html.querySelector('#btn-set-default').addEventListener('click', function() {
+        this.html.querySelector('#btn-set-default').addEventListener('click', function () {
             self.event.onBtnSetDefault(self.creditCard.id, self.customerId);
         });
     }

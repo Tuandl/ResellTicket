@@ -20,7 +20,7 @@ export default class RegisterScreen extends Component {
         super(props);
         let { navigation } = props;
         const phoneNumber = navigation.getParam('phoneNumber', '');
-        if(phoneNumber === '') {
+        if (phoneNumber === '') {
             navigation.navigate('Login');
             return;
         }
@@ -36,6 +36,8 @@ export default class RegisterScreen extends Component {
             OTPNumber: '',
             otp_valid: true,
             password: '',
+            confirmPassword: '',
+            confirmPassword_valid: false,
             login_failed: false,
             showLoading: false,
         };
@@ -47,7 +49,7 @@ export default class RegisterScreen extends Component {
 
     validateUsername(username) {
         let isValid = true;
-        if(!username || username.length == 0) {
+        if (!username || username.length == 0) {
             isValid = false;
         }
         this.setState({
@@ -59,7 +61,7 @@ export default class RegisterScreen extends Component {
 
     validateFullName(fullName) {
         let isValid = true;
-        if(!fullName || fullName.length == 0) {
+        if (!fullName || fullName.length == 0) {
             isValid = false;
         }
         this.setState({
@@ -71,12 +73,27 @@ export default class RegisterScreen extends Component {
 
     validateOTP(OTPNumber) {
         let isValid = true;
-        if(!OTPNumber || OTPNumber.length == 0) {
+        if (!OTPNumber || OTPNumber.length == 0) {
             isValid = false;
         }
         this.setState({
             OTPNumber: OTPNumber,
             otp_valid: isValid,
+        })
+        return isValid;
+    }
+
+    validateConfirmPassword(confirmPassword) {
+        let isValid = true;
+        if (confirmPassword !== this.state.password) {
+            isValid = false;
+            RNToasty.Error({
+                title: 'Confirm Password is not match',
+            });
+        }
+        this.setState({
+            confirmPassword: confirmPassword,
+            confirmPassword_valid: isValid
         })
         return isValid;
     }
@@ -99,7 +116,7 @@ export default class RegisterScreen extends Component {
 
         try {
             const response = await Api.post('api/customer', data);
-            if(response.status === 200) {
+            if (response.status === 200) {
                 RNToasty.Success({
                     title: 'Register successfully',
                 });
@@ -109,7 +126,7 @@ export default class RegisterScreen extends Component {
                     title: 'Register Error',
                 });
             }
-        } catch(err) {
+        } catch (err) {
             console.error('Register error', err);
         } finally {
             this.setState({
@@ -119,7 +136,7 @@ export default class RegisterScreen extends Component {
     }
 
     render() {
-        const { username, password, username_valid, showLoading, fullName, fullName_valid, 
+        const { username, password, confirmPassword, confirmPassword_valid, username_valid, showLoading, fullName, fullName_valid,
             email, email_valid, OTPNumber, otp_valid } = this.state;
 
         return (
@@ -142,7 +159,7 @@ export default class RegisterScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={username => {this.setState({ username: username })}}
+                                onChangeText={username => { this.setState({ username: username }) }}
                                 value={username}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
@@ -189,8 +206,42 @@ export default class RegisterScreen extends Component {
                                 placeholderTextColor="white"
                                 onSubmitEditing={() => {
                                     this.validateUsername(username);
+                                    this.confirmPasswordInput.focus();
+                                }}
+                            />
+                            <Input
+                                leftIcon={
+                                    <Icon
+                                        name="lock"
+                                        type="font-awesome"
+                                        color="rgba(171, 189, 219, 1)"
+                                        size={25}
+                                    />
+                                }
+                                containerStyle={{ marginVertical: 10 }}
+                                onChangeText={confirmPassword => this.setState({ confirmPassword })}
+                                value={confirmPassword}
+                                inputStyle={{ marginLeft: 10, color: 'white' }}
+                                secureTextEntry={true}
+                                keyboardAppearance="light"
+                                placeholder="Comfirm Password"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                keyboardType="default"
+                                returnKeyType="done"
+                                ref={input => (this.confirmPasswordInput = input)}
+                                blurOnSubmit={true}
+                                placeholderTextColor="white"
+                                onSubmitEditing={() => {
+                                    this.validateConfirmPassword(confirmPassword);
                                     this.fullNameInput.focus();
                                 }}
+                                // blurOnSubmit={false}
+                                // placeholderTextColor="white"
+                                // errorStyle={{ textAlign: 'center', fontSize: 12 }}
+                                // errorMessage={
+                                //     confirmPassword_valid ? null : 'Password is not match'
+                                // }
                             />
                             <Input
                                 leftIcon={
@@ -202,7 +253,7 @@ export default class RegisterScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={fullName => {this.setState({ fullName: fullName })}}
+                                onChangeText={fullName => { this.setState({ fullName: fullName }) }}
                                 value={fullName}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
@@ -234,7 +285,7 @@ export default class RegisterScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={email => {this.setState({ email: email })}}
+                                onChangeText={email => { this.setState({ email: email }) }}
                                 value={email}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
@@ -263,7 +314,7 @@ export default class RegisterScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={OTPNumber => {this.setState({ OTPNumber: OTPNumber })}}
+                                onChangeText={OTPNumber => { this.setState({ OTPNumber: OTPNumber }) }}
                                 value={OTPNumber}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
@@ -292,9 +343,9 @@ export default class RegisterScreen extends Component {
                             onPress={this.submitRegisterCredentials}
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: 'white' }}
-                            disabled={!username_valid && password.length < 8}
+                            disabled={!username_valid && !confirmPassword_valid && password.length < 8}
                             buttonStyle={{
-                                height: 50,
+                                height: 40,
                                 width: 250,
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
@@ -338,7 +389,7 @@ const styles = StyleSheet.create({
         marginTop: 0,
         backgroundColor: 'transparent',
         width: 250,
-        height: 600,
+        height: 650,
     },
     registerTitle: {
         flex: 0.3,
@@ -356,10 +407,10 @@ const styles = StyleSheet.create({
         fontFamily: 'regular',
     },
     registerInput: {
-        flex: 0.7,
+        flex: 0.6,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: -70,
+        marginTop: -55,
 
     },
     footerView: {
