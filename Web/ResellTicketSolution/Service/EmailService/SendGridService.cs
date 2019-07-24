@@ -210,13 +210,13 @@ namespace Service.EmailService
                 string body = string.Empty;
                 string ticketRow = string.Empty;
                 var ticket = _ticketRepository.Get(r => r.Id == ticketId);
-                var customer = _customerRepository.Get(c => c.Id == ticket.BuyerId);
+                var customer = _customerRepository.Get(c => c.Id == ticket.SellerId);
                 //using streamreader for reading my htmltemplate   
                 using (StreamReader reader = new StreamReader(emailTemplateHtml))
                 {
                     body = reader.ReadToEnd();
                 }
-                var customerEmail = _customerRepository.Get(c => c.Id == ticket.BuyerId).Email;
+                var customerEmail = customer.Email;
                 var customerName = customer.FullName;
                 var customerPhone = customer.PhoneNumber;
                 var ticketCode = ticket.TicketCode;
@@ -292,7 +292,7 @@ namespace Service.EmailService
                 {
                     body = reader.ReadToEnd();
                 }
-                var customerEmail = _customerRepository.Get(c => c.Id == ticket.BuyerId).Email;
+                var customerEmail = customer.Email;
                 var customerName = customer.FullName;
                 var customerPhone = customer.PhoneNumber;
                 var ticketCode = ticket.TicketCode;
