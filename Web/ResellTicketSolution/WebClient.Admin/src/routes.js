@@ -69,9 +69,11 @@ const BoughtRoutes = React.lazy(() => import('./views/routes/BoughtRoutes'));
 const PayoutRefundDetailRoute = React.lazy(() => import('./views/routes/PayoutRefundDetailRoute'));
 
 const CompletedRoutes = React.lazy(() => import('./views/routes/CompletedRoutes'));
+
+const RTDashboard = React.lazy(() => import('./views/Dashboard/RTDashboard'));
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', component: RTDashboard },
   { path: '/theme', exact: true, name: 'Theme', component: Colors },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },

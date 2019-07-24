@@ -11,6 +11,7 @@ namespace ViewModel.ViewModel.Route
         public RouteStatus Status { get; set; }
         public int CustomerId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public decimal EarnedLoss { get; set; }
         public string DepartureCityName { get; set; }
         public string ArrivalCityName { get; set; }
         public int TicketQuantity { get; set; }

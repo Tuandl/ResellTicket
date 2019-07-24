@@ -93,6 +93,8 @@ namespace Service.Services
         /// <param name="failRouteTicketId"></param>
         /// <param name="replaceTicketId"></param>
         void ReplaceOneFailTicket(int routeId, int failRouteTicketId, int replaceTicketId, string username);
+
+        StatisticReportViewModel GetStatisticReport();
     }
 
     public class RouteService : IRouteService
@@ -249,7 +251,7 @@ namespace Service.Services
 
             //Parse route ticket into viewmodel
 
-            foreach (var routeTicket in route.RouteTickets.Where(x=>x.IsReplaced != true))
+            foreach (var routeTicket in route.RouteTickets.Where(x => x.IsReplaced != true))
             {
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
                 //routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
@@ -263,7 +265,7 @@ namespace Service.Services
 
         public RouteDetailViewModel GetRouteDetailForAdmin(int routeId) //admin
         {
-            var route = _routeRepository.Get(x =>x.Id == routeId);
+            var route = _routeRepository.Get(x => x.Id == routeId);
 
             if (route == null)
             {
@@ -280,17 +282,28 @@ namespace Service.Services
 
             foreach (var routeTicket in route.RouteTickets)
             {
-                if(_resolveOptionLogRepository.Get(x => x.RouteId == routeTicket.RouteId && x.TicketId == routeTicket.TicketId) == null)
+                if (_resolveOptionLogRepository.Get(x => x.RouteId == routeTicket.RouteId && x.TicketId == routeTicket.TicketId) == null)
                 {
                     var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
                     routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
                     routeViewModel.RouteTickets.Add(routeTicketViewModel);
                 }
             }
-
-            foreach(var resolveOption in route.ResolveOptionLogs)
+            routeViewModel.EarnedLoss = route.TotalAmount;
+            //decimal refundAmount = 0;
+            //decimal payoutAmount = 0;
+            foreach (var resolveOption in route.ResolveOptionLogs)
             {
                 var routeTicket = _routeTicketRepository.Get(x => x.RouteId == resolveOption.RouteId && x.TicketId == resolveOption.TicketId);
+                if(resolveOption.Option != ResolveOption.REPLACE)
+                {
+                    routeViewModel.EarnedLoss = routeViewModel.EarnedLoss - routeTicket.Ticket.SellingPrice;
+                    if(resolveOption.Option == ResolveOption.PAYOUT)
+                    {
+                        routeViewModel.EarnedLoss = routeViewModel.EarnedLoss + routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100);
+                    }
+                }
+
                 var resolveOptionLogViewModel = new ResolveOptionLogViewModel()
                 {
                     ResolvedTicketCode = resolveOption.ResolvedTicket.TicketCode,
@@ -301,9 +314,10 @@ namespace Service.Services
                     ArrivalCityName = routeTicket.Ticket.ArrivalStation.City.Name,
                     DepartureDateTime = routeTicket.Ticket.DepartureDateTime,
                     ArrivalDateTime = routeTicket.Ticket.ArrivalDateTime,
-                    SellingPrice = routeTicket.Ticket.SellingPrice
+                    SellingPrice = routeTicket.Ticket.SellingPrice,
+                    FeeAmount = routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100)
                 };
-                if(resolveOption.Option == ResolveOption.REPLACE)
+                if (resolveOption.Option == ResolveOption.REPLACE)
                 {
                     resolveOptionLogViewModel.ReplacedTicketCode = resolveOption.ReplacedTicketCode;
                 }
@@ -311,6 +325,7 @@ namespace Service.Services
             }
             routeViewModel.ResolveOptionLogs = routeViewModel.ResolveOptionLogs.OrderByDescending(x => x.ResolveAt).ToList();
             routeViewModel.RouteTickets = routeViewModel.RouteTickets.OrderBy(x => x.Order).ToList();
+            //routeViewModel.profitLoss += (payoutAmount - refundAmount);
 
             return routeViewModel;
         }
@@ -724,10 +739,10 @@ namespace Service.Services
                 Data = routePagedVMs.ToList(),
                 Total = routeVMs.Count()
             };
-            foreach(var routeVM in routeDataTable.Data) 
+            foreach (var routeVM in routeDataTable.Data)
             {
                 var routeTickets = _routeRepository.Get(x => x.Id == routeVM.Id).RouteTickets;
-                foreach(var rt in routeTickets)
+                foreach (var rt in routeTickets)
                 {
                     if (_resolveOptionLogRepository.Get(x => x.RouteId == rt.RouteId && x.TicketId == rt.TicketId) == null)
                     {
@@ -774,7 +789,7 @@ namespace Service.Services
                      //ROUTETICKET.Ticket.Deleted == false &&
                      ROUTE.Status == RouteStatus.Completed &&
                      ROUTE.Code.ToLower().Contains(param.ToLower())
-                 orderby 
+                 orderby
                     ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC descending
 
                  select new RouteRowViewModel()
@@ -800,6 +815,18 @@ namespace Service.Services
 
             foreach (var route in routeDataTable.Data)
             {
+                route.EarnedLoss = route.TotalAmount;
+                var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == route.Id && x.Option != ResolveOption.REPLACE);
+                foreach(var log in resolveOptionLogs)
+                {
+                    if(log.Option == ResolveOption.PAYOUT)
+                    {
+                        route.EarnedLoss = route.EarnedLoss - log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100);
+                    } else
+                    {
+                        route.EarnedLoss = route.EarnedLoss - log.ResolvedTicket.SellingPrice;
+                    }
+                }
                 var routeTickets = _routeTicketRepository.GetAllQueryable().Where(x =>
                     x.RouteId == route.Id &&
                     x.IsReplaced != true
@@ -834,21 +861,21 @@ namespace Service.Services
             failRouteTicket.IsReplaced = true;
             _routeTicketRepository.Update(failRouteTicket);
             _routeTicketRepository.Add(replaceRouteTicket);
-            
+
             replaceTicket.Status = TicketStatus.Bought;
             replaceTicket.BuyerPassengerName = failRouteTicket.Ticket.BuyerPassengerName;
             replaceTicket.BuyerPassengerEmail = failRouteTicket.Ticket.BuyerPassengerEmail;
             replaceTicket.BuyerPassengerPhone = failRouteTicket.Ticket.BuyerPassengerPhone;
             replaceTicket.BuyerPassengerIdentify = failRouteTicket.Ticket.BuyerPassengerIdentify;
             replaceTicket.BuyerId = failRouteTicket.Ticket.BuyerId;
-            _ticketRepository.Update(replaceTicket);      
+            _ticketRepository.Update(replaceTicket);
 
             //hoàn 1 phần tiền 
             decimal failTicketPrice = failRouteTicket.Ticket.SellingPrice;
             decimal replaceTicketPrice = replaceTicket.SellingPrice;
             //lấy Lịch sử chagre tiền
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeId && x.Route.Deleted == false);
-            if (replaceTicketPrice < failTicketPrice)
+            if (replaceTicketPrice <= failTicketPrice)
             {
                 var amount = failTicketPrice - replaceTicketPrice;
                 RefundAfterReplaceTicket(amount, paymentDetail);
@@ -858,6 +885,17 @@ namespace Service.Services
                 route.TotalAmount = route.TotalAmount - (failTicketPrice - replaceTicketPrice);
                 _routeRepository.Update(route);
             }
+            //else
+            //{
+            //    _paymentService.ChargeAfterReplaceTicket(failRouteTicket.Ticket, replaceTicket, failRouteTicket.RouteId);
+            //    var route = failRouteTicket.Route;
+            //    route.TotalAmount = route.TotalAmount - (failTicketPrice - replaceTicketPrice);
+            //    _routeRepository.Update(route);
+
+            //    //Send Email
+
+            //    //
+            //}
 
             ResolveOptionLog resolveOptionLog = new ResolveOptionLog()
             {
@@ -871,12 +909,13 @@ namespace Service.Services
 
             _unitOfWork.CommitChanges();
 
+            //push noti to seller
             var message = "Ticket " + replaceTicket.TicketCode + " has been bought";
-            var customerDevices = replaceTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
-            List<string> deviceIds = new List<string>();
-            foreach (var cusDev in customerDevices)
+            var sellerDevices = replaceTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> sellerDeviceIds = new List<string>();
+            foreach (var sellerDev in sellerDevices)
             {
-                deviceIds.Add(cusDev.DeviceId);
+                sellerDeviceIds.Add(sellerDev.DeviceId);
             }
 
             //Save Notification into db
@@ -886,7 +925,17 @@ namespace Service.Services
             //    data: new { ticketId = ticket.Id }
             //);
 
-            _oneSignalService.PushNotificationCustomer(message, deviceIds);
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+
+            //push noti to buyer
+            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode;
+            var buyerDevices = failRouteTicket.Ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> buyerDeviceIds = new List<string>();
+            foreach (var buyerDev in buyerDevices)
+            {
+                buyerDeviceIds.Add(buyerDev.DeviceId);
+            }
+            _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
         }
 
         public void RefundAfterReplaceTicket(decimal amount, Payment payment)
@@ -907,6 +956,39 @@ namespace Service.Services
             refundAddIntoData.Amount = amount;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
+        }
+
+        public StatisticReportViewModel GetStatisticReport()
+        {
+            var statisticReport = new StatisticReportViewModel();
+            var availableTicketCount = _ticketRepository.GetAllQueryable()
+                .Where(x => x.Deleted == false && x.Status == TicketStatus.Valid).Count();
+            var completedTicketCount = _ticketRepository.GetAllQueryable()
+                .Where(x => x.Status == TicketStatus.Completed || x.Status == TicketStatus.RenamedFail).Count();
+            var completedRoutes = _routeRepository.GetAllQueryable()
+                .Where(x => x.Status == RouteStatus.Completed);
+
+            statisticReport.BalanceAccount = 0;
+            foreach (var route in completedRoutes)
+            {
+                statisticReport.BalanceAccount += route.TotalAmount;
+                var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == route.Id && x.Option != ResolveOption.REPLACE);
+                foreach (var log in resolveOptionLogs)
+                {
+                    if (log.Option == ResolveOption.PAYOUT)
+                    {
+                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100);
+                    }
+                    else
+                    {
+                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - log.ResolvedTicket.SellingPrice;
+                    }
+                }
+            }
+            statisticReport.AvailableTicketCount = availableTicketCount;
+            statisticReport.CompletedTicketCount = completedTicketCount;
+            statisticReport.CompletedRouteCount = completedRoutes.Count();
+            return statisticReport;
         }
     }
 }

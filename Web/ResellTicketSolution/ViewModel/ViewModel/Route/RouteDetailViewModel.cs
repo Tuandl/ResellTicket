@@ -10,7 +10,7 @@ namespace ViewModel.ViewModel.Route
         public string Code { get; set; }
         public decimal TotalAmount { get; set; }
         public RouteStatus Status { get; set; }
-        //public ResolveOption? ResolveOption { get; set; }
+        public decimal EarnedLoss { get; set; }
         public int CustomerId { get; set; }
         public bool IsRefundAll { get; set; }
         public string BuyerName { get; set; }

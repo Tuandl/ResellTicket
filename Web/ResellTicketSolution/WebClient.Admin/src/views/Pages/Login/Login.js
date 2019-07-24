@@ -73,7 +73,7 @@ class Login extends Component {
 
     render() {
         if (this.state.isRedirect && this.state.userRole === 'Manager') {
-            return <Redirect to="/user" />
+            return <Redirect to="/dashboard" />
         } else if (this.state.isRedirect && this.state.userRole === 'Staff') {
             return <Redirect to="/newPostedTicket" />
         }

@@ -17,6 +17,7 @@ namespace ViewModel.ViewModel.ResolveOptionLog
         public string ArrivalCityName { get; set; }
         public DateTime ArrivalDateTime { get; set; }
         public decimal SellingPrice { get; set; }
+        public decimal FeeAmount { get; set; }
 
     }
 }
