@@ -38,6 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="EmailTemplate\EmailTemplateReplacement.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="EmailTemplate\EmailTemplateRefund.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

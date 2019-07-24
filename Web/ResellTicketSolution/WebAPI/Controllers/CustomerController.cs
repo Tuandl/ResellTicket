@@ -259,10 +259,10 @@ namespace WebAPI.Controllers
         }
 
         //[HttpPost]
-        //[Route("send-email-refund-for-seller")]
-        //public IActionResult SendEmailRefundForSeller(int ticketId)
+        //[Route("send-email-replace-for-buyer")]
+        //public IActionResult SendEmailReplacementForBuyer(int oldTicketId, int replacementTicketId)
         //{
-        //    _sendGridService.SendEmailRefundForSeller(ticketId);
+        //    _sendGridService.SendEmailReplacementForBuyer(oldTicketId, replacementTicketId);
         //    return Ok();
         //}
 
