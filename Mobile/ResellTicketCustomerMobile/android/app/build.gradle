@@ -177,6 +177,8 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
+            ext.betaDistributionGroupAliases = "tester-resell-ticket"
+            ext.betaDistributionReleaseNotesFilePath = file('release_note.txt').absolutePath
         }
     }
     // applicationVariants are e.g. debug, release
