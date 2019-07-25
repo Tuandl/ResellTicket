@@ -6,7 +6,7 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    Platform,
+    Dimensions,
     AsyncStorage,
     FlatList
 } from "react-native";
@@ -22,6 +22,9 @@ import FlipCard from "react-native-flip-card";
 import { Input, } from 'react-native-elements';
 import Dialog from "react-native-dialog";
 const BASE_SIZE = { width: 300, height: 190 };
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const BG_IMAGE = require('../../../assets/images/empty-list.png');
 
 /* eslint react/prop-types: 0 */ // https://github.com/yannickcr/eslint-plugin-react/issues/106
 export default class CreditCardViewListScreen extends Component {
@@ -31,7 +34,8 @@ export default class CreditCardViewListScreen extends Component {
         this.state = {
             creditCard: [],
             dialogVisible: false,
-            creditCardId: null
+            creditCardId: null,
+            isShowEmptyView: false
         }
         //this.deleteCreditCard = this.deleteCreditCard.bind(this);
     }
@@ -48,12 +52,22 @@ export default class CreditCardViewListScreen extends Component {
         var customerIdDefault = await AsyncStorage.getItem(keyConstant.STORAGE.ID);
         try {
             var creditCardResponse = await Api.get('api/credit-card?id=' + customerIdDefault);
-            console.log('repone', creditCardResponse);
             this.setState({
                 creditCard: creditCardResponse.data
             });
+            if (this.state.creditCard.length === 0) {
+                this.setState({
+                    isShowEmptyView: true
+                });
+            } else {
+                this.setState({
+                    isShowEmptyView: false
+                });
+            }
         } catch (error) {
-            toastr.error('Error', 'Error on Load Credit Card Data');
+            RNToasty.Error({
+                title: 'Error on Load Credit Card Data',
+            });
         }
     }
 
@@ -69,7 +83,9 @@ export default class CreditCardViewListScreen extends Component {
             });
             this.componentDidMount();
         } catch (error) {
-            toastr.error('Error', 'Error Delete Credit Data');
+            RNToasty.Error({
+                title: 'Error Delete Credit Data',
+            });
         }
     }
 
@@ -82,7 +98,9 @@ export default class CreditCardViewListScreen extends Component {
             });
             this.componentDidMount();
         } catch (error) {
-            toastr.error('Error', 'Error Delete Credit Data');
+            RNToasty.Error({
+                title: 'Error Set default Credit Data',
+            });
         }
     }
 
@@ -93,7 +111,7 @@ export default class CreditCardViewListScreen extends Component {
         });
     }
     handleDelete = (id) => {
-        
+
         this.setState({
             dialogVisible: true,
             creditCardId: id
@@ -127,7 +145,7 @@ export default class CreditCardViewListScreen extends Component {
     };
 
     render() {
-        const { creditCard, isLoading, creditCardId } = this.state;
+        const { creditCard, isLoading, creditCardId, isShowEmptyView } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
@@ -149,20 +167,23 @@ export default class CreditCardViewListScreen extends Component {
                     </Right>
                 </Header>
                 {/* <Content contentContainerStyle={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}> */}
-                <FlatList
+
+                {isShowEmptyView ? <ImageBackground source={BG_IMAGE} style={s.bgImage} /> : null}
+                {!isShowEmptyView ? <FlatList
                     data={creditCard}
                     renderItem={this.renderItem}
                     keyExtractor={item => item.id}
                     stickyHeaderIndices={this.state.stickyHeaderIndices}
-                />
+                /> : null}
+
                 <Dialog.Container visible={this.state.dialogVisible}>
-                        <Dialog.Title>Delete Credit card</Dialog.Title>
-                        <Dialog.Description>
-                            Do you want to delete this credit card?
+                    <Dialog.Title>Delete Credit card</Dialog.Title>
+                    <Dialog.Description>
+                        Do you want to delete this credit card?
                             </Dialog.Description>
-                        <Dialog.Button label="Delete" onPress={() => this.deleteCreditCard(creditCardId)} />
-                        <Dialog.Button label="Cancel" onPress={() => this.handleCancel()} />
-                    </Dialog.Container>
+                    <Dialog.Button label="Delete" onPress={() => this.deleteCreditCard(creditCardId)} />
+                    <Dialog.Button label="Cancel" onPress={() => this.handleCancel()} />
+                </Dialog.Container>
                 {/* </Content> */}
             </Container>
 
@@ -171,6 +192,15 @@ export default class CreditCardViewListScreen extends Component {
 }
 
 const s = StyleSheet.create({
+    bgImage: {
+        flex: 1,
+        top: 50,
+        left: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT / 1.75,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     cardContainer: {
         margin: 10
     },

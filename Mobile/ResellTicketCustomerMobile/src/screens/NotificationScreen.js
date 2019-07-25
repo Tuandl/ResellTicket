@@ -1,6 +1,6 @@
-import { Body, Container, Content, Header, Right, Title, Button } from 'native-base';
+import {StyleSheet, Body, Container, Content, Header, Right, Title, Button } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, View } from 'react-native';
+import { Dimensions, View, ImageBackground } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import { withNavigation } from 'react-navigation';
@@ -10,6 +10,7 @@ import api from '../service/Api';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+const BG_IMAGE = require('../../assets/images/empty-list.png');
 
 class NotificationScreen extends Component {
 
@@ -22,6 +23,7 @@ class NotificationScreen extends Component {
         this.state = {
             notifications: [],
             isLoading: false,
+            isShowEmptyView: false
         };
 
         this.getNotification = this.getNotification.bind(this);
@@ -51,12 +53,12 @@ class NotificationScreen extends Component {
         });
 
         const param = {
-            page: page, 
+            page: page,
             pageSize: pageSize,
         };
         const response = await api.get(`api/notification/data-table`, param);
 
-        if(response.status === 200) {
+        if (response.status === 200) {
             const listData = response.data.data.map(notification => {
                 return {
                     ...notification,
@@ -64,15 +66,28 @@ class NotificationScreen extends Component {
                 }
             });
             this.total = response.data.total;
+            if (this.total === 0) {
+                this.setState({
+                    isShowEmptyView: true
+                })
+            } else {
+                this.setState({
+                    isShowEmptyView: false
+                })
+            }
             this.setState({
                 notifications: [...this.state.notifications, ...listData],
                 isLoading: false,
             });
+        } else {
+            this.setState({
+                isShowEmptyView: true
+            })
         }
     }
 
     getMoreNotification() {
-        if(this.state.notifications.length < this.total) {
+        if (this.state.notifications.length < this.total) {
             this.page++;
             this.getNotification(this.page, this.pageSize);
         }
@@ -83,7 +98,7 @@ class NotificationScreen extends Component {
 
         const notifications = [...this.state.notifications];
         notifications.forEach(notification => {
-            if(notification.id === notificationId) {
+            if (notification.id === notificationId) {
                 notification.read = true;
             }
         });
@@ -95,7 +110,7 @@ class NotificationScreen extends Component {
 
     async sendReadNotificationMessage(notificationId) {
         const response = await api.post(`api/notification/${notificationId}/read`);
-        if(response.status !== 200) {
+        if (response.status !== 200) {
             RNToasty.Error({
                 title: 'Error while sending read notification request.',
             });
@@ -104,7 +119,7 @@ class NotificationScreen extends Component {
 
     async handleOnReadAllClicked() {
         const response = await api.post('api/notification/read-all');
-        if(response.status === 200) {
+        if (response.status === 200) {
             this.resetData();
         } else {
             RNToasty.Error({
@@ -126,35 +141,39 @@ class NotificationScreen extends Component {
     }
 
     render() {
-        const { notifications, isLoading } = this.state;
+        const { notifications, isLoading, isShowEmptyView } = this.state;
 
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
-                    <Body style={{paddingLeft: 10}}>
+                    <Body style={{ paddingLeft: 10 }}>
                         <Title>Notification</Title>
                     </Body>
                     <Right>
                         <Button transparent
-                            onPress={() => {this.handleOnReadAllClicked();}}
+                            onPress={() => { this.handleOnReadAllClicked(); }}
                         >
                             <Icon name='clear-all' type='material' color="#fff" />
                         </Button>
                     </Right>
                 </Header>
-                <Content style={{ flex: 1, backgroundColor: 'white' }}>
-                    <View style={{flex: 1, backgroundColor: "rgb(255,255,255)"}}>
-                        <NotificationListComponent 
+                {isShowEmptyView ? <ImageBackground source={BG_IMAGE} 
+                style={{flex:1, top: 50, left: 0,width:SCREEN_WIDTH, height: SCREEN_HEIGHT/2,justifyContent: 'center', alignItems: 'center'}} /> : null}
+                {!isShowEmptyView ? <Content style={{ flex: 1, backgroundColor: 'white' }}>
+                    <View style={{ flex: 1, backgroundColor: "rgb(255,255,255)" }}>
+                        <NotificationListComponent
                             notifications={notifications}
                             isLoading={isLoading}
                             getMoreNotification={this.getMoreNotification}
                             readNotification={this.readNotification}
                         />
                     </View>
-                </Content>
+                </Content> : null}
+
             </Container>
         );
     }
 }
+
 
 export default withNavigation(NotificationScreen);
