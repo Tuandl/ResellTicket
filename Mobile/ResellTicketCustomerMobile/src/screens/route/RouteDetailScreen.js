@@ -1,6 +1,6 @@
 import { Body, Button, Container, Content, Header, Left, Right, Text, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Dimensions, StyleSheet, View, ActivityIndicator, AsyncStorage } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import NumberFormat from 'react-number-format';
@@ -9,6 +9,7 @@ import api from '../../service/Api';
 import { withNavigationFocus } from 'react-navigation';
 import Dialog from "react-native-dialog";
 import RouteStatus from '../../constants/routeStatus';
+import keyConstant from '../../constants/keyConstant';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -145,24 +146,30 @@ class RouteDetailScreen extends Component {
 
 
     async onBtnBuyRoutePressed() {
-        this.setState({
-            isBuyLoading: true,
-        })
-        const response = await api.get('api/customer/detail');
-        if (response.status === 200) {
-            var params = {
-                routeId: this.routeId,
-                buyerPassengerName: response.data.fullName,
-                buyerPassengerEmail: response.data.email,
-                buyerPassengerPhone: response.data.phoneNumber
-            };
+        var customerIdDefault = await AsyncStorage.getItem(keyConstant.STORAGE.ID);
+
+        var creditCardResponse = await api.get('api/credit-card?id=' + customerIdDefault);
+        if(creditCardResponse.data.length === 0) {
+            this.props.navigation.navigate('CreditCardCreate')
+        } else {
             this.setState({
-                isBuyLoading: false
-            });
-
-            this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+                isBuyLoading: true,
+            })
+            const response = await api.get('api/customer/detail');
+            if (response.status === 200) {
+                var params = {
+                    routeId: this.routeId,
+                    buyerPassengerName: response.data.fullName,
+                    buyerPassengerEmail: response.data.email,
+                    buyerPassengerPhone: response.data.phoneNumber
+                };
+                this.setState({
+                    isBuyLoading: false
+                });
+    
+                this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+            }
         }
-
     }
 
     onBtnDeletePressed() {

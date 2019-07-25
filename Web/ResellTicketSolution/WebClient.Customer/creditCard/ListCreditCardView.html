@@ -33,6 +33,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         }
     </style>
     <!-- js -->
+	<script src="/js/lib/pace.min.js"></script>
     <script src="./../js/jquery-1.11.1.min.js"></script>
     <script src="./../js/jstarbox.js"></script>
     <script type="text/javascript" src="./../helper/Api.js"></script>
@@ -51,7 +52,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 appId: appConfig.OneSignalAppId,
                 subdomainName: appConfig.SubdomainName,
                 notifyButton: {
-                    enable: true,
+                    enable: false,
                 }
             });
             OneSignal.on('notificationDisplay', function (event) {

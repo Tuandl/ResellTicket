@@ -8,7 +8,8 @@ import {
     StyleSheet,
     Platform,
     AsyncStorage,
-    FlatList
+    FlatList,
+    ActivityIndicator
 } from "react-native";
 import { TouchableNativeFeedback } from 'react-native-gesture-handler';
 import { Text, ListItem, Left, Body, Right, Title } from "native-base";
@@ -45,12 +46,16 @@ export default class CreditCardViewListScreen extends Component {
     }
 
     async getCreditCardListByCustomerId() {
+        this.setState({
+            isLoading: true
+        })
         var customerIdDefault = await AsyncStorage.getItem(keyConstant.STORAGE.ID);
         try {
             var creditCardResponse = await Api.get('api/credit-card?id=' + customerIdDefault);
             console.log('repone', creditCardResponse);
             this.setState({
-                creditCard: creditCardResponse.data
+                creditCard: creditCardResponse.data,
+                isLoading: false
             });
         } catch (error) {
             toastr.error('Error', 'Error on Load Credit Card Data');
@@ -129,10 +134,11 @@ export default class CreditCardViewListScreen extends Component {
     render() {
         const { creditCard, isLoading, creditCardId } = this.state;
         return (
+            
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
+                        <Button transparent
                             onPress={() => this.props.navigation.navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
@@ -143,7 +149,7 @@ export default class CreditCardViewListScreen extends Component {
                         </Title>
                     </Body>
                     <Right>
-                        <Button onPress={() => this.props.navigation.navigate('CreditCardCreate')}>
+                        <Button transparent onPress={() => this.props.navigation.navigate('CreditCardCreate')}>
                             <Icon name="plus-circle-outline" type="material-community" color="#fff" />
                         </Button>
                     </Right>
@@ -154,6 +160,7 @@ export default class CreditCardViewListScreen extends Component {
                     renderItem={this.renderItem}
                     keyExtractor={item => item.id}
                     stickyHeaderIndices={this.state.stickyHeaderIndices}
+                    ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}
                 />
                 <Dialog.Container visible={this.state.dialogVisible}>
                         <Dialog.Title>Delete Credit card</Dialog.Title>

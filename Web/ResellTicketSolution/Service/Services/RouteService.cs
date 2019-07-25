@@ -196,7 +196,7 @@ namespace Service.Services
                     CustomerId = x.CustomerId,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
-                    TicketQuantity = x.RouteTickets.Count(t => t.IsReplaced != true),
+                    TicketQuantity = x.RouteTickets.Count(t => t.IsReplaced != true)
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
                     //IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
@@ -228,6 +228,7 @@ namespace Service.Services
                 var firstRouteTicket = routeTickets.FirstOrDefault();
                 route.DepartureCityName = firstRouteTicket.DepartureStation.City.Name;
                 route.DepartureDate = firstRouteTicket.Ticket.DepartureDateTime;
+                route.ExpiredDateTime = firstRouteTicket.Ticket.ExpiredDateTime;
 
                 var lastRouteTicket = routeTickets.LastOrDefault();
                 route.ArrivalCityName = lastRouteTicket.ArrivalStation.City.Name;
@@ -443,6 +444,7 @@ namespace Service.Services
                         DepartureStationId = ticket.DepartureStationId,
                         DepartureStationName = ticket.DepartureStation.Name,
                         DepartureDateTime = ticket.DepartureDateTime,
+                        ExpiredDateTime = ticket.ExpiredDateTime,
                         TransportationName = ticket.Transportation.Name,
                         VehicleName = ticket.Transportation.Vehicle.Name,
                         Order = count++,

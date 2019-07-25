@@ -5,13 +5,15 @@ import ticketStatus from '../js/enum/ticketStatus.js';
 import commonService from '../js/service/commonService.js';
 import SellerTicketComponent from '../js/component/SellerTicketComponent.js';
 import TicketFilterStatusComponent from '../js/component/TicketFilterStatusComponent.js';
+import toastService from '../js/service/toastService.js';
 
 function postedTicketController() {
     const id = {
         ticketContainer: 'ticket-container',
         btnStatuses: 'btnStatuses',
         btnPostTicket: 'btnPostTicket',
-        btnLoadMore: 'btnLoadMore'
+        btnLoadMore: 'btnLoadMore',
+        connectToStripeLinkId: 'connect-to-stripe-link'
     }
 
     const model = {
@@ -70,8 +72,14 @@ function postedTicketController() {
 
     function bindEvent() {
         var btnPostTicket = document.getElementById(id.btnPostTicket);
+        var connectToStripeLinkId = id.connectToStripeLinkId;
         btnPostTicket.addEventListener('click', function () {
-            window.location.href = appConfig.url.postedTicket.postEditForm_2;
+            const linkElement = document.getElementById(connectToStripeLinkId);
+            if(linkElement.href === appConfig.bankConnect.linkCreate) {
+                toastService.error('Please connect to Stripe account that we can tranfer money.')
+            } else {
+                window.location.href = appConfig.url.postedTicket.postEditForm_2;
+            }
         });
 
         $(window).scroll(function() {
