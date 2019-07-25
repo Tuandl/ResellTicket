@@ -11,12 +11,14 @@ function ListCreditCardViewController() {
 
     const id = {
         creditCardList: 'credit-card-list',
-        dialogConfirmCreditCard: 'dialog-confirm-credit-card'
+        dialogConfirmCreditCard: 'dialog-confirm-credit-card',
+        showEmptyList: 'show-empty-list'
     }
 
     const elements = {
         creditCardList: document.getElementById(id.creditCardList),
-        dialogConfirmCreditCard: document.getElementById(id.dialogConfirmCreditCard)
+        dialogConfirmCreditCard: document.getElementById(id.dialogConfirmCreditCard),
+        showEmptyList: document.getElementById(id.showEmptyList)
     }
 
 
@@ -42,6 +44,11 @@ function ListCreditCardViewController() {
         commonService.removeAllChildren(elements.creditCardList);
         commonService.removeAllChildren(elements.dialogConfirmCreditCard);
         const customerId = param.id;
+        if(creditCards.length === 0){
+            elements.showEmptyList.style.display = 'block';
+        } else {
+            elements.showEmptyList.style.display = 'none';
+        }
         creditCards.forEach(creditCard => {
             const creditCardElement = new CreditCardComponent(creditCard, customerId, onBtnDeleteClicked, onBtnSetDefault, showConfirmDialog);
 

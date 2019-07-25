@@ -11,7 +11,8 @@ function postedTicketController() {
         ticketContainer: 'ticket-container',
         btnStatuses: 'btnStatuses',
         btnPostTicket: 'btnPostTicket',
-        btnLoadMore: 'btnLoadMore'
+        btnLoadMore: 'btnLoadMore',
+        showEmptyList: 'show-empty-list'
     }
 
     const model = {
@@ -20,6 +21,7 @@ function postedTicketController() {
         tickets: [],
         searchStatus: ticketStatus.Pending,
         ticketComponents: [],
+        total: 0
     }
 
     bindEvent();
@@ -60,6 +62,12 @@ function postedTicketController() {
             ticketComponent.render();
             containerElement.appendChild(ticketComponent.domElement);
         });
+        model.total = response.length;
+        if(model.total === 0){
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         if(response.length !== model.pageSize) {
             model.isLoadAll = true;
             commonService.removeAllChildren(document.getElementById(id.btnLoadMore))

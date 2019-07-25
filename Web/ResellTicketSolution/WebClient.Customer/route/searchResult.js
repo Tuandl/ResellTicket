@@ -12,6 +12,7 @@ function searchResult() {
         routesContainer: 'route-container',
         routeDetailContainer: 'route-detail-container',
         routeDetailModal: 'route-detail-modal',
+        showEmptyList: 'show-empty-list'
     }
     const routesContainer = document.getElementById(id.routesContainer);
     const routeDetailContainer = document.getElementById(id.routeDetailContainer);
@@ -59,6 +60,11 @@ function searchResult() {
     }
 
     function mapRoute(routes) {
+        if(routes.length === 0 || routes === null || routes === undefined) {
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         model.routes = routes.map(route => {
             return {
                 id: route.id || commonService.generateRandomId(),
