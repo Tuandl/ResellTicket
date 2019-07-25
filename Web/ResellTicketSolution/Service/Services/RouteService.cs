@@ -300,7 +300,7 @@ namespace Service.Services
                     routeViewModel.EarnedLoss = routeViewModel.EarnedLoss - routeTicket.Ticket.SellingPrice;
                     if(resolveOption.Option == ResolveOption.PAYOUT)
                     {
-                        routeViewModel.EarnedLoss = routeViewModel.EarnedLoss + routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100);
+                        routeViewModel.EarnedLoss = routeViewModel.EarnedLoss + Math.Round(routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100), 2);
                     }
                 }
 
@@ -315,7 +315,7 @@ namespace Service.Services
                     DepartureDateTime = routeTicket.Ticket.DepartureDateTime,
                     ArrivalDateTime = routeTicket.Ticket.ArrivalDateTime,
                     SellingPrice = routeTicket.Ticket.SellingPrice,
-                    FeeAmount = routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100)
+                    FeeAmount = Math.Round(routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100), 2)
                 };
                 if (resolveOption.Option == ResolveOption.REPLACE)
                 {
@@ -821,7 +821,8 @@ namespace Service.Services
                 {
                     if(log.Option == ResolveOption.PAYOUT)
                     {
-                        route.EarnedLoss = route.EarnedLoss - log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100);
+                        route.EarnedLoss = route.EarnedLoss - 
+                            (log.ResolvedTicket.SellingPrice - Math.Round(log.ResolvedTicket.SellingPrice * (log.ResolvedTicket.CommissionPercent / 100), 2));
                     } else
                     {
                         route.EarnedLoss = route.EarnedLoss - log.ResolvedTicket.SellingPrice;
@@ -977,7 +978,8 @@ namespace Service.Services
                 {
                     if (log.Option == ResolveOption.PAYOUT)
                     {
-                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100);
+                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - 
+                            Math.Round(log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100), 2);
                     }
                     else
                     {

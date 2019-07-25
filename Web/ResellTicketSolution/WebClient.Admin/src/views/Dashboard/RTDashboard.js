@@ -11,10 +11,11 @@ import {
     // Progress,
     Row,
 } from 'reactstrap';
-import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+//import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 import { getStyle } from '@coreui/coreui/dist/js/coreui-utilities'
 import CompletedRoute from '../routes/CompletedRoutes';
 import Axios from 'axios';
+import NumberFormat from 'react-number-format';
 
 // const Widget03 = lazy(() => import('../../views/Widgets/Widget03'));
 
@@ -40,7 +41,7 @@ const cardChartData1 = {
 const cardChartOpts1 = {
     tooltips: {
         enabled: false,
-        custom: CustomTooltips
+        //custom: CustomTooltips
     },
     maintainAspectRatio: false,
     legend: {
@@ -98,7 +99,7 @@ const cardChartData2 = {
 const cardChartOpts2 = {
     tooltips: {
         enabled: false,
-        custom: CustomTooltips
+        //custom: CustomTooltips
     },
     maintainAspectRatio: false,
     legend: {
@@ -156,7 +157,7 @@ const cardChartData3 = {
 const cardChartOpts3 = {
     tooltips: {
         enabled: false,
-        custom: CustomTooltips
+        //custom: CustomTooltips
     },
     maintainAspectRatio: false,
     legend: {
@@ -200,7 +201,7 @@ const cardChartData4 = {
 const cardChartOpts4 = {
     tooltips: {
         enabled: false,
-        custom: CustomTooltips
+        //custom: CustomTooltips
     },
     maintainAspectRatio: false,
     legend: {
@@ -309,11 +310,14 @@ class Dashboard extends Component {
                     <Col xs="12" sm="6" lg="3">
                         <Card className="text-white bg-success">
                             <CardBody className="pb-0">
-                                <div className="text-value">{statisticReport.balanceAccount}</div>
+                                <div className="text-value">{statisticReport.balanceAccount === undefined ? '' : 
+                                                            <NumberFormat value={statisticReport.balanceAccount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</div>
                                 <div>Balance Account</div>
                             </CardBody>
                             <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
-                                <Bar data={cardChartData4} options={cardChartOpts4} height={70} />
+                                <Bar data={cardChartData4} options={cardChartOpts4} height={70} 
+                                    
+                                />
                             </div>
                         </Card>
                     </Col>

@@ -191,7 +191,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("check-existed-connect-bank-account")]
-        public IActionResult CheckIsExistedConnectAccount()
+        public ActionResult CheckIsExistedConnectAccount()
         {
             if (!ModelState.IsValid)
             {
@@ -207,7 +207,7 @@ namespace WebAPI.Controllers
                     return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
                 }
 
-                return Ok();
+                return Ok("");
             }
             catch(Exception e)
             {

@@ -349,7 +349,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                                     {resolveOptionLog.option === ResolveOption.PAYOUT ?
                                                         <div>
                                                             <Badge color="success">Earned: ${resolveOptionLog.feeAmount}</Badge><br/>
-                                                            <Badge color="danger">Loss: ${resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount}</Badge>
+                                                            <Badge color="danger">Loss: ${(resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount).toFixed(2)}</Badge>
                                                         </div>
                                                         : null
                                                     }

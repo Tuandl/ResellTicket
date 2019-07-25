@@ -10,6 +10,7 @@ const AxiosConfigurate = () => {
     Axios.interceptors.response.use(null, (err) => {
         if(err.response.status === 401) {
             localStorage.removeItem('userToken');
+            localStorage.clear();
             window.location.replace('/login');
         }
         return err;
