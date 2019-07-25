@@ -33,11 +33,11 @@ function searchResult() {
     init();
     
     async function init() {
+        model.isLoadingMore = true;
         const routeSearchResults = await apiService.get(appConfig.apiUrl.route + 'search', params);
-
         mapRoute(routeSearchResults);
-
         renderRoutes();
+        model.isLoadingMore = false;
 
         $(window).scroll(async function() {
             if($(window).scrollTop() + $(window).height() >= ($(document).height() - $('.footer').height())) {
