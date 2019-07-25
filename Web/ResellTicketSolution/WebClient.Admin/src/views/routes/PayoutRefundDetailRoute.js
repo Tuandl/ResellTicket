@@ -10,6 +10,8 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import TicketStatus from '../Tickets/TicketStatus';
 import ResolveRenamedFailTicket from './ResolveRenamedFailTicket';
+import RouteStatus from './RouteStatus';
+
 
 function TicketRow(props) {
     const { routeTicket, routeStatus, resolveOption, isRefund } = props;
@@ -43,7 +45,7 @@ function TicketRow(props) {
     const getButton = (status) => {
         switch (status) {
             case TicketStatus.RenamedFail:
-                if (routeStatus !== 3 && resolveOption === 2 && isRefund) {
+                if (routeStatus !== RouteStatus.Completed && resolveOption === 2 && isRefund) {
                     return (
                         <Button color="danger" className="mr-2" onClick={refundFailTicketMoneyToBuyer}>
                             <i className="fa fa-dollar fa-lg mr-1"></i>Refund
@@ -108,6 +110,7 @@ class PayoutRefundDetailRoute extends Component {
             isRefund: false,
             resolveOptionLogs: [],
             isRefundedAll: false,
+            profitLoss: 0,
 
             isOpenConfirmPayoutDialog: false,
             isOpenConfirmRefundDialog: false,
@@ -123,16 +126,18 @@ class PayoutRefundDetailRoute extends Component {
         const routeId = this.props.match.params.id;
         await Axios.get('api/route/detail?routeId=' + routeId).then(res => {
             this.setState({
-                routeDetail: [
+                routeDetail:
+                [
                     { name: 'Buyer Phone', value: res.data.buyerPhone },
                     { name: 'Route Code', value: res.data.code },
-                    { name: 'Total Amount', value: '$' + res.data.totalAmount },
+                    { name: 'Total Amount Earned', value: '$' + res.data.totalAmount }
                 ],
                 routeId: res.data.id,
                 routeStatus: res.data.status,
                 routeTickets: res.data.routeTickets,
                 resolveOptionLogs: res.data.resolveOptionLogs,
-                isRefundedAll: res.data.isRefundAll
+                isRefundedAll: res.data.isRefundAll,
+                earnedLoss: res.data.earnedLoss
             }, () => this.checkRefundAll())
         });
     }
@@ -207,7 +212,8 @@ class PayoutRefundDetailRoute extends Component {
             resolveOption,
             routeId,
             resolveOptionLogs,
-            isRefundedAll } = this.state;
+            isRefundedAll,
+            earnedLoss } = this.state;
         return (
             <div className="animated fadeIn">
                 <Row>
@@ -275,7 +281,8 @@ class PayoutRefundDetailRoute extends Component {
 
                 <ResolveRenamedFailTicket routeTickets={routeTickets} resolveOption={resolveOption}
                     routeStatus={routeStatus} onOptionChange={this.onOptionChange} routeId={routeId}
-                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll} />
+                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll} 
+                    earnedLoss={earnedLoss} />
 
                 <div>
                     {this.renderConfirmPayoutDialog()}

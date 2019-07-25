@@ -34,6 +34,7 @@ export default class PostedTicket extends Component {
     }
 
     componentDidMount() {
+        
         this.getCustomerTickets();
     }
 
@@ -81,8 +82,8 @@ export default class PostedTicket extends Component {
         this.setState({
             selectedIndex: selectedIndex,
             postedTickets: [],
-            currentPage: 1
         })
+        this.currentPage = 1;
         switch (selectedIndex) {
             case this.buttonIndexes.all:
                 this.ticketStatus = TICKET_STATUS.ALL;
@@ -113,13 +114,13 @@ export default class PostedTicket extends Component {
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
-                    <Left>
+                    {/* <Left>
                         <Button transparent
                             onPress={() => navigate('Me')}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
-                    </Left>
-                    <Body>
+                    </Left> */}
+                    <Body style={{paddingLeft: 10}}>
                         <Title>
                             Posted Ticket
                         </Title>

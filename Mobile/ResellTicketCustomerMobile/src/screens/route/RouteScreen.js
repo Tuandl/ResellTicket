@@ -116,8 +116,8 @@ class RouteScreen extends Component {
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
-                    <Left></Left>
-                    <Body>
+                    {/* <Left></Left> */}
+                    <Body style={{paddingLeft: 10}}>
                         <Title>Route</Title>
                     </Body>
                     <Right>

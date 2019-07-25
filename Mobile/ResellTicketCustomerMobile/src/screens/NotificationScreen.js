@@ -50,6 +50,10 @@ class NotificationScreen extends Component {
             isLoading: true,
         });
 
+        if(this.isGettingAPI) return; 
+
+        this.isGettingAPI = true;
+
         const param = {
             page: page, 
             pageSize: pageSize,
@@ -69,6 +73,8 @@ class NotificationScreen extends Component {
                 isLoading: false,
             });
         }
+
+        this.isGettingAPI = false;
     }
 
     getMoreNotification() {

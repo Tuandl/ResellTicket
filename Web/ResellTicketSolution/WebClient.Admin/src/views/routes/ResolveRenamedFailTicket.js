@@ -2,12 +2,15 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 import { toastr } from 'react-redux-toastr';
 import { Link } from 'react-router-dom';
-import { Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table,
-    Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import {
+    Badge, Button, Card, CardBody, CardHeader, Col, Input, Row, Table,
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import TicketStatus from '../Tickets/TicketStatus';
 import ResolveOption from './ResolveOption'
+import RouteStatus from './RouteStatus';
 
 function TicketRow(props) {
     const { ticket } = props;
@@ -66,7 +69,7 @@ export default class ResolveRenamedFailTicket extends Component {
             replaceTicketId: 0,
             resolveOptionLogs: [],
             isRefundedAll: false,
-            isOpenConfirmReplaceDialog: false
+            isOpenConfirmReplaceDialog: false,
         }
     }
 
@@ -198,8 +201,8 @@ export default class ResolveRenamedFailTicket extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" onChange={this.optionChange} 
-                                    />
+                                &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" onChange={this.optionChange}
+                                />
                                 <strong>OPTION 1: Replace fail ticket to a new ticket.</strong>
                             </CardHeader>
                             {replaceTickets.length > 0 ?
@@ -258,10 +261,25 @@ export default class ResolveRenamedFailTicket extends Component {
         }
     }
 
-    renderResolveOptionLogs() {
-        var { resolveOptionLogs, isRefundedAll } = this.state;
-        if (resolveOptionLogs.length > 0) {
+    renderProfitOrLoss() {
+        var { routeStatus } = this.state;
+        var { earnedLoss } = this.props;
+        if (routeStatus === RouteStatus.Completed) {
+            if (parseFloat(earnedLoss) < 0) {
+                return (
+                    <Badge color="danger" style={{ float: 'right', fontSize: 15 }}>LOSS: ${earnedLoss * (-1)}</Badge>
+                )
+            } else {
+                return (
+                    <Badge color="success" style={{ float: 'right', fontSize: 15 }}>EARNED: ${earnedLoss}</Badge>
+                )
+            }
+        }
+    }
 
+    renderResolveOptionLogs() {
+        var { resolveOptionLogs } = this.state;
+        if (resolveOptionLogs.length > 0) {
 
             return (
                 <Row>
@@ -269,7 +287,7 @@ export default class ResolveRenamedFailTicket extends Component {
                         <Card>
                             <CardHeader>
                                 <strong>Resolved Tickets History </strong>
-                                {isRefundedAll ? <Badge color="danger" style={{ float: 'right', fontSize: 15 }}>This route was refunded all</Badge> : null}
+                                {this.renderProfitOrLoss()}
                             </CardHeader>
                             <CardBody>
                                 <Table responsive hover>
@@ -282,6 +300,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                             <th>Price</th>
                                             <th>Updated At</th>
                                             <th>Status</th>
+                                            <th>Result</th>
                                             <th>Staff</th>
                                         </tr>
                                     </thead>
@@ -290,8 +309,8 @@ export default class ResolveRenamedFailTicket extends Component {
                                             <tr key={index}>
                                                 <td><strong>{index + 1}</strong></td>
                                                 <td>{resolveOptionLog.resolvedTicketCode}</td>
-                                                <td>{resolveOptionLog.departureCityName} - {moment(resolveOptionLog.departureDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
-                                                <td>{resolveOptionLog.arrivalCityName} - {moment(resolveOptionLog.arrivalDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
+                                                <td>{resolveOptionLog.departureCityName} <br/> {moment(resolveOptionLog.departureDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
+                                                <td>{resolveOptionLog.arrivalCityName} <br/> {moment(resolveOptionLog.arrivalDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
                                                 <td>${resolveOptionLog.sellingPrice}</td>
                                                 <td>{moment(resolveOptionLog.resolveAt).format('ddd, MMM DD YYYY HH:mm')}</td>
                                                 <td>
@@ -309,6 +328,29 @@ export default class ResolveRenamedFailTicket extends Component {
                                                     }
                                                     {resolveOptionLog.option === ResolveOption.PAYOUT ?
                                                         <Badge color="success">Payout</Badge>
+                                                        : null
+                                                    }
+                                                </td>
+                                                <td>
+                                                    {resolveOptionLog.option === ResolveOption.REFUNDFAILTICKET ?
+                                                        <div>
+                                                            
+                                                            <Badge color="danger">Loss: ${resolveOptionLog.sellingPrice}</Badge>
+                                                        </div>
+                                                        : null
+                                                    }
+                                                    {resolveOptionLog.option === ResolveOption.REFUNDTOTALAMOUNT ?
+                                                        <div>
+                                                            
+                                                            <Badge color="danger">Loss: ${resolveOptionLog.sellingPrice}</Badge>
+                                                        </div>
+                                                        : null
+                                                    }
+                                                    {resolveOptionLog.option === ResolveOption.PAYOUT ?
+                                                        <div>
+                                                            <Badge color="success">Earned: ${resolveOptionLog.feeAmount}</Badge><br/>
+                                                            <Badge color="danger">Loss: ${(resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount).toFixed(2)}</Badge>
+                                                        </div>
                                                         : null
                                                     }
                                                 </td>
