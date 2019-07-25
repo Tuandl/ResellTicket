@@ -6,6 +6,7 @@ using Core.Infrastructure;
 using Core.Models;
 using Core.Repository;
 using Microsoft.Extensions.Options;
+using Service.EmailService;
 using Service.Helpers;
 using Service.NotificationService;
 using Stripe;
@@ -113,6 +114,8 @@ namespace Service.Services
         private readonly IRefundRepository _refundRepository;
         private readonly IUserRepository _userRepository;
         private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
+        private readonly ISendGridService _sendGridService;
+
 
         public RouteService(
                 IRouteRepository routeRepository,
@@ -128,7 +131,8 @@ namespace Service.Services
                 IPaymentRepository paymentRepository,
                 IRefundRepository refundRepository,
                 IUserRepository userRepository,
-                 IResolveOptionLogRepository resolveOptionLogRepository
+                 IResolveOptionLogRepository resolveOptionLogRepository,
+                 ISendGridService sendGridService
             )
         {
             _routeRepository = routeRepository;
@@ -145,6 +149,7 @@ namespace Service.Services
             _refundRepository = refundRepository;
             _userRepository = userRepository;
             _resolveOptionLogRepository = resolveOptionLogRepository;
+            _sendGridService = sendGridService;
         }
 
         public void DeleteRoute(int routeId)
@@ -937,6 +942,7 @@ namespace Service.Services
                 buyerDeviceIds.Add(buyerDev.DeviceId);
             }
             _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+            _sendGridService.SendEmailReplacementForBuyer(failRouteTicket.TicketId, replaceTicketId);
         }
 
         public void RefundAfterReplaceTicket(decimal amount, Payment payment)
@@ -957,6 +963,7 @@ namespace Service.Services
             refundAddIntoData.Amount = amount;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
+            //
         }
 
         public StatisticReportViewModel GetStatisticReport()
