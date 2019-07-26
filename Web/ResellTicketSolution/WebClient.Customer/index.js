@@ -11,6 +11,7 @@ function indexController() {
         routeContainer: 'route-container',
         btnStatuses: 'btnStatuses',
         btnSearchRoute: 'btnSearchRoute',
+        showEmptyList: 'show-empty-list'
     }
 
     const model = {
@@ -67,6 +68,11 @@ function indexController() {
             containerElement.appendChild(routeComponent.domElement);
         });
         model.total = response.total;
+        if(model.total === 0) {
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        }else{
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         model.isLoadingMore = false;
     }
 

@@ -7,10 +7,12 @@ function Transaction(){
 
     const id = {
         transactionList: 'transaction-list',
-        btnLoadMore: 'btnLoadMore'
+        btnLoadMore: 'btnLoadMore',
+        tableTransasctionList: 'table-transasction-list',
+        showEmptyList: 'show-empty-list'
     }
 
-    total: 0;
+    
 
     const model = {
         page: 1,
@@ -18,7 +20,6 @@ function Transaction(){
         transactions: [],
         total: 0
     }
-    
     
     bindEvent();
     renderTransaction();
@@ -38,6 +39,13 @@ function Transaction(){
             transactionRow.render();
             transactionListComponent.appendChild(transactionRow.domElement);
         });
+        if(model.total === 0){
+            document.getElementById(id.tableTransasctionList).style.display = 'none';
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.tableTransasctionList).style.display = 'block';
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         if(transactions.length !== model.pageSize) {
             model.isLoadAll = true;
             commonService.removeAllChildren(document.getElementById(id.btnLoadMore))

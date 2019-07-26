@@ -13,7 +13,8 @@ function postedTicketController() {
         btnStatuses: 'btnStatuses',
         btnPostTicket: 'btnPostTicket',
         btnLoadMore: 'btnLoadMore',
-        connectToStripeLinkId: 'connect-to-stripe-link'
+        showEmptyList: 'show-empty-list',
+        connectToStripeLinkId: 'connect-to-stripe-link',
     }
 
     const model = {
@@ -22,6 +23,7 @@ function postedTicketController() {
         tickets: [],
         searchStatus: ticketStatus.Pending,
         ticketComponents: [],
+        total: 0
     }
 
     bindEvent();
@@ -62,6 +64,12 @@ function postedTicketController() {
             ticketComponent.render();
             containerElement.appendChild(ticketComponent.domElement);
         });
+        model.total = response.length;
+        if(model.total === 0){
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         if(response.length !== model.pageSize) {
             model.isLoadAll = true;
             commonService.removeAllChildren(document.getElementById(id.btnLoadMore))
