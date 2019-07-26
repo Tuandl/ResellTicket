@@ -61,12 +61,6 @@ function searchResult() {
     }
 
     function mapRoute(routes) {
-        if(routes === null || routes === undefined || routes.length === 0) {
-            document.getElementById(id.showEmptyList).style.display = 'block';
-        } else {
-            document.getElementById(id.showEmptyList).style.display = 'none';
-        }
-
         var newRoutes = routes.map(route => {
             return {
                 id: route.id || commonService.generateRandomId(),
@@ -85,6 +79,12 @@ function searchResult() {
         });
 
         model.routes = [...model.routes, ...newRoutes];
+
+        if(model.routes === null || model.routes === undefined || model.routes.length === 0) {
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
     }
 
     function renderRoutes(doNotDeleteChildren) {
