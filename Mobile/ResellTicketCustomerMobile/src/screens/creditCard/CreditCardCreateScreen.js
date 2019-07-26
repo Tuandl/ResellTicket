@@ -145,7 +145,8 @@ export default class CreditCardCreateScreen extends Component {
                     RNToasty.Success({
                         title: 'Create Credit Card successfully',
                     });
-                    navigate('CreditCardViewList');
+                    //navigate('CreditCardViewList');
+                    this.props.navigation.pop() //quay về trang trước đó
                 } else {
                     RNToasty.Error({
                         title: 'Create credit card Error',
@@ -202,8 +203,8 @@ export default class CreditCardCreateScreen extends Component {
             <Container style={{ flex: 1 }}>
                 <Header>
                     <Left>
-                        <Button
-                            onPress={() => this.props.navigation.navigate('CreditCardViewList')}>
+                        <Button transparent
+                            onPress={() => this.props.navigation.pop()}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
                     </Left>
@@ -228,18 +229,18 @@ export default class CreditCardCreateScreen extends Component {
                             inputStyle={styles.input}
                             validColor={"black"}
                             invalidColor={"red"}
-                            placeholderColor={"darkgray"}
+                            placeholderColor={"darkgray"}   
 
                             onFocus={this._onFocus}
                             onChange={this._onChange} />
-                        <Button rounded block primary
+                        <Button block primary
                             //activeOpacity={1}
                             underlayColor="transparent"
                             onPress={this.createCreditCard}
                             loading={showLoading}
                             loadingProps={{ size: 'small', color: '#fff' }}
                             style={{
-                                flex: 0.3,
+                                margin: 20,
                                 marginTop: 10
                             }}
                             titleStyle={{ fontSize: 20, color: '#fff' }}

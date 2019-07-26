@@ -8,7 +8,7 @@ import TICKET_STATUS from '../../constants/TicketStatus';
 
 export default class PostedTicket extends Component {
 
-    
+
     currentPage = 1;
     pageSize = 5;
     ticketStatus = TICKET_STATUS.ALL;
@@ -18,6 +18,7 @@ export default class PostedTicket extends Component {
         renamed: 2,
         completed: 3,
     };
+    isExistConnectAccount = false;
 
     constructor(props) {
         super(props);
@@ -25,7 +26,7 @@ export default class PostedTicket extends Component {
             postedTickets: [],
             isLoading: false,
             selectedIndex: this.buttonIndexes.all,
-            isStill : false
+            isStill: false
         }
     }
 
@@ -34,7 +35,7 @@ export default class PostedTicket extends Component {
     }
 
     componentDidMount() {
-        
+
         this.getCustomerTickets();
     }
 
@@ -101,6 +102,31 @@ export default class PostedTicket extends Component {
         this.getCustomerTickets(selectedIndex);
     }
 
+    postTicket = () => {
+        this.checkExistedConnectAccount();
+        if (!this.isExistConnectAccount) {
+            this.props.navigation.navigate('CreateBankAccountToReceiveMoney')
+        } else {
+            this.props.navigation.navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })
+        }
+        
+    }
+
+    checkExistedConnectAccount = async () => {
+        try {
+            var response = await Api.get('api/customer/check-existed-connect-bank-account');
+            if (response.status === 200) {
+                this.isExistConnectAccount = false
+            } else {
+                this.isExistConnectAccount = true
+            }
+        } catch (error) {
+            RNToasty.Error({
+                title: 'Error on Load Connect Bank Account Data',
+            });
+        }
+    }
+
     render() {
         const { postedTickets, isLoading, selectedIndex } = this.state
         const username = this.props.navigation.getParam('username');
@@ -120,13 +146,13 @@ export default class PostedTicket extends Component {
                             <Icon name="arrow-left" type="material-community" color="#fff" />
                         </Button>
                     </Left> */}
-                    <Body style={{paddingLeft: 10}}>
+                    <Body style={{ paddingLeft: 10 }}>
                         <Title>
                             Posted Ticket
                         </Title>
                     </Body>
                     <Right>
-                        <Button transparent onPress={() => navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })}>
+                        <Button transparent onPress={this.postTicket}>
                             <Icon name="plus-circle-outline" type="material-community" color="#fff" />
                         </Button>
                     </Right>

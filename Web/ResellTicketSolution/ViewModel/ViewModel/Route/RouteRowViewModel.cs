@@ -17,6 +17,7 @@ namespace ViewModel.ViewModel.Route
         public int TicketQuantity { get; set; }
         public DateTime DepartureDate { get; set; }
         public DateTime ArrivalDate { get; set; }
+        public DateTime? ExpiredDateTime { get; set; }
         public bool IsValid { get; set; }
         public bool IsLiability { get; set; }
         public ResolveOption? ResolveOption { get; set; }

@@ -140,7 +140,6 @@ function routeDetail() {
     }
 
     async function onBtnConfirmClickedCallApi() {
-
         // window.location.replace('/index.html');
         const params = {
             routeId: routeId,
@@ -163,7 +162,17 @@ function routeDetail() {
     }
 
     async function onBtnBuyClicked() {
-        await renderCustomerDetail(routeId);
+        const param = {
+            id: localStorage.getItem('ID')
+        }
+        var creditCards = await apiService.get(appConfig.apiUrl.creditCard, param);
+        if(creditCards.length === 0) {
+            toastService.error('Please add a credit card');
+            window.location.replace(appConfig.url.creditCard.viewListCreditCard);
+        } else {
+            await renderCustomerDetail(routeId);
+        }
+        //
     }
 
     async function renderCustomerDetail(routeId) {

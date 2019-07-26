@@ -72,7 +72,9 @@ class RouteComponent {
                         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><h3>${numeral(this.route.totalAmount).format('$0,0.00')}</h3></div>
                     </div>
                     <div class="routeFooter">
-                        <span style="color: red">Expired Date: ${moment(this.route.departureDate).format(appConfig.format.datetime)}</span>
+                        ${this.route.status !== routeStatus.Completed ? 
+                            `<span style="color: red">Expired Date: ${moment(this.route.expiredDateTime).format(appConfig.format.datetime)}</span>`
+                    : ''}
                     </div>
                 </div>
             </div>

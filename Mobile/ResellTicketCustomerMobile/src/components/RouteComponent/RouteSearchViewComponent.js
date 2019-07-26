@@ -36,7 +36,7 @@ export default class RouteSearchViewComponent extends Component {
         route.departureTime = moment(route.routeTickets[0].departureDateTime).format(formatConstant.TIME);
         route.arrivalDate = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.DATE);
         route.arrivalTime = moment(route.routeTickets[route.routeTickets.length - 1].arrivalDateTime).format(formatConstant.TIME);
-        route.expiredDate = moment(route.routeTickets[0].departureDateTime).format(formatConstant.DATE_TIME);
+        route.expiredDate = moment(route.routeTickets[0].expiredDateTime).format(formatConstant.DATE_TIME);
     }
 
     onPress = () => {

@@ -58,12 +58,14 @@ export default class CreateBankAccountToReceiveMoneyScreen extends Component {
                     isLoading: false
                 });
             }
-            this.props.navigation.navigate('Me');
+            //this.props.navigation.navigate('Me');
+            this.props.navigation.pop()
         } catch (error) {
             RNToasty.Error({
                 title: 'Error on Creating Bank Account Card Data',
             });
-            this.props.navigation.navigate('Me');
+            //this.props.navigation.navigate('Me');
+            this.props.navigation.pop();
         } finally {
             this.setState({
                 showLoading: false,
