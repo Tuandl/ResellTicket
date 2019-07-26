@@ -30,9 +30,17 @@ namespace Service.Services
         /// <param name="page">Page number. Start at 1.</param>
         /// <param name="pageSize">Page Size</param>
         /// <param name="maxCombinationTickets">Max tickets a route has</param>
+        /// <param name="arrivalDate">Get only routes that arrive before this date</param>
+        /// <param name="departureDate">Get only routes that start after this date</param>
+        /// <param name="maxWaitingHours">If route has many tickets, each sequence ticket must not wait more than this hour</param>
+        /// <param name="ticketTypeIds">list of ticket types allow to search</param>
+        /// <param name="transportationIds">list of transportations allow to search</param>
+        /// <param name="vehicleIds">list of vehicles allow to search</param>
         /// <returns>List search results.</returns>
         List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3);
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
+            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24, 
+            int[] ticketTypeIds = null);
 
         /// <summary>
         /// Create new Route base on Search result
@@ -376,13 +384,15 @@ namespace Service.Services
         }
 
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3)
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
+            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
+            int[] ticketTypeIds = null)
         {
             //Convert fromDate, toDate into UTC
             var departureCity = _cityRepository.Get(x => x.Id == departureCityId && x.Deleted == false);
-            if (departureCity == null) throw new NotFoundException();
+            if (departureCity == null) throw new NotFoundException("Not Found Depoarture City");
             var arrivalCity = _cityRepository.Get(x => x.Id == arrivalCityId && x.Deleted == false);
-            if (arrivalCity == null) throw new NotFoundException();
+            if (arrivalCity == null) throw new NotFoundException("Not Found Arrival City");
 
             var departureDateUTC = departureDate.ToSpecifiedTimeZone(departureCity.TimeZoneId);
             var arrivalDateUTC = arrivalDate.ToSpecifiedTimeZone(arrivalCity.TimeZoneId);
@@ -393,8 +403,18 @@ namespace Service.Services
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     x.Deleted == false &&
                     x.DepartureDateTimeUTC >= departureDateUTC &&
-                    x.ArrivalDateTimeUTC <= arrivalDateUTC
+                    x.ArrivalDateTimeUTC <= arrivalDateUTC &&
+                    (x.ExpiredDateTimeUTC == null || x.ExpiredDateTimeUTC >= DateTime.UtcNow) &&
+                    (vehicleIds == null || vehicleIds.Length == 0 || vehicleIds.Contains(x.Transportation.VehicleId)) && 
+                    (transportationIds == null || transportationIds.Length == 0 || transportationIds.Contains(x.TransportationId)) &&
+                    (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId))
                 );
+
+            //return empty list in case of no input data
+            if(tickets.Count() == 0)
+            {
+                return new List<RouteSearchViewModel>();
+            }
 
 
             //create graph base on available tickets
@@ -409,7 +429,8 @@ namespace Service.Services
                 departureId: departureCityId,
                 destinationId: arrivalCityId,
                 maxCombination: maxCombinationTickets,
-                kshortestPathQuantity: page * pageSize
+                kshortestPathQuantity: page * pageSize,
+                maxWaitingHours: maxWaitingHours
             );
 
             //Get k shortest path
@@ -423,7 +444,7 @@ namespace Service.Services
             }
 
             var routes = new List<RouteSearchViewModel>();
-            foreach (var path in paths.Skip((page - 1) * pageSize))
+            foreach (var path in paths.Skip((page - 1) * pageSize).Take(pageSize))
             {
                 var routeSearchViewModel = new RouteSearchViewModel();
 

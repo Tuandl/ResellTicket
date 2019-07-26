@@ -44,6 +44,10 @@ namespace WebAPI.Controllers
         /// <param name="arrivalDate">Arrival Date (Local arrival city)</param>
         /// <param name="page">Current Page</param>
         /// <param name="pageSize">Size of a page</param>
+        /// <param name="maxWaitingHours">Max waiting hours between 2 tickets in a route</param>
+        /// <param name="ticketTypeIds">Only search these ticket type</param>
+        /// <param name="transportationIds">Only search these transportation</param>
+        /// <param name="vehicleIds">only search these vehicle</param>
         /// <returns>Search Result</returns>
         [HttpGet("search")]
         public IActionResult SearchRoute(
@@ -53,7 +57,11 @@ namespace WebAPI.Controllers
             DateTime departureDate,
             DateTime arrivalDate,
             int page,
-            int pageSize)
+            int pageSize,
+            [FromQuery] int[] vehicleIds,
+            [FromQuery] int[] transportationIds,
+            [FromQuery] int[] ticketTypeIds,
+            int maxWaitingHours = 24)
         {
             try
             {
@@ -63,7 +71,8 @@ namespace WebAPI.Controllers
                 arrivalDate = arrivalDate.Date.AddDays(1).AddMilliseconds(-1);
 
                 var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,
-                    departureDate, arrivalDate, page, pageSize, maxTicketCombination
+                    departureDate, arrivalDate, page, pageSize, maxTicketCombination,
+                    vehicleIds, transportationIds, maxWaitingHours, ticketTypeIds
                 );
 
                 return Ok(routes);
