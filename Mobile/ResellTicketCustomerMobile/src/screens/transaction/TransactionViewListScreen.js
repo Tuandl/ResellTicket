@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, FlatList, Text, ActivityIndicator } from "react-native";
+import { StyleSheet, View, FlatList, Text, ActivityIndicator, Dimensions, ImageBackground } from "react-native";
 import { Left, Body, Right, Title } from "native-base";
 import { Container, Header, Button } from 'native-base';
 import Api from '../../service/Api';
@@ -8,17 +8,22 @@ import { RNToasty } from 'react-native-toasty';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import formatConstant from '../../constants/formatConstant';
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const BG_IMAGE = require('../../../assets/images/empty-list.png');
 
 
 export default class TransactionViewListScreen extends Component {
     currentPage = 1;
     pageSize = 7;
+    total = 0;
     constructor(props) {
         super(props);
         this.state = {
             transaction: [],
             isLoading: false,
-            isStill: false
+            isStill: false,
+            isShowEmptyView: false
         }
 
     }
@@ -38,16 +43,27 @@ export default class TransactionViewListScreen extends Component {
         }
         try {
             var transactionResponse = await Api.get('/api/customer/get-transaction', params);
-            console.log('repone', transactionResponse);
             if (transactionResponse.status === 200) {
-                // this.isStill = res.data.length === this.pageSize ? true : false
                 this.setState({
                     isStill: transactionResponse.data.length === this.pageSize ? true : false,
                 })
-                console.log('isStill', this.state.isStill);
+                this.total += transactionResponse.data.length;
                 this.setState({
                     transaction: [...this.state.transaction, ...transactionResponse.data],
                     isLoading: false,
+                })
+                if (this.total === 0 && transactionResponse.data.length === 0) {
+                    this.setState({
+                        isShowEmptyView: true
+                    })
+                } else {
+                    this.setState({
+                        isShowEmptyView: false
+                    })
+                }
+            } else {
+                this.setState({
+                    isShowEmptyView: true
                 })
             }
         } catch (error) {
@@ -75,7 +91,7 @@ export default class TransactionViewListScreen extends Component {
 
 
     render() {
-        const { transaction, isLoading } = this.state;
+        const { transaction, isLoading, isShowEmptyView } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
@@ -91,9 +107,11 @@ export default class TransactionViewListScreen extends Component {
                         </Title>
                     </Body>
                 </Header>
-                <View style={[styles.root, this.props.style]}>
+                {isShowEmptyView ? <ImageBackground source={BG_IMAGE} style={styles.bgImage} /> : null}
+                {!isShowEmptyView ? <View style={[styles.root, this.props.style]}>
                     <FlatList
                         onEndReached={this.onEndReached}
+                        keyExtractor={(item, index) => index}
                         onEndReachedThreshold={0.1}
                         data={transaction}
                         renderItem={({ item, separators }) => (
@@ -122,15 +140,25 @@ export default class TransactionViewListScreen extends Component {
                         ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}
                         ItemSeparatorComponent={() => <View style={styles.rect2} />}
                         style={styles.list}
-                        // ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}></FlatList>
+                    // ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}></FlatList>
                     />
-                </View>
+                </View> : null}
+
             </Container>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    bgImage: {
+        flex: 1,
+        top: 50,
+        left: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT / 1.75,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     root: {
         flex: 1,
         backgroundColor: "#FFF",
