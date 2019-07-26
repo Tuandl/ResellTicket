@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Algorithm.KShortestPaths.Models
@@ -104,6 +105,28 @@ namespace Algorithm.KShortestPaths.Models
             }
 
             return vertices;
+        }
+
+        /// <summary>
+        /// Calculate max waiting hours between 2 tickets in this route
+        /// </summary>
+        /// <returns></returns>
+        public double GetMaximumWaitingHour()
+        {
+            double maxWaitingHours = 0;
+
+            var trimed = this.Trim();
+
+            for (int index = 0; index < trimed.Count() - 1; index++)
+            {
+                var firstEdge = trimed[index];
+                var secondEdge = trimed[index + 1];
+
+                var waitingHours = secondEdge.Tail.ArrivalTimeUTC.Subtract(firstEdge.Head.ArrivalTimeUTC).TotalHours;
+                maxWaitingHours = Math.Max(maxWaitingHours, waitingHours);
+            }
+
+            return maxWaitingHours;
         }
     }
 }

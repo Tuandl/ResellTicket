@@ -29,6 +29,7 @@ function searchResult() {
     const model = {
         isLoadingMore: false,
         isLoadAll: false,
+        routes: [],
     };
     init();
     
@@ -47,7 +48,7 @@ function searchResult() {
 
                     const response = await apiService.get(appConfig.apiUrl.route + 'search', params);
                     mapRoute(response);
-                    renderRoutes(true);
+                    renderRoutes(false);
 
                     if(response.length < params.pageSize) {
                         model.isLoadAll = true;
@@ -59,7 +60,7 @@ function searchResult() {
     }
 
     function mapRoute(routes) {
-        model.routes = routes.map(route => {
+        var newRoutes = routes.map(route => {
             return {
                 id: route.id || commonService.generateRandomId(),
                 code: route.code || '',
@@ -75,6 +76,8 @@ function searchResult() {
                 routeTickets: route.routeTickets,
             }
         });
+
+        model.routes = [...model.routes, ...newRoutes];
     }
 
     function renderRoutes(doNotDeleteChildren) {

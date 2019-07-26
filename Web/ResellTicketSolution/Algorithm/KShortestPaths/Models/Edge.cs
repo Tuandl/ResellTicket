@@ -29,12 +29,12 @@ namespace Algorithm.KShortestPaths.Models
         public object Data { get; set; }
 
         /// <summary>
-        /// Public Getter for Tail Vertex
+        /// Public Getter for Tail Vertex. Tail is departure
         /// </summary>
         public Vertex Tail { get; }
 
         /// <summary>
-        /// Public Getter for Head Vertex
+        /// Public Getter for Head Vertex. Head is arrival
         /// </summary>
         public Vertex Head { get; }
 
