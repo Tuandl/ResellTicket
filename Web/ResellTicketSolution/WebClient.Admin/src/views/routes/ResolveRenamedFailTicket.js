@@ -83,7 +83,8 @@ export default class ResolveRenamedFailTicket extends Component {
             resolveOptionLogs: props.resolveOptionLogs,
             isRefundedAll: props.isRefundedAll
         }, () => {
-            if (props.routeStatus === 2) this.checkResovleNeed(this.state.routeTickets);
+            if (props.routeStatus === RouteStatus.Bought) this.checkResovleNeed(this.state.routeTickets)
+            else this.setState({isResolveNeed: false});
         })
     }
 
