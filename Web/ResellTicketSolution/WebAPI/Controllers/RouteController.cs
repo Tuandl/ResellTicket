@@ -53,7 +53,7 @@ namespace WebAPI.Controllers
                 var routes = _routeService.SearchRoute(paramsModel.DepartureCityId, paramsModel.ArrivalCityId,
                     paramsModel.DepartureDate, paramsModel.ArrivalDate, paramsModel.Page, paramsModel.PageSize, 
                     paramsModel.MaxTicketCombination, paramsModel.VehicleIds, paramsModel.TransportationIds,
-                    paramsModel.maxWaitingHours, paramsModel.TicketTypeIds
+                    paramsModel.MaxWaitingHours, paramsModel.TicketTypeIds
                 );
 
                 return Ok(routes);

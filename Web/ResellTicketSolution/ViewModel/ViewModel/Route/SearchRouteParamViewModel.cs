@@ -14,6 +14,6 @@ namespace ViewModel.ViewModel.Route
         public int[] VehicleIds { get; set; }
         public int[] TransportationIds { get; set; }
         public int[] TicketTypeIds { get; set; }
-        public int maxWaitingHours { get; set; }
+        public int MaxWaitingHours { get; set; }
     }
 }
