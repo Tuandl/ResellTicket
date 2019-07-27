@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.EmailService;
 using Service.Services;
 using System;
+using System.Net;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Route;
 using WebAPI.Extensions;
@@ -249,7 +250,8 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.GetRootException().Message);
+                //return BadRequest(ex.GetRootException().Message);
+                return StatusCode((int)HttpStatusCode.NotAcceptable, ex.Message);
             }
         }
     }

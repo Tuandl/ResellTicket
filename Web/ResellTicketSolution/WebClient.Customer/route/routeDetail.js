@@ -7,6 +7,7 @@ import toastService from "../js/service/toastService.js";
 import { ConfirmDialogDeleteRouteDetail } from '../js/component/dialogComponent/ConfirmDialogDeleteRouteDetail.js';
 import { ConfirmDialogConfirmBuyerDetail } from '../js/component/dialogComponent/ConfirmDialogConfirmBuyerDetail.js';
 import routeStatus from '../js/enum/routeStatus.js';
+import ticketStatus from "../js/enum/ticketStatus.js";
 
 function routeDetail() {
 
@@ -42,6 +43,7 @@ function routeDetail() {
         dialogConfirmBuyerDetail: document.getElementById(id.dialogConfirmBuyerDetail),
     };
 
+    var boughtTicketCount = 0;
     const routeId = commonService.getQueryParam('routeId');
     const customerComponent = new CustomerComponent(routeId);
     const model = {};
@@ -64,7 +66,7 @@ function routeDetail() {
         renderTickets(model.route.routeTickets);
         const customerComponent = new CustomerComponent(model.route);
 
-        if(model.route.status === routeStatus.New) {
+        if(model.route.status === routeStatus.New && boughtTicketCount === 0) {
             elements.btnBuy.style.display = 'inline';
             elements.btnBuy.addEventListener('click', onBtnBuyClicked);
             elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
@@ -118,6 +120,9 @@ function routeDetail() {
     function renderTickets(routeTickets) {
         commonService.removeAllChildren(elements.ticketContainer);
         routeTickets.forEach(routeTicket => {
+            if(routeTicket.status !== ticketStatus.Valid) {
+                boughtTicketCount++;
+            }
             const ticketElement = new TicketComponent(routeTicket, onRouteTicketClicked);
             elements.ticketContainer.appendChild(ticketElement.render());
         });
@@ -151,13 +156,15 @@ function routeDetail() {
         try {
             var routeResponse = await apiService.post(appConfig.apiUrl.route + 'buy-route/', params);
             if (routeResponse.status === 200) {
-                // toastService.success('Buy route successfully!');
+                toastService.success('Buy route successfully!');
                 window.location.replace('/index.html');
             } else {
-                toastService.error('error');
+                toastService.error('Buy route fail, someone has just bought this route');
+                location.reload();
             }
         } catch (ex) {
-            toastService.error('error');
+            toastService.error('Buy route fail, someone has just bought this route');
+            location.reload();
         }
     }
 
@@ -168,7 +175,7 @@ function routeDetail() {
         var creditCards = await apiService.get(appConfig.apiUrl.creditCard, param);
         if(creditCards.length === 0) {
             toastService.error('Please add a credit card');
-            window.location.replace(appConfig.url.creditCard.viewListCreditCard);
+            window.location.replace(appConfig.url.creditCard.createCreditCard);
         } else {
             await renderCustomerDetail(routeId);
         }
