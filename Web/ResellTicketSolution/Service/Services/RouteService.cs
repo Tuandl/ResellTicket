@@ -621,9 +621,6 @@ namespace Service.Services
                         count++;
                     } else
                     {
-                        existedRoute.Deleted = true;
-                        _routeRepository.Update(existedRoute);
-                        _unitOfWork.CommitChanges();
                         return "This Route has been bought.";
                     }
                     
