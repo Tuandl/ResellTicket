@@ -10,7 +10,6 @@ namespace ViewModel.ViewModel.Route
         public int DepartureStationId { get; set; }
         public string DepartureStationName { get; set; }
         public DateTime DepartureDateTime { get; set; }
-        public DateTime? ExpiredDateTime { get; set; }
         public int ArrivalCityId { get; set; }
         public string ArrivalCityName { get; set; }
         public int ArrivalStationId { get; set; }
