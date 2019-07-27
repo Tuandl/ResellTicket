@@ -37,42 +37,23 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Search Route by some criterials
         /// </summary>
-        /// <param name="departureCityId">Departure City Id</param>
-        /// <param name="arrivalCityId">Arrival City</param>
-        /// <param name="maxTicketCombination">Max Ticket Combination</param>
-        /// <param name="departureDate">Departure Date (Local departure city)</param>
-        /// <param name="arrivalDate">Arrival Date (Local arrival city)</param>
-        /// <param name="page">Current Page</param>
-        /// <param name="pageSize">Size of a page</param>
-        /// <param name="maxWaitingHours">Max waiting hours between 2 tickets in a route</param>
-        /// <param name="ticketTypeIds">Only search these ticket type</param>
-        /// <param name="transportationIds">Only search these transportation</param>
-        /// <param name="vehicleIds">only search these vehicle</param>
+        /// <param name="paramsModel">Filters for searching routes.</param>
         /// <returns>Search Result</returns>
-        [HttpGet("search")]
+        [HttpPost("search")]
         public IActionResult SearchRoute(
-            int departureCityId,
-            int arrivalCityId,
-            int maxTicketCombination,
-            DateTime departureDate,
-            DateTime arrivalDate,
-            int page,
-            int pageSize,
-            [FromQuery] int[] vehicleIds,
-            [FromQuery] int[] transportationIds,
-            [FromQuery] int[] ticketTypeIds,
-            int maxWaitingHours = 24)
+            SearchRouteParamViewModel paramsModel)
         {
             try
             {
                 //Set departureDate is the begin of this day
-                departureDate = departureDate.Date;
+                paramsModel.DepartureDate = paramsModel.DepartureDate.Date;
                 //Set arrivalDate is the end of this day
-                arrivalDate = arrivalDate.Date.AddDays(1).AddMilliseconds(-1);
+                paramsModel.ArrivalDate = paramsModel.ArrivalDate.Date.AddDays(1).AddMilliseconds(-1);
 
-                var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,
-                    departureDate, arrivalDate, page, pageSize, maxTicketCombination,
-                    vehicleIds, transportationIds, maxWaitingHours, ticketTypeIds
+                var routes = _routeService.SearchRoute(paramsModel.DepartureCityId, paramsModel.ArrivalCityId,
+                    paramsModel.DepartureDate, paramsModel.ArrivalDate, paramsModel.Page, paramsModel.PageSize, 
+                    paramsModel.MaxTicketCombination, paramsModel.VehicleIds, paramsModel.TransportationIds,
+                    paramsModel.maxWaitingHours, paramsModel.TicketTypeIds
                 );
 
                 return Ok(routes);

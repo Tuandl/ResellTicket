@@ -16,15 +16,9 @@ function searchResult() {
     const routesContainer = document.getElementById(id.routesContainer);
     const routeDetailContainer = document.getElementById(id.routeDetailContainer);
 
-    const params = {
-        departureCityId: commonService.getQueryParam('departureCityId'),
-        arrivalCityId: commonService.getQueryParam('arrivalCityId'),
-        maxTicketCombination: commonService.getQueryParam('maxTicketCombination'),
-        departureDate: moment(commonService.getQueryParam('departureDate')).format(appConfig.format.datetimeISO),
-        arrivalDate: moment(commonService.getQueryParam('arrivalDate')).format(appConfig.format.datetimeISO),
-        page: 1,
-        pageSize: 10,
-    };
+    const params = JSON.parse(localStorage.getItem('SEARCH_DATA'));
+    params.departureDate = moment(params.departureDate).format(appConfig.format.datetimeISO);
+    params.arrivalDate = moment(params.arrivalDate).format(appConfig.format.datetimeISO);
 
     const model = {
         isLoadingMore: false,
@@ -35,8 +29,9 @@ function searchResult() {
     
     async function init() {
         model.isLoadingMore = true;
-        const routeSearchResults = await apiService.get(appConfig.apiUrl.route + 'search', params);
-        mapRoute(routeSearchResults);
+        const routeSearchResults = await apiService.post(appConfig.apiUrl.route + 'search', params);
+        const data = await routeSearchResults.json();
+        mapRoute(data);
         renderRoutes();
         model.isLoadingMore = false;
 
@@ -46,11 +41,12 @@ function searchResult() {
                     model.isLoadingMore = true;
                     params.page++;
 
-                    const response = await apiService.get(appConfig.apiUrl.route + 'search', params);
-                    mapRoute(response);
+                    const response = await apiService.post(appConfig.apiUrl.route + 'search', params);
+                    const data = await response.json();
+                    mapRoute(data);
                     renderRoutes(false);
 
-                    if(response.length < params.pageSize) {
+                    if(data.length < params.pageSize) {
                         model.isLoadAll = true;
                     }
                     model.isLoadingMore = false;
@@ -61,19 +57,29 @@ function searchResult() {
 
     function mapRoute(routes) {
         var newRoutes = routes.map(route => {
+            const firstTicket = route.routeTickets[0];
+            const lastTicket = route.routeTickets[route.routeTickets.length - 1];
+            let expiredDate = route.routeTickets.reduce((preValue, currentValue) => {
+                if(preValue.isAfter(moment(currentValue.expiredDate))) {
+                    return moment(currentValue.expiredDate);
+                }
+                return preValue;
+            }, moment('2099-01-01'));
+
             return {
                 id: route.id || commonService.generateRandomId(),
                 code: route.code || '',
                 rawData: route,
                 totalAmount: route.totalAmount,
                 status: routeStatus.New,
-                departureCityName: route.routeTickets[0].departureCityName,
-                arrivalCityName: route.routeTickets[route.routeTickets.length - 1].arrivalCityName,
+                departureCityName: firstTicket.departureCityName,
+                arrivalCityName: lastTicket.arrivalCityName,
                 ticketQuantity: route.routeTickets.length,
-                departureDate: route.routeTickets[0].departureDateTime,
-                arrivalDate: route.routeTickets[0].arrivalDateTime,
+                departureDate: firstTicket.departureDateTime,
+                arrivalDate: lastTicket.arrivalDateTime,
                 saved: route.saved || false,
                 routeTickets: route.routeTickets,
+                expiredDate: expiredDate,
             }
         });
 

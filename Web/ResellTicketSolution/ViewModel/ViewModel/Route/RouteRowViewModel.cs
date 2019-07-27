@@ -20,5 +20,6 @@ namespace ViewModel.ViewModel.Route
         public bool IsValid { get; set; }
         public bool IsLiability { get; set; }
         public ResolveOption? ResolveOption { get; set; }
+        public DateTime? ExpiredDate { get; set; }
     }
 }
