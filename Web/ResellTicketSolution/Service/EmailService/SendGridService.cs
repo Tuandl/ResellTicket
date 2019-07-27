@@ -45,6 +45,7 @@ namespace Service.EmailService
             _stationRepository = stationRepository;
         }
 
+        //Payment
         public void SendEmailReceiptForBuyer(int routeId)
         {
             try
@@ -83,7 +84,7 @@ namespace Service.EmailService
                 body = body.Replace("{customerPhone}", customerPhone);
                 body = body.Replace("{Date}", date.ToString());
                 body = body.Replace("{subTotal}", totalAmount.ToString());
-                body = body.Replace("{Total}", totalAmount.ToString());
+                body = body.Replace("{Total}", "- " + totalAmount.ToString());
 
                 body = body.Replace("{Term}", SETTING.Value.Term);
                 body = body.Replace("{Title}", SETTING.Value.Title);
@@ -117,7 +118,7 @@ namespace Service.EmailService
                 body = body.Replace("{ticketList}", ticketList);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-                var subject = routeCode + " - Receipt";
+                var subject = routeCode + " - Receipt - Payment";
                 var to = new EmailAddress(customerEmail, customerName);
                 var plainTextContent = "";
                 var htmlContent = body;
@@ -129,6 +130,7 @@ namespace Service.EmailService
             }
         }
 
+        //Refund All Ticket
         public void SendEmailRefundForBuyerAllTicket(int routeId)
         {
             try
@@ -188,7 +190,7 @@ namespace Service.EmailService
                 body = body.Replace("{ticketList}", ticketList);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-                var subject = routeCode + " - Refund";
+                var subject = routeCode + " - Receipt - Refund All";
                 var to = new EmailAddress(customerEmail, customerName);
                 var plainTextContent = "";
                 var htmlContent = body;
@@ -200,6 +202,7 @@ namespace Service.EmailService
             }
         }
 
+        //Payout
         public void SendEmailReceiptForSeller(int ticketId)
         {
             try
@@ -264,7 +267,7 @@ namespace Service.EmailService
                 body = body.Replace("{Ticket}", ticketRow);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-                var subject = ticketCode + " - Receipt";
+                var subject = ticketCode + " - Receipt - Payout";
                 var to = new EmailAddress(customerEmail, customerName);
                 var plainTextContent = "";
                 var htmlContent = body;
@@ -275,7 +278,7 @@ namespace Service.EmailService
             {
             }
         }
-
+        //Refund One Ticket
         public void SendEmailRefundForBuyerOneTicket(int ticketId)
         {
             try
@@ -329,7 +332,7 @@ namespace Service.EmailService
                 body = body.Replace("{ticketList}", ticketRow);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-                var subject = ticketCode + " - Refund";
+                var subject = ticketCode + " - Receipt - Refund";
                 var to = new EmailAddress(customerEmail, customerName);
                 var plainTextContent = "";
                 var htmlContent = body;
@@ -342,6 +345,7 @@ namespace Service.EmailService
             }
         }
 
+        //Replacement ticket
         public void SendEmailReplacementForBuyer(int oldTicketId, int replacementTicketId)
         {
             try
@@ -433,7 +437,7 @@ namespace Service.EmailService
                 body = body.Replace("{replaceTicket}", replacementTicketRow);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
-                var subject = routeCode + " - Replacement";
+                var subject = routeCode + " - Receipt - Replacement";
                 var to = new EmailAddress(customerEmail, customerName);
                 var plainTextContent = "";
                 var htmlContent = body;
