@@ -73,6 +73,7 @@ function searchResult() {
                 ticketQuantity: route.routeTickets.length,
                 departureDate: route.routeTickets[0].departureDateTime,
                 arrivalDate: route.routeTickets[0].arrivalDateTime,
+                expiredDateTime: route.routeTickets[0].expiredDateTime,
                 saved: route.saved || false,
                 routeTickets: route.routeTickets,
             }

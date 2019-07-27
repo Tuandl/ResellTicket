@@ -129,7 +129,8 @@ function createCreditCardController() {
             try {
                 var creditCardResponse = await apiService.post(appConfig.apiUrl.creditCard, dataCreditCard);
                 if (creditCardResponse.status === 200) {
-                    window.location.href = appConfig.url.creditCard.viewListCreditCard;
+                    //window.location.href = appConfig.url.creditCard.viewListCreditCard;
+                    window.history.back();
                     toastService.success("Create Credit Card successfully");
                 } else {
                     toastService.error("Create credit card Error");

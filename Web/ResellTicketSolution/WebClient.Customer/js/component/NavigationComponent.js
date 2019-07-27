@@ -7,6 +7,7 @@ export default class NavigationComponent {
     
     containerId = 'nav-bar-container';
     connectToStripeLinkId = 'connect-to-stripe-link';
+    linkConnectToStripe = 'linkConnectToStripe'
 
     navBarGroup = {
         route: 1,
@@ -72,6 +73,12 @@ export default class NavigationComponent {
             try {
                 await apiService.get(appConfig.apiUrl.checkIsConnectedBank);
                 linkElement.href = appConfig.bankConnect.linkCreate;
+                
+                var link = document.getElementById(this.linkConnectToStripe)
+                if(link !== null) {
+                    document.getElementById(this.linkConnectToStripe).style.display = 'block';
+                    document.getElementById(this.linkConnectToStripe).children[0].href = linkElement.href;
+                }
             } catch(ex) {
                 const stripeAccountLink = await apiService.get(appConfig.apiUrl.getLinkConnectBank);
                 linkElement.setAttribute('target', '_blank');

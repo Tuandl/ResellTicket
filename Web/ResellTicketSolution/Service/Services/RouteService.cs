@@ -39,7 +39,7 @@ namespace Service.Services
         /// <returns>List search results.</returns>
         List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
             DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
-            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24, 
+            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
             int[] ticketTypeIds = null);
 
         /// <summary>
@@ -309,10 +309,10 @@ namespace Service.Services
             foreach (var resolveOption in route.ResolveOptionLogs)
             {
                 var routeTicket = _routeTicketRepository.Get(x => x.RouteId == resolveOption.RouteId && x.TicketId == resolveOption.TicketId);
-                if(resolveOption.Option != ResolveOption.REPLACE)
+                if (resolveOption.Option != ResolveOption.REPLACE)
                 {
                     routeViewModel.EarnedLoss = routeViewModel.EarnedLoss - routeTicket.Ticket.SellingPrice;
-                    if(resolveOption.Option == ResolveOption.PAYOUT)
+                    if (resolveOption.Option == ResolveOption.PAYOUT)
                     {
                         routeViewModel.EarnedLoss = routeViewModel.EarnedLoss + Math.Round(routeTicket.Ticket.SellingPrice * (routeTicket.Ticket.CommissionPercent / 100), 2);
                     }
@@ -405,13 +405,13 @@ namespace Service.Services
                     x.DepartureDateTimeUTC >= departureDateUTC &&
                     x.ArrivalDateTimeUTC <= arrivalDateUTC &&
                     (x.ExpiredDateTimeUTC == null || x.ExpiredDateTimeUTC >= DateTime.UtcNow) &&
-                    (vehicleIds == null || vehicleIds.Length == 0 || vehicleIds.Contains(x.Transportation.VehicleId)) && 
+                    (vehicleIds == null || vehicleIds.Length == 0 || vehicleIds.Contains(x.Transportation.VehicleId)) &&
                     (transportationIds == null || transportationIds.Length == 0 || transportationIds.Contains(x.TransportationId)) &&
                     (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId))
                 );
 
             //return empty list in case of no input data
-            if(tickets.Count() == 0)
+            if (tickets.Count() == 0)
             {
                 return new List<RouteSearchViewModel>();
             }
@@ -587,6 +587,7 @@ namespace Service.Services
 
         public string BuyRoute(BuyRouteParams model, string username)
         {
+            //var concurrencyCode = Guid.NewGuid().ToString();
             var existedRoute = _routeRepository.Get(x => x.Id == model.RouteId && x.Deleted == false);
             if (existedRoute == null)
             {
@@ -619,6 +620,7 @@ namespace Service.Services
                 }
                 if (count == tickets.Count())
                 {
+                    //_unitOfWork.StartTransaction();
                     existedRoute.CustomerId = _customerRepository.Get(c => c.Username.Equals(username) && c.Deleted == false && c.IsActive == true).Id;
                     foreach (var ticket in tickets)
                     {
@@ -628,6 +630,7 @@ namespace Service.Services
                         ticket.BuyerPassengerPhone = model.BuyerPassengerPhone;
                         ticket.BuyerId = existedRoute.CustomerId;
                         ticket.Status = TicketStatus.Bought;
+                        //ticket.ConcurrencyCheck = concurrencyCode;
                         _ticketRepository.Update(ticket);
                     }
                     existedRoute.Status = RouteStatus.Bought;
@@ -637,34 +640,28 @@ namespace Service.Services
                 {
                     throw new InvalidOperationException();
                 }
-                try
-                {
-                    _unitOfWork.CommitChanges();
 
-                    //push noti for seller customer
-                    foreach (var ticket in tickets)
+                _unitOfWork.CommitChanges();
+
+                //push noti for seller customer
+                foreach (var ticket in tickets)
+                {
+                    var message = "Ticket " + ticket.TicketCode + " has been bought";
+                    var customerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList();
+                    List<string> deviceIds = new List<string>();
+                    foreach (var cusDev in customerDevices)
                     {
-                        var message = "Ticket " + ticket.TicketCode + " has been bought";
-                        var customerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList();
-                        List<string> deviceIds = new List<string>();
-                        foreach (var cusDev in customerDevices)
-                        {
-                            deviceIds.Add(cusDev.DeviceId);
-                        }
-
-                        //Save Notification into db
-                        _notificationService.SaveNotification(
-                            customerId: ticket.Seller.Id,
-                            type: NotificationType.TicketIsBought,
-                            data: new { ticketId = ticket.Id }
-                        );
-
-                        _oneSignalService.PushNotificationCustomer(message, deviceIds);
+                        deviceIds.Add(cusDev.DeviceId);
                     }
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
+
+                    //Save Notification into db
+                    _notificationService.SaveNotification(
+                        customerId: ticket.Seller.Id,
+                        type: NotificationType.TicketIsBought,
+                        data: new { ticketId = ticket.Id }
+                    );
+
+                    _oneSignalService.PushNotificationCustomer(message, deviceIds);
                 }
             }
             return string.Empty;
@@ -845,13 +842,14 @@ namespace Service.Services
             {
                 route.EarnedLoss = route.TotalAmount;
                 var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == route.Id && x.Option != ResolveOption.REPLACE);
-                foreach(var log in resolveOptionLogs)
+                foreach (var log in resolveOptionLogs)
                 {
-                    if(log.Option == ResolveOption.PAYOUT)
+                    if (log.Option == ResolveOption.PAYOUT)
                     {
-                        route.EarnedLoss = route.EarnedLoss - 
+                        route.EarnedLoss = route.EarnedLoss -
                             (log.ResolvedTicket.SellingPrice - Math.Round(log.ResolvedTicket.SellingPrice * (log.ResolvedTicket.CommissionPercent / 100), 2));
-                    } else
+                    }
+                    else
                     {
                         route.EarnedLoss = route.EarnedLoss - log.ResolvedTicket.SellingPrice;
                     }
@@ -1008,7 +1006,7 @@ namespace Service.Services
                 {
                     if (log.Option == ResolveOption.PAYOUT)
                     {
-                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - 
+                        statisticReport.BalanceAccount = statisticReport.BalanceAccount -
                             Math.Round(log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100), 2);
                     }
                     else

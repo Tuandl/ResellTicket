@@ -15,6 +15,7 @@ function postedTicketController() {
         btnLoadMore: 'btnLoadMore',
         showEmptyList: 'show-empty-list',
         connectToStripeLinkId: 'connect-to-stripe-link',
+        linkConnectToStripe: 'linkConnectToStripe'
     }
 
     const model = {
@@ -25,6 +26,7 @@ function postedTicketController() {
         ticketComponents: [],
         total: 0
     }
+
 
     bindEvent();
     renderBtnStatuses();
@@ -79,10 +81,9 @@ function postedTicketController() {
     }
 
     function bindEvent() {
+        const linkElement = document.getElementById(id.connectToStripeLinkId);
         var btnPostTicket = document.getElementById(id.btnPostTicket);
-        var connectToStripeLinkId = id.connectToStripeLinkId;
         btnPostTicket.addEventListener('click', function () {
-            const linkElement = document.getElementById(connectToStripeLinkId);
             if(linkElement.href === appConfig.bankConnect.linkCreate) {
                 toastService.error('Please connect to Stripe account that we can tranfer money.')
             } else {

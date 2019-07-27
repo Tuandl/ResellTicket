@@ -10,6 +10,7 @@ import { withNavigationFocus } from 'react-navigation';
 import Dialog from "react-native-dialog";
 import RouteStatus from '../../constants/routeStatus';
 import keyConstant from '../../constants/keyConstant';
+import TicketStatus from '../../constants/TicketStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -31,7 +32,8 @@ class RouteDetailScreen extends Component {
             dialogVisibleDelete: false,
             isBuyLoading: false,
             isDeleteLoading: false,
-            isLoading: false
+            isLoading: false,
+            boughtTicketCount: 0,
         };
 
         this.onBtnBuyRoutePressed = this.onBtnBuyRoutePressed.bind(this);
@@ -91,6 +93,13 @@ class RouteDetailScreen extends Component {
                 this.setState({
                     route: response.data,
                     isLoading: false
+                });
+                response.data.routeTickets.forEach(routeTicket => {
+                    if(routeTicket.status !== TicketStatus.VALID) {
+                        this.setState({
+                            boughtTicketCount: this.state.boughtTicketCount + 1
+                        })
+                    }
                 });
             } else {
                 RNToasty.Error({ title: 'Error when load route detail' });
@@ -181,7 +190,7 @@ class RouteDetailScreen extends Component {
     }
 
     render() {
-        const { route } = this.state;
+        const { route, boughtTicketCount } = this.state;
 
         return (
             <Container style={{ flex: 1 }}>
@@ -230,7 +239,7 @@ class RouteDetailScreen extends Component {
                         </View>
 
                         <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
-                            {route.status === RouteStatus.NEW ?
+                            {route.status === RouteStatus.NEW && boughtTicketCount === 0 ?
                                 <View style={{ paddingTop: 5, paddingLeft: 20, paddingRight: 20, borderRadius: 10, flex: 0.5 }}>
                                     <Button primary onPress={this.onBtnBuyRoutePressed} block>
                                         {this.state.isBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />

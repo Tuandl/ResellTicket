@@ -112,13 +112,20 @@ namespace WebAPI.Admin.Controllers
                 return BadRequest("Invalid Request");
             }
 
-            var approveResult = _ticketService.ApproveTicket(id, commissionFee, expiredDateTime);
-
-            if (!string.IsNullOrEmpty(approveResult))
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, approveResult);
+                var approveResult = _ticketService.ApproveTicket(id, commissionFee, expiredDateTime);
+
+                if (!string.IsNullOrEmpty(approveResult))
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, approveResult);
+                }
+                return Ok();
             }
-            return Ok();
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, ex.Message);
+            }
         }
 
         /// <summary>

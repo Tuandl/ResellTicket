@@ -74,22 +74,31 @@ export default class RouteBuyerInfoScreen extends Component {
             buyerPassengerPhone: this.state.buyerPassengerPhone,
             buyerPassengerIdentify: this.state.buyerPassengerIdentify
         };
-        const resBuyRoute = await api.post('api/route/buy-route', params);
-        const { navigation } = this.props;
-        if (resBuyRoute.status === 200) {
-            this.setState({
-                isConfirmBuyLoading: false
-            });
-            RNToasty.Success({
-                title: 'Buy route Successfully'
-            })
-            navigation.navigate('Route');
-        }
-        else {
+        try{
+            const resBuyRoute = await api.post('api/route/buy-route', params);
+            const { navigation } = this.props;
+            if (resBuyRoute.status === 200) {
+                this.setState({
+                    isConfirmBuyLoading: false
+                });
+                RNToasty.Success({
+                    title: 'Buy route Successfully'
+                })
+                navigation.navigate('Route');
+            }
+            else {
+                RNToasty.Error({
+                    title: 'Buy route fail, someone has just bought this route'
+                })
+                navigation.pop();
+            }
+        } catch(e) {
             RNToasty.Error({
-                title: 'Buy route Fail, All tickets in route must be valid!'
+                title: 'Buy route fail, someone has just bought this route'
             })
+            navigation.pop();
         }
+        
     }
 
     render() {

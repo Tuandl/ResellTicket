@@ -3,11 +3,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Core.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Models
 {
     public class Ticket : EntityBase
     {
+        //public string ConcurrencyCheck { get; set; } //check ticket can be bought buy one customer
         public string BuyerPassengerName { get; set; }
         public string BuyerPassengerEmail { get; set; }
         public string BuyerPassengerPhone { get; set; }
@@ -21,6 +23,8 @@ namespace Core.Models
         public bool? IsDepartureValid { get; set; }
         public int ArrivalStationId { get; set; }
         public bool? IsArrivalValid { get; set; }
+
+        [ConcurrencyCheck]
         public TicketStatus Status { get; set; }
         public decimal SellingPrice { get; set; }
         public string Description { get; set; }

@@ -336,21 +336,21 @@ export default class ResolveRenamedFailTicket extends Component {
                                                     {resolveOptionLog.option === ResolveOption.REFUNDFAILTICKET ?
                                                         <div>
                                                             
-                                                            <Badge color="danger">Loss: ${resolveOptionLog.sellingPrice}</Badge>
+                                                            <Badge color="danger">Lost: ${resolveOptionLog.sellingPrice}</Badge>
                                                         </div>
                                                         : null
                                                     }
                                                     {resolveOptionLog.option === ResolveOption.REFUNDTOTALAMOUNT ?
                                                         <div>
                                                             
-                                                            <Badge color="danger">Loss: ${resolveOptionLog.sellingPrice}</Badge>
+                                                            <Badge color="danger">Lost: ${resolveOptionLog.sellingPrice}</Badge>
                                                         </div>
                                                         : null
                                                     }
                                                     {resolveOptionLog.option === ResolveOption.PAYOUT ?
                                                         <div>
-                                                            <Badge color="success">Earned: ${resolveOptionLog.feeAmount}</Badge><br/>
-                                                            <Badge color="danger">Loss: ${(resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount).toFixed(2)}</Badge>
+                                                            {/* <Badge color="success">Earned: ${resolveOptionLog.feeAmount}</Badge><br/> */}
+                                                            <Badge color="danger">Lost: ${(resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount).toFixed(2)}</Badge>
                                                         </div>
                                                         : null
                                                     }
