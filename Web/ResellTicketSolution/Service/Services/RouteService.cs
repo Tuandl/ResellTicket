@@ -593,6 +593,10 @@ namespace Service.Services
             {
                 return "Not found route";
             }
+            if(existedRoute.Status != RouteStatus.New)
+            {
+                return "This Route has been bought.";
+            }
             if (existedRoute.Status == RouteStatus.New)
             {
                 var routeTickets = _routeTicketRepository.GetAllQueryable()
@@ -616,7 +620,11 @@ namespace Service.Services
                     if (ticket.Status == TicketStatus.Valid)
                     {
                         count++;
+                    } else
+                    {
+                        return "This Route has been bought.";
                     }
+                    
                 }
                 if (count == tickets.Count())
                 {
@@ -663,6 +671,9 @@ namespace Service.Services
 
                     _oneSignalService.PushNotificationCustomer(message, deviceIds);
                 }
+            } else
+            {
+                return "This Route has been bought.";
             }
             return string.Empty;
         }

@@ -159,13 +159,12 @@ function routeDetail() {
                 toastService.success('Buy route successfully!');
                 window.location.replace('/index.html');
             } else {
-                toastService.error('Buy route fail, someone has just bought this route');
-                location.reload();
+                toastService.error('This Route has been bought. Please buy another route.');
             }
         } catch (ex) {
-            toastService.error('Buy route fail, someone has just bought this route');
-            location.reload();
+            toastService.error('This Route has been bought. Please buy another route.');
         }
+        //window.location.replace(appConfig.url.route.searchForm);
     }
 
     async function onBtnBuyClicked() {

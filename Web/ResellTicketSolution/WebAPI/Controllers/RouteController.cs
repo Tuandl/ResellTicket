@@ -241,9 +241,14 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("Invalid Request");
             }
+            var changeStatusRoute = _routeService.BuyRoute(model, username);
+            if (!string.IsNullOrEmpty(changeStatusRoute))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, changeStatusRoute);
+            }
             try
             {
-                _routeService.BuyRoute(model, username);
+                
                 _paymentService.MakePayment(model.RouteId);
                 _sendGridService.SendEmailReceiptForBuyer(model.RouteId);
                 return Ok();

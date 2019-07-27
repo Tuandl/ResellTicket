@@ -29,8 +29,8 @@ class TransactionRowComponent {
         this.html.innerHTML = `<td>${index}</td>
         <td>${this.renderType(transaction.type)}</td>
         <td>${transaction.description}</td>
-        <td>${moment(transaction.createdAtUTC).format(appConfig.format.datetimeNotification)}</td>
-        <td>${numeral(transaction.amount).format('$0,0.00')}</td>`;
+        <td style="	width: 25%;">${moment(transaction.createdAtUTC).format(appConfig.format.datetimeNotification)}</td>
+        <td style="	width: 10%;">${numeral(transaction.amount).format('$0,0.00')}</td>`;
     }
 
     get domElement() {

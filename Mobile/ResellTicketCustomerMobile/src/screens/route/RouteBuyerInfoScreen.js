@@ -74,7 +74,7 @@ export default class RouteBuyerInfoScreen extends Component {
             buyerPassengerPhone: this.state.buyerPassengerPhone,
             buyerPassengerIdentify: this.state.buyerPassengerIdentify
         };
-        try{
+        try {
             const resBuyRoute = await api.post('api/route/buy-route', params);
             const { navigation } = this.props;
             if (resBuyRoute.status === 200) {
@@ -88,13 +88,13 @@ export default class RouteBuyerInfoScreen extends Component {
             }
             else {
                 RNToasty.Error({
-                    title: 'Buy route fail, someone has just bought this route'
-                })
+                    title: 'Buy route Fail, This route has been bought!'
+                });
                 navigation.pop();
             }
-        } catch(e) {
+        } catch (error) {
             RNToasty.Error({
-                title: 'Buy route fail, someone has just bought this route'
+                title: 'Buy route Fail, This route has been bought!'
             })
             navigation.pop();
         }
@@ -186,9 +186,9 @@ export default class RouteBuyerInfoScreen extends Component {
                     </Right>
                 </Item> */}
                     <Button block primary
-                        style={{ margin: 10, marginTop:40, marginBottom: 0 }}
+                        style={{ margin: 10, marginTop: 40, marginBottom: 0 }}
                         onPress={this.onBtnConfirmPressed}>
-                            {this.state.isConfirmBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                        {this.state.isConfirmBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
                             : <Text style={styles.buttonText}>Confirm</Text>}
                     </Button>
                     <Dialog.Container visible={this.state.dialogVisibleConfirmBuy}>
