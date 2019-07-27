@@ -466,7 +466,6 @@ namespace Service.Services
                         DepartureStationId = ticket.DepartureStationId,
                         DepartureStationName = ticket.DepartureStation.Name,
                         DepartureDateTime = ticket.DepartureDateTime,
-                        ExpiredDateTime = ticket.ExpiredDateTime,
                         TransportationName = ticket.Transportation.Name,
                         VehicleName = ticket.Transportation.Vehicle.Name,
                         Order = count++,
