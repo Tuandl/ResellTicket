@@ -17,5 +17,6 @@ namespace ViewModel.AppSetting
         public string BussinessNumber { get; set; }
         public string Term { get; set; }
         public string RefundTitle { get; set; }
+        public string ReplacementTitle { get; set; }
     }
 }

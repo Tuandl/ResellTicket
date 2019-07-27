@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, ActivityIndicator, FlatList } from 'react-native';
+import { Dimensions, StyleSheet, View, ActivityIndicator, FlatList, ImageBackground } from 'react-native';
 import { Icon, ButtonGroup } from 'react-native-elements'
 import { Container, Header, Left, Body, Right, Title, Button, Text, Content } from 'native-base';
 import RouteHistoryView from '../../components/RouteComponent/RouteHistoryViewComponent';
@@ -7,9 +7,9 @@ import api from '../../service/Api';
 import { RNToasty } from 'react-native-toasty';
 import ROUTE_STATUS from '../../constants/routeStatus';
 import { withNavigation } from 'react-navigation';
-
-const {width} = Dimensions.get('window');
-const {height} = Dimensions.get('window');
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const BG_IMAGE = require('../../../assets/images/empty-list.png');
 
 class RouteScreen extends Component {
 
@@ -17,6 +17,7 @@ class RouteScreen extends Component {
     currentPage = 1;
     pageSize = 10;
     routeStatus = ROUTE_STATUS.NEW;
+    total = 0;
     buttonIndexes = {
         history: 0,
         bought: 1,
@@ -28,7 +29,8 @@ class RouteScreen extends Component {
         this.state = {
             routes: [],
             selectedIndex: this.buttonIndexes.history,
-            isLoading: false
+            isLoading: false,
+            isShowEmptyView: false
         };
         this.updateButtonGroupIndex = this.updateButtonGroupIndex.bind(this);
         this.onHistoryPressed = this.onHistoryPressed.bind(this);
@@ -57,45 +59,63 @@ class RouteScreen extends Component {
             status: this.routeStatus,
         }
         const response = await api.get(this.urlRouteDataTable, params);
-        if(response.status === 200) {
-            if(selectedIndex === undefined) {
+        if (response.status === 200) {
+            if (selectedIndex === undefined) {
                 this.setState({
                     routes: response.data.data,
-                    isLoading: false
+                    //isLoading: false
                 });
             } else {
                 this.setState({
                     routes: response.data.data,
                     selectedIndex: selectedIndex,
-                    isLoading: false
+                    //isLoading: false
                 });
             }
+            this.total = response.data.data.length;
+            if (this.total === 0) {
+                this.setState({
+                    isShowEmptyView: true,
+                    isLoading: false
+                })
+            } else {
+                this.setState({
+                    isShowEmptyView: false,
+                    isLoading: false
+                })
+            }
+        } else {
+            this.setState({
+                isShowEmptyView: true,
+                isLoading: false
+            })
         }
     }
 
     renderRoutes(routes) {
-        var {isLoading} = this.state;
-        if(isLoading) {
+        var { isLoading } = this.state;
+        if (isLoading) {
             return <ActivityIndicator size="large" animating />
-        } 
+        }
         return routes.map((route) =>
-            <RouteHistoryView route={route} key={route.id} onPress={this.onHistoryPressed}/>
+            <RouteHistoryView route={route} key={route.id} onPress={this.onHistoryPressed} />
         );
     }
 
     onHistoryPressed(route) {
-        this.props.navigation.navigate('RouteDetail', {routeId: route.id});
+        this.props.navigation.navigate('RouteDetail', { routeId: route.id });
     }
 
     updateButtonGroupIndex(selectedIndex) {
-        switch(selectedIndex) {
+        this.total = 0;
+        switch (selectedIndex) {
             case this.buttonIndexes.history:
                 this.routeStatus = ROUTE_STATUS.NEW;
                 break;
-            case this.buttonIndexes.bought: 
+            case this.buttonIndexes.bought:
                 this.routeStatus = ROUTE_STATUS.BOUGHT;
                 break;
-            case this.buttonIndexes.completed: 
+            case this.buttonIndexes.completed:
                 this.routeStatus = ROUTE_STATUS.COMPLETED;
                 break;
         }
@@ -103,21 +123,21 @@ class RouteScreen extends Component {
     }
 
     render() {
-        const { routes, selectedIndex, isLoading } = this.state;
+        const { routes, selectedIndex, isLoading, isShowEmptyView } = this.state;
         const { navigate } = this.props.navigation;
 
         const buttonHistory = () => <Text>History</Text>
         const buttonBought = () => <Text>Bought</Text>
         const buttonCompleted = () => <Text>Completed</Text>
 
-        const buttons = [{element: buttonHistory}, {element: buttonBought}, {element: buttonCompleted}];
+        const buttons = [{ element: buttonHistory }, { element: buttonBought }, { element: buttonCompleted }];
 
         //  const BadgedIcon = withBadge(2)(Icon)
         return (
             <Container style={{ flex: 1 }}>
                 <Header>
-                    <Left></Left>
-                    <Body>
+                    {/* <Left></Left> */}
+                    <Body style={{paddingLeft: 10}}>
                         <Title>Route</Title>
                     </Body>
                     <Right>
@@ -132,9 +152,11 @@ class RouteScreen extends Component {
                     onPress={this.updateButtonGroupIndex}
                     selectedIndex={selectedIndex}
                     buttons={buttons}
-                    containerStyle={{borderRadius: 25}}
+                    containerStyle={{ borderRadius: 25 }}
                 />
-                <Content style={{ flex: 1, backgroundColor: 'white' }}
+                {isShowEmptyView ? <ImageBackground source={BG_IMAGE}
+                    style={{ flex: 1, top: 50, left: 0, width: SCREEN_WIDTH, height: SCREEN_HEIGHT / 1.75, justifyContent: 'center', alignItems: 'center' }} /> : null}
+                {!isShowEmptyView ? <Content style={{ flex: 1, backgroundColor: 'white' }}
                     contentContainerStyle={{ justifyContent: 'center', alignItems: 'center' }}>
                     {this.renderRoutes(routes)}
                     {/* <FlatList onEndReached={this.onEndReached}
@@ -149,7 +171,8 @@ class RouteScreen extends Component {
                         )}
                         ListFooterComponent={isLoading ? <ActivityIndicator size="large" animating /> : ''}>
                     </FlatList> */}
-                </Content>
+                </Content> : null}
+
             </Container>
         );
     }

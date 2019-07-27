@@ -2,7 +2,7 @@ import Axios from 'axios';
 import React, { Component } from 'react';
 // import { toastr } from 'react-redux-toastr';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table, Badge } from 'reactstrap';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import PaginationView from '../Pagination/PaginationComponent';
@@ -10,21 +10,33 @@ import PaginationView from '../Pagination/PaginationComponent';
 function RouteRow(props) {
     const { route } = props;
     const routeLink = `/completedRoute/${route.id}`
+
+    function renderEarnedLoss(earnedLoss) {
+        if(earnedLoss < 0) {
+            return (
+                <Badge color="danger">Loss: ${earnedLoss * (-1)}</Badge>
+            )
+        } else {
+            return (
+                <Badge color="success">Earned: ${earnedLoss}</Badge>
+            )
+        }
+    }
+
     return (
         <tr>
             <th>{props.index + 1}</th>
             <td>{route.code}</td>
-            <td>{route.departureCityName}</td>
-            <td>{moment(route.departureDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{route.arrivalCityName}</td>
-            <td>{moment(route.arrivalDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{<NumberFormat value={route.totalAmount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
-
-            <td>{route.ticketQuantity}</td>
-            {/* <td>{getBadge(route.status)}</td> */}
+            <td>{route.departureCityName} - {moment(route.departureDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{route.arrivalCityName} - {moment(route.arrivalDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td style={{paddingLeft: 95}}>{route.ticketQuantity}</td>
+            <td style={{paddingLeft: 65}}>{<NumberFormat value={route.totalAmount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
+            <td>
+                {renderEarnedLoss(route.earnedLoss)}
+            </td>
             <td>
                 <Link to={routeLink}>
-                    <Button color="success" className="mr-2">
+                    <Button color="secondary" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Details
                     </Button>
                 </Link>
@@ -34,6 +46,7 @@ function RouteRow(props) {
 }
 
 class CompletedRoute extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -96,7 +109,7 @@ class CompletedRoute extends Component {
                         <Card>
                             <CardHeader>
                                 <strong>Completed Routes</strong>
-                                <Form className="text-right mr-2" onSubmit={this.onBoughtSearch}>
+                                <Form className="text-right mr-2" onSubmit={this.onSubmit}>
                                     <InputGroup>
                                         <Input type="text" className="mr-2" placeholder="Route Code" name="searchValue" value={this.state.searchValue} onChange={this.onChange} />
                                         <Button color="primary">
@@ -112,11 +125,10 @@ class CompletedRoute extends Component {
                                             <th>No.</th>
                                             <th>Code</th>
                                             <th>Departure</th>
-                                            <th>Departure Time</th>
                                             <th>Arrival</th>
-                                            <th>Arrival Time</th>
-                                            <th>Total Amount</th>
                                             <th>Ticket Quantity</th>
+                                            <th>Total Amount</th>
+                                            <th>Result</th>                                           
                                             {/* <th>Status</th> */}
                                             <th>Action</th>
                                         </tr>

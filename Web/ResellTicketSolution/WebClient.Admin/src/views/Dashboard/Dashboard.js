@@ -487,21 +487,8 @@ class Dashboard extends Component {
           <Col xs="12" sm="6" lg="3">
             <Card className="text-white bg-info">
               <CardBody className="pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown id='card1' isOpen={this.state.card1} toggle={() => { this.setState({ card1: !this.state.card1 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem disabled>Disabled action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <div className="text-value">9.823</div>
-                <div>Members online</div>
+                <div className="text-value">1202</div>
+                <div style={{fontSize: 15}}>Completed Routes</div>
               </CardBody>
               <div className="chart-wrapper mx-3" style={{ height: '70px' }}>
                 <Line data={cardChartData2} options={cardChartOpts2} height={70} />

@@ -62,7 +62,7 @@ class TicketComponent {
                                 <div class="ticket-component__stationName">${ticket.departureStationName}</div>
                             </div>
                             <div class="col-sm-1 text-center">
-                                ${this.renderVehicleIcon(ticket.vehicle)}
+                                ${this.renderVehicleIcon(ticket.vehicleName)}
                             </div>
                             <div class="col-sm-5 text-center">
                                 <div>${ticket.arrivalCityName}</div>

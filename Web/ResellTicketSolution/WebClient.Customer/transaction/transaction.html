@@ -33,6 +33,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
         }
     </style>
     <!-- js -->
+    <script src="/js/lib/pace.min.js"></script>
     <script src="https://js.stripe.com/v2/"></script>
     <script src="/js/jquery-1.11.1.min.js"></script>
     <script src="/js/jstarbox.js"></script>
@@ -119,7 +120,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
     <div class="login">
         <div class="main-agileits" style="width: 70%;">
             <div class="form-w3agile form1">
-                <table class="table  table-striped table-responsive table-hover">
+                <div id="show-empty-list"
+                    style='display: none;text-align:center;background-image: url(/images/empty-list.png);height:450px;background-size: 100% 100%;'>
+                </div>
+                <table style="display: none;" id="table-transasction-list" class="table  table-striped table-responsive table-hover">
                     <thead style="font-size: 20px; font-weight: bold;">
                         <tr>
                             <th>#</th>
@@ -130,7 +134,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         </tr>
                     </thead>
                     <tbody style="font-size: 20px" id="transaction-list">
-                        
+
                     </tbody>
                 </table>
             </div>

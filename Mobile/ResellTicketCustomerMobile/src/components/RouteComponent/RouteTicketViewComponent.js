@@ -30,7 +30,7 @@ export default class RouteTicketViewComponent extends Component {
     }
 
     onPress() {
-        this.props.onPress(this.state.routeTicket); 
+        this.props.onPress(this.state.routeTicket);
     }
 
     setStatusColor = () => {
@@ -72,7 +72,9 @@ export default class RouteTicketViewComponent extends Component {
             arrivalDateTime,
             status,
             vehicleName,
-            ticketCode } = this.state.routeTicket;
+            ticketCode,
+            expiredDateTime,
+        } = this.state.routeTicket;
 
         return (
             <TouchableNativeFeedback onPress={this.onPress}>
@@ -115,8 +117,12 @@ export default class RouteTicketViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(departureDateTime).format(formatConstant.DATE_TIME)}</Text>
+                        {status !== TicketStatus.COMPLETED && status !== TicketStatus.RENAMEDFAIL && status !== TicketStatus.RENAMEDSUCESS ?
+                            <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format(formatConstant.DATE_TIME)}</Text>
+                            : null
+                        }
                     </View>
+
                 </View>
             </TouchableNativeFeedback>
         )

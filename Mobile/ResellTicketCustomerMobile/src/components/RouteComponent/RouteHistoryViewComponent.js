@@ -6,6 +6,7 @@ import { TouchableOpacity, TouchableNativeFeedback } from 'react-native-gesture-
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import formatConstant from '../../constants/formatConstant';
+import routeStatus from '../../constants/routeStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -28,24 +29,25 @@ export default class RouteHistoryViewComponent extends Component {
     }
 
     initRouteDetail(route) {
-        route.departureDate = moment(route.departureDateTime).format(formatConstant.DATE);
-        route.departureTime = moment(route.departureDateTime).format(formatConstant.TIME);
-        route.arrivalDate = moment(route.arrivalDateTime).format(formatConstant.DATE);
-        route.arrivalTime = moment(route.arrivalDateTime).format(formatConstant.TIME);
-        route.expiredDate = moment(route.departureDateTime).format(formatConstant.DATE_TIME);
+        route.departureTime = moment(route.departureDate).format(formatConstant.TIME);
+        route.departureDate = moment(route.departureDate).format(formatConstant.DATE);
+        route.arrivalTime = moment(route.arrivalDate).format(formatConstant.TIME);
+        route.arrivalDate = moment(route.arrivalDate).format(formatConstant.DATE);
+        route.expiredDate = moment(route.expiredDateTime).format(formatConstant.DATE_TIME);
         route.createdAt = moment(route.createdAt).format(formatConstant.DATE_TIME);
+        route.status = route.status
     }
 
     onPress() {
-        if(this.preventDefault) return;
+        if (this.preventDefault) return;
         this.props.onPress(this.state.route);
     }
 
     renderIsAvailable(isValid) {
-        if(isValid) {
+        if (isValid) {
             return <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
         } else {
-            return <Text style={{ fontSize: 12, color: 'red'}}>Not Available</Text>
+            return <Text style={{ fontSize: 12, color: 'red' }}>Not Available</Text>
         }
     }
 
@@ -58,7 +60,7 @@ export default class RouteHistoryViewComponent extends Component {
                     <View style={styles.routeHeader}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text>{route.departureCityName} </Text>
-                            <Icon name="long-arrow-right" type="font-awesome" color="grey"/>
+                            <Icon name="long-arrow-right" type="font-awesome" color="grey" />
                             <Text> {route.arrivalCityName}</Text>
                         </View>
                         <View style={{ flexDirection: 'row' }}>
@@ -92,7 +94,11 @@ export default class RouteHistoryViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.routeFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {route.expiredDate}</Text>
+                        {route.status !== routeStatus.COMPLETED ?
+                            <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {route.expiredDate}</Text>
+                            : null
+                        }
+
                     </View>
                 </View>
             </TouchableNativeFeedback>

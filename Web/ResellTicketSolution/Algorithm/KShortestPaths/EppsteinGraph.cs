@@ -47,6 +47,11 @@ namespace Algorithm.KShortestPaths
         private int MaxCombination = int.MaxValue;
 
         /// <summary>
+        /// Max Waiting hours between 2 tickets in a route
+        /// </summary>
+        private int MaxWaitingBetweenTwoTickets = 24;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public EppsteinGraph()
@@ -102,7 +107,9 @@ namespace Algorithm.KShortestPaths
         /// <param name="destinationId">Destination vertex Id</param>
         /// <param name="maxCombination">Maximum Travel Edges</param>
         /// <param name="kshortestPathQuantity">Precalculate only k shotest paths</param>
-        public void BuildKthShortestPaths(int departureId, int destinationId, int maxCombination = int.MaxValue, int kshortestPathQuantity = 10)
+        /// <param name="maxWaitingHours">Find Routes that has 2 near tickets' waiting time less than or equal this hour. Default is 1 day.</param>
+        public void BuildKthShortestPaths(int departureId, int destinationId, int maxCombination = int.MaxValue, int kshortestPathQuantity = 10,
+            int maxWaitingHours = 24)
         {
             isCaculated = false;
 
@@ -110,6 +117,7 @@ namespace Algorithm.KShortestPaths
             InitSourceDestination(departureId, destinationId);
             this.MaxCombination = maxCombination;
             this.KShortestPathQuantity = kshortestPathQuantity;
+            this.MaxWaitingBetweenTwoTickets = maxWaitingHours;
 
             if (SourceVertex == null || DestinationVertex == null)
             {
@@ -255,7 +263,7 @@ namespace Algorithm.KShortestPaths
                 {
                     continue;
                 }
-                
+
                 //Check duplicate path result
                 //bool isExisted = false;
                 //var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
@@ -273,9 +281,17 @@ namespace Algorithm.KShortestPaths
                 //{
                 //    SideTrackPathsHeap.Enqueue(currentSideTrack);
                 //}
-                
+
+                //Check max waiting hours before add into result
+                var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
+                if(currentFullPath.GetMaximumWaitingHour() <= this.MaxWaitingBetweenTwoTickets)
+                {
+                    SideTrackPathsHeap.Enqueue(currentSideTrack);
+                }
+
+
                 //Add Path to result
-                SideTrackPathsHeap.Enqueue(currentSideTrack);
+                //SideTrackPathsHeap.Enqueue(currentSideTrack);
 
                 var currentVertex = currentSideTrack.CurrentVertex;
                 var currentPath = new Path();

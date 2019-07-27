@@ -34,6 +34,8 @@ const RouteStack = createStackNavigator(
     RouteTicketUpdate: RouteTicketUpdateScreen,
     RouteBuyerInfo: RouteBuyerInfoScreen,
     DetailTicket: DetailTicketScreen,
+    CreditCardViewList: CreditCardViewListScreen,
+    CreditCardCreate: CreditCardCreateScreen,
   }, {
     initialRouteName: 'Route',
     headerMode: 'none',
@@ -67,6 +69,7 @@ const TicketStack = createStackNavigator(
     PostedTicket: PostedTicketScreen,
     PostEditTicket: PostEditTicketScreen,
     DetailTicket: DetailTicketScreen,
+    CreateBankAccountToReceiveMoney: CreateBankAccountToReceiveMoneyScreen,
   }, {
     initialRouteName: 'PostedTicket',
     headerMode: 'none',

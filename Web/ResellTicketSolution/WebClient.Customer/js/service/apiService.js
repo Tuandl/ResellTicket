@@ -6,6 +6,8 @@ const token = localStorage.getItem('TOKEN');
 
 function Get(url, params) {
     return new Promise((resolve, reject) => {
+        if(Pace) Pace.start();
+        
         fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
             method: 'GET',
             headers: {
@@ -27,11 +29,15 @@ function Get(url, params) {
         }).catch((error) => {
             toastService.error('Error');
             reject(error);
+        }).finally(() => {
+            if(Pace) Pace.stop();
         })
     });
 }
 
 function Post(url, data) {
+    if(Pace) Pace.start();
+    
     return new Promise((resolve, reject) => {
         fetch(appConfig.apiBaseUrl + url, {
             method: 'POST',
@@ -55,11 +61,15 @@ function Post(url, data) {
         }).catch((error) => {
             toastService.error('Error');
             reject(error);
+        }).finally(() => {
+            if(Pace) Pace.stop();
         })
     });
 }
 
 function Put(url, data) {
+    if(Pace) Pace.start();
+    
     return new Promise((resolve, reject) => {
         fetch(appConfig.apiBaseUrl + url, {
             method: 'PUT',
@@ -83,11 +93,15 @@ function Put(url, data) {
         }).catch((error) => {
             toastService.error('Error');
             reject(error);
+        }).finally(() => {
+            if(Pace) Pace.stop();
         })
     });
 }
 
 function PutParams(url, params) {
+    if(Pace) Pace.start();
+    
     return new Promise((resolve, reject) => {
         fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
             method: 'PUT',
@@ -110,11 +124,15 @@ function PutParams(url, params) {
         }).catch((error) => {
             toastService.error('Error');
             reject(error);
+        }).finally(() => {
+            if(Pace) Pace.stop();
         })
     });
 }
 
 function Delete(url, params) {
+    if(Pace) Pace.start();
+    
     return new Promise((resolve, reject) => {
         fetch(appConfig.apiBaseUrl + url + '?' + commonService.getQueryString(params), {
             method: 'DELETE',
@@ -137,6 +155,8 @@ function Delete(url, params) {
         }).catch((error) => {
             toastService.error('Error');
             reject(error);
+        }).finally(() => {
+            if(Pace) Pace.stop();
         })
     });
 }

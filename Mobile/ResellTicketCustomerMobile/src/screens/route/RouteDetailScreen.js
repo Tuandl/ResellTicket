@@ -1,6 +1,6 @@
 import { Body, Button, Container, Content, Header, Left, Right, Text, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, View, ActivityIndicator } from 'react-native';
+import { Dimensions, StyleSheet, View, ActivityIndicator, AsyncStorage } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import NumberFormat from 'react-number-format';
@@ -9,6 +9,8 @@ import api from '../../service/Api';
 import { withNavigationFocus } from 'react-navigation';
 import Dialog from "react-native-dialog";
 import RouteStatus from '../../constants/routeStatus';
+import keyConstant from '../../constants/keyConstant';
+import TicketStatus from '../../constants/TicketStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -30,7 +32,8 @@ class RouteDetailScreen extends Component {
             dialogVisibleDelete: false,
             isBuyLoading: false,
             isDeleteLoading: false,
-            isLoading: false
+            isLoading: false,
+            boughtTicketCount: 0,
         };
 
         this.onBtnBuyRoutePressed = this.onBtnBuyRoutePressed.bind(this);
@@ -91,6 +94,13 @@ class RouteDetailScreen extends Component {
                     route: response.data,
                     isLoading: false
                 });
+                response.data.routeTickets.forEach(routeTicket => {
+                    if(routeTicket.status !== TicketStatus.VALID) {
+                        this.setState({
+                            boughtTicketCount: this.state.boughtTicketCount + 1
+                        })
+                    }
+                });
             } else {
                 RNToasty.Error({ title: 'Error when load route detail' });
             }
@@ -145,24 +155,30 @@ class RouteDetailScreen extends Component {
 
 
     async onBtnBuyRoutePressed() {
-        this.setState({
-            isBuyLoading: true,
-        })
-        const response = await api.get('api/customer/detail');
-        if (response.status === 200) {
-            var params = {
-                routeId: this.routeId,
-                buyerPassengerName: response.data.fullName,
-                buyerPassengerEmail: response.data.email,
-                buyerPassengerPhone: response.data.phoneNumber
-            };
+        var customerIdDefault = await AsyncStorage.getItem(keyConstant.STORAGE.ID);
+
+        var creditCardResponse = await api.get('api/credit-card?id=' + customerIdDefault);
+        if(creditCardResponse.data.length === 0) {
+            this.props.navigation.navigate('CreditCardCreate')
+        } else {
             this.setState({
-                isBuyLoading: false
-            });
-
-            this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+                isBuyLoading: true,
+            })
+            const response = await api.get('api/customer/detail');
+            if (response.status === 200) {
+                var params = {
+                    routeId: this.routeId,
+                    buyerPassengerName: response.data.fullName,
+                    buyerPassengerEmail: response.data.email,
+                    buyerPassengerPhone: response.data.phoneNumber
+                };
+                this.setState({
+                    isBuyLoading: false
+                });
+    
+                this.props.navigation.navigate('RouteBuyerInfo', { params: params });
+            }
         }
-
     }
 
     onBtnDeletePressed() {
@@ -174,7 +190,7 @@ class RouteDetailScreen extends Component {
     }
 
     render() {
-        const { route } = this.state;
+        const { route, boughtTicketCount } = this.state;
 
         return (
             <Container style={{ flex: 1 }}>
@@ -223,7 +239,7 @@ class RouteDetailScreen extends Component {
                         </View>
 
                         <View style={{ justifyContent: 'center', width: width, flexDirection: 'column' }}>
-                            {route.status === RouteStatus.NEW ?
+                            {route.status === RouteStatus.NEW && boughtTicketCount === 0 ?
                                 <View style={{ paddingTop: 5, paddingLeft: 20, paddingRight: 20, borderRadius: 10, flex: 0.5 }}>
                                     <Button primary onPress={this.onBtnBuyRoutePressed} block>
                                         {this.state.isBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />

@@ -1,13 +1,14 @@
 import { Body, Button, Container, Content, Header, Left, Right, Title } from 'native-base';
 import React, { Component } from 'react';
-import { Dimensions, StyleSheet, ActivityIndicator } from 'react-native';
+import { Dimensions, StyleSheet, ActivityIndicator, ImageBackground } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import RouteViewComponent from '../../components/RouteComponent/RouteSearchViewComponent';
 import api from '../../service/Api';
 
-const { width } = Dimensions.get('window');
-const { height } = Dimensions.get('window');
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const BG_IMAGE = require('../../../assets/images/empty_state.png');
 
 export default class RouteSearchResultScreen extends Component {
 
@@ -25,6 +26,7 @@ export default class RouteSearchResultScreen extends Component {
         this.state = {
             routes: [],
             isLoading: false,
+            isShowEmptyView: false
         };
 
         this.onRoutePressed = this.onRoutePressed.bind(this);
@@ -36,60 +38,69 @@ export default class RouteSearchResultScreen extends Component {
     }
 
     async searchRoutes(params) {
-        if(params === null || params === undefined) {
+        if (params === null || params === undefined) {
             this.navigation.pop();
         } else {
             this.setState({
                 isLoading: true
             })
-            const response = await api.get(this.URL_ROUTE_SEARCH, params);
+            const response = await api.post(this.URL_ROUTE_SEARCH, params);
             if(response.status === 200) {
                 this.setState({
                     isLoading: false,
                     routes: response.data,
                 });
+                if (response.data.length === 0) {
+                    this.setState({
+                        isShowEmptyView: true
+                    })
+                } else {
+                    this.setState({
+                        isShowEmptyView: false
+                    })
+                }
             } else {
-                RNToasty.Error({
-                    title: 'Search Error.'
+                this.setState({
+                    isShowEmptyView: true
                 })
             }
         }
     }
 
     async saveRoute(params) {
-        if(params === null || params === undefined) {
-            RNToasty.Error({title: 'Cannot save route'});
+        if (params === null || params === undefined) {
+            RNToasty.Error({ title: 'Cannot save route' });
         } else {
             const response = await api.post(this.URL_ROUTE_SAVE, params);
-            if(response.status === 200) {
-                RNToasty.Success({title: 'Save route successfullt'});
+            if (response.status === 200) {
+                RNToasty.Success({ title: 'Save route successfullt' });
                 params.id = response.data;
-                this.navigation.navigate('RouteDetail', {routeId: params.id});
+                this.navigation.navigate('RouteDetail', { routeId: params.id });
             } else {
-                RNToasty.Error({title: 'Save Route Failed'});
+                RNToasty.Error({ title: 'Save Route Failed' });
             }
         }
     }
 
     onRoutePressed(route) {
-        if(route.id === null || route.id === undefined || route.id <= 0) {
+        if (route.id === null || route.id === undefined || route.id <= 0) {
             this.saveRoute(route);
         } else {
-            this.navigation.navigate('RouteDetail', {routeId: route.id});
+            this.navigation.navigate('RouteDetail', { routeId: route.id });
         }
     }
 
     renderRoutes(routes) {
-        if(this.state.isLoading) {
+        if (this.state.isLoading) {
             return <ActivityIndicator size="large" animating />
         }
-        return routes.map((route, index) => 
-            <RouteViewComponent route={route} key={index} onRoutePressed={(route) => this.onRoutePressed(route)}/>
+        return routes.map((route, index) =>
+            <RouteViewComponent route={route} key={index} onRoutePressed={(route) => this.onRoutePressed(route)} />
         );
     }
 
     render() {
-        const {routes} = this.state;
+        const { routes, isShowEmptyView } = this.state;
         const { navigation } = this.props;
 
         return (
@@ -108,15 +119,26 @@ export default class RouteSearchResultScreen extends Component {
                     <Right>
                     </Right>
                 </Header>
-                <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
+                {isShowEmptyView ? <ImageBackground source={BG_IMAGE} style={styles.bgImage} /> : null}
+                {!isShowEmptyView ? <Content style={styles.content} contentContainerStyle={styles.contentContainer}>
                     {this.renderRoutes(routes)}
-                </Content>
+                </Content> : null}
+
             </Container>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    bgImage: {
+        flex: 1,
+        top: 50,
+        left: 0,
+        width: SCREEN_WIDTH,
+        height: SCREEN_HEIGHT / 1.75,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     content: {
         flex: 1,
         // padding: 30,
@@ -124,7 +146,7 @@ const styles = StyleSheet.create({
         // backgroundColor: 'lightgrey'
     },
     contentContainer: {
-        justifyContent: 'center', 
+        justifyContent: 'center',
         alignItems: 'center',
     },
     label: {

@@ -15,13 +15,12 @@ function RouteRow(props) {
         <tr>
             <th>{props.index + 1}</th>
             <td>{route.code}</td>
-            <td>{route.departureCityName}</td>
-            <td>{moment(route.departureDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{route.arrivalCityName}</td>
-            <td>{moment(route.arrivalDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
-            <td>{<NumberFormat value={route.totalAmount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
+            <td>{route.departureCityName} - {moment(route.departureDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td>{route.arrivalCityName} - {moment(route.arrivalDate).format('ddd, MMM DD YYYY, HH:mm')}</td>
+            <td style={{paddingLeft: 95}}>{route.ticketQuantity}</td>
+            <td style={{paddingLeft: 65}}>{<NumberFormat value={route.totalAmount} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
 
-            <td>{route.ticketQuantity}</td>
+            
             {/* <td>{getBadge(route.status)}</td> */}
             <td>
                 <Link to={routeLink}>
@@ -161,11 +160,9 @@ class BoughtRoutes extends Component {
                                             <th>No.</th>
                                             <th>Code</th>
                                             <th>Departure</th>
-                                            <th>Departure Time</th>
                                             <th>Arrival</th>
-                                            <th>Arrival Time</th>
-                                            <th>Total Amount</th>
                                             <th>Ticket Quantity</th>
+                                            <th>Total Amount</th>
                                             {/* <th>Status</th> */}
                                             <th>Action</th>
                                         </tr>
@@ -184,50 +181,6 @@ class BoughtRoutes extends Component {
                         </Card>
                     </Col>
                 </Row>
-
-                {/* <Row>
-                    <Col xl={12}>
-                        <Card>
-                            <CardHeader>
-                                <strong>Liability Routes</strong>
-                                <Form className="text-right mr-2" onSubmit={this.onLiabilitySearch}>
-                                    <InputGroup>
-                                        <Input type="text" className="mr-2" placeholder="Route Code" name="liabilitySearchValue" value={this.state.liabilitySearchValue} onChange={this.onChange} />
-                                        <Button color="primary">
-                                            <i className="fa fa-search fa-lg mr-1"></i>Search Route
-                                                </Button>
-                                    </InputGroup>
-                                </Form>
-                            </CardHeader>
-                            <CardBody>
-                                <Table responsive hover>
-                                    <thead>
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Code</th>
-                                            <th>Departure</th>
-                                            <th>Departure Time</th>
-                                            <th>Arrival</th>
-                                            <th>Arrival Time</th>
-                                            <th>Total Amount</th>
-                                            <th>Ticket Quantity</th>
-                                            <th>Status</th> 
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {liabilityRoutes.map((route, index) => (
-                                            <RouteRow key={index} route={route} index={index} parent={this} />
-                                        ))}
-                                    </tbody>
-                                </Table>
-                                <div style={{ float: 'right' }}>
-                                    <PaginationView currentPage={liabilityCurrentPage} pageCount={liabilityPageCount} goPage={this.liabilityGoPage} />
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row> */}
             </div>
         )
     }

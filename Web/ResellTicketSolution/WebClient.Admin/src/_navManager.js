@@ -10,6 +10,11 @@ export default {
             class: ''             // optional class names space delimited list for title item ex: "text-center"
         },
         {
+            name: 'Dashboard',
+            url: '/dashboard',
+            icon: 'icon-speedometer'
+        },
+        {
             name: 'User',
             url: '/user',
             icon: 'icon-user'
@@ -22,22 +27,22 @@ export default {
         {
             name: 'City',
             url: '/city',
-            icon: 'icon-user'
+            icon: 'icon-map'
         },
         {
             name: 'Station',
             url: '/station',
-            icon: 'icon-user'
+            icon: 'icon-location-pin'
         },
         {
             name: 'Transportation',
             url: '/transportation',
-            icon: 'icon-user'
+            icon: 'icon-cursor'
         },
         {
             name: 'Ticket Type',
             url: '/tickettype',
-            icon: 'icon-user'
+            icon: 'icon-star'
         },
     ]
 }

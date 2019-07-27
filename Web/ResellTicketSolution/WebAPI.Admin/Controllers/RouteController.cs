@@ -13,7 +13,7 @@ namespace WebAPI.Admin.Controllers
 {
     [Route("api/route")]
     [ApiController]
-    [Authorize(Roles = "Staff")]
+    
     public class RouteController : ControllerBase
     {
         private readonly IRouteService _routeService;
@@ -24,7 +24,24 @@ namespace WebAPI.Admin.Controllers
         }
 
         [HttpGet]
+        [Route("statistic")]
+        [Authorize(Roles = "Manager")]
+        public ActionResult GetStatisticResult()
+        {
+            try
+            {
+                var report = _routeService.GetStatisticReport();
+                return Ok(report);
+            }
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("bought")]
+        [Authorize(Roles = "Staff")]
         public ActionResult<RouteDataTable> GetBoughtRoutes(string param, int page, int pageSize)
         {
             try
@@ -40,6 +57,7 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("liability")]
+        [Authorize(Roles = "Staff")]
         public ActionResult<RouteDataTable> GetLiabilityRoutes(string param, int page, int pageSize)
         {
             try
@@ -55,6 +73,7 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("completed")]
+        [Authorize]
         public ActionResult<RouteDataTable> GetCompletedRoutes(string param, int page, int pageSize)
         {
             try
@@ -70,6 +89,7 @@ namespace WebAPI.Admin.Controllers
 
         [HttpGet]
         [Route("detail")]
+        [Authorize]
         public ActionResult<RouteDetailViewModel> GetRouteDetail(int routeId)
         {
             try
@@ -86,6 +106,7 @@ namespace WebAPI.Admin.Controllers
 
         [HttpPost]
         [Route("replaceOneFail")]
+        [Authorize(Roles = "Staff")]
         public ActionResult ReplaceOneFailTicket(int routeId, int failRouteTicketId, int replaceTicketId)
         {
             try

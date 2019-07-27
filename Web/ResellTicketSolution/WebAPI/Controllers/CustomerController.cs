@@ -191,7 +191,7 @@ namespace WebAPI.Controllers
 
         [HttpGet]
         [Route("check-existed-connect-bank-account")]
-        public IActionResult CheckIsExistedConnectAccount()
+        public ActionResult CheckIsExistedConnectAccount()
         {
             if (!ModelState.IsValid)
             {
@@ -207,7 +207,7 @@ namespace WebAPI.Controllers
                     return StatusCode((int)HttpStatusCode.NotAcceptable, "This customer already have a connect account!!");
                 }
 
-                return Ok();
+                return Ok("");
             }
             catch(Exception e)
             {
@@ -259,10 +259,10 @@ namespace WebAPI.Controllers
         }
 
         //[HttpPost]
-        //[Route("send-email-refund-for-seller")]
-        //public IActionResult SendEmailRefundForSeller(int ticketId)
+        //[Route("send-email-replace-for-buyer")]
+        //public IActionResult SendEmailReplacementForBuyer(int oldTicketId, int replacementTicketId)
         //{
-        //    _sendGridService.SendEmailRefundForSeller(ticketId);
+        //    _sendGridService.SendEmailReplacementForBuyer(oldTicketId, replacementTicketId);
         //    return Ok();
         //}
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Service.EmailService;
 using Service.Services;
 using System;
+using System.Net;
 using ViewModel.ErrorViewModel;
 using ViewModel.ViewModel.Route;
 using WebAPI.Extensions;
@@ -37,33 +38,23 @@ namespace WebAPI.Controllers
         /// <summary>
         /// Search Route by some criterials
         /// </summary>
-        /// <param name="departureCityId">Departure City Id</param>
-        /// <param name="arrivalCityId">Arrival City</param>
-        /// <param name="maxTicketCombination">Max Ticket Combination</param>
-        /// <param name="departureDate">Departure Date (Local departure city)</param>
-        /// <param name="arrivalDate">Arrival Date (Local arrival city)</param>
-        /// <param name="page">Current Page</param>
-        /// <param name="pageSize">Size of a page</param>
+        /// <param name="paramsModel">Filters for searching routes.</param>
         /// <returns>Search Result</returns>
-        [HttpGet("search")]
+        [HttpPost("search")]
         public IActionResult SearchRoute(
-            int departureCityId,
-            int arrivalCityId,
-            int maxTicketCombination,
-            DateTime departureDate,
-            DateTime arrivalDate,
-            int page,
-            int pageSize)
+            SearchRouteParamViewModel paramsModel)
         {
             try
             {
                 //Set departureDate is the begin of this day
-                departureDate = departureDate.Date;
+                paramsModel.DepartureDate = paramsModel.DepartureDate.Date;
                 //Set arrivalDate is the end of this day
-                arrivalDate = arrivalDate.Date.AddDays(1).AddMilliseconds(-1);
+                paramsModel.ArrivalDate = paramsModel.ArrivalDate.Date.AddDays(1).AddMilliseconds(-1);
 
-                var routes = _routeService.SearchRoute(departureCityId, arrivalCityId,
-                    departureDate, arrivalDate, page, pageSize, maxTicketCombination
+                var routes = _routeService.SearchRoute(paramsModel.DepartureCityId, paramsModel.ArrivalCityId,
+                    paramsModel.DepartureDate, paramsModel.ArrivalDate, paramsModel.Page, paramsModel.PageSize, 
+                    paramsModel.MaxTicketCombination, paramsModel.VehicleIds, paramsModel.TransportationIds,
+                    paramsModel.MaxWaitingHours, paramsModel.TicketTypeIds
                 );
 
                 return Ok(routes);
@@ -231,16 +222,22 @@ namespace WebAPI.Controllers
             {
                 return BadRequest("Invalid Request");
             }
+            var changeStatusRoute = _routeService.BuyRoute(model, username);
+            if (!string.IsNullOrEmpty(changeStatusRoute))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, changeStatusRoute);
+            }
             try
             {
-                _routeService.BuyRoute(model, username);
+                
                 _paymentService.MakePayment(model.RouteId);
                 _sendGridService.SendEmailReceiptForBuyer(model.RouteId);
                 return Ok();
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.GetRootException().Message);
+                //return BadRequest(ex.GetRootException().Message);
+                return StatusCode((int)HttpStatusCode.NotAcceptable, ex.Message);
             }
         }
     }

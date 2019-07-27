@@ -5,13 +5,17 @@ import ticketStatus from '../js/enum/ticketStatus.js';
 import commonService from '../js/service/commonService.js';
 import SellerTicketComponent from '../js/component/SellerTicketComponent.js';
 import TicketFilterStatusComponent from '../js/component/TicketFilterStatusComponent.js';
+import toastService from '../js/service/toastService.js';
 
 function postedTicketController() {
     const id = {
         ticketContainer: 'ticket-container',
         btnStatuses: 'btnStatuses',
         btnPostTicket: 'btnPostTicket',
-        btnLoadMore: 'btnLoadMore'
+        btnLoadMore: 'btnLoadMore',
+        showEmptyList: 'show-empty-list',
+        connectToStripeLinkId: 'connect-to-stripe-link',
+        linkConnectToStripe: 'linkConnectToStripe'
     }
 
     const model = {
@@ -20,7 +24,9 @@ function postedTicketController() {
         tickets: [],
         searchStatus: ticketStatus.Pending,
         ticketComponents: [],
+        total: 0
     }
+
 
     bindEvent();
     renderBtnStatuses();
@@ -60,6 +66,12 @@ function postedTicketController() {
             ticketComponent.render();
             containerElement.appendChild(ticketComponent.domElement);
         });
+        model.total = response.length;
+        if(model.total === 0){
+            document.getElementById(id.showEmptyList).style.display = 'block';
+        } else {
+            document.getElementById(id.showEmptyList).style.display = 'none';
+        }
         if(response.length !== model.pageSize) {
             model.isLoadAll = true;
             commonService.removeAllChildren(document.getElementById(id.btnLoadMore))
@@ -69,9 +81,14 @@ function postedTicketController() {
     }
 
     function bindEvent() {
+        const linkElement = document.getElementById(id.connectToStripeLinkId);
         var btnPostTicket = document.getElementById(id.btnPostTicket);
         btnPostTicket.addEventListener('click', function () {
-            window.location.href = appConfig.url.postedTicket.postEditForm_2;
+            if(linkElement.href === appConfig.bankConnect.linkCreate) {
+                toastService.error('Please connect to Stripe account that we can tranfer money.')
+            } else {
+                window.location.href = appConfig.url.postedTicket.postEditForm_2;
+            }
         });
 
         $(window).scroll(function() {

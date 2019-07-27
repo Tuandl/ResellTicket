@@ -368,14 +368,16 @@ namespace Service.Services
             existedTicket.IsPassengerNameValid = true;
             existedTicket.IsEmailBookingValid = true;
             _ticketRepository.Update(existedTicket);
-            try
-            {
-                _unitOfWork.CommitChanges();
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+
+            _unitOfWork.CommitChanges();
+            //try
+            //{
+                
+            //}
+            //catch (Exception ex)
+            //{
+            //    return ex.Message;
+            //}
             var message = "Ticket " + existedTicket.TicketCode + " is valid";
             List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
 
@@ -547,6 +549,30 @@ namespace Service.Services
                 );
 
                 _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+                #endregion
+
+                //noti to buyer
+                #region Notify Buyer
+                List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
+                //message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
+
+                //Save notification into db
+                //var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
+                //    x.Route.Status == RouteStatus.Bought &&
+                //    x.Deleted == false &&
+                //    x.Route.Deleted == false
+                //);
+
+                //if (routeTicket != null && existedTicket.BuyerId != null)
+                //{
+                //    _notificationService.SaveNotification(
+                //        customerId: existedTicket.BuyerId.Value,
+                //        type: NotificationType.TicketIsRenamed,
+                //        data: new { routeId = routeTicket.RouteId }
+                //    );
+                //}
+
+                _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
                 #endregion
             }
 

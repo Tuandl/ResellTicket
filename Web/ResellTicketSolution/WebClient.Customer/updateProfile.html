@@ -69,7 +69,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 method: "GET",
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('TOKEN'),
                 }
             });
             if (respone.status === 204) {

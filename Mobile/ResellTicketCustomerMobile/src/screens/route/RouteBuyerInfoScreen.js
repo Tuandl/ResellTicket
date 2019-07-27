@@ -74,22 +74,31 @@ export default class RouteBuyerInfoScreen extends Component {
             buyerPassengerPhone: this.state.buyerPassengerPhone,
             buyerPassengerIdentify: this.state.buyerPassengerIdentify
         };
-        const resBuyRoute = await api.post('api/route/buy-route', params);
-        const { navigation } = this.props;
-        if (resBuyRoute.status === 200) {
-            this.setState({
-                isConfirmBuyLoading: false
-            });
-            RNToasty.Success({
-                title: 'Buy route Successfully'
-            })
-            navigation.navigate('Route');
-        }
-        else {
+        try {
+            const resBuyRoute = await api.post('api/route/buy-route', params);
+            const { navigation } = this.props;
+            if (resBuyRoute.status === 200) {
+                this.setState({
+                    isConfirmBuyLoading: false
+                });
+                RNToasty.Success({
+                    title: 'Buy route Successfully'
+                })
+                navigation.navigate('Route');
+            }
+            else {
+                RNToasty.Error({
+                    title: 'Buy route Fail, This route has been bought!'
+                });
+                navigation.pop();
+            }
+        } catch (error) {
             RNToasty.Error({
-                title: 'Buy route Fail, All tickets in route must be valid!'
+                title: 'Buy route Fail, This route has been bought!'
             })
+            navigation.pop();
         }
+        
     }
 
     render() {
@@ -177,9 +186,9 @@ export default class RouteBuyerInfoScreen extends Component {
                     </Right>
                 </Item> */}
                     <Button block primary
-                        style={{ margin: 10, marginTop:40, marginBottom: 0 }}
+                        style={{ margin: 10, marginTop: 40, marginBottom: 0 }}
                         onPress={this.onBtnConfirmPressed}>
-                            {this.state.isConfirmBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
+                        {this.state.isConfirmBuyLoading ? <ActivityIndicator size="small" animating color="#fff" />
                             : <Text style={styles.buttonText}>Confirm</Text>}
                     </Button>
                     <Dialog.Container visible={this.state.dialogVisibleConfirmBuy}>
