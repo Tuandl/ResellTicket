@@ -204,7 +204,8 @@ namespace Service.Services
                     CustomerId = x.CustomerId,
                     Status = x.Status,
                     TotalAmount = x.TotalAmount,
-                    TicketQuantity = x.RouteTickets.Count(t => t.IsReplaced != true)
+                    TicketQuantity = x.RouteTickets.Count(t => t.IsReplaced != true),
+                    ExpiredDate = x.RouteTickets.Min(routeTicket => routeTicket.Ticket.ExpiredDateTime),
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
                     //IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
@@ -469,6 +470,7 @@ namespace Service.Services
                         TransportationName = ticket.Transportation.Name,
                         VehicleName = ticket.Transportation.Vehicle.Name,
                         Order = count++,
+                        ExpiredDate = ticket.ExpiredDateTime,
                     };
 
                     routeSearchViewModel.TotalAmount += ticket.SellingPrice;

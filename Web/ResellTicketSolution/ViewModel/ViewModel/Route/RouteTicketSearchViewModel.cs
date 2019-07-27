@@ -20,5 +20,7 @@ namespace ViewModel.ViewModel.Route
         public string VehicleName { get; set; }
         public string TransportationName { get; set; }
         public int Order { get; set; }
+
+        public DateTime? ExpiredDate { get; set; }
     }
 }

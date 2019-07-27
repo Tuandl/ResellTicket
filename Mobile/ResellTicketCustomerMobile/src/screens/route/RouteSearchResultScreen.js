@@ -44,8 +44,8 @@ export default class RouteSearchResultScreen extends Component {
             this.setState({
                 isLoading: true
             })
-            const response = await api.get(this.URL_ROUTE_SEARCH, params);
-            if (response.status === 200) {
+            const response = await api.post(this.URL_ROUTE_SEARCH, params);
+            if(response.status === 200) {
                 this.setState({
                     isLoading: false,
                     routes: response.data,
