@@ -41,6 +41,7 @@ namespace WebAPI.Controllers
         /// <param name="paramsModel">Filters for searching routes.</param>
         /// <returns>Search Result</returns>
         [HttpPost("search")]
+        [AllowAnonymous]
         public IActionResult SearchRoute(
             SearchRouteParamViewModel paramsModel)
         {
