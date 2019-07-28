@@ -84,7 +84,7 @@ export default class ResolveRenamedFailTicket extends Component {
             isRefundedAll: props.isRefundedAll
         }, () => {
             if (props.routeStatus === RouteStatus.Bought) this.checkResovleNeed(this.state.routeTickets)
-            else this.setState({isResolveNeed: false});
+            else this.setState({ isResolveNeed: false });
         })
     }
 
@@ -106,7 +106,12 @@ export default class ResolveRenamedFailTicket extends Component {
     checkResovleNeed = (routeTickets) => {
         var renamedFailCount = 0;
         routeTickets.forEach(routeTicket => {
-            if (routeTicket.status === TicketStatus.RenamedFail) renamedFailCount++;
+            if (routeTicket.status === TicketStatus.RenamedFail){renamedFailCount++;} 
+            else if(routeTicket.status === TicketStatus.RenamedSuccess || routeTicket.status === TicketStatus.Renamed)
+            {
+                renamedFailCount = 0; 
+                return;
+            }
         });
         this.setState({
             isResolveNeed: renamedFailCount >= 1 ? true : false
@@ -310,8 +315,8 @@ export default class ResolveRenamedFailTicket extends Component {
                                             <tr key={index}>
                                                 <td><strong>{index + 1}</strong></td>
                                                 <td>{resolveOptionLog.resolvedTicketCode}</td>
-                                                <td>{resolveOptionLog.departureCityName} <br/> {moment(resolveOptionLog.departureDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
-                                                <td>{resolveOptionLog.arrivalCityName} <br/> {moment(resolveOptionLog.arrivalDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
+                                                <td>{resolveOptionLog.departureCityName} <br /> {moment(resolveOptionLog.departureDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
+                                                <td>{resolveOptionLog.arrivalCityName} <br /> {moment(resolveOptionLog.arrivalDateTime).format('ddd, MMM DD YYYY HH:mm')}</td>
                                                 <td>${resolveOptionLog.sellingPrice}</td>
                                                 <td>{moment(resolveOptionLog.resolveAt).format('ddd, MMM DD YYYY HH:mm')}</td>
                                                 <td>
@@ -333,27 +338,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                                     }
                                                 </td>
                                                 <td>
-                                                    {resolveOptionLog.option === ResolveOption.REFUNDFAILTICKET ?
-                                                        <div>
-                                                            
-                                                            <Badge color="danger">Lost: ${resolveOptionLog.sellingPrice}</Badge>
-                                                        </div>
-                                                        : null
-                                                    }
-                                                    {resolveOptionLog.option === ResolveOption.REFUNDTOTALAMOUNT ?
-                                                        <div>
-                                                            
-                                                            <Badge color="danger">Lost: ${resolveOptionLog.sellingPrice}</Badge>
-                                                        </div>
-                                                        : null
-                                                    }
-                                                    {resolveOptionLog.option === ResolveOption.PAYOUT ?
-                                                        <div>
-                                                            {/* <Badge color="success">Earned: ${resolveOptionLog.feeAmount}</Badge><br/> */}
-                                                            <Badge color="danger">Lost: ${(resolveOptionLog.sellingPrice - resolveOptionLog.feeAmount).toFixed(2)}</Badge>
-                                                        </div>
-                                                        : null
-                                                    }
+                                                    <Badge color="danger">Lost: ${resolveOptionLog.amount}</Badge>
                                                 </td>
                                                 <td>{resolveOptionLog.staffName}</td>
                                             </tr>

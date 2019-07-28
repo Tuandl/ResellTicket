@@ -123,10 +123,10 @@ namespace Service.Services
             payoutCreateIntoDatabase.StripePayoutId = Transfer.Id;
             payoutCreateIntoDatabase.TicketId = TicketId;
             payoutCreateIntoDatabase.PaymentId = paymentDetail.Id;
-            payoutCreateIntoDatabase.Amount = amount;
+            payoutCreateIntoDatabase.Amount = Transfer.Amount / 100;
             payoutCreateIntoDatabase.FeeAmount = ticket.SellingPrice * (ticket.CommissionPercent / 100);
             payoutCreateIntoDatabase.Description = "You receive money for ticket " + ticket.TicketCode + ". Thank you for using our service.";
-            
+
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
 
@@ -140,12 +140,13 @@ namespace Service.Services
                 Option = ResolveOption.PAYOUT,
                 RouteId = route.Id,
                 TicketId = TicketId,
-                StaffId = staffId
+                StaffId = staffId,
+                Amount = Transfer.Amount / 100
             };
             _resolveOptionLogRepository.Add(log);
             _unitOfWork.CommitChanges();
 
-            if(route.ResolveOptionLogs.Count() == route.RouteTickets.Count())
+            if (route.ResolveOptionLogs.Count() == route.RouteTickets.Where(x => x.Deleted == false).Count())
             {
                 route.Status = RouteStatus.Completed;
                 _routeRepository.Update(route);
