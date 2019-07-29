@@ -13,6 +13,7 @@ namespace Core.Models
         public int TicketId { get; set; } //resolved
         public string ReplacedTicketCode { get; set; }
         public string StaffId { get; set; }
+        public decimal Amount { get; set; }
         public virtual Route Route { get; set; }
         public virtual Ticket ResolvedTicket { get; set; }
         public virtual User Staff { get; set; }

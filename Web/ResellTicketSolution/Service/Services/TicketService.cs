@@ -803,6 +803,11 @@ namespace Service.Services
         public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId)
         {
             List<AvailableTicketViewModel> replaceTickets = GetTicketAvailableForRouteTicket(failRouteTicketId);
+            var routeTicket = _routeTicketRepository.Get(x =>
+                x.Id == failRouteTicketId &&
+                x.Deleted == false
+            );
+            replaceTickets = replaceTickets.Where(x => x.SellingPrice <= routeTicket.Ticket.SellingPrice).ToList();
             AvailableTicketDataTable resultDataTable = new AvailableTicketDataTable()
             {
                 Data = replaceTickets,
