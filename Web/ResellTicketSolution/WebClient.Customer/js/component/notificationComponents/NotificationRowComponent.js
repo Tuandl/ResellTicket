@@ -34,6 +34,15 @@ export default class NotificationRowComponent {
         element.id = this.elementId;
         return element;
     }
+    generateNotificationRowElementEmpty() {
+        let elementStr = ``;
+        elementStr += `<li>`;
+
+        const element = commonService.htmlToElement(elementStr);
+        element.addEventListener('click', this.onNotificationClicked);
+        element.id = this.elementId;
+        return element;
+    }
 
     rerender() {
         const oldElement = document.getElementById(this.elementId);

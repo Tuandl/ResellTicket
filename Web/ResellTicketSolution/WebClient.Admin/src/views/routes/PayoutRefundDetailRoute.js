@@ -138,7 +138,9 @@ class PayoutRefundDetailRoute extends Component {
                 resolveOptionLogs: res.data.resolveOptionLogs,
                 isRefundedAll: res.data.isRefundAll,
                 earnedLoss: res.data.earnedLoss
-            }, () => this.checkRefundAll())
+            }, () => {
+                this.checkRefundAll();
+            })
         });
     }
 
@@ -188,7 +190,7 @@ class PayoutRefundDetailRoute extends Component {
         Axios.post('api/refund/all-ticket?ticketId=' + ticketId + '&resolveOption=' + this.state.resolveOption).then(res => {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Refund money successfully.');
-                this.props.history.push('/boughtRoutes');
+                //this.props.history.push('/boughtRoutes');
                 this.getRouteDetail();
             }
         })
