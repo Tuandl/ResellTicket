@@ -68,9 +68,9 @@ namespace Service.Services
         {
             string staffId = _userRepository.Get(x => x.UserName == username).Id;
             // lấy routeTicket ứng vs ticketId 
-            var routeTicket = _routeTicketRepository.Get(x => 
+            var routeTicket = _routeTicketRepository.Get(x =>
                 x.TicketId == TicketId &
-                x.Deleted == false & 
+                x.Deleted == false &
                 x.Route.Status == RouteStatus.Bought
             );
 
@@ -78,7 +78,7 @@ namespace Service.Services
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeTicket.RouteId && x.Route.Deleted == false);
             var refundFromPayments = _refundRepository.GetAllQueryable().Where(x => x.PaymentId == paymentDetail.Id);
             decimal totalRefund = 0;
-            foreach(var refundFromPayment in refundFromPayments)
+            foreach (var refundFromPayment in refundFromPayments)
             {
                 totalRefund = totalRefund + refundFromPayment.Amount;
             }
@@ -97,7 +97,7 @@ namespace Service.Services
             RefundCreateViewModel refundCreate = new RefundCreateViewModel();
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
-            refundCreate.Amount = remainRefund; //refund all 
+            refundCreate.Amount = refund.Amount / 100; //refund all 
             refundCreate.Description = "You have a refund for route " + routeTicket.Route.Code + ". We are sorry for the inconvenience.";
 
             refundCreate.Status = RefundStatus.Success;
@@ -123,18 +123,19 @@ namespace Service.Services
             //route.ResolveOption = resolveOption;
             _routeRepository.Update(route);
 
-            var routeTickets = route.RouteTickets;
-            foreach(var rt in routeTickets)
+            var routeTickets = route.RouteTickets.Where(x => x.Deleted == false);
+            foreach (var rt in routeTickets)
             {
                 var resolveOptionLog = _resolveOptionLogRepository.Get(x => x.RouteId == rt.RouteId && x.TicketId == rt.TicketId);
-                if(resolveOptionLog == null || resolveOptionLog.Option == ResolveOption.PAYOUT)
+                if (resolveOptionLog == null || resolveOptionLog.Option == ResolveOption.PAYOUT)
                 {
                     ResolveOptionLog newLog = new ResolveOptionLog()
                     {
                         RouteId = rt.RouteId,
                         TicketId = rt.TicketId,
                         StaffId = staffId,
-                        Option = ResolveOption.REFUNDTOTALAMOUNT
+                        Option = ResolveOption.REFUNDTOTALAMOUNT,
+                        Amount = rt.Ticket.SellingPrice
                     };
                     _resolveOptionLogRepository.Add(newLog);
                 }
@@ -189,7 +190,7 @@ namespace Service.Services
             refundAddIntoData.PaymentId = paymentDetail.Id;
             refundAddIntoData.StripeRefundId = refund.Id;
             refundAddIntoData.Description = "You have a refund for ticket " + failRouteTicket.Ticket.TicketCode + " in route " + failRouteTicket.Route.Code
-                                    + ". We sorry for the inconvenience."; 
+                                    + ". We sorry for the inconvenience.";
             refundAddIntoData.Amount = failTicket.SellingPrice;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
@@ -201,12 +202,13 @@ namespace Service.Services
                 Option = resolveOption,
                 RouteId = route.Id,
                 TicketId = failTicket.Id,
-                StaffId = staffId
+                StaffId = staffId,
+                Amount = refund.Amount / 100
             };
             _resolveOptionLogRepository.Add(log);
             _unitOfWork.CommitChanges();
 
-            if (route.ResolveOptionLogs.Count() == route.RouteTickets.Count())
+            if (route.ResolveOptionLogs.Count() == route.RouteTickets.Where(x => x.Deleted == false).Count())
             {
                 route.Status = RouteStatus.Completed;
                 _routeRepository.Update(route);
