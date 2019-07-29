@@ -182,7 +182,7 @@ namespace Service.Services
             }
         }
 
-        public RouteDataTable GetRouteDataTable(int page, int pageSize, RouteStatus? status, string userName) //BUG
+        public RouteDataTable GetRouteDataTable(int page, int pageSize, RouteStatus? status, string userName) 
         {
             var customer = _customerRepository.Get(x =>
                 x.Username == userName &&
@@ -208,7 +208,7 @@ namespace Service.Services
                     ExpiredDate = x.RouteTickets.Min(routeTicket => routeTicket.Ticket.ExpiredDateTime),
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
-                    //IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Ticket.Status != TicketStatus.Valid),
+                    IsValid = !x.RouteTickets.Any(routeTicket => (routeTicket.Ticket.Status != TicketStatus.Valid && routeTicket.Deleted == false)),
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
