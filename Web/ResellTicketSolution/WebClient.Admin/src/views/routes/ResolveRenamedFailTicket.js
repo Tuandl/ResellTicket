@@ -55,6 +55,8 @@ export default class ResolveRenamedFailTicket extends Component {
     failRouteTicketId = 0;
     failRouteTicketCode = '';
     routeId = 0;
+    renamedFailCount = 0;
+    optionValue = 0;
 
 
     constructor(props) {
@@ -83,7 +85,24 @@ export default class ResolveRenamedFailTicket extends Component {
             resolveOptionLogs: props.resolveOptionLogs,
             isRefundedAll: props.isRefundedAll
         }, () => {
-            if (props.routeStatus === RouteStatus.Bought) this.checkResovleNeed(this.state.routeTickets)
+            if (props.routeStatus === RouteStatus.Bought) {
+                this.checkResovleNeed(this.state.routeTickets)
+                if (this.renamedFailCount > 0) {
+                    var { routeTickets } = this.state;
+                    var failTickets = 0;
+                    for (var i = 0; i < routeTickets.length; i++) {
+                        if (routeTickets[i].status === TicketStatus.RenamedFail) {
+                            failTickets++;
+                            this.failRouteTicketCode = routeTickets[i].ticketCode;
+                            this.failRouteTicketId = routeTickets[i].id;
+                            break;
+                        }
+                    }
+                    if (failTickets === 1) {
+                        this.getReplaceTicketForFailTicket(this.failRouteTicketId);
+                    }
+                }
+            }
             else this.setState({ isResolveNeed: false });
         })
     }
@@ -104,51 +123,49 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     checkResovleNeed = (routeTickets) => {
-        var renamedFailCount = 0;
         routeTickets.forEach(routeTicket => {
-            if (routeTicket.status === TicketStatus.RenamedFail){renamedFailCount++;} 
-            else if(routeTicket.status === TicketStatus.RenamedSuccess || routeTicket.status === TicketStatus.Renamed)
-            {
-                renamedFailCount = 0; 
+            if (routeTicket.status === TicketStatus.RenamedFail) { this.renamedFailCount++; }
+            else if (routeTicket.status === TicketStatus.RenamedSuccess || routeTicket.status === TicketStatus.Renamed) {
+                this.renamedFailCount = 0;
                 return;
             }
         });
         this.setState({
-            isResolveNeed: renamedFailCount >= 1 ? true : false
+            isResolveNeed: this.renamedFailCount > 0 ? true : false
         })
     }
 
     optionChange = (event) => {
-        var { routeTickets } = this.state;
-        var optionValue = parseInt(event.target.value);
-        switch (optionValue) {
+        //var { routeTickets } = this.state;
+        this.optionValue = parseInt(event.target.value);
+        switch (this.optionValue) {
             case ResolveOption.REPLACE:
-                this.props.onOptionChange(optionValue)
+                this.props.onOptionChange(this.optionValue)
                 //this.getReplaceTicket();
-                var failTickets = 0;
-                for (var i = 0; i < routeTickets.length; i++) {
-                    if (routeTickets[i].status === TicketStatus.RenamedFail) {
-                        failTickets++;
-                        this.failRouteTicketCode = routeTickets[i].ticketCode;
-                        this.failRouteTicketId = routeTickets[i].id;
-                        break;
-                    }
-                }
-                if (failTickets === 1) {
-                    this.getReplaceTicketForFailTicket(this.failRouteTicketId);
-                }
+                // var failTickets = 0;
+                // for (var i = 0; i < routeTickets.length; i++) {
+                //     if (routeTickets[i].status === TicketStatus.RenamedFail) {
+                //         failTickets++;
+                //         this.failRouteTicketCode = routeTickets[i].ticketCode;
+                //         this.failRouteTicketId = routeTickets[i].id;
+                //         break;
+                //     }
+                // }
+                // if (failTickets === 1) {
+                //     this.getReplaceTicketForFailTicket(this.failRouteTicketId);
+                // }
                 break;
             case ResolveOption.REFUNDFAILTICKET:
                 this.setState({
                     replaceTickets: []
                 })
-                this.props.onOptionChange(optionValue)
+                this.props.onOptionChange(this.optionValue)
                 break;
             case ResolveOption.REFUNDTOTALAMOUNT:
                 this.setState({
                     replaceTickets: []
                 })
-                this.props.onOptionChange(optionValue)
+                this.props.onOptionChange(this.optionValue)
                 break;
             default:
                 break;
@@ -160,9 +177,7 @@ export default class ResolveRenamedFailTicket extends Component {
         if (res.status === 200) {
             this.setState({
                 replaceTickets: res.data.data
-
             })
-
         }
     }
 
@@ -207,11 +222,18 @@ export default class ResolveRenamedFailTicket extends Component {
                     <Col xl={12}>
                         <Card>
                             <CardHeader>
-                                &nbsp;&nbsp;&nbsp;<Input type="radio" name="option" value="1" onChange={this.optionChange}
-                                />
-                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong>
+                                &nbsp;&nbsp;&nbsp;
+                                {replaceTickets.length === 0 ?
+                                    null
+                                    : <Input type="radio" name="option" value="1" onChange={this.optionChange} />
+                                }
+                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong><br/>
+                                {replaceTickets.length === 0 ?
+                                    <span>There is no available tickets to replace ticket {this.failRouteTicketCode}</span>
+                                    : null
+                                }
                             </CardHeader>
-                            {replaceTickets.length > 0 ?
+                            {replaceTickets.length > 0 && this.optionValue === ResolveOption.REPLACE ?
                                 <CardBody>
                                     <span>Replace For Ticket <strong>{this.failRouteTicketCode}</strong></span>
                                     <Table responsive hover>

@@ -871,13 +871,12 @@ namespace Service.Services
                     //{
                     //    route.EarnedLoss = route.EarnedLoss - log.Amount;
                     //}
-                    if(log.Option == ResolveOption.REPLACE)
+
+                    if (log.Option == ResolveOption.REPLACE)
                     {
                         route.TotalAmount += log.Amount;
-                    } else
-                    {
-                        route.EarnedLoss += log.Amount;
                     }
+                    route.EarnedLoss += log.Amount;
                     //route.EarnedLoss -= log.Amount;
                 }
                 route.EarnedLoss = route.TotalAmount - route.EarnedLoss;
