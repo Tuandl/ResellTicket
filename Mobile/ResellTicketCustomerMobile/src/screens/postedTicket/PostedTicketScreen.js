@@ -125,12 +125,12 @@ export default class PostedTicket extends Component {
         this.getCustomerTickets(selectedIndex);
     }
 
-    postTicket = () => {
-        this.checkExistedConnectAccount();
+    postTicket = async () => {
+        await this.checkExistedConnectAccount();
         if (!this.isExistConnectAccount) {
             this.props.navigation.navigate('CreateBankAccountToReceiveMoney')
         } else {
-            this.props.navigation.navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket, username: username })
+            this.props.navigation.navigate('PostEditTicket', { refreshPostedTicket: this.refreshPostedTicket })
         }
         
     }

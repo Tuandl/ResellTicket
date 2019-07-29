@@ -160,11 +160,9 @@ function routeDetail() {
                 window.location.replace('/index.html');
             } else {
                 toastService.error('This Route has been bought. Please buy another route.');
-                window.location.reload();
             }
         } catch (ex) {
             toastService.error('This Route has been bought. Please buy another route.');
-            window.location.reload();
         }
         //window.location.replace(appConfig.url.route.searchForm);
     }
