@@ -785,6 +785,11 @@ namespace Service.Services
             };
             foreach (var routeVM in routeDataTable.Data)
             {
+                var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == routeVM.Id && x.Option == ResolveOption.REPLACE);
+                foreach (var log in resolveOptionLogs)
+                {
+                        routeVM.TotalAmount += log.Amount;
+                }
                 var routeTickets = _routeRepository.Get(x => x.Id == routeVM.Id).RouteTickets;
                 foreach (var rt in routeTickets)
                 {
@@ -961,17 +966,11 @@ namespace Service.Services
                 sellerDeviceIds.Add(sellerDev.DeviceId);
             }
 
-            //Save Notification into db
-            //_notificationService.SaveNotification(
-            //    customerId: ticket.Seller.Id,
-            //    type: NotificationType.TicketIsBought,
-            //    data: new { ticketId = ticket.Id }
-            //);
-
             _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
             //push noti to buyer
-            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode;
+            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode + ". " +
+                amount + "$ will be refunded within next 5 to 7 days.";
             var buyerDevices = failRouteTicket.Ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> buyerDeviceIds = new List<string>();
             foreach (var buyerDev in buyerDevices)
@@ -1017,18 +1016,14 @@ namespace Service.Services
             foreach (var route in completedRoutes)
             {
                 statisticReport.BalanceAccount += route.TotalAmount;
-                var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == route.Id && x.Option != ResolveOption.REPLACE);
+                var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == route.Id);
                 foreach (var log in resolveOptionLogs)
                 {
-                    if (log.Option == ResolveOption.PAYOUT)
+                    if(log.Option == ResolveOption.REPLACE)
                     {
-                        statisticReport.BalanceAccount = statisticReport.BalanceAccount -
-                            Math.Round(log.ResolvedTicket.SellingPrice * (1 - log.ResolvedTicket.CommissionPercent / 100), 2);
+                        statisticReport.BalanceAccount += log.Amount;
                     }
-                    else
-                    {
-                        statisticReport.BalanceAccount = statisticReport.BalanceAccount - log.ResolvedTicket.SellingPrice;
-                    }
+                    statisticReport.BalanceAccount -= log.Amount;
                 }
             }
             statisticReport.AvailableTicketCount = availableTicketCount;
