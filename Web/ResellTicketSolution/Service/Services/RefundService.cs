@@ -143,7 +143,7 @@ namespace Service.Services
 
             _unitOfWork.CommitChanges();
 
-            _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId);
+            _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId, remainRefund);
             return "";
         }
 

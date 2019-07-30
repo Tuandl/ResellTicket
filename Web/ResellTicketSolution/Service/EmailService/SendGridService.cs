@@ -18,8 +18,8 @@ namespace Service.EmailService
     public interface ISendGridService
     {
         void SendEmailReceiptForBuyer(int routeId);
-        void SendEmailReceiptForSeller(int ticketId);
-        void SendEmailRefundForBuyerAllTicket(int routeId);
+        void SendEmailReceiptForSeller(int ticketId, decimal amount);
+        void SendEmailRefundForBuyerAllTicket(int routeId, decimal remainRefund);
         void SendEmailRefundForBuyerOneTicket(int ticketId);
         void SendEmailReplacementForBuyer(int oldTicketId, int replacementTicketId);
     }
@@ -131,7 +131,7 @@ namespace Service.EmailService
         }
 
         //Refund All Ticket
-        public void SendEmailRefundForBuyerAllTicket(int routeId)
+        public void SendEmailRefundForBuyerAllTicket(int routeId, decimal remainRefund)
         {
             try
             {
@@ -152,41 +152,43 @@ namespace Service.EmailService
                 var customerName = customer.FullName;
                 var totalAmount = route.TotalAmount;
                 var routeCode = route.Code;
-                var routeTickets = _routeTicketRepository.GetAllQueryable().Where(r => r.RouteId == routeId);
-                List<TicketRowViewModel> tickets = new List<TicketRowViewModel>();
-                foreach (var routeTicket in routeTickets)
-                {
-                    var ticket = _ticketRepository.Get(t => t.Id == routeTicket.TicketId);
-                    var ticketRowViewModel = _mapper.Map<Ticket, TicketRowViewModel>(ticket);
-                    tickets.Add(ticketRowViewModel);
-                }
+                var routeTickets = _routeTicketRepository.GetAllQueryable()
+                    .Where(r => r.RouteId == routeId && r.IsReplaced != true)
+                    .OrderBy(r=> r.Order);
+                var firstTicket = routeTickets.FirstOrDefault();
+                var lastTicket = routeTickets.LastOrDefault();
+
                 //replacing the required things  
                 body = body.Replace("{customerName}", customerName);
-                body = body.Replace("{subTotal}", totalAmount.ToString());
-                body = body.Replace("{Total}", totalAmount.ToString());
+                body = body.Replace("{subTotal}", remainRefund.ToString());
+                body = body.Replace("{Total}", remainRefund.ToString());
 
                 body = body.Replace("{refundTitle}", SETTING.Value.RefundTitle);
                 body = body.Replace("{fromName}", SETTING.Value.FromName);
-                foreach (var ticket in tickets)
-                {
-                    using (StreamReader reader = new StreamReader(ticketTemplatehtml))
-                    {
-                        var ticketRow = reader.ReadToEnd();
-                        var departureStation = _stationRepository.Get(s => s.Id == ticket.DepartureStationId).Name;
-                        var arrivalStation = _stationRepository.Get(s => s.Id == ticket.ArrivalStationId).Name;
-                        ticketRow = ticketRow.Replace("{ticketCode}", ticket.TicketCode);
-                        ticketRow = ticketRow.Replace("{Description}", ticket.Description);
-                        ticketRow = ticketRow.Replace("{departureCity}", ticket.DepartureCity);
-                        ticketRow = ticketRow.Replace("{departureStation}", departureStation);
-                        ticketRow = ticketRow.Replace("{departureTime}", ticket.DepartureDateTime.ToString());
-                        ticketRow = ticketRow.Replace("{arrivalCity}", ticket.ArrivalCity);
-                        ticketRow = ticketRow.Replace("{arrivalStation}", arrivalStation);
-                        ticketRow = ticketRow.Replace("{arrivalTime}", ticket.ArrivalDateTime.ToString());
-                        ticketRow = ticketRow.Replace("{Amount}", ticket.SellingPrice.ToString());
 
-                        ticketList += ticketRow;
-                    }
+                using (StreamReader reader = new StreamReader(ticketTemplatehtml))
+                {
+                    var ticketRow = reader.ReadToEnd();
+                    var departureStation = firstTicket.DepartureStation.Name;
+                    var arrivalStation = lastTicket.ArrivalStation.Name;
+                    var departureCity = firstTicket.DepartureStation.City.Name;
+                    var arrivalCity = lastTicket.ArrivalStation.City.Name;
+                    var departureDateTime = firstTicket.Ticket.DepartureDateTime;
+                    var arrivalDateTime = lastTicket.Ticket.ArrivalDateTime;
+
+                    ticketRow = ticketRow.Replace("{ticketCode}", routeCode);
+                    ticketRow = ticketRow.Replace("{Description}", "");
+                    ticketRow = ticketRow.Replace("{departureCity}", departureCity);
+                    ticketRow = ticketRow.Replace("{departureStation}", departureStation);
+                    ticketRow = ticketRow.Replace("{departureTime}", String.Format("{0:dddd, MMMM dd, yyyy HH:mm}", departureDateTime));
+                    ticketRow = ticketRow.Replace("{arrivalCity}", arrivalCity);
+                    ticketRow = ticketRow.Replace("{arrivalStation}", arrivalStation);
+                    ticketRow = ticketRow.Replace("{arrivalTime}", String.Format("{0:dddd, MMMM dd, yyyy HH:mm}", arrivalDateTime));
+                    ticketRow = ticketRow.Replace("{Amount}", remainRefund.ToString());
+
+                    ticketList += ticketRow;
                 }
+
                 body = body.Replace("{ticketList}", ticketList);
 
                 var from = new EmailAddress(SETTING.Value.FromEmail, SETTING.Value.FromName);
@@ -203,7 +205,7 @@ namespace Service.EmailService
         }
 
         //Payout
-        public void SendEmailReceiptForSeller(int ticketId)
+        public void SendEmailReceiptForSeller(int ticketId, decimal amount)
         {
             try
             {
@@ -224,7 +226,7 @@ namespace Service.EmailService
                 var customerName = customer.FullName;
                 var customerPhone = customer.PhoneNumber;
                 var ticketCode = ticket.TicketCode;
-                var totalAmount = ticket.SellingPrice;
+                var totalAmount = amount;
                 var date = DateTime.UtcNow;
                 var ticketRowViewModel = _mapper.Map<Ticket, TicketRowViewModel>(ticket);
 
@@ -260,7 +262,7 @@ namespace Service.EmailService
                     ticketRow = ticketRow.Replace("{arrivalCity}", ticketRowViewModel.ArrivalCity);
                     ticketRow = ticketRow.Replace("{arrivalStation}", arrivalStation);
                     ticketRow = ticketRow.Replace("{arrivalTime}", ticketRowViewModel.ArrivalDateTime.ToString());
-                    ticketRow = ticketRow.Replace("{Amount}", ticketRowViewModel.SellingPrice.ToString());
+                    ticketRow = ticketRow.Replace("{Amount}", amount.ToString());
 
 
                 }
@@ -374,7 +376,7 @@ namespace Service.EmailService
                 var routeCode = _routeRepository.Get(r => r.Id == routeId).Code;
                 var oldTotalAmount = oldTicket.SellingPrice;
                 var replacementTotalAmount = replacementTicket.SellingPrice;
-                var totalAmount = replacementTotalAmount - oldTotalAmount;
+                var totalAmount = oldTotalAmount - replacementTotalAmount;
                 var date = DateTime.UtcNow;
                 var oldTicketRowViewModel = _mapper.Map<Ticket, TicketRowViewModel>(oldTicket);
                 var replacementTicketRowViewModel = _mapper.Map<Ticket, TicketRowViewModel>(replacementTicket);

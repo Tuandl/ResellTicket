@@ -153,7 +153,7 @@ namespace Service.Services
             }
             _unitOfWork.CommitTransaction();
 
-            _sendGridService.SendEmailReceiptForSeller(TicketId);
+            _sendGridService.SendEmailReceiptForSeller(TicketId, Transfer.Amount / 100);
 
             return "";
         }
