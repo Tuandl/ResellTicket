@@ -907,6 +907,10 @@ namespace Service.Services
             var staffId = _userRepository.Get(x => x.UserName == username).Id;
             var failRouteTicket = _routeTicketRepository.Get(x => x.Id == failRouteTicketId && x.Deleted == false);
             var replaceTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == replaceTicketId);
+            if(replaceTicket.Status != TicketStatus.Valid)
+            {
+                throw new InvalidOperationException();
+            }
             RouteTicket replaceRouteTicket = new RouteTicket()
             {
                 Id = 0,
@@ -927,6 +931,8 @@ namespace Service.Services
             replaceTicket.BuyerPassengerIdentify = failRouteTicket.Ticket.BuyerPassengerIdentify;
             replaceTicket.BuyerId = failRouteTicket.Ticket.BuyerId;
             _ticketRepository.Update(replaceTicket);
+            _unitOfWork.StartTransaction();
+            _unitOfWork.CommitChanges();
 
             //hoàn 1 phần tiền 
             decimal failTicketPrice = failRouteTicket.Ticket.SellingPrice;
@@ -955,7 +961,8 @@ namespace Service.Services
             _resolveOptionLogRepository.Add(resolveOptionLog);
             //}
 
-            _unitOfWork.CommitChanges();
+            //_unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
 
             //push noti to seller
             var message = "Ticket " + replaceTicket.TicketCode + " has been bought";

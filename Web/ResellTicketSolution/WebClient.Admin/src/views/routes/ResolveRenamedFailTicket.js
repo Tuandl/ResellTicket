@@ -126,7 +126,7 @@ export default class ResolveRenamedFailTicket extends Component {
 
     checkResovleNeed = (routeTickets) => {
         this.renamedFailCount = 0;
-        for(var i = 0; i < routeTickets.length; i++) {
+        for (var i = 0; i < routeTickets.length; i++) {
             if (routeTickets[i].status === TicketStatus.RenamedFail) { this.renamedFailCount++; }
             else if (routeTickets[i].status === TicketStatus.RenamedSuccess || routeTickets[i].status === TicketStatus.Renamed) {
                 this.renamedFailCount = 0;
@@ -193,15 +193,21 @@ export default class ResolveRenamedFailTicket extends Component {
     onReplaceTicket = async () => {
         this.closeConfirmReplaceDialog()
         toastr.info('Processing', 'Waiting for replace')
-        var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
-            '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
-        if (res.status === 200) {
-            toastr.success('Successfully', 'Replace ticket successfully.');
-            this.setState({
-                resolveOption: 0,
-                replaceTickets: [],
-            })
-            this.props.getRouteDetail();
+        try {
+            var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
+                '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
+            if (res.status === 200) {
+                toastr.success('Successfully', 'Replace ticket successfully.');
+                this.setState({
+                    resolveOption: 0,
+                    replaceTickets: [],
+                })
+                this.props.getRouteDetail();
+            } else {
+                toastr.error('Fail', 'Sorry, this ticket has just bought by other customer.');
+            }
+        } catch (error) {
+            toastr.error('Fail', 'Sorry, this ticket has just bought by other customer.');
         }
 
     }
@@ -230,7 +236,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                     null
                                     : <Input type="radio" name="option" value="1" onChange={this.optionChange} />
                                 }
-                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong><br/>
+                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong><br />
                                 {replaceTickets.length === 0 ?
                                     <span>There is no available tickets to replace ticket {this.failRouteTicketCode}</span>
                                     : null
