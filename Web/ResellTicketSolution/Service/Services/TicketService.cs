@@ -554,23 +554,9 @@ namespace Service.Services
                 //noti to buyer
                 #region Notify Buyer
                 List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
-                //message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
+                message = "Ticket " + existedTicket.TicketCode + " renamed fail.";
 
-                //Save notification into db
-                //var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
-                //    x.Route.Status == RouteStatus.Bought &&
-                //    x.Deleted == false &&
-                //    x.Route.Deleted == false
-                //);
-
-                //if (routeTicket != null && existedTicket.BuyerId != null)
-                //{
-                //    _notificationService.SaveNotification(
-                //        customerId: existedTicket.BuyerId.Value,
-                //        type: NotificationType.TicketIsRenamed,
-                //        data: new { routeId = routeTicket.RouteId }
-                //    );
-                //}
+                //save noti
 
                 _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
                 #endregion
