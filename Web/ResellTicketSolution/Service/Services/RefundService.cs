@@ -103,26 +103,15 @@ namespace Service.Services
             refundCreate.Status = RefundStatus.Success;
             var refundAddIntoData = _mapper.Map<RefundCreateViewModel, Core.Models.Refund>(refundCreate);
             _refundRepository.Add(refundAddIntoData);
+            //refund total amount
 
-            foreach (var boughtTicket in routeTicket.Route.RouteTickets)
-            {
-                var ticket = boughtTicket.Ticket;
-                if (ticket.Status == TicketStatus.Bought)
-                {
-                    ticket.Status = TicketStatus.Valid;
-                    //ticket.BuyerId = null;
-                    _ticketRepository.Update(ticket);
-                    var message = "Buyer has canceled the transaction, ticket " + ticket.TicketCode + " is valid again.";
-                    List<string> sellerDeviceIds = GetCustomerDeviceIds(ticket, true);
-                    _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
-                }
-            }
             var route = routeTicket.Route;
             route.Status = RouteStatus.Completed;
             route.IsRefundAll = true;
             //route.ResolveOption = resolveOption;
             _routeRepository.Update(route);
 
+            //save log
             var routeTickets = route.RouteTickets.Where(x => x.Deleted == false);
             foreach (var rt in routeTickets)
             {
@@ -140,8 +129,31 @@ namespace Service.Services
                     _resolveOptionLogRepository.Add(newLog);
                 }
             }
-
             _unitOfWork.CommitChanges();
+            //save log
+
+            //push noti to seller bought ticket
+            foreach (var boughtTicket in routeTicket.Route.RouteTickets)
+            {
+                var ticket = boughtTicket.Ticket;
+                if (ticket.Status == TicketStatus.Bought)
+                {
+                    ticket.Status = TicketStatus.Valid;
+                    //ticket.BuyerId = null;
+                    _ticketRepository.Update(ticket);
+                    var message = "Buyer has canceled the transaction, ticket " + ticket.TicketCode + " is valid again.";
+                    List<string> sellerTicketDeviceIds = GetCustomerDeviceIds(ticket, true);
+                    _oneSignalService.PushNotificationCustomer(message, sellerTicketDeviceIds);
+                }
+            }
+            //push noti to seller bought ticket
+
+            //push noti to seller bought this route
+            var messageRoute = "Route " + route.Code + " has been refunded. " +
+                (refund.Amount / 100) + "$ will be refunded within next 5 to 7 days.";
+            List<string> sellerRouteDeviceIds = GetCustomerDeviceIds(routeTicket.Ticket, true);
+            _oneSignalService.PushNotificationCustomer(messageRoute, sellerRouteDeviceIds);
+            //push noti to seller bought this route
 
             _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId);
             return "";
@@ -177,7 +189,6 @@ namespace Service.Services
             var failTicket = _ticketRepository.Get(x => x.Id == failTicketId && x.Deleted == false);
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
 
-            //cmt để test
             //số tiền vé fail chuyền về lại cho buyer
             var refundOptions = new RefundCreateOptions()
             {
@@ -194,7 +205,9 @@ namespace Service.Services
             refundAddIntoData.Amount = failTicket.SellingPrice;
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
+            //số tiền vé fail chuyền về lại cho buyer
 
+            //save log
             var route = failRouteTicket.Route;
             _unitOfWork.StartTransaction();
             ResolveOptionLog log = new ResolveOptionLog()
@@ -213,21 +226,22 @@ namespace Service.Services
                 route.Status = RouteStatus.Completed;
                 _routeRepository.Update(route);
             }
-
-            //var refundFailTickets = 0;
-            //var routeTickets = route.RouteTickets.Where(x => x.Deleted == false && x.Ticket.Status == TicketStatus.RenamedFail);
-            //foreach(var routeTicket in routeTickets)
-            //{
-            //    if (_resolveOptionLogRepository.Get(x => x.TicketId == routeTicket.TicketId) != null) refundFailTickets++;
-            //}
-            //if(refundFailTickets == routeTickets.Count())
-            //{
-            //    route.Status = RouteStatus.Completed;
-            //    _routeRepository.Update(route);
-            //}
-
             _unitOfWork.CommitTransaction();
+            //save log
 
+            //push noti to seller
+            var message = "Ticket " + failTicket.TicketCode + " has been refunded. " + 
+                (refund.Amount / 100) + "$ will be refunded within next 5 to 7 days.";
+            var sellerDevices = failTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> sellerDeviceIds = new List<string>();
+            foreach (var sellerDev in sellerDevices)
+            {
+                sellerDeviceIds.Add(sellerDev.DeviceId);
+            }
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+            //push noti
+
+            //send Email
             _sendGridService.SendEmailRefundForBuyerOneTicket(failTicketId);
         }
     }

@@ -101,6 +101,8 @@ export default class ResolveRenamedFailTicket extends Component {
                     if (failTickets === 1) {
                         this.getReplaceTicketForFailTicket(this.failRouteTicketId);
                     }
+                } else {
+                    this.setState({ isResolveNeed: false });
                 }
             }
             else this.setState({ isResolveNeed: false });
@@ -123,13 +125,14 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     checkResovleNeed = (routeTickets) => {
-        routeTickets.forEach(routeTicket => {
-            if (routeTicket.status === TicketStatus.RenamedFail) { this.renamedFailCount++; }
-            else if (routeTicket.status === TicketStatus.RenamedSuccess || routeTicket.status === TicketStatus.Renamed) {
+        this.renamedFailCount = 0;
+        for(var i = 0; i < routeTickets.length; i++) {
+            if (routeTickets[i].status === TicketStatus.RenamedFail) { this.renamedFailCount++; }
+            else if (routeTickets[i].status === TicketStatus.RenamedSuccess || routeTickets[i].status === TicketStatus.Renamed) {
                 this.renamedFailCount = 0;
-                return;
+                break;;
             }
-        });
+        }
         this.setState({
             isResolveNeed: this.renamedFailCount > 0 ? true : false
         })
@@ -194,11 +197,11 @@ export default class ResolveRenamedFailTicket extends Component {
             '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
         if (res.status === 200) {
             toastr.success('Successfully', 'Replace ticket successfully.');
-            this.props.getRouteDetail();
             this.setState({
                 resolveOption: 0,
-                replaceTickets: []
+                replaceTickets: [],
             })
+            this.props.getRouteDetail();
         }
 
     }
