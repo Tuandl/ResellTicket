@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service.EmailService;
 using Service.Services;
 
 namespace WebAPI.Admin.Controllers
@@ -15,10 +16,13 @@ namespace WebAPI.Admin.Controllers
     public class PayoutController : Controller
     {
         private readonly IPayoutService _payoutService;
+        private readonly ISendGridService _sendGridService;
 
-        public PayoutController(IPayoutService payoutService)
+
+        public PayoutController(IPayoutService payoutService, ISendGridService sendGridService)
         {
             _payoutService = payoutService;
+            _sendGridService = sendGridService;
         }
 
         [HttpPost]
@@ -29,13 +33,14 @@ namespace WebAPI.Admin.Controllers
                 return BadRequest("Invalid Request");
             }
             string username = User.Identity.Name;
+            //string username = "staff";
             var payout = _payoutService.MakePayoutToCustomer(ticketId, username);
 
             if (!string.IsNullOrEmpty(payout))
             {
                 return StatusCode((int)HttpStatusCode.NotAcceptable, payout);
             }
-
+            //_sendGridService.SendEmailReceiptForSeller(ticketId);
             return Ok();
         }
 

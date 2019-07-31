@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using System.Linq;
 using Core.Enum;
 using Service.EmailService;
+using Service.NotificationService;
 
 namespace Service.Services
 {
@@ -36,10 +37,21 @@ namespace Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
         private readonly ISendGridService _sendGridService;
-        public PayoutService(IPayoutRepository payoutRepository, ITicketRepository ticketRepository, IMapper mapper, IUnitOfWork unitOfWork,
-            ICustomerRepository customerRepository, ICreditCardRepository creditCardRepository, IRouteTicketRepository routeTicketRepository,
-            IPaymentRepository paymentRepository, IRouteRepository routeRepository, IOptions<CrediCardSetting> options, IUserRepository userRepository,
-            IResolveOptionLogRepository resolveOptionLogRepository, ISendGridService sendGridService)
+        private readonly IOneSignalService _oneSignalService;
+        public PayoutService(IPayoutRepository payoutRepository, 
+            ITicketRepository ticketRepository, 
+            IMapper mapper, 
+            IUnitOfWork unitOfWork,
+            ICustomerRepository customerRepository,
+            ICreditCardRepository creditCardRepository,
+            IRouteTicketRepository routeTicketRepository,
+            IPaymentRepository paymentRepository,
+            IRouteRepository routeRepository,
+            IOptions<CrediCardSetting> options,
+            IUserRepository userRepository,
+            IResolveOptionLogRepository resolveOptionLogRepository,
+            ISendGridService sendGridService,
+            IOneSignalService oneSignalService) 
         {
             _payoutRepository = payoutRepository;
             _ticketRepository = ticketRepository;
@@ -54,6 +66,7 @@ namespace Service.Services
             _userRepository = userRepository;
             _resolveOptionLogRepository = resolveOptionLogRepository;
             _sendGridService = sendGridService;
+            _oneSignalService = oneSignalService;
         }
 
         public string MakePayoutToCustomer(int TicketId, string username)
@@ -100,7 +113,7 @@ namespace Service.Services
             //}
 
 
-            //
+            //make payout
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == route.Id && x.Deleted == false);
             var ticket = _ticketRepository.Get(x => x.Id == TicketId && x.Deleted == false);
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
@@ -126,14 +139,13 @@ namespace Service.Services
             payoutCreateIntoDatabase.Amount = Transfer.Amount / 100;
             payoutCreateIntoDatabase.FeeAmount = ticket.SellingPrice * (ticket.CommissionPercent / 100);
             payoutCreateIntoDatabase.Description = "You receive money for ticket " + ticket.TicketCode + ". Thank you for using our service.";
-
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
-
             ticket.Status = TicketStatus.Completed;
             _ticketRepository.Update(ticket);
+            //make payout
 
-            //var route = ticket.Route;
+            //save log
             _unitOfWork.StartTransaction();
             ResolveOptionLog log = new ResolveOptionLog()
             {
@@ -152,8 +164,22 @@ namespace Service.Services
                 _routeRepository.Update(route);
             }
             _unitOfWork.CommitTransaction();
+            //save log
 
-            _sendGridService.SendEmailReceiptForSeller(TicketId);
+            //push noti to buyer
+            var message = "Ticket " + ticket.TicketCode + " has been payout. " +
+                (Transfer.Amount / 100) + "$ has been tranfered to your Stripe account.";
+            var buyerDevices = ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> buyerDeviceIds = new List<string>();
+            foreach (var buyerDev in buyerDevices)
+            {
+                buyerDeviceIds.Add(buyerDev.DeviceId);
+            }
+            _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+            //push noti
+
+            //send Email
+            _sendGridService.SendEmailReceiptForSeller(TicketId, Transfer.Amount / 100);
 
             return "";
         }
