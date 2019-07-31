@@ -179,8 +179,7 @@ namespace Service.Services
             //push noti
 
             //send Email
-            _sendGridService.SendEmailReceiptForSeller(TicketId);
-            //send Email
+            _sendGridService.SendEmailReceiptForSeller(TicketId, Transfer.Amount / 100);
 
             return "";
         }

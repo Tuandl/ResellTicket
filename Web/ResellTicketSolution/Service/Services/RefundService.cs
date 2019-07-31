@@ -155,7 +155,7 @@ namespace Service.Services
             _oneSignalService.PushNotificationCustomer(messageRoute, sellerRouteDeviceIds);
             //push noti to seller bought this route
 
-            _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId);
+            _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId, remainRefund);
             return "";
         }
 

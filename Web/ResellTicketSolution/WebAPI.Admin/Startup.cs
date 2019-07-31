@@ -15,6 +15,7 @@ namespace WebAPI.Admin
         private const string CONFIG_AUTH_SETTING = "AuthSetting";
         private const string CONFIG_ONESIGNAL_SETTING = "OneSignalSetting";
         private const string CONFIG_CREDITCARD_SETTING = "CrediCardSetting";
+        private const string CONFIG_SENDGRID_SETTING = "SendGridSetting";
 
         public IConfiguration Configuration { get; }
 
@@ -33,6 +34,7 @@ namespace WebAPI.Admin
             services.Configure<AuthSetting>(Configuration.GetSection(CONFIG_AUTH_SETTING));
             services.Configure<OneSignalSetting>(Configuration.GetSection(CONFIG_ONESIGNAL_SETTING));
             services.Configure<CrediCardSetting>(Configuration.GetSection(CONFIG_CREDITCARD_SETTING));
+            services.Configure<SendGridSetting>(Configuration.GetSection(CONFIG_SENDGRID_SETTING));
 
             //set local 
             var authSetting = Configuration.GetSection(CONFIG_AUTH_SETTING).Get<AuthSetting>();
