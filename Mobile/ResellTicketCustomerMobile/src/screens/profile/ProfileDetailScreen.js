@@ -198,7 +198,7 @@ export default class ProfileDetailScreen extends Component {
                                 }
                                 containerStyle={{ marginVertical: 10, width: SCREEN_WIDTH / 1.2  }}
                                 onChangeText={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
-                                value={phoneNumber}
+                                value={'+' + phoneNumber}
                                 inputStyle={{ marginLeft: 30, color: 'grey' }}
                                 keyboardAppearance="light"
                                 placeholder="Phone Number"

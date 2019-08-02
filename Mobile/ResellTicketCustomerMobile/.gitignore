@@ -32,7 +32,12 @@ local.properties
 
 # node.js
 #
-node_modules/
+node_modules/*
+!node_modules/react-native-phone-input
+node_modules/react-native-phone-input/*
+!node_modules/react-native-phone-input/lib/
+node_modules/react-native-phone-input/lib/*
+!node_modules/react-native-phone-input/lib/index.js
 npm-debug.log
 yarn-error.log
 
