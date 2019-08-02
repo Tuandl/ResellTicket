@@ -43,7 +43,7 @@ function routeDetail() {
         dialogConfirmBuyerDetail: document.getElementById(id.dialogConfirmBuyerDetail),
     };
 
-    var boughtTicketCount = 0;
+    var notValidTicketCount = 0;
     const routeId = commonService.getQueryParam('routeId');
     const customerComponent = new CustomerComponent(routeId);
     const model = {};
@@ -66,7 +66,7 @@ function routeDetail() {
         renderTickets(model.route.routeTickets);
         const customerComponent = new CustomerComponent(model.route);
 
-        if(model.route.status === routeStatus.New && boughtTicketCount === 0) {
+        if(model.route.status === routeStatus.New && notValidTicketCount === 0) {
             elements.btnBuy.style.display = 'inline';
             elements.btnBuy.addEventListener('click', onBtnBuyClicked);
             elements.btnConfirm.addEventListener('click', onBtnConfirmClicked);
@@ -121,7 +121,7 @@ function routeDetail() {
         commonService.removeAllChildren(elements.ticketContainer);
         routeTickets.forEach(routeTicket => {
             if(routeTicket.status !== ticketStatus.Valid) {
-                boughtTicketCount++;
+                notValidTicketCount++;
             }
             const ticketElement = new TicketComponent(routeTicket, onRouteTicketClicked);
             elements.ticketContainer.appendChild(ticketElement.render());

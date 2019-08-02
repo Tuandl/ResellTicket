@@ -51,6 +51,21 @@ export default class RouteHistoryViewComponent extends Component {
         }
     }
 
+    renderStatus(status, isValid) {
+        switch (status) {
+            case routeStatus.NEW:
+                if (isValid) {
+                    return <Text style={{ fontSize: 12, color: '#28a745' }}>Available</Text>
+                } else {
+                    return <Text style={{ fontSize: 12, color: 'red' }}>Not Available</Text>
+                }
+            case routeStatus.BOUGHT:
+                return <Text style={{ fontSize: 12, color: '#28a745' }}>Bought</Text>
+            case routeStatus.COMPLETED:
+                return <Text style={{ fontSize: 12, color: '#28a745' }}>Completed</Text>
+        }
+    }
+
     render() {
         var { route } = this.state;
 
@@ -88,7 +103,8 @@ export default class RouteHistoryViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{route.arrivalDate}</Text>
                         </View>
                         <View style={styles.routeBodyContent}>
-                            {this.renderIsAvailable(route.isValid)}
+                            {/* {this.renderIsAvailable(route.isValid)} */}
+                            {this.renderStatus(route.status, route.isValid)}
                             <Text style={{ fontSize: 12 }}>{route.departureTime}</Text>
                             <Text style={{ fontSize: 12 }}>{route.arrivalTime}</Text>
                         </View>

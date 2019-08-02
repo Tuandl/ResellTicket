@@ -19,11 +19,11 @@ function TicketRow(props) {
         switch (status) {
             case TicketStatus.RenamedFail:
                 return (
-                    <Badge color="danger">RenamedFail</Badge>
+                    <Badge color="danger">Renamed Fail</Badge>
                 )
             case TicketStatus.RenamedSuccess:
                 return (
-                    <Badge color="success">RenamedSuccess</Badge>
+                    <Badge color="success">Renamed Success</Badge>
                 )
             case TicketStatus.Renamed:
                 return (
@@ -35,7 +35,7 @@ function TicketRow(props) {
                 )
             case TicketStatus.Completed:
                 return (
-                    <Badge color="success">RenamedSuccess</Badge>
+                    <Badge color="success">Renamed Success</Badge>
                 )
             default:
                 break;
@@ -103,7 +103,7 @@ class PayoutRefundDetailRoute extends Component {
         super(props);
         this.state = {
             routeId: 0,
-            routeDetail: [],
+            routeDetail: {},
             routeTickets: [],
             resolveOption: 0,
             routeStatus: 0,
@@ -128,12 +128,18 @@ class PayoutRefundDetailRoute extends Component {
         const routeId = this.props.match.params.id;
         await Axios.get('api/route/detail?routeId=' + routeId).then(res => {
             this.setState({
-                routeDetail:
-                    [
-                        { name: 'Buyer Phone', value: res.data.buyerPhone },
-                        { name: 'Route Code', value: res.data.code },
-                        { name: 'Total Amount Earned', value: '$' + res.data.totalAmount }
-                    ],
+                // routeDetail:
+                //     [
+                //         { name: 'Buyer Phone', value: res.data.buyerPhone },
+                //         { name: 'Route Code', value: res.data.code },
+                //         { name: 'Total Amount Earned', value: '$' + res.data.totalAmount }
+                //     ],
+                routeDetail: {
+                    buyerName: res.data.buyerName,
+                    buyerPhone: res.data.buyerPhone,
+                    routeCode: res.data.code,
+                    totalAmountEarned: '$' + res.data.totalAmount
+                },
                 routeId: res.data.id,
                 routeStatus: res.data.status,
                 routeTickets: res.data.routeTickets,
@@ -252,19 +258,38 @@ class PayoutRefundDetailRoute extends Component {
                                 <strong>Route Detail</strong>
                             </CardHeader>
                             <CardBody>
-                                {routeDetail.map((detail, index) => (
-                                    <Row key={index}>
+                                    <Row>
                                         <Col md="6" xs="12">
                                             <FormGroup>
-                                                <Label htmlFor={detail.name}>{detail.name}</Label>
-                                                <Input type="text" disabled value={detail.value}
+                                                <Label htmlFor="buyerName">Buyer's FullName</Label>
+                                                <Input type="text" disabled value={routeDetail.buyerName}
                                                 />
                                             </FormGroup>
                                         </Col>
                                         <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="buyerPhone">Buyer's Phone</Label>
+                                                <Input type="text" disabled value={routeDetail.buyerPhone}
+                                                />
+                                            </FormGroup>
                                         </Col>
                                     </Row>
-                                ))}
+                                    <Row>
+                                        <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="routeCode">Route Code</Label>
+                                                <Input type="text" disabled value={routeDetail.routeCode}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="totalAmount">Total Amount Earned</Label>
+                                                <Input type="text" disabled value={routeDetail.totalAmountEarned}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
                                 {routeTickets.length > 0 ?
                                     <Table responsive hover>
                                         <thead>

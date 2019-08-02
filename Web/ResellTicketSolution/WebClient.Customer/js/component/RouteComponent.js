@@ -16,8 +16,12 @@ class RouteComponent {
 
     renderStatus(status) {
         switch (status) {
-            case routeStatus.New: 
-                return `<span class="label label-warning">New</span>`;
+            case routeStatus.New:
+                if (this.route.isValid || (this.route.saved !== undefined && !this.route.saved)) {
+                    return `<span class="label label-success">Available</span>`;
+                } else {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
             case routeStatus.Bought:
                 return `<span class="label label-info">Bought</span>`;
             case routeStatus.Completed:
@@ -79,8 +83,8 @@ class RouteComponent {
         </div>`;
 
         const self = this;
-        this.html.addEventListener('click', function(e) {
-            if(self.event.onClicked) {
+        this.html.addEventListener('click', function (e) {
+            if (self.event.onClicked) {
                 self.event.onClicked(self.route);
             }
         });

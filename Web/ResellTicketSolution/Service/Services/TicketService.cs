@@ -266,8 +266,20 @@ namespace Service.Services
                     customerStatusTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedFail).ToList();
                     break;
             }
+
             var customerPagedTickets = customerStatusTickets.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            foreach (var ticket in customerPagedTickets)
+            {
+                if (ticket.Status == TicketStatus.Valid)
+                {
+                    if (ticket.ExpiredDateTimeUTC < DateTime.UtcNow)
+                    {
+                        ticket.Status = 0;
+                    }
+                }
+            }
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerPagedTickets);
+            
             return customerTicketVMs;
         }
 

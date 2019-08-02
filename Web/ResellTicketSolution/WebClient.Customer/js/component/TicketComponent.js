@@ -28,11 +28,11 @@ class TicketComponent {
             case ticketStatus.Renamed:
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
-                return `<span class="label label-success">RenamedSuccess</span>`;
+                return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedSuccess:
-                return `<span class="label label-success">RenamedSuccess</span>`;
-            case ticketStatus.RenamedFail:
-                return `<span class="label label-danger">RenamedFail</span>`;
+                return `<span class="label label-success">Renamed Success</span>`;
+            case ticketStatus.RenamedFail:               
+                return `<span class="label label-danger">Renamed Fail</span>`;
             default:
                 return `<span class="label label-default">Expired</span>`;
         }
