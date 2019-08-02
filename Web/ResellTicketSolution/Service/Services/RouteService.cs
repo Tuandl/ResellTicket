@@ -852,7 +852,7 @@ namespace Service.Services
                      TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
-            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
+            var routeOrderedVMs = routeVMs.OrderBy(x => x.Status);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
 
 

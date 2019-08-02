@@ -55,7 +55,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="failRouteTicketId"></param>
         /// <returns></returns>
-        AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId);
+        AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId, int page, int pageSize);
         TicketDataTable GetReplaceTickets(int routeTicketId);
     }
     public class TicketService : ITicketService
@@ -798,7 +798,7 @@ namespace Service.Services
             return ticketDataTable;
         }
 
-        public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId)
+        public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId, int page, int pageSize)
         {
             List<AvailableTicketViewModel> replaceTickets = GetTicketAvailableForRouteTicket(failRouteTicketId);
             var routeTicket = _routeTicketRepository.Get(x =>
@@ -806,10 +806,12 @@ namespace Service.Services
                 x.Deleted == false
             );
             replaceTickets = replaceTickets.Where(x => x.SellingPrice <= routeTicket.Ticket.SellingPrice).ToList();
+            var replaceTicketsTotal = replaceTickets.Count();
+            var replacePagedTickets = replaceTickets.Skip((page - 1) * pageSize).Take(pageSize);
             AvailableTicketDataTable resultDataTable = new AvailableTicketDataTable()
             {
-                Data = replaceTickets,
-                Total = replaceTickets.Count()
+                Data = replacePagedTickets.ToList(),
+                Total = replaceTicketsTotal
             };
             return resultDataTable;
         }
