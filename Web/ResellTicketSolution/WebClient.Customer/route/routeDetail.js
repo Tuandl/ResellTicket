@@ -191,6 +191,10 @@ function routeDetail() {
 
     async function onRouteTicketClicked(component) {
         const routeTicket = component.ticket;
+
+        if(model.route.status !== routeStatus.New) {
+            return;
+        }
         model.selectedRouteTicketId = routeTicket.id;
         model.availableTickets = await apiService.get(appConfig.apiUrl.routeTicket + routeTicket.id + '/ticket');
         renderAvailableTickets(model.availableTickets);
