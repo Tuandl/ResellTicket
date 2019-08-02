@@ -66,7 +66,7 @@ namespace Service.Services
         /// <param name="status">optional. Status of routes</param>
         /// <returns>Route data table (route information and tickets in that route</returns>
         RouteDataTable GetRouteDataTable(int page, int pageSize,
-            RouteStatus? status, string userName); //admin
+            RouteStatus? status, string userName); //customer
 
         RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize); // liability - admin
 
@@ -208,7 +208,8 @@ namespace Service.Services
                     ExpiredDate = x.RouteTickets.Min(routeTicket => routeTicket.Ticket.ExpiredDateTime),
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
-                    IsValid = !x.RouteTickets.Any(routeTicket => (routeTicket.Ticket.Status != TicketStatus.Valid && routeTicket.Deleted == false)),
+                    IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Deleted == false && 
+                    (routeTicket.Ticket.Status != TicketStatus.Valid || routeTicket.Ticket.ArrivalDateTimeUTC < DateTime.UtcNow)),
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -271,6 +272,10 @@ namespace Service.Services
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
                 //routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
                 routeTicketViewModel.ExpiredDateTime = routeTicket.Ticket.ExpiredDateTime;
+                if(routeTicket.Ticket.Status == TicketStatus.Valid && routeTicket.Ticket.DepartureDateTimeUTC < DateTime.UtcNow)
+                {
+                    routeTicketViewModel.Status = 0;
+                }
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }
             routeViewModel.RouteTickets = routeViewModel.RouteTickets.OrderBy(x => x.Order).ToList();
@@ -289,6 +294,7 @@ namespace Service.Services
 
             var routeViewModel = _mapper.Map<Route, RouteDetailViewModel>(route);
             routeViewModel.BuyerPhone = route.Customer.PhoneNumber;
+            routeViewModel.BuyerName = route.Customer.FullName;
             //routeViewModel.ResolveOption = route.ResolveOption;
             routeViewModel.RouteTickets = new List<RouteTicketDetailViewModel>();
             routeViewModel.ResolveOptionLogs = new List<ResolveOptionLogViewModel>();
@@ -608,16 +614,10 @@ namespace Service.Services
                 var routeTickets = _routeTicketRepository.GetAllQueryable()
                 .Where(t => t.Deleted == false && t.RouteId == existedRoute.Id).ToList();
                 var tickets = new List<Ticket>();
-                var ticketList = _ticketRepository.GetAll();
+                //var ticketList = _ticketRepository.GetAll();
                 foreach (var routeTicket in routeTickets)
                 {
-                    foreach (var ticket in ticketList)
-                    {
-                        if (ticket.Id == routeTicket.TicketId)
-                        {
-                            tickets.Add(ticket);
-                        }
-                    }
+                    tickets.Add(routeTicket.Ticket);
                 }
 
                 var count = 0;
@@ -852,7 +852,7 @@ namespace Service.Services
                      TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
-            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
+            var routeOrderedVMs = routeVMs.OrderBy(x => x.Status);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
 
 
@@ -907,6 +907,10 @@ namespace Service.Services
             var staffId = _userRepository.Get(x => x.UserName == username).Id;
             var failRouteTicket = _routeTicketRepository.Get(x => x.Id == failRouteTicketId && x.Deleted == false);
             var replaceTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == replaceTicketId);
+            if(replaceTicket.Status != TicketStatus.Valid)
+            {
+                throw new InvalidOperationException();
+            }
             RouteTicket replaceRouteTicket = new RouteTicket()
             {
                 Id = 0,
@@ -927,6 +931,8 @@ namespace Service.Services
             replaceTicket.BuyerPassengerIdentify = failRouteTicket.Ticket.BuyerPassengerIdentify;
             replaceTicket.BuyerId = failRouteTicket.Ticket.BuyerId;
             _ticketRepository.Update(replaceTicket);
+            _unitOfWork.StartTransaction();
+            _unitOfWork.CommitChanges();
 
             //hoàn 1 phần tiền 
             decimal failTicketPrice = failRouteTicket.Ticket.SellingPrice;
@@ -955,7 +961,8 @@ namespace Service.Services
             _resolveOptionLogRepository.Add(resolveOptionLog);
             //}
 
-            _unitOfWork.CommitChanges();
+            //_unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
 
             //push noti to seller
             var message = "Ticket " + replaceTicket.TicketCode + " has been bought";

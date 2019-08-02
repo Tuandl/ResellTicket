@@ -19,11 +19,11 @@ function TicketRow(props) {
         switch (status) {
             case TicketStatus.RenamedFail:
                 return (
-                    <Badge color="danger">RenamedFail</Badge>
+                    <Badge color="danger">Renamed Fail</Badge>
                 )
             case TicketStatus.RenamedSuccess:
                 return (
-                    <Badge color="success">RenamedSuccess</Badge>
+                    <Badge color="success">Renamed Success</Badge>
                 )
             case TicketStatus.Renamed:
                 return (
@@ -35,7 +35,7 @@ function TicketRow(props) {
                 )
             case TicketStatus.Completed:
                 return (
-                    <Badge color="success">RenamedSuccess</Badge>
+                    <Badge color="success">Renamed Success</Badge>
                 )
             default:
                 break;
@@ -103,7 +103,7 @@ class PayoutRefundDetailRoute extends Component {
         super(props);
         this.state = {
             routeId: 0,
-            routeDetail: [],
+            routeDetail: {},
             routeTickets: [],
             resolveOption: 0,
             routeStatus: 0,
@@ -114,7 +114,9 @@ class PayoutRefundDetailRoute extends Component {
 
             isOpenConfirmPayoutDialog: false,
             isOpenConfirmRefundDialog: false,
-            isOpenConfirmRefundAllDialog: false
+            isOpenConfirmRefundAllDialog: false,
+
+            isShowNote: false //show note to staff know that has to confirm all renamed tickets and make payout all renamed success tickets
         }
     }
 
@@ -126,12 +128,18 @@ class PayoutRefundDetailRoute extends Component {
         const routeId = this.props.match.params.id;
         await Axios.get('api/route/detail?routeId=' + routeId).then(res => {
             this.setState({
-                routeDetail:
-                [
-                    { name: 'Buyer Phone', value: res.data.buyerPhone },
-                    { name: 'Route Code', value: res.data.code },
-                    { name: 'Total Amount Earned', value: '$' + res.data.totalAmount }
-                ],
+                // routeDetail:
+                //     [
+                //         { name: 'Buyer Phone', value: res.data.buyerPhone },
+                //         { name: 'Route Code', value: res.data.code },
+                //         { name: 'Total Amount Earned', value: '$' + res.data.totalAmount }
+                //     ],
+                routeDetail: {
+                    buyerName: res.data.buyerName,
+                    buyerPhone: res.data.buyerPhone,
+                    routeCode: res.data.code,
+                    totalAmountEarned: '$' + res.data.totalAmount
+                },
                 routeId: res.data.id,
                 routeStatus: res.data.status,
                 routeTickets: res.data.routeTickets,
@@ -140,8 +148,32 @@ class PayoutRefundDetailRoute extends Component {
                 earnedLoss: res.data.earnedLoss
             }, () => {
                 this.checkRefundAll();
+                this.checkShowNoteToConfirmRenameAndPayout();
             })
         });
+    }
+
+    checkShowNoteToConfirmRenameAndPayout() {
+        var { routeTickets, routeStatus } = this.state;
+        if (routeStatus === RouteStatus.Bought) {
+            var hasRenamedFail = false;
+            var hasRenamedOrPayout = false;
+            for (var i = 0; i < routeTickets.length; i++) {
+                if (routeTickets[i].status === TicketStatus.RenamedFail) hasRenamedFail = true;
+                else if (routeTickets[i].status === TicketStatus.Renamed || routeTickets[i].status === TicketStatus.RenamedSuccess)
+                    hasRenamedOrPayout = true;
+            }
+            if (hasRenamedFail && hasRenamedOrPayout) {
+                this.setState({
+                    isShowNote: true
+                })
+            } else{
+                this.setState({
+                    isShowNote: false
+                })
+            }
+        }
+
     }
 
     checkRefundAll() {
@@ -215,7 +247,8 @@ class PayoutRefundDetailRoute extends Component {
             routeId,
             resolveOptionLogs,
             isRefundedAll,
-            earnedLoss } = this.state;
+            earnedLoss,
+            isShowNote } = this.state;
         return (
             <div className="animated fadeIn">
                 <Row>
@@ -225,19 +258,38 @@ class PayoutRefundDetailRoute extends Component {
                                 <strong>Route Detail</strong>
                             </CardHeader>
                             <CardBody>
-                                {routeDetail.map((detail, index) => (
-                                    <Row key={index}>
+                                    <Row>
                                         <Col md="6" xs="12">
                                             <FormGroup>
-                                                <Label htmlFor={detail.name}>{detail.name}</Label>
-                                                <Input type="text" disabled value={detail.value}
+                                                <Label htmlFor="buyerName">Buyer's FullName</Label>
+                                                <Input type="text" disabled value={routeDetail.buyerName}
                                                 />
                                             </FormGroup>
                                         </Col>
                                         <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="buyerPhone">Buyer's Phone</Label>
+                                                <Input type="text" disabled value={routeDetail.buyerPhone}
+                                                />
+                                            </FormGroup>
                                         </Col>
                                     </Row>
-                                ))}
+                                    <Row>
+                                        <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="routeCode">Route Code</Label>
+                                                <Input type="text" disabled value={routeDetail.routeCode}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                        <Col md="6" xs="12">
+                                            <FormGroup>
+                                                <Label htmlFor="totalAmount">Total Amount Earned</Label>
+                                                <Input type="text" disabled value={routeDetail.totalAmountEarned}
+                                                />
+                                            </FormGroup>
+                                        </Col>
+                                    </Row>
                                 {routeTickets.length > 0 ?
                                     <Table responsive hover>
                                         <thead>
@@ -264,15 +316,23 @@ class PayoutRefundDetailRoute extends Component {
                                         </tbody>
                                     </Table>
                                     : null}
-                                <Row className="float-right">
-                                    <Col xs="12">
+                                <Row>
+                                    <Col md="6">
+                                        {isShowNote ?
+                                            <strong style={{ color: '#ffc107' }}>To make resolve renamed fail ticket,
+                                            let confirm all renamed tickets and make payout all tickets that are renamed success.</strong>
+                                            : null
+                                        }
+
+                                    </Col>
+                                    <Col md="6">
                                         {
                                             routeStatus !== 3 && resolveOption === 3 && isRefund ?
-                                                <Button color="danger" className="mr-2" onClick={this.openConfirmRefundAllDialog}>
+                                                <Button color="danger" className="mr-2 float-right" onClick={this.openConfirmRefundAllDialog}>
                                                     <i className="fa fa-dollar fa-lg mr-1"></i>Refund Total Amount
                                                 </Button> : ''
                                         }
-                                        <Button color="secondary" className="ml-1" onClick={() => this.goBack()}>Back</Button>
+                                        <Button color="secondary" className="ml-1 float-right" onClick={() => this.goBack()}>Back</Button>
                                     </Col>
                                 </Row>
                             </CardBody>
@@ -283,7 +343,7 @@ class PayoutRefundDetailRoute extends Component {
 
                 <ResolveRenamedFailTicket routeTickets={routeTickets} resolveOption={resolveOption}
                     routeStatus={routeStatus} onOptionChange={this.onOptionChange} routeId={routeId}
-                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll} 
+                    getRouteDetail={this.getRouteDetail} resolveOptionLogs={resolveOptionLogs} isRefundedAll={isRefundedAll}
                     earnedLoss={earnedLoss} />
 
                 <div>

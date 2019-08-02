@@ -29,7 +29,8 @@ function postEditTicketController() {
         //confirmdialog
         dialogDeletePendingPostedTicket: 'dialog-delete-pending-posted-ticket',
         dialogConfirmTicketRename: 'dialog-confirm-ticket-rename',
-        dialogRefuseTicketRename: 'dialog-refuse-ticket-rename'
+        dialogRefuseTicketRename: 'dialog-refuse-ticket-rename',
+        arrivalDateContainer: 'arrivalDateContainer'
     };
 
     const elements = {
@@ -420,6 +421,10 @@ function postEditTicketController() {
         });
         document.getElementById(id.departureDate).addEventListener('blur', function (e) {
             model.departureDateTime = moment(this.value).format(appConfig.format.datetimeISO)
+            var arrivalDateContainer = document.getElementById(id.arrivalDateContainer)
+            arrivalDateContainer.removeChild(document.getElementById(id.arrivalDate));
+            var newArrivalDate = commonService.htmlToElement('<input type="text" placeholder="Arrival Date" id="arrivalDate" class="form-control" disabled>')
+            arrivalDateContainer.appendChild(newArrivalDate)
             initArrivalDateTimePicker();
         })
     }
@@ -471,7 +476,7 @@ function postEditTicketController() {
         document.getElementById(id.arrivalDate).disabled = false;
         $(`#${id.arrivalDate}`).datetimepicker({
             format: appConfig.format.datetime,
-            minDate: new Date(moment(model.departureDateTime).format('YYYY-MM-DD'))
+            minDate: new Date(moment(model.departureDateTime).format('YYYY-MM-DD')),
         });
         document.getElementById(id.arrivalDate).addEventListener('blur', function (e) {
             model.arrivalDateTime = moment(this.value).format(appConfig.format.datetimeISO)

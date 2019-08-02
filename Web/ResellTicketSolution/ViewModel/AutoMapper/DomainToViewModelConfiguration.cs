@@ -33,7 +33,8 @@ namespace ViewModel.AutoMapper
                 .ForMember(dest => dest.ArrivalCityId, option => option.MapFrom(source => source.ArrivalStation.CityId))
                 .ForMember(dest => dest.ArrivalStationName, option => option.MapFrom(source => source.ArrivalStation.Name))
                 .ForMember(dest => dest.ExpiredBefore, option => option.MapFrom(source => source.Transportation.ExpiredBefore))
-                .ForMember(dest => dest.SellerPhone, option => option.MapFrom(source => source.Seller.PhoneNumber));
+                .ForMember(dest => dest.SellerPhone, option => option.MapFrom(source => source.Seller.PhoneNumber))
+                .ForMember(dest => dest.SellerName, option => option.MapFrom(source => source.Seller.FullName));
 
             CreateMap<Ticket, AvailableTicketViewModel>()
                 .ForMember(dest => dest.VehicleName, option => option.MapFrom(source => source.Transportation.Vehicle.Name))
