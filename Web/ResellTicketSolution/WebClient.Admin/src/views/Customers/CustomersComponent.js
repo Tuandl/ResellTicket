@@ -31,7 +31,7 @@ function CustomerRow(props) {
             <td>{getBadge(customer.isActive)}</td>
             <td>
                 <Link to={customerLink}>
-                    <Button color="danger" className="mr-2">
+                    <Button color="primary" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                     </Button>
                 </Link>
@@ -117,7 +117,7 @@ class CustomersComponent extends Component {
     render() {
         var { customers, userRole, currentPage, pageCount } = this.state;
         return (
-            userRole === 'Manager' ? 
+            userRole === 'Manager' ?
             <div className="animated fadeIn">
                 <Row>
                     <Col xl={12}>

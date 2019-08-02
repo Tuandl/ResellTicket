@@ -19,12 +19,12 @@ function TicketTypeRow(props) {
             <td>{tickettype.vehicleName}</td>
             <td>
                 <Link to={tickettypeLink}>
-                    <Button color="danger" className="mr-2">
+                    <Button color="primary" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                     </Button>
                 </Link>
                 <Button color="danger" className="mr-2" onClick={() => { props.parent.showConfirmDialog(props.tickettype.id) }}>
-                        <i className="fa fa-delete fa-lg mr-1"></i>Delete
+                        <i className="fa fa-trash fa-lg mr-1"></i>Delete
                 </Button>
             </td>
         </tr>
