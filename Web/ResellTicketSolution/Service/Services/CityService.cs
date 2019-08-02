@@ -16,6 +16,7 @@ namespace Service.Services
         CityDataTable GetCities(string name, int page, int pageSize);
         CityRowViewModel FindCityById(int id);
         string UpdateCity(CityUpdateViewModel model);
+        string DeleteCity(int Id);
     }
     public class CityService : ICityService
     {
@@ -123,5 +124,24 @@ namespace Service.Services
             };
             return cityDataTable;
         }
+
+        public string DeleteCity(int Id)
+        {
+            var existedCity = _cityRepository.Get(x => x.Deleted == false && x.Id == Id);
+            if (existedCity == null)
+            {
+                return "Not found City";
+            }
+            else
+            {
+                existedCity.Deleted = true;
+                _cityRepository.Update(existedCity);
+                _unitOfWork.CommitChanges();
+            }
+
+
+            return "";
+        }
+
     }
 }

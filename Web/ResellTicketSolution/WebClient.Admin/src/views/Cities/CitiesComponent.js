@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 // import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import { Button, Card, CardBody, Modal, ModalHeader, ModalBody, ModalFooter, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import Axios from 'axios';
 import PaginationView from '../Pagination/PaginationComponent';
+import { toastr } from 'react-redux-toastr';
 
 function CityRow(props) {
     const city = props.city
     const cityLink = `/city/${city.id}`
-
     return (
         <tr>
             <th>{props.index + 1}</th>
@@ -20,6 +20,9 @@ function CityRow(props) {
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                     </Button>
                 </Link>
+                <Button color="danger" className="mr-2" onClick={() => { props.parent.showConfirmDialog(props.city.id) }}>
+                        <i className="fa fa-delete fa-lg mr-1"></i>Delete
+                </Button>
             </td>
         </tr>
 
@@ -37,10 +40,14 @@ class CitiesComponent extends Component {
             searchValue: '',
             currentPage: 1,
             pageSize: 5,
-            pageCount: 1
+            pageCount: 1,
+            isShowConfirmDialog: false,
+            deleteId: ''
         }
         this.onSearch = this.onSearch.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.onDelete = this.onDelete.bind(this);
+
     }
 
     componentWillMount() {
@@ -99,6 +106,38 @@ class CitiesComponent extends Component {
         })
     }
 
+    async onDelete (id) {
+      var res = await Axios.put('api/city/delete?Id=' + id);
+      if (res.status === 200) {
+        toastr.success('Delete Success', 'City is deleted.');
+        this.props.history.push('/city');
+    } else {
+        toastr.error('Error', 'Error when delete City');
+    }
+    this.getCities();
+    }
+
+    showConfirmDialog = (id) => {
+        this.setState({
+            isShowConfirmDialog: true,
+            deleteId: id
+        });
+    }
+
+    closeConfirmDialog = () => {
+        this.setState({
+            isShowConfirmDialog: false
+        });
+    }
+
+    onConfirm = async () => {
+      toastr.info('Deleting', 'Waiting for delete');
+      this.onDelete(this.state.deleteId);
+      this.setState({
+          isShowConfirmDialog: false
+      });
+  }
+
     render() {
         var { cities, currentPage, pageCount, userRole } = this.state;
         return (
@@ -135,7 +174,7 @@ class CitiesComponent extends Component {
                                     </thead>
                                     <tbody>
                                         {cities.map((city, index) =>
-                                            <CityRow key={index} city={city} index={index} />
+                                            <CityRow key={index} city={city} index={index} parent={this}/>
                                         )}
                                     </tbody>
                                 </Table>
@@ -146,6 +185,17 @@ class CitiesComponent extends Component {
                         </Card>
                     </Col>
                 </Row>
+                <Modal isOpen={this.state.isShowConfirmDialog}
+                    className="modal-danger">
+                    <ModalHeader toggle={this.closeConfirmDialog}>Confirm Delete City</ModalHeader>
+                    <ModalBody>
+                        Do you want to delete this city?
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.onConfirm}>Confirm</Button>
+                        <Button color="secondary" onClick={this.closeConfirmDialog}>Cancel</Button>
+                    </ModalFooter>
+                </Modal>
             </div> : ''
         )
     }

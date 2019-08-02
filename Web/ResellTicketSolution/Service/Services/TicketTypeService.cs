@@ -17,6 +17,7 @@ namespace Service.Services
         List<TicketTypeRowViewModel> GetTicketTypesByVehicleId(int vehicleId, string ticketTypeName);
         TicketTypeRowViewModel FindTicketTypeById(int id);
         string UpdateTicketType(TicketTypeRowViewModel model);
+        string DeleteTicketType(int Id);
     }
 
     public class TicketTypeService : ITicketTypeService
@@ -117,5 +118,24 @@ namespace Service.Services
 
             return string.Empty;
         }
+
+        public string DeleteTicketType(int Id)
+        {
+            var existedTicketType = _ticketTypeRepository.Get(x => x.Deleted == false && x.Id == Id);
+            if (existedTicketType == null)
+            {
+                return "Not found Ticket Type";
+            }
+            else
+            {
+                existedTicketType.Deleted = true;
+                _ticketTypeRepository.Update(existedTicketType);
+                _unitOfWork.CommitChanges();
+            }
+
+
+            return "";
+        }
+
     }
 }

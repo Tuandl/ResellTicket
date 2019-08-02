@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 // import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Modal, ModalHeader, ModalBody, ModalFooter, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 import Axios from 'axios';
 import PaginationView from '../Pagination/PaginationComponent';
+import { toastr } from 'react-redux-toastr';
 
 function StationRow(props) {
     const station = props.station
@@ -20,6 +21,9 @@ function StationRow(props) {
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                   </Button>
                 </Link>
+                <Button color="danger" className="mr-2" onClick={() => { props.parent.showConfirmDialog(props.station.id) }}>
+                        <i className="fa fa-delete fa-lg mr-1"></i>Delete
+                </Button>
             </td>
         </tr>
 
@@ -37,7 +41,9 @@ class StationsComponent extends Component {
             searchValue: '',
             currentPage: 1,
             pageSize: 5,
-            pageCount: 1
+            pageCount: 1,
+            isShowConfirmDialog: false,
+            deleteId: ''
         }
         this.onSearch = this.onSearch.bind(this);
         this.onChange = this.onChange.bind(this);
@@ -99,6 +105,38 @@ class StationsComponent extends Component {
         })
     }
 
+    async onDelete (id) {
+      var res = await Axios.put('api/station/delete?Id=' + id);
+      if (res.status === 200) {
+        toastr.success('Delete Success', 'Station is deleted.');
+        this.props.history.push('/station');
+    } else {
+        toastr.error('Error', 'Error when delete Station');
+    }
+    this.getStations();
+    }
+
+    showConfirmDialog = (id) => {
+      this.setState({
+          isShowConfirmDialog: true,
+          deleteId: id
+      });
+  }
+
+  closeConfirmDialog = () => {
+      this.setState({
+          isShowConfirmDialog: false
+      });
+  }
+
+  onConfirm = async () => {
+    toastr.info('Deleting', 'Waiting for delete');
+    this.onDelete(this.state.deleteId);
+    this.setState({
+        isShowConfirmDialog: false
+    });
+  }
+
     render() {
         var { stations, currentPage, pageCount, userRole } = this.state;
         return (
@@ -135,7 +173,7 @@ class StationsComponent extends Component {
                                         </thead>
                                         <tbody>
                                             {stations.map((station, index) =>
-                                                <StationRow key={index} station={station} index={index} />
+                                                <StationRow key={index} station={station} index={index} parent={this}/>
                                             )}
                                         </tbody>
                                     </Table>
@@ -146,6 +184,17 @@ class StationsComponent extends Component {
                             </Card>
                         </Col>
                     </Row>
+                    <Modal isOpen={this.state.isShowConfirmDialog}
+                    className="modal-danger">
+                    <ModalHeader toggle={this.closeConfirmDialog}>Confirm Delete Station</ModalHeader>
+                    <ModalBody>
+                        Do you want to delete this station?
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.onConfirm}>Confirm</Button>
+                        <Button color="secondary" onClick={this.closeConfirmDialog}>Cancel</Button>
+                    </ModalFooter>
+                    </Modal>
                 </div> : ''
         )
     }
