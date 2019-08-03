@@ -84,7 +84,7 @@ namespace Service.EmailService
                 body = body.Replace("{customerPhone}", customerPhone);
                 body = body.Replace("{Date}", date.ToString());
                 body = body.Replace("{subTotal}", totalAmount.ToString());
-                body = body.Replace("{Total}", "- " + totalAmount.ToString());
+                body = body.Replace("{Total}", totalAmount.ToString());
 
                 body = body.Replace("{Term}", SETTING.Value.Term);
                 body = body.Replace("{Title}", SETTING.Value.Title);
