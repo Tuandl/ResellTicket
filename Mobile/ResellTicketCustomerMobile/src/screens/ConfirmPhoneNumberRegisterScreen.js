@@ -36,7 +36,6 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
         this.submitRegisterCredentials = this.submitRegisterCredentials.bind(this);
         this.onPressFlag = this.onPressFlag.bind(this);
         this.selectCountry = this.selectCountry.bind(this);
-        this.onSelectedContry = this.onSelectedContry.bind(this);
     }
 
     componentDidMount() {
@@ -51,16 +50,7 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
 
     selectCountry(country) {
         this.phone.selectCountry(country.cca2.toLowerCase());
-        console.log("1234", this.phone.selectCountry(country.cca2.toLowerCase()));
-        console.log("1234", this.phone.getDialCode());
         this.setState({ cca2: country.cca2 });
-    }
-
-    onSelectedContry(country) {
-        console.log('onSelectedCountry', country);
-        if (this.phone) {
-            console.log('test', this.phone.getValue());
-        }
     }
 
     validatePhoneNumber(phoneNumber) {
@@ -104,7 +94,7 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                     RNToasty.Success({
                         title: 'Phone number is valid',
                     });
-                    this.props.navigation.navigate('Register', { phoneNumber: this.state.phoneNumber });
+                    this.props.navigation.navigate('Register', { phoneNumber: data.phoneNumber });
                 } else {
                     RNToasty.Error({
                         title: 'Phone Number is existed',
@@ -142,7 +132,6 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                                 ref={(ref) => { this.phone = ref; }}
                                 onPressFlag={this.onPressFlag}
                                 initialCountry='vn'
-                                // onSelectCountry={this.onSelectedContry}
                                 textStyle={{fontSize: 20, color: 'white'}}
                                 autoFormat={true}
                                 onChangePhoneNumber={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
