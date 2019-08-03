@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 // import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Button, Card, CardBody, CardHeader, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
+import { Button, Card, CardBody, CardHeader, Modal, ModalHeader, ModalBody, ModalFooter, Col, Form, Input, InputGroup, Row, Table } from 'reactstrap';
 // import {getTicketTypeRequest} from './../../action/TicketTypeAction';
 import PaginationView from '../Pagination/PaginationComponent';
 import Axios from 'axios';
-
+import { toastr } from 'react-redux-toastr';
 
 
 function TicketTypeRow(props) {
@@ -19,10 +19,13 @@ function TicketTypeRow(props) {
             <td>{tickettype.vehicleName}</td>
             <td>
                 <Link to={tickettypeLink}>
-                    <Button color="danger">
+                    <Button color="primary" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                     </Button>
                 </Link>
+                <Button color="danger" className="mr-2" onClick={() => { props.parent.showConfirmDialog(props.tickettype.id) }}>
+                        <i className="fa fa-trash fa-lg mr-1"></i>Delete
+                </Button>
             </td>
         </tr>
 
@@ -40,7 +43,9 @@ class TicketTypeComponent extends Component {
             currentPage: 1,
             pageSize: 5,
             pageCount: 1,
-            ticketTypes: []
+            ticketTypes: [],
+            isShowConfirmDialog: false,
+            deleteId: ''
         }
     }
 
@@ -97,6 +102,38 @@ class TicketTypeComponent extends Component {
         })
     }
 
+    async onDelete (id) {
+      var res = await Axios.put('api/tickettype/delete?Id=' + id);
+      if (res.status === 200) {
+        toastr.success('Delete Success', 'Ticket Type is deleted.');
+        this.props.history.push('/tickettype');
+    } else {
+        toastr.error('Error', 'Error when delete Ticket Type');
+    }
+    this.getTicketTypes();
+    }
+
+    showConfirmDialog = (id) => {
+      this.setState({
+          isShowConfirmDialog: true,
+          deleteId: id
+      });
+  }
+
+  closeConfirmDialog = () => {
+      this.setState({
+          isShowConfirmDialog: false
+      });
+  }
+
+  onConfirm = async () => {
+    toastr.info('Deleting', 'Waiting for delete');
+    this.onDelete(this.state.deleteId);
+    this.setState({
+        isShowConfirmDialog: false
+    });
+}
+
     render() {
         var { searchValue, userRole, ticketTypes, pageCount, currentPage } = this.state;
         return(
@@ -134,7 +171,7 @@ class TicketTypeComponent extends Component {
                                         </thead>
                                         <tbody>
                                             {ticketTypes.map((tickettype, index) =>
-                                                <TicketTypeRow key={index} tickettype={tickettype} index={index} />
+                                                <TicketTypeRow key={index} tickettype={tickettype} index={index} parent={this}/>
                                             )}
                                         </tbody>
                                     </Table>
@@ -145,10 +182,21 @@ class TicketTypeComponent extends Component {
                             </Card>
                         </Col>
                     </Row>
+                    <Modal isOpen={this.state.isShowConfirmDialog}
+                    className="modal-danger">
+                    <ModalHeader toggle={this.closeConfirmDialog}>Confirm Delete Ticket Type</ModalHeader>
+                    <ModalBody>
+                        Do you want to delete this ticket type?
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.onConfirm}>Confirm</Button>
+                        <Button color="secondary" onClick={this.closeConfirmDialog}>Cancel</Button>
+                    </ModalFooter>
+                    </Modal>
                 </div> : ''
         );
     };
-} 
+}
 
 // const mapStateToProps = state => {
 //     return {
