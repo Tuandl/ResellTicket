@@ -55,7 +55,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="failRouteTicketId"></param>
         /// <returns></returns>
-        AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId);
+        AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId, int page, int pageSize);
         TicketDataTable GetReplaceTickets(int routeTicketId);
     }
     public class TicketService : ITicketService
@@ -266,8 +266,20 @@ namespace Service.Services
                     customerStatusTickets = customerTickets.Where(x => x.Status == status || x.Status == TicketStatus.RenamedFail).ToList();
                     break;
             }
+
             var customerPagedTickets = customerStatusTickets.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            foreach (var ticket in customerPagedTickets)
+            {
+                if (ticket.Status == TicketStatus.Valid)
+                {
+                    if (ticket.ExpiredDateTimeUTC < DateTime.UtcNow)
+                    {
+                        ticket.Status = 0;
+                    }
+                }
+            }
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerPagedTickets);
+            
             return customerTicketVMs;
         }
 
@@ -378,13 +390,14 @@ namespace Service.Services
             //{
             //    return ex.Message;
             //}
-            var message = "Ticket " + existedTicket.TicketCode + " is valid";
+            var message = "Your ticket " + existedTicket.TicketCode + " is valid.";
             List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
 
             //Save notification into db
             _notificationService.SaveNotification(
                 customerId: existedTicket.SellerId,
                 type: NotificationType.TicketIsValid,
+                message: $"Your ticket {existedTicket.TicketCode} is valid.",
                 data: new { ticketId = existedTicket.Id }
             );
 
@@ -426,6 +439,7 @@ namespace Service.Services
             _notificationService.SaveNotification(
                 customerId: existedTicket.SellerId,
                 type: NotificationType.TicketIsReject,
+                message: $"Ticket {existedTicket.TicketCode} is invalid. {System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(invalidField.ToLower())} is incorrect.",
                 data: new { ticketId = existedTicket.Id }
             );
 
@@ -486,12 +500,13 @@ namespace Service.Services
                 //noti to seller
                 #region Notify Seller
                 List<string> sellerDeviceIds = GetCustomerDeviceIds(existedTicket, true);
-                var message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Money will be tranfered in a few minutes";
+                var message = "Ticket " + existedTicket.TicketCode + " renamed successfully. We are processing to transfer your money.";
 
                 //Save notification into db
                 _notificationService.SaveNotification(
                     customerId: existedTicket.SellerId,
                     type: NotificationType.TicketIsConfirmedRenamed,
+                    message: $"Ticket {existedTicket.TicketCode} renamed successfully. We are processing to transfer your money.",
                     data: new { ticketId = existedTicket.Id }
                 );
 
@@ -501,21 +516,25 @@ namespace Service.Services
                 //noti to buyer
                 #region Notify Buyer
                 List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
-                message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
+                
+                var boughtRoute = existedTicket.RouteTickets.Where(x => 
+                    x.Route.CustomerId == existedTicket.BuyerId &&
+                    x.Route.Status == RouteStatus.Bought &&
+                    x.Route.Deleted == false &&
+                    x.Deleted == false
+                ).FirstOrDefault()
+                ?.Route;
+
+                message = "Ticket " + existedTicket.TicketCode + " in Route " + (boughtRoute?.Code ?? string.Empty) + " renamed successfully.";
 
                 //Save notification into db
-                var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
-                    x.Route.Status == RouteStatus.Bought &&
-                    x.Deleted == false &&
-                    x.Route.Deleted == false
-                );
-
-                if (routeTicket != null && existedTicket.BuyerId != null)
+                if (existedTicket.BuyerId != null)
                 {
                     _notificationService.SaveNotification(
                         customerId: existedTicket.BuyerId.Value,
                         type: NotificationType.TicketIsRenamed,
-                        data: new { routeId = routeTicket.RouteId }
+                        message: $"Ticket {existedTicket.TicketCode} in Route {boughtRoute?.Code ?? string.Empty} renamed successfully",
+                        data: new { routeId = boughtRoute?.Id }
                     );
                 }
 
@@ -545,6 +564,7 @@ namespace Service.Services
                 _notificationService.SaveNotification(
                     customerId: existedTicket.SellerId,
                     type: NotificationType.TicketIsConfirmedRenamedFailed,
+                    message: $"Ticket {existedTicket.TicketCode} renamed fail.",
                     data: new { ticketId = existedTicket.Id }
                 );
 
@@ -553,26 +573,29 @@ namespace Service.Services
 
                 //noti to buyer
                 #region Notify Buyer
+                var boughtRoute = existedTicket.RouteTickets.Where(x =>
+                    x.Route.CustomerId == existedTicket.BuyerId &&
+                    x.Route.Status == RouteStatus.Bought &&
+                    x.Route.Deleted == false &&
+                    x.Deleted == false
+                ).FirstOrDefault()
+                ?.Route;
+
                 List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
-                //message = "Ticket " + existedTicket.TicketCode + " renamed successfully. Please check your email.";
-
-                //Save notification into db
-                //var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
-                //    x.Route.Status == RouteStatus.Bought &&
-                //    x.Deleted == false &&
-                //    x.Route.Deleted == false
-                //);
-
-                //if (routeTicket != null && existedTicket.BuyerId != null)
-                //{
-                //    _notificationService.SaveNotification(
-                //        customerId: existedTicket.BuyerId.Value,
-                //        type: NotificationType.TicketIsRenamed,
-                //        data: new { routeId = routeTicket.RouteId }
-                //    );
-                //}
-
+                message = "Ticket " + existedTicket.TicketCode + " in Route " + (boughtRoute?.Code ?? string.Empty) + " renamed fail.";
                 _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+
+                //save noti
+                if(existedTicket.BuyerId != null)
+                {
+                    _notificationService.SaveNotification(
+                        customerId: existedTicket.BuyerId.Value,
+                        type: NotificationType.RouteHasRenamedFailTicket,
+                        message: $"Ticket {existedTicket.TicketCode} in Route {boughtRoute?.Code ?? string.Empty} renamed fail.",
+                        data: new { ticketId = boughtRoute?.Id }
+                    );
+                } 
+
                 #endregion
             }
 
@@ -643,7 +666,16 @@ namespace Service.Services
             _unitOfWork.CommitChanges();
 
             #region Notify Buyer
-            var message = "Ticket " + existedTicket.TicketCode + " has been refused."; 
+            var boughtRoute = existedTicket.RouteTickets
+                .Where(x =>
+                    x.Deleted == false &&
+                    x.Route.Deleted == false &&
+                    x.Route.Status == RouteStatus.Bought && 
+                    x.Route.CustomerId == existedTicket.BuyerId
+                ).FirstOrDefault()
+                ?.Route;
+
+            var message = "Ticket " + existedTicket.TicketCode + " in Route " + (boughtRoute?.Code ?? string.Empty) + " has been refused."; 
             //if(_routeTicketRepository.Get(x => x.Deleted == false && x.TicketId == existedTicket.Id).Route.CustomerId == existedTicket.BuyerId)
             //{
             //    message += "Our staff will contact you in a few minutes.";
@@ -651,18 +683,13 @@ namespace Service.Services
             List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
 
             //save notification into db
-            var routeTicket = existedTicket.RouteTickets.FirstOrDefault(x =>
-                x.Deleted == false &&
-                x.Route.Deleted == false &&
-                x.Route.Status == RouteStatus.Bought
-            );
-
-            if (routeTicket != null && existedTicket.BuyerId != null)
+            if (existedTicket.BuyerId != null)
             {
                 _notificationService.SaveNotification(
                     customerId: existedTicket.BuyerId.Value,
                     type: NotificationType.TicketIsRefuse,
-                    data: new { routeId = routeTicket.RouteId }
+                    message: $"Ticket {existedTicket.TicketCode} in Route {boughtRoute?.Code ?? string.Empty} has been refused.",
+                    data: new { routeId = boughtRoute?.Id }
                 );
             }
 
@@ -800,7 +827,7 @@ namespace Service.Services
             return ticketDataTable;
         }
 
-        public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId)
+        public AvailableTicketDataTable GetReplaceTicketForOneFailTicket(int failRouteTicketId, int page, int pageSize)
         {
             List<AvailableTicketViewModel> replaceTickets = GetTicketAvailableForRouteTicket(failRouteTicketId);
             var routeTicket = _routeTicketRepository.Get(x =>
@@ -808,10 +835,12 @@ namespace Service.Services
                 x.Deleted == false
             );
             replaceTickets = replaceTickets.Where(x => x.SellingPrice <= routeTicket.Ticket.SellingPrice).ToList();
+            var replaceTicketsTotal = replaceTickets.Count();
+            var replacePagedTickets = replaceTickets.Skip((page - 1) * pageSize).Take(pageSize);
             AvailableTicketDataTable resultDataTable = new AvailableTicketDataTable()
             {
-                Data = replaceTickets,
-                Total = replaceTickets.Count()
+                Data = replacePagedTickets.ToList(),
+                Total = replaceTicketsTotal
             };
             return resultDataTable;
         }

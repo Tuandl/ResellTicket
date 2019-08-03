@@ -14,11 +14,6 @@ namespace Core.Models.Map
                 .HasForeignKey(x => x.CustomerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.Message)
-                .WithMany(x => x.Notifications)
-                .HasForeignKey(x => x.Type)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.ToTable("Notification");
 
         }

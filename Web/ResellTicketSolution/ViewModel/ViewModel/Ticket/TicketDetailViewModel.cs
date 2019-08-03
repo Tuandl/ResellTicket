@@ -33,6 +33,7 @@ namespace ViewModel.ViewModel.Ticket
         public string EmailBooking { get; set; }
         public decimal SellingPrice { get; set; }
         public string SellerPhone { get; set; }
+        public string SellerName { get; set; }
         public int ExpiredBefore { get; set; }
         public DateTime ExpiredDateTime { get; set; }
 

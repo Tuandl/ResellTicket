@@ -38,6 +38,8 @@ namespace Service.Services
         private readonly IResolveOptionLogRepository _resolveOptionLogRepository;
         private readonly ISendGridService _sendGridService;
         private readonly IOneSignalService _oneSignalService;
+        private readonly INotificationService _notificationService;
+
         public PayoutService(IPayoutRepository payoutRepository, 
             ITicketRepository ticketRepository, 
             IMapper mapper, 
@@ -51,7 +53,8 @@ namespace Service.Services
             IUserRepository userRepository,
             IResolveOptionLogRepository resolveOptionLogRepository,
             ISendGridService sendGridService,
-            IOneSignalService oneSignalService) 
+            IOneSignalService oneSignalService,
+            INotificationService notificationService) 
         {
             _payoutRepository = payoutRepository;
             _ticketRepository = ticketRepository;
@@ -67,6 +70,7 @@ namespace Service.Services
             _resolveOptionLogRepository = resolveOptionLogRepository;
             _sendGridService = sendGridService;
             _oneSignalService = oneSignalService;
+            _notificationService = notificationService;
         }
 
         public string MakePayoutToCustomer(int TicketId, string username)
@@ -167,16 +171,23 @@ namespace Service.Services
             //save log
 
             //push noti to buyer
-            var message = "Ticket " + ticket.TicketCode + " has been payout. " +
-                (Transfer.Amount / 100) + "$ has been tranfered to your Stripe account.";
-            var buyerDevices = ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
-            List<string> buyerDeviceIds = new List<string>();
-            foreach (var buyerDev in buyerDevices)
+            var message = "Ticket " + ticket.TicketCode + " has been payout. $" +
+                (Transfer.Amount / 100).ToString("N2") + " has been tranfered to your Stripe account.";
+            var sellerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> sellerDeviceIds = new List<string>();
+            foreach (var sellerDev in sellerDevices)
             {
-                buyerDeviceIds.Add(buyerDev.DeviceId);
+                sellerDeviceIds.Add(sellerDev.DeviceId);
             }
-            _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
             //push noti
+            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
+
+            //Save Notification
+            _notificationService.SaveNotification(
+                customerId: ticket.SellerId,
+                type: NotificationType.TicketIsPayouted,
+                message: $"Ticket {ticket.TicketCode} has been payout. ${(Transfer.Amount / 100).ToString("N2")} has been transfered to your Stripe account.",
+                data: new { ticketId = ticket.Id, });
 
             //send Email
             _sendGridService.SendEmailReceiptForSeller(TicketId, Transfer.Amount / 100);

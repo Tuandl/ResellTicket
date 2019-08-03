@@ -22,6 +22,7 @@ export default class ValidTicketDetail extends Component {
             expiredBefore: '0', //hours
             expiredDateTime: '',
             sellerPhone: '',
+            sellerName: '',
             isShowConfirmDialog: false
         }
 
@@ -59,6 +60,7 @@ export default class ValidTicketDetail extends Component {
                     { name: "Email Booking", value: res.data.emailBooking },
                 ],
                 sellerPhone: res.data.sellerPhone,
+                sellerName: res.data.sellerName,
                 expiredBefore: res.data.expiredBefore,
                 expiredDateTime: moment(res.data.departureDateTime)
             })
@@ -143,7 +145,8 @@ export default class ValidTicketDetail extends Component {
             invalidCount,
             commissionFee,
             expiredBefore,
-            sellerPhone
+            sellerPhone,
+            sellerName
         } = this.state;
         return (
 
@@ -158,7 +161,14 @@ export default class ValidTicketDetail extends Component {
                                 <Row>
                                     <Col md="6" xs="12">
                                         <FormGroup>
-                                            <Label htmlFor="sellerPhone">Seller Phone</Label>
+                                            <Label htmlFor="sellerName">Seller's FullName</Label>
+                                            <Input type="text" id="sellerName" disabled value={sellerName}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md="6" xs="12">
+                                        <FormGroup>
+                                            <Label htmlFor="sellerPhone">Seller's Phone</Label>
                                             <Input type="text" id="sellerPhone" disabled value={sellerPhone}
                                             />
                                         </FormGroup>

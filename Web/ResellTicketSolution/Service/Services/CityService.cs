@@ -54,7 +54,7 @@ namespace Service.Services
             var cities = _cityRepository.GetAllQueryable()
                 .Where(x => x.Deleted == false)
                 .Where(x => x.Name.ToLower().Contains(name.ToLower()));
-            if(ignoreCityId != -1)
+            if (ignoreCityId != -1)
             {
                 cities = cities.Where(x => x.Id != ignoreCityId);
             }
@@ -97,25 +97,26 @@ namespace Service.Services
         {
             name = name ?? "";
             var cities = new List<City>();
-            if(page > 0 && pageSize > 0)
+            if (page > 0 && pageSize > 0)
             {
                 cities = _cityRepository.GetAllQueryable()
                     .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                          .OrderBy(x => x.Name)
                          .Skip((page - 1) * pageSize).Take(pageSize).ToList();
-            } else
+            }
+            else
             {
                 cities = _cityRepository.GetAllQueryable()
                     .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower()))
                          .OrderBy(x => x.Name).ToList();
             }
-                         
+
             var totalCities = _cityRepository.GetAllQueryable()
                 .Where(x => x.Deleted == false)
                          .Where(x => x.Name.ToLower().Contains(name.ToLower())).Count();
-            
+
             var cityRowViewModels = _mapper.Map<List<City>, List<CityRowViewModel>>(cities);
             var cityDataTable = new CityDataTable()
             {

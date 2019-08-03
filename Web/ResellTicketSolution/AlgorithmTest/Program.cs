@@ -23,7 +23,7 @@ namespace AlgorithmTest
             Console.WriteLine("TEST CASE 1");
             const int HCM = 1;
             const int HN = 2;
-            const int DN = 3;
+            //const int DN = 3;
 
             List<Ticket> tickets = new List<Ticket>()
             {
