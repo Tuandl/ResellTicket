@@ -53,9 +53,9 @@ namespace WebAPI.Controllers
                 paramsModel.ArrivalDate = paramsModel.ArrivalDate.Date.AddDays(1).AddMilliseconds(-1);
 
                 var routes = _routeService.SearchRoute(paramsModel.DepartureCityId, paramsModel.ArrivalCityId,
-                    paramsModel.DepartureDate, paramsModel.ArrivalDate, paramsModel.Page, paramsModel.PageSize, 
-                    paramsModel.MaxTicketCombination, paramsModel.VehicleIds, paramsModel.TransportationIds,
-                    paramsModel.MaxWaitingHours, paramsModel.TicketTypeIds
+                    paramsModel.DepartureDate, paramsModel.ArrivalDate, paramsModel.Page, paramsModel.PageSize,
+                    User.Identity.Name, paramsModel.MaxTicketCombination, paramsModel.VehicleIds, 
+                    paramsModel.TransportationIds, paramsModel.MaxWaitingHours, paramsModel.TicketTypeIds
                 );
 
                 return Ok(routes);

@@ -38,9 +38,9 @@ namespace Service.Services
         /// <param name="vehicleIds">list of vehicles allow to search</param>
         /// <returns>List search results.</returns>
         List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
-            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
-            int[] ticketTypeIds = null);
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
+            int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
+            int maxWaitingHours = 24, int[] ticketTypeIds = null);
 
         /// <summary>
         /// Create new Route base on Search result
@@ -390,9 +390,9 @@ namespace Service.Services
         }
 
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
-            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
-            int[] ticketTypeIds = null)
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
+            int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
+            int maxWaitingHours = 24, int[] ticketTypeIds = null)
         {
             //Convert fromDate, toDate into UTC
             var departureCity = _cityRepository.Get(x => x.Id == departureCityId && x.Deleted == false);
@@ -413,7 +413,8 @@ namespace Service.Services
                     (x.ExpiredDateTimeUTC == null || x.ExpiredDateTimeUTC >= DateTime.UtcNow) &&
                     (vehicleIds == null || vehicleIds.Length == 0 || vehicleIds.Contains(x.Transportation.VehicleId)) &&
                     (transportationIds == null || transportationIds.Length == 0 || transportationIds.Contains(x.TransportationId)) &&
-                    (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId))
+                    (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId)) && 
+                    (searchedUsername == null || searchedUsername.Length == 0 || searchedUsername != x.Seller.Username)
                 );
 
             //return empty list in case of no input data
