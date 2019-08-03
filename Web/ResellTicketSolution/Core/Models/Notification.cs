@@ -15,6 +15,6 @@ namespace Core.Models
 
         public virtual Customer Customer { get; set; }
 
-        public virtual NotificationMessage Message { get; set; }
+        public string Message { get; set; }
     }
 }

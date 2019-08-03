@@ -661,7 +661,7 @@ namespace Service.Services
                 //push noti for seller customer
                 foreach (var ticket in tickets)
                 {
-                    var message = "Ticket " + ticket.TicketCode + " has been bought";
+                    var message = "Ticket " + ticket.TicketCode + " has been bought. Please change this ticket information to finish the selling process.";
                     var customerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList();
                     List<string> deviceIds = new List<string>();
                     foreach (var cusDev in customerDevices)
@@ -673,6 +673,7 @@ namespace Service.Services
                     _notificationService.SaveNotification(
                         customerId: ticket.Seller.Id,
                         type: NotificationType.TicketIsBought,
+                        message: $"Your ticket {ticket.TicketCode} has been bought. Please change this ticket information to finish the selling process.",
                         data: new { ticketId = ticket.Id }
                     );
 
@@ -965,7 +966,7 @@ namespace Service.Services
             _unitOfWork.CommitTransaction();
 
             //push noti to seller
-            var message = "Ticket " + replaceTicket.TicketCode + " has been bought";
+            var message = "Ticket " + replaceTicket.TicketCode + " has been bought. Please change this ticket information to finish the selling process.";
             var sellerDevices = replaceTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> sellerDeviceIds = new List<string>();
             foreach (var sellerDev in sellerDevices)
@@ -975,9 +976,15 @@ namespace Service.Services
 
             _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
+            _notificationService.SaveNotification(
+                customerId: replaceTicket.SellerId,
+                type: NotificationType.TicketIsBought,
+                message: $"Your ticket {replaceTicket.TicketCode} has been bought. Please change this ticket information to finish the selling process."
+            );
+
             //push noti to buyer
-            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode + ". " +
-                amount + "$ will be refunded within next 5 to 7 days.";
+            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode + ". $" +
+                amount.ToString("N2") + " will be refunded within next 5 to 7 working days.";
             var buyerDevices = failRouteTicket.Ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> buyerDeviceIds = new List<string>();
             foreach (var buyerDev in buyerDevices)
@@ -985,6 +992,19 @@ namespace Service.Services
                 buyerDeviceIds.Add(buyerDev.DeviceId);
             }
             _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+
+            //Save Notification
+            if(replaceTicket.BuyerId != null)
+            {
+                _notificationService.SaveNotification(
+                    customerId: replaceTicket.BuyerId.Value,
+                    type: NotificationType.RouteIsRefundReplaceTicket,
+                    message: $"Tikcet {failRouteTicket.Ticket.TicketCode} in Route {failRouteTicket.Route.Code} is replaced by Ticket {replaceTicket.TicketCode}. " +
+                        $"${amount.ToString("N2")} will be refunded within next 5 to 7 working days.",
+                    data: new { routeId = failRouteTicket.RouteId }
+                );
+            }
+
             _sendGridService.SendEmailReplacementForBuyer(failRouteTicket.TicketId, replaceTicketId);
         }
 

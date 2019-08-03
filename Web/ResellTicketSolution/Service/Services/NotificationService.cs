@@ -16,7 +16,7 @@ namespace Service.Services
         /// <param name="customerId"></param>
         /// <param name="type"></param>
         /// <param name="data"></param>
-        void SaveNotification(int customerId, NotificationType type, object data);
+        void SaveNotification(int customerId, NotificationType type, string message, object data = null);
 
         /// <summary>
         /// Set exieted notification Read = true    
@@ -66,7 +66,7 @@ namespace Service.Services
         /// </summary>
         /// <param name="notification"></param>
         /// <param name="data"></param>
-        public void SaveNotification(int customerId, NotificationType type, object data)
+        public void SaveNotification(int customerId, NotificationType type, string message, object data = null)
         {
             var notification = new Notification()
             {
@@ -74,6 +74,7 @@ namespace Service.Services
                 Type = type,
                 Data = Newtonsoft.Json.JsonConvert.SerializeObject(data),
                 Read = false,
+                Message = message,
             };
 
             _notificationRepository.Add(notification);
@@ -117,7 +118,7 @@ namespace Service.Services
                     Id = x.Id,
                     Data = x.Data,
                     CreatedAtUTC = x.CreatedAtUTC,
-                    Message = x.Message.Content,
+                    Message = x.Message ?? string.Empty,
                     Read = x.Read,
                     Type = x.Type,
                 });
