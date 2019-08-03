@@ -4,6 +4,8 @@ import { history } from './../src/helper/history';
 // import { toastr } from 'react-redux-toastr';
 // import { renderRoutes } from 'react-router-config';
 import './App.scss';
+import { loadProgressBar } from 'axios-progress-bar';
+import 'axios-progress-bar/dist/nprogress.css';
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
@@ -40,6 +42,8 @@ class App extends Component {
       });
       OneSignal.setSubscription(true);
     });
+
+    loadProgressBar();
 }
   render() {
     return (
