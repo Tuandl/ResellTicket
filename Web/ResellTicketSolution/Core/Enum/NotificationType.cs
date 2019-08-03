@@ -36,5 +36,35 @@
         /// Notification Buyer when seller refuse renaming this ticket
         /// </summary>
         TicketIsRefuse = 7,
+
+        /// <summary>
+        /// Notification Seller when staff payout
+        /// </summary>
+        TicketIsPayouted = 8,
+
+        /// <summary>
+        /// Ticket is revalid because of refund route 
+        /// </summary>
+        TicketIsRevalid = 9,
+
+        /// <summary>
+        /// Refund for buyer
+        /// </summary>
+        RouteIsRefunded = 10,
+
+        /// <summary>
+        /// Refund partial for buyer due to fail changing information of ticket
+        /// </summary>
+        RouteIsRefundedFailTicket = 11,
+
+        /// <summary>
+        /// Refund partial for buyer due to replace ticket.
+        /// </summary>
+        RouteIsRefundReplaceTicket = 12,
+
+        /// <summary>
+        /// Notify buyer when a ticket in route renamed failed
+        /// </summary>
+        RouteHasRenamedFailTicket = 13,
     }
 }

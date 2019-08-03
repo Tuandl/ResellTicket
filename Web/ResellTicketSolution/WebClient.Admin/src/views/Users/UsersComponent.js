@@ -35,7 +35,7 @@ function UserRow(props) {
             <td>{getBadge(user.isActive)}</td>
             <td>
                 <Link to={userLink}>
-                    <Button color="danger">
+                    <Button color="primary">
                         <i className="fa fa-edit fa-lg mr-1"></i>Edit
                     </Button>
                 </Link>

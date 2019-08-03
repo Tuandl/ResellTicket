@@ -31,7 +31,6 @@ namespace Core.Data
         public virtual DbSet<Route> Routes { get; set; }
         public virtual DbSet<CustomerDevice> CustomerDevices { get; set; }
         public virtual DbSet<AdminDevice> AdminDevices { get; set; }
-        public virtual DbSet<NotificationMessage> NotificationMessages { get; set; }
         public virtual DbSet<ResolveOptionLog> ResolveOptionLogs { get; set; }
         /// <summary>
         /// Config Models using Fluent API
@@ -57,7 +56,6 @@ namespace Core.Data
             modelBuilder.ApplyConfiguration(new TicketTypeMap());
             modelBuilder.ApplyConfiguration(new CustomerDeviceMap());
             modelBuilder.ApplyConfiguration(new AdminDeviceMap());
-            modelBuilder.ApplyConfiguration(new NotificationMessageMap());
             modelBuilder.ApplyConfiguration(new ResolveOptionLogMap());
 
             modelBuilder.Entity<User>().ToTable("User");
@@ -68,16 +66,6 @@ namespace Core.Data
             modelBuilder.Ignore<IdentityUserClaim<string>>();
             modelBuilder.Ignore<IdentityUserToken<string>>();
             modelBuilder.Ignore<IdentityRoleClaim<string>>();
-
-            modelBuilder.Entity<NotificationMessage>().HasData(
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsValid, Content = "Your posted ticket is valid. Now people can buy your ticket." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsBought, Content = "Your ticket is bought. Please change this ticket information." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsReject, Content = "Your ticket is invalid. Please check again." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsConfirmedRenamed, Content = "Your ticket is confirmed renamed successfully." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsRenamed, Content = "A ticket in your route is renamed successfully." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsConfirmedRenamedFailed, Content = "Sorry, our system cannot confirm your ticket is renamed correctly." },
-                new NotificationMessage() {Type = Enum.NotificationType.TicketIsRefuse, Content = "A ticket in your route is refused. We are processing your refund." }
-            );
         }
     }
 }

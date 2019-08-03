@@ -11,6 +11,7 @@ import NumberFormat from 'react-number-format';
 import TicketStatus from '../Tickets/TicketStatus';
 import ResolveOption from './ResolveOption'
 import RouteStatus from './RouteStatus';
+import PaginationView from '../Pagination/PaginationComponent';
 
 function TicketRow(props) {
     const { ticket } = props;
@@ -58,7 +59,6 @@ export default class ResolveRenamedFailTicket extends Component {
     renamedFailCount = 0;
     optionValue = 0;
 
-
     constructor(props) {
         super(props)
         this.state = {
@@ -72,6 +72,9 @@ export default class ResolveRenamedFailTicket extends Component {
             resolveOptionLogs: [],
             isRefundedAll: false,
             isOpenConfirmReplaceDialog: false,
+            currentPage: 1,
+            pageSize: 5,
+            pageCount: 1,
         }
     }
 
@@ -99,7 +102,7 @@ export default class ResolveRenamedFailTicket extends Component {
                         }
                     }
                     if (failTickets === 1) {
-                        this.getReplaceTicketForFailTicket(this.failRouteTicketId);
+                        this.getReplaceTicketForFailTicket();
                     }
                 } else {
                     this.setState({ isResolveNeed: false });
@@ -110,23 +113,11 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     componentDidMount() {
-        // var failTickets = 0;
-        // for (var i = 0; i < routeTickets.length; i++) {
-        //     if (routeTickets[i].status === TicketStatus.RenamedFail) {
-        //         failTickets++;
-        //         this.failRouteTicketCode = routeTickets[i].ticketCode;
-        //         this.failRouteTicketId = routeTickets[i].id;
-        //         break;
-        //     }
-        // }
-        // if (failTickets === 1) {
-        //     this.getReplaceTicketForFailTicket(this.failRouteTicketId);
-        // }
     }
 
     checkResovleNeed = (routeTickets) => {
         this.renamedFailCount = 0;
-        for(var i = 0; i < routeTickets.length; i++) {
+        for (var i = 0; i < routeTickets.length; i++) {
             if (routeTickets[i].status === TicketStatus.RenamedFail) { this.renamedFailCount++; }
             else if (routeTickets[i].status === TicketStatus.RenamedSuccess || routeTickets[i].status === TicketStatus.Renamed) {
                 this.renamedFailCount = 0;
@@ -175,11 +166,13 @@ export default class ResolveRenamedFailTicket extends Component {
         }
     }
 
-    getReplaceTicketForFailTicket = async (failRouteTicketId) => {
-        var res = await Axios.get('api/ticket/replaceOneFail?failRouteTicketId=' + failRouteTicketId);
+    getReplaceTicketForFailTicket = async () => {
+        var { currentPage, pageSize } = this.state
+        var res = await Axios.get('api/ticket/replaceOneFail?failRouteTicketId=' + this.failRouteTicketId + "&page=" + currentPage + "&pageSize=" + pageSize);
         if (res.status === 200) {
             this.setState({
-                replaceTickets: res.data.data
+                replaceTickets: res.data.data,
+                pageCount: res.data.total <= pageSize ? 1 : res.data.total % pageSize === 0 ? parseInt(res.data.total / pageSize) : parseInt(res.data.total / pageSize) + 1
             })
         }
     }
@@ -193,17 +186,33 @@ export default class ResolveRenamedFailTicket extends Component {
     onReplaceTicket = async () => {
         this.closeConfirmReplaceDialog()
         toastr.info('Processing', 'Waiting for replace')
-        var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
-            '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
-        if (res.status === 200) {
-            toastr.success('Successfully', 'Replace ticket successfully.');
-            this.setState({
-                resolveOption: 0,
-                replaceTickets: [],
-            })
-            this.props.getRouteDetail();
+        try {
+            var res = await Axios.post('api/route/replaceOneFail?routeId=' + this.routeId +
+                '&failRouteTicketId=' + this.failRouteTicketId + '&replaceTicketId=' + this.state.replaceTicketId);
+            if (res.status === 200) {
+                toastr.success('Successfully', 'Replace ticket successfully.');
+                this.setState({
+                    resolveOption: 0,
+                    replaceTickets: [],
+                })
+                this.props.getRouteDetail();
+            } else {
+                toastr.error('Fail', 'Sorry, this ticket has just bought by other customer.');
+            }
+        } catch (error) {
+            toastr.error('Fail', 'Sorry, this ticket has just bought by other customer.');
         }
 
+    }
+
+    goPage = (pageNumber) => {
+        this.setState({
+            currentPage: pageNumber === 'prev' ? this.state.currentPage - 1 :
+                pageNumber === 'next' ? this.state.currentPage + 1 :
+                    pageNumber
+        }, () => {
+            this.getReplaceTicketForFailTicket();
+        })
     }
 
     render() {
@@ -217,7 +226,7 @@ export default class ResolveRenamedFailTicket extends Component {
     }
 
     renderResolveOption = () => {
-        var { replaceTickets, replaceTicketId, isResolveNeed } = this.state;
+        var { replaceTickets, replaceTicketId, isResolveNeed, currentPage, pageCount } = this.state;
         if (isResolveNeed) {
             return (
                 //Bought Routes
@@ -230,7 +239,7 @@ export default class ResolveRenamedFailTicket extends Component {
                                     null
                                     : <Input type="radio" name="option" value="1" onChange={this.optionChange} />
                                 }
-                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong><br/>
+                                <strong>OPTION 1: Replace fail ticket to a new ticket.</strong><br />
                                 {replaceTickets.length === 0 ?
                                     <span>There is no available tickets to replace ticket {this.failRouteTicketCode}</span>
                                     : null
@@ -258,6 +267,9 @@ export default class ResolveRenamedFailTicket extends Component {
                                             ))}
                                         </tbody>
                                     </Table>
+                                    <div style={{ float: 'right' }}>
+                                        <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
+                                    </div>
                                     {replaceTicketId !== 0 ?
                                         <Row className="float-right">
                                             <Col xs="12">

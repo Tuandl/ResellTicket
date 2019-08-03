@@ -13,11 +13,11 @@ function TicketRow(props) {
     const getBadge = (status) => {
         if (status === TicketStatus.Completed) {
             return (
-                <Badge color="success">RenamedSuccess</Badge>
+                <Badge color="success">Renamed Success</Badge>
             )
         } else if (status === TicketStatus.RenamedFail) {
             return (
-                <Badge color="danger">RenamedFail</Badge>
+                <Badge color="danger">Renamed Fail</Badge>
             )
         }
     }

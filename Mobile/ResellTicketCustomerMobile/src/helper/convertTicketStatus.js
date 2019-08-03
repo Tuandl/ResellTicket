@@ -23,11 +23,11 @@ function toString(status) {
         case TicketStatus.RENAMED:
             return 'Renamed';
         case TicketStatus.COMPLETED:
-            return 'RenamedSuccess';
+            return 'Renamed Success';
         case TicketStatus.RENAMEDSUCESS:
-            return 'RenamedSuccess';
+            return 'Renamed Success';
         case TicketStatus.RENAMEDFAIL:
-            return 'RenamedFail';
+            return 'Renamed Fail';
         default:
             return 'Expired';
     }

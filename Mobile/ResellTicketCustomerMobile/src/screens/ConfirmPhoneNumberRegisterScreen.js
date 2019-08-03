@@ -5,10 +5,14 @@ import {
     View,
     ImageBackground,
     Dimensions,
+    TouchableOpacity
 } from 'react-native';
 import { Input, Button, Icon } from 'react-native-elements';
 import Api from './../service/Api';
 import { RNToasty } from 'react-native-toasty';
+import PhoneInput from 'react-native-phone-input';
+import CountryPicker from 'react-native-country-picker-modal';
+
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -25,22 +29,51 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
             password: '',
             login_failed: false,
             showLoading: false,
+            cca2: 'US',
         };
 
         this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
         this.submitRegisterCredentials = this.submitRegisterCredentials.bind(this);
+        this.onPressFlag = this.onPressFlag.bind(this);
+        this.selectCountry = this.selectCountry.bind(this);
+        this.onSelectedContry = this.onSelectedContry.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({
+            pickerData: this.phone.getPickerData(),
+        });
+    }
+
+    onPressFlag() {
+        this.countryPicker.openModal();
+    }
+
+    selectCountry(country) {
+        this.phone.selectCountry(country.cca2.toLowerCase());
+        console.log("1234", this.phone.selectCountry(country.cca2.toLowerCase()));
+        console.log("1234", this.phone.getDialCode());
+        this.setState({ cca2: country.cca2 });
+    }
+
+    onSelectedContry(country) {
+        console.log('onSelectedCountry', country);
+        if (this.phone) {
+            console.log('test', this.phone.getValue());
+        }
     }
 
     validatePhoneNumber(phoneNumber) {
         let isValid = true;
-
-        if(!phoneNumber) {
+        if (!phoneNumber && phoneNumber.length < 12) {
             isValid = false;
         }
         // else {
         //     var regex = new RegExp(/\d[0-9]{9,12}/gm);
         //     isValid = regex.test(phoneNo);
         // }
+
+
 
         this.setState({
             phoneNumber_valid: isValid,
@@ -51,37 +84,45 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
     }
 
     async submitRegisterCredentials() {
-        const { phoneNumber } = this.state;
-        //console.log(this.state);
-        this.setState({
-            showLoading: true,
-        });
+        
+        this.validatePhoneNumber(this.state.phoneNumber);
+        if (this.state.phoneNumber_valid) {
+            this.setState({
+                showLoading: true,
+            });
 
-        const data = {
-            phoneNumber: phoneNumber
-        };
+            const data = {
+                phoneNumber: this.state.phoneNumber.replace('+', '') 
+            };
+            console.log("Phone number Data", data);
 
-        try {
-            const response = await Api.post('api/customer/checkPhone', data);
-            
-            console.log("Phone number", phoneNumber)
-            if(response.status === 200) {
-                RNToasty.Success({
-                    title: 'Phone number is valid',
-                });
-                this.props.navigation.navigate('Register', { phoneNumber: phoneNumber });
-            } else {
-                RNToasty.Error({
-                    title: 'Phone Number is existed',
+            try {
+                const response = await Api.post('api/customer/checkPhone', data);
+
+                console.log("Phone number", data);
+                if (response.status === 200) {
+                    RNToasty.Success({
+                        title: 'Phone number is valid',
+                    });
+                    this.props.navigation.navigate('Register', { phoneNumber: this.state.phoneNumber });
+                } else {
+                    RNToasty.Error({
+                        title: 'Phone Number is existed',
+                    });
+                }
+            } catch (err) {
+                console.error('Phone Number is existed', err);
+            } finally {
+                this.setState({
+                    showLoading: false,
                 });
             }
-        } catch(err) {
-            console.error('Phone Number is existed', err);
-        } finally {
-            this.setState({
-                showLoading: false,
+        } else {
+            RNToasty.Error({
+                title: 'Phone Number is not valid',
             });
         }
+
     }
 
     render() {
@@ -97,7 +138,31 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                             </View>
                         </View>
                         <View style={styles.registerInput}>
-                            <Input
+                            <PhoneInput
+                                ref={(ref) => { this.phone = ref; }}
+                                onPressFlag={this.onPressFlag}
+                                initialCountry='vn'
+                                // onSelectCountry={this.onSelectedContry}
+                                textStyle={{fontSize: 20, color: 'white'}}
+                                autoFormat={true}
+                                onChangePhoneNumber={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
+                                allowZeroAfterCountryCode={false}
+                                textComponent={Input}
+                                textProps={{inputStyle:{ marginLeft: 10, color: 'white' }}}
+                            />
+
+                            <CountryPicker
+                                ref={(ref) => {
+                                    this.countryPicker = ref;
+                                }}
+                                onChange={value => { this.selectCountry(value) }}
+                                translation="eng"
+                                cca2={this.state.cca2}
+                            >
+                                <View />
+                            </CountryPicker>
+                            
+                            {/* <Input
                                 leftIcon={
                                     <Icon
                                         name="user-o"
@@ -107,7 +172,7 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                                     />
                                 }
                                 containerStyle={{ marginVertical: 10 }}
-                                onChangeText={phoneNumber => {this.setState({ phoneNumber: phoneNumber })}}
+                                onChangeText={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
                                 value={phoneNumber}
                                 inputStyle={{ marginLeft: 10, color: 'white' }}
                                 keyboardAppearance="light"
@@ -127,8 +192,9 @@ export default class ConfirmPhoneNumberRegisterScreen extends Component {
                                 errorMessage={
                                     phoneNumber_valid ? null : 'Please enter a valid phone number'
                                 }
-                            />
+                            /> */}
                         </View>
+
                         <Button
                             title="REGISTER"
                             activeOpacity={1}
@@ -204,7 +270,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: -70,
-
+        color: 'white',
+        fontSize: 15,
     },
     footerView: {
         marginTop: 0,
@@ -212,4 +279,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    info: {
+        // width: 200,
+        borderRadius: 5,
+        backgroundColor: "#f0f0f0",
+        padding: 10,
+        marginTop: 20
+    }
 });

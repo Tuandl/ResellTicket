@@ -18,6 +18,7 @@ namespace Service.Services
         TransportationRowViewModel FindTransportationById(int id);
         string UpdateTransportation(TransportationUpdateViewModel model);
         string DeleteTransportation(TransportationUpdateViewModel model);
+        string DeleteOneTransportation(int Id);
     }
     public class TransportationService : ITransportationService
     {
@@ -156,5 +157,24 @@ namespace Service.Services
             return string.Empty;
 
         }
+
+        public string DeleteOneTransportation(int Id)
+        {
+            var existedTransportation = _transportationRepository.Get(x => x.Deleted == false && x.Id == Id);
+            if (existedTransportation == null)
+            {
+                return "Not found Transportation";
+            }
+            else
+            {
+                existedTransportation.Deleted = true;
+                _transportationRepository.Update(existedTransportation);
+                _unitOfWork.CommitChanges();
+            }
+
+
+            return "";
+        }
+
     }
 }

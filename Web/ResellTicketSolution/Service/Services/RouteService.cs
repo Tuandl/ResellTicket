@@ -38,9 +38,9 @@ namespace Service.Services
         /// <param name="vehicleIds">list of vehicles allow to search</param>
         /// <returns>List search results.</returns>
         List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
-            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
-            int[] ticketTypeIds = null);
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
+            int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
+            int maxWaitingHours = 24, int[] ticketTypeIds = null);
 
         /// <summary>
         /// Create new Route base on Search result
@@ -66,7 +66,7 @@ namespace Service.Services
         /// <param name="status">optional. Status of routes</param>
         /// <returns>Route data table (route information and tickets in that route</returns>
         RouteDataTable GetRouteDataTable(int page, int pageSize,
-            RouteStatus? status, string userName); //admin
+            RouteStatus? status, string userName); //customer
 
         RouteDataTable GetLiabilityRoutes(string param, int page, int pageSize); // liability - admin
 
@@ -208,7 +208,8 @@ namespace Service.Services
                     ExpiredDate = x.RouteTickets.Min(routeTicket => routeTicket.Ticket.ExpiredDateTime),
                     //ResolveOption = x.ResolveOption,
                     //Check valid or not depen on ticket status
-                    IsValid = !x.RouteTickets.Any(routeTicket => (routeTicket.Ticket.Status != TicketStatus.Valid && routeTicket.Deleted == false)),
+                    IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Deleted == false && 
+                    (routeTicket.Ticket.Status != TicketStatus.Valid || routeTicket.Ticket.ArrivalDateTimeUTC < DateTime.UtcNow)),
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -271,6 +272,10 @@ namespace Service.Services
                 var routeTicketViewModel = _mapper.Map<RouteTicket, RouteTicketDetailViewModel>(routeTicket);
                 //routeTicketViewModel.SellerPhone = routeTicket.Ticket.Seller.PhoneNumber;
                 routeTicketViewModel.ExpiredDateTime = routeTicket.Ticket.ExpiredDateTime;
+                if(routeTicket.Ticket.Status == TicketStatus.Valid && routeTicket.Ticket.DepartureDateTimeUTC < DateTime.UtcNow)
+                {
+                    routeTicketViewModel.Status = 0;
+                }
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }
             routeViewModel.RouteTickets = routeViewModel.RouteTickets.OrderBy(x => x.Order).ToList();
@@ -289,6 +294,7 @@ namespace Service.Services
 
             var routeViewModel = _mapper.Map<Route, RouteDetailViewModel>(route);
             routeViewModel.BuyerPhone = route.Customer.PhoneNumber;
+            routeViewModel.BuyerName = route.Customer.FullName;
             //routeViewModel.ResolveOption = route.ResolveOption;
             routeViewModel.RouteTickets = new List<RouteTicketDetailViewModel>();
             routeViewModel.ResolveOptionLogs = new List<ResolveOptionLogViewModel>();
@@ -390,9 +396,9 @@ namespace Service.Services
         }
 
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
-            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, int maxCombinationTickets = 3,
-            int[] vehicleIds = null, int[] transportationIds = null, int maxWaitingHours = 24,
-            int[] ticketTypeIds = null)
+            DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
+            int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
+            int maxWaitingHours = 24, int[] ticketTypeIds = null)
         {
             //Convert fromDate, toDate into UTC
             var departureCity = _cityRepository.Get(x => x.Id == departureCityId && x.Deleted == false);
@@ -413,7 +419,8 @@ namespace Service.Services
                     (x.ExpiredDateTimeUTC == null || x.ExpiredDateTimeUTC >= DateTime.UtcNow) &&
                     (vehicleIds == null || vehicleIds.Length == 0 || vehicleIds.Contains(x.Transportation.VehicleId)) &&
                     (transportationIds == null || transportationIds.Length == 0 || transportationIds.Contains(x.TransportationId)) &&
-                    (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId))
+                    (ticketTypeIds == null || ticketTypeIds.Length == 0 || ticketTypeIds.Contains(x.TicketTypeId)) && 
+                    (searchedUsername == null || searchedUsername.Length == 0 || searchedUsername != x.Seller.Username)
                 );
 
             //return empty list in case of no input data
@@ -608,16 +615,10 @@ namespace Service.Services
                 var routeTickets = _routeTicketRepository.GetAllQueryable()
                 .Where(t => t.Deleted == false && t.RouteId == existedRoute.Id).ToList();
                 var tickets = new List<Ticket>();
-                var ticketList = _ticketRepository.GetAll();
+                //var ticketList = _ticketRepository.GetAll();
                 foreach (var routeTicket in routeTickets)
                 {
-                    foreach (var ticket in ticketList)
-                    {
-                        if (ticket.Id == routeTicket.TicketId)
-                        {
-                            tickets.Add(ticket);
-                        }
-                    }
+                    tickets.Add(routeTicket.Ticket);
                 }
 
                 var count = 0;
@@ -661,7 +662,7 @@ namespace Service.Services
                 //push noti for seller customer
                 foreach (var ticket in tickets)
                 {
-                    var message = "Ticket " + ticket.TicketCode + " has been bought";
+                    var message = "Ticket " + ticket.TicketCode + " has been bought. Please change this ticket information to finish the selling process.";
                     var customerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false).ToList();
                     List<string> deviceIds = new List<string>();
                     foreach (var cusDev in customerDevices)
@@ -673,6 +674,7 @@ namespace Service.Services
                     _notificationService.SaveNotification(
                         customerId: ticket.Seller.Id,
                         type: NotificationType.TicketIsBought,
+                        message: $"Your ticket {ticket.TicketCode} has been bought. Please change this ticket information to finish the selling process.",
                         data: new { ticketId = ticket.Id }
                     );
 
@@ -852,7 +854,7 @@ namespace Service.Services
                      TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
-            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.Id);
+            var routeOrderedVMs = routeVMs.OrderBy(x => x.Status);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
 
 
@@ -907,6 +909,10 @@ namespace Service.Services
             var staffId = _userRepository.Get(x => x.UserName == username).Id;
             var failRouteTicket = _routeTicketRepository.Get(x => x.Id == failRouteTicketId && x.Deleted == false);
             var replaceTicket = _ticketRepository.Get(x => x.Deleted == false && x.Id == replaceTicketId);
+            if(replaceTicket.Status != TicketStatus.Valid)
+            {
+                throw new InvalidOperationException();
+            }
             RouteTicket replaceRouteTicket = new RouteTicket()
             {
                 Id = 0,
@@ -927,6 +933,8 @@ namespace Service.Services
             replaceTicket.BuyerPassengerIdentify = failRouteTicket.Ticket.BuyerPassengerIdentify;
             replaceTicket.BuyerId = failRouteTicket.Ticket.BuyerId;
             _ticketRepository.Update(replaceTicket);
+            _unitOfWork.StartTransaction();
+            _unitOfWork.CommitChanges();
 
             //hoàn 1 phần tiền 
             decimal failTicketPrice = failRouteTicket.Ticket.SellingPrice;
@@ -955,10 +963,11 @@ namespace Service.Services
             _resolveOptionLogRepository.Add(resolveOptionLog);
             //}
 
-            _unitOfWork.CommitChanges();
+            //_unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
 
             //push noti to seller
-            var message = "Ticket " + replaceTicket.TicketCode + " has been bought";
+            var message = "Ticket " + replaceTicket.TicketCode + " has been bought. Please change this ticket information to finish the selling process.";
             var sellerDevices = replaceTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> sellerDeviceIds = new List<string>();
             foreach (var sellerDev in sellerDevices)
@@ -968,9 +977,15 @@ namespace Service.Services
 
             _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
 
+            _notificationService.SaveNotification(
+                customerId: replaceTicket.SellerId,
+                type: NotificationType.TicketIsBought,
+                message: $"Your ticket {replaceTicket.TicketCode} has been bought. Please change this ticket information to finish the selling process."
+            );
+
             //push noti to buyer
-            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode + ". " +
-                amount + "$ will be refunded within next 5 to 7 days.";
+            message = "Ticket " + failRouteTicket.Ticket.TicketCode + " is replaced by Ticket " + replaceTicket.TicketCode + ". $" +
+                amount.ToString("N2") + " will be refunded within next 5 to 7 working days.";
             var buyerDevices = failRouteTicket.Ticket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> buyerDeviceIds = new List<string>();
             foreach (var buyerDev in buyerDevices)
@@ -978,6 +993,19 @@ namespace Service.Services
                 buyerDeviceIds.Add(buyerDev.DeviceId);
             }
             _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+
+            //Save Notification
+            if(replaceTicket.BuyerId != null)
+            {
+                _notificationService.SaveNotification(
+                    customerId: replaceTicket.BuyerId.Value,
+                    type: NotificationType.RouteIsRefundReplaceTicket,
+                    message: $"Tikcet {failRouteTicket.Ticket.TicketCode} in Route {failRouteTicket.Route.Code} is replaced by Ticket {replaceTicket.TicketCode}. " +
+                        $"${amount.ToString("N2")} will be refunded within next 5 to 7 working days.",
+                    data: new { routeId = failRouteTicket.RouteId }
+                );
+            }
+
             _sendGridService.SendEmailReplacementForBuyer(failRouteTicket.TicketId, replaceTicketId);
         }
 

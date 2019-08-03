@@ -22,25 +22,26 @@ export default class TicketViewComponent extends Component {
 
     componentDidMount() {
         var { postedTicket } = this.props
-        if (moment(new Date()).isAfter(moment(postedTicket.expiredDateTime))) {
-            this.state.statusColor = 'lightgrey'
-            this.setState({
-                statusTemp: 0
-            }, () => this.setStatusColor())
-        } else {
-            this.setState({
-                statusTemp: postedTicket.status
-            }, () => this.setStatusColor())
-        }
+        this.setStatusColor()
+        // if (moment(new Date()).isAfter(moment(postedTicket.expiredDateTime))) {
+        //     this.state.statusColor = 'lightgrey'
+        //     this.setState({
+        //         statusTemp: 0
+        //     }, () => this.setStatusColor())
+        // } else {
+        //     this.setState({
+        //         statusTemp: postedTicket.status
+        //     }, () => this.setStatusColor())
+        // }
     }
 
     componentWillReceiveProps(props) {
-        
+
     }
 
     setStatusColor = () => {
-        var { statusTemp } = this.state;
-        switch (statusTemp) {
+        var { postedTicket } = this.props;
+        switch (postedTicket.status) {
             case convertTicketStatus.ticketStatus.PENDING:
                 this.setState({
                     statusColor: 'orange'
@@ -69,7 +70,7 @@ export default class TicketViewComponent extends Component {
         }
     }
 
-    
+
 
     editTicketOrViewTicketDetails = () => {
         const { postedTicket, navigate, refreshPostedTicket } = this.props;
@@ -90,8 +91,10 @@ export default class TicketViewComponent extends Component {
             arrivalDateTime,
             expiredDateTime,
             vehicle,
-            ticketCode } = this.props.postedTicket;
+            ticketCode,
+            status } = this.props.postedTicket;
         var { statusTemp, statusColor } = this.state;
+
 
         return (
             <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
@@ -128,17 +131,17 @@ export default class TicketViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('ddd, MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: statusColor }}>{convertTicketStatus.toString(statusTemp)}</Text>
+                            <Text style={{ fontSize: 12, color: statusColor }}>{convertTicketStatus.toString(status)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        {statusTemp !== TicketStatus.COMPLETED && statusTemp !== TicketStatus.RENAMEDFAIL && statusTemp !== TicketStatus.RENAMEDSUCESS? 
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
-                        : null    
-                    }
-                        
+                        {statusTemp !== TicketStatus.COMPLETED && statusTemp !== TicketStatus.RENAMEDFAIL && statusTemp !== TicketStatus.RENAMEDSUCESS ?
+                            <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
+                            : null
+                        }
+
                     </View>
                 </View>
             </TouchableNativeFeedback>

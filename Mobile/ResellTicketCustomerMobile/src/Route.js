@@ -8,6 +8,7 @@ import ResetPasswordScreen from "./screens/resetPassword/ResetPasswordScreen";
 import PostedTicketScreen from "./screens/postedTicket/PostedTicketScreen";
 import ProfileDetailScreen from "./screens/profile/ProfileDetailScreen";
 import ChangePasswordScreen from "./screens/profile/ChangePasswordScreen";
+import ConfirmPhone from "./ConfirmPhone";
 
 const MainRoot = createAppContainer(createStackNavigator(
     {
@@ -27,6 +28,7 @@ const MainRoot = createAppContainer(createStackNavigator(
         },
         ConfirmPhoneNumberRegister: {
             screen: ConfirmPhoneNumberRegisterScreen,
+            //screen: ConfirmPhone,
             path: 'confirmPhoneRegister'
         },
         Home: {
