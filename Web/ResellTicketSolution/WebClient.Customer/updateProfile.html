@@ -80,7 +80,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 var responeData = await respone.json();
                 document.getElementsByName("txtUsername")[0].value = usernameDefault;
                 document.getElementsByName("txtFullname")[0].value = responeData.fullName;
-                document.getElementsByName("txtPhoneNumber")[0].value = responeData.phoneNumber;
+                document.getElementsByName("txtPhoneNumber")[0].value = '+' + responeData.phoneNumber;
                 document.getElementsByName("txtEmail")[0].value = responeData.email;
                 document.getElementsByName("txtAddress")[0].value = responeData.address;
             }
