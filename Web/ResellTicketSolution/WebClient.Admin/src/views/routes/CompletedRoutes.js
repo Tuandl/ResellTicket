@@ -8,8 +8,8 @@ import NumberFormat from 'react-number-format';
 import PaginationView from '../Pagination/PaginationComponent';
 
 function RouteRow(props) {
-    const { route } = props;
-    const routeLink = `/completedRoute/${route.id}`
+    const { route, isDashboard } = props;
+    const routeLink = isDashboard ? `/dashboard/${route.id}` : `/completedRoute/${route.id}`
 
     function renderEarnedLoss(earnedLoss) {
         if(earnedLoss < 0) {
@@ -135,7 +135,7 @@ class CompletedRoute extends Component {
                                     </thead>
                                     <tbody>
                                         {routes.map((route, index) => (
-                                            <RouteRow key={index} route={route} index={index} parent={this} />
+                                            <RouteRow key={index} route={route} index={index} parent={this} isDashboard={this.props.isDashboard}/>
                                         ))}
                                     </tbody>
                                 </Table>

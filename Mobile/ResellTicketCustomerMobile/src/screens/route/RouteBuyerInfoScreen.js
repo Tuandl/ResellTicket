@@ -157,7 +157,7 @@ export default class RouteBuyerInfoScreen extends Component {
                         value={buyerPassengerPhone}
                         inputStyle={{ fontSize: 15, color: 'black' }}
                     />
-                    <Label style={styles.label}>New Passenger Identify</Label>
+                    <Label style={styles.label}>New Passenger Indentification</Label>
                     <Input
 
                         onChangeText={buyerPassengerIdentify => this.setState({ buyerPassengerIdentify })}

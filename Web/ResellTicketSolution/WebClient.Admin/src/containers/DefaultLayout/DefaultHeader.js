@@ -1,10 +1,10 @@
-import { AppAsideToggler, AppHeaderDropdown, AppNavbarBrand, AppSidebarToggler } from '@coreui/react';
+import { AppHeaderDropdown, AppSidebarToggler } from '@coreui/react';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Badge, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem } from 'reactstrap';
-import logo from '../../assets/img/brand/logo.svg';
-import sygnet from '../../assets/img/brand/sygnet.svg';
+import { NavLink, Link } from 'react-router-dom';
+import { DropdownItem, DropdownMenu, DropdownToggle, Nav } from 'reactstrap';
+import logo from '../../assets/img/brand/ticket-travel-logo.jpg';
+// import sygnet from '../../assets/img/brand/sygnet.svg';
 
 const propTypes = {
   children: PropTypes.node,
@@ -30,10 +30,13 @@ class DefaultHeader extends Component {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <AppNavbarBrand
-          full={{ src: logo, width: 89, height: 25, alt: 'CoreUI Logo' }}
-          minimized={{ src: sygnet, width: 30, height: 30, alt: 'CoreUI Logo' }}
-        />
+        <Link style={{width:155, height: 55}} className="navbar-brand">
+          <img src={logo} width="170" height="50" className="navbar-brand-full" alt="RESELL TICKET"/>
+        </Link>
+        {/* <AppNavbarBrand
+          full={{ src: logo, width: 89, height: 25, alt: 'RESELL TICKET' }}
+          minimized={{ src: sygnet, width: 30, height: 30, alt: 'RESELL TICKET' }}
+        /> */}
         <AppSidebarToggler className="d-md-down-none" display="lg" />
 
         {/* <Nav className="d-md-down-none" navbar>
@@ -48,9 +51,9 @@ class DefaultHeader extends Component {
           </NavItem>
         </Nav> */}
         <Nav className="ml-auto" navbar>
-          <NavItem className="d-md-down-none">
+          {/* <NavItem className="d-md-down-none">
             <NavLink to="#" className="nav-link"><i className="icon-bell"></i><Badge pill color="danger">5</Badge></NavLink>
-          </NavItem>
+          </NavItem> */}
           {/* <NavItem className="d-md-down-none">
             <NavLink to="#" className="nav-link"><i className="icon-list"></i></NavLink>
           </NavItem>
@@ -69,8 +72,8 @@ class DefaultHeader extends Component {
               <DropdownItem><i className="fa fa-comments"></i> Comments<Badge color="warning">42</Badge></DropdownItem> */}
               {/* <DropdownItem header tag="div" className="text-center"><strong>Settings</strong></DropdownItem> */}
               <NavLink to="/profile"><DropdownItem><i className="fa fa-user"></i> Profile</DropdownItem></NavLink>
-              <DropdownItem><i className="fa fa-wrench"></i> Settings</DropdownItem>
-              <DropdownItem><i className="fa fa-usd"></i> Payments<Badge color="secondary">42</Badge></DropdownItem>
+              {/* <DropdownItem><i className="fa fa-wrench"></i> Settings</DropdownItem>
+              <DropdownItem><i className="fa fa-usd"></i> Payments<Badge color="secondary">42</Badge></DropdownItem> */}
               {/* <DropdownItem><i className="fa fa-file"></i> Projects<Badge color="primary">42</Badge></DropdownItem> */}
               <DropdownItem divider />
               {/* <DropdownItem><i className="fa fa-shield"></i> Lock Account</DropdownItem> */}
@@ -78,7 +81,7 @@ class DefaultHeader extends Component {
             </DropdownMenu>
           </AppHeaderDropdown>
         </Nav>
-        <AppAsideToggler className="d-md-down-none" />
+        {/* <AppAsideToggler className="d-md-down-none" /> */}
         {/*<AppAsideToggler className="d-lg-none" mobile />*/}
       </React.Fragment>
     );

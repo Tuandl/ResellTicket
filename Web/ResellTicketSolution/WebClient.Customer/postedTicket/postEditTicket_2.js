@@ -7,6 +7,7 @@ import PassengerComponent from "../js/component/PassengerComponent.js";
 import { ConfirmDialogDeletePendingPostedTicket } from "./../js/component/dialogComponent/ConfirmDialogDeletePendingPostedTicket.js";
 import { ConfirmDialogConfirmTicketRename } from "./../js/component/dialogComponent/ConfirmDialogConfirmTicketRename.js";
 import { ConfirmDialogRefuseTicketRename } from "./../js/component/dialogComponent/ConfirmDialogRefuseTicketRename.js";
+import toastService from '../js/service/toastService.js';
 
 function postEditTicketController() {
 
@@ -30,8 +31,23 @@ function postEditTicketController() {
         dialogDeletePendingPostedTicket: 'dialog-delete-pending-posted-ticket',
         dialogConfirmTicketRename: 'dialog-confirm-ticket-rename',
         dialogRefuseTicketRename: 'dialog-refuse-ticket-rename',
-        arrivalDateContainer: 'arrivalDateContainer'
+        arrivalDateContainer: 'arrivalDateContainer',
     };
+
+    const alertId = {
+        transportation: 'transportation-alert',
+        ticketType: 'ticketType-alert',
+        departureCity: 'departureCity-alert',
+        departureStation: 'departureStation-alert',
+        departureDate: 'departureDate-alert',
+        arrivalCity: 'arrivalCity-alert',
+        arrivalStation: 'arrivalStation-alert',
+        arrivalDate: 'arrivalDate-alert',
+        ticketCode: 'ticketCode-alert',
+        passsengerName: 'passName-alert',
+        emailBooking: 'email-alert',
+        sellingPrice: 'price-alert'
+    }
 
     const elements = {
         dialogDeletePendingPostedTicket: document.getElementById(id.dialogDeletePendingPostedTicket),
@@ -265,10 +281,28 @@ function postEditTicketController() {
     }
 
     async function postTicket() {
-        const res = await apiService.post(appConfig.apiUrl.ticket, model);
-        if (res.status === 200) {
-            window.location.href = "postedTicket.html";
+        if (model.transportationId !== undefined && model.ticketTypeId !== undefined && model.departureStationId !== undefined && model.arrivalStationId !== undefined
+            && model.departureDateTime !== undefined && model.arrivalDateTime != undefined && model.ticketCode !== undefined && model.passengerName != undefined
+            && model.emailBooking !== undefined && model.sellingPrice !== undefined) {
+            const res = await apiService.post(appConfig.apiUrl.ticket, model);
+            if (res.status === 200) {
+                window.location.href = "postedTicket.html";
+            }
+        } else {
+            document.getElementById(alertId.transportation).style.display = model.transportationId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.ticketType).style.display = model.ticketTypeId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.departureCity).style.display = model.departureCityId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.departureStation).style.display = model.departureStationId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.departureDate).style.display = model.departureDateTime == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.arrivalCity).style.display = model.arrivalCityId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.arrivalStation).style.display = model.arrivalStationId == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.arrivalDate).style.display = model.arrivalDateTime == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.ticketCode).style.display = model.ticketCode == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.passsengerName).style.display = model.passengerName == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.emailBooking).style.display = model.emailBooking == undefined ? 'inline' : 'none'
+            document.getElementById(alertId.sellingPrice).style.display = model.sellingPrice == undefined ? 'inline' : 'none'
         }
+
     }
 
     async function editTicket() {

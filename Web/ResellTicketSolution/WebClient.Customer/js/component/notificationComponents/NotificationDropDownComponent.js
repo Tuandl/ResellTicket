@@ -40,8 +40,8 @@ export default class NotificationDropDownComponent {
             this.data = resposneObj.data;
             this.total = resposneObj.total;
         } catch (ex) {
-            toastService.error('An error occured when getting notification data.');
-            console.error('Get Notification Data', ex);
+            // toastService.error('An error occured when getting notification data.');
+            // console.error('Get Notification Data', ex);
         }
     }
 
