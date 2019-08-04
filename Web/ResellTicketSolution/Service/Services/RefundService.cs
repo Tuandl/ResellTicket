@@ -39,6 +39,7 @@ namespace Service.Services
         private readonly IUserRepository _userRepository;
         private readonly IRouteRepository _routeRepository;
         private readonly ISendGridService _sendGridService;
+        private readonly INotificationService _notificationService;
 
         public RefundService()
         {
@@ -47,7 +48,8 @@ namespace Service.Services
         public RefundService(IRefundRepository refundRepository, IRouteTicketRepository routeTicketRepository, ITicketRepository ticketRepository,
         IPaymentRepository paymentRepository, IMapper mapper, IUnitOfWork unitOfWork, IOptions<CrediCardSetting> options,
         IOneSignalService oneSignalService, IPayoutRepository payoutRespository, IResolveOptionLogRepository resolveOptionLogRepository,
-        IUserRepository userRepository, IRouteRepository routeRepository, ISendGridService sendGridService)
+        IUserRepository userRepository, IRouteRepository routeRepository, ISendGridService sendGridService,
+        INotificationService notificationService)
         {
             _refundRepository = refundRepository;
             _routeTicketRepository = routeTicketRepository;
@@ -62,6 +64,7 @@ namespace Service.Services
             _userRepository = userRepository;
             _routeRepository = routeRepository;
             _sendGridService = sendGridService;
+            _notificationService = notificationService;
         }
 
         public string RefundToTalMoneyToCustomer(int TicketId, ResolveOption resolveOption, string username)
@@ -144,16 +147,32 @@ namespace Service.Services
                     var message = "Buyer has canceled the transaction, ticket " + ticket.TicketCode + " is valid again.";
                     List<string> sellerTicketDeviceIds = GetCustomerDeviceIds(ticket, true);
                     _oneSignalService.PushNotificationCustomer(message, sellerTicketDeviceIds);
+
+                    //Save notification
+                    _notificationService.SaveNotification(
+                        customerId: ticket.SellerId,
+                        type: NotificationType.TicketIsRevalid,
+                        message: $"Your Ticket {ticket.TicketCode} is valid again due to buyer has canceled the transaction.",
+                        data: new { ticketId = ticket.Id }
+                    );
                 }
             }
-            //push noti to seller bought ticket
 
-            //push noti to seller bought this route
+            //push notification for buyer to notify his payment is refunded
             var messageRoute = "Route " + route.Code + " has been refunded. " +
-                (refund.Amount / 100) + "$ will be refunded within next 5 to 7 days.";
-            List<string> sellerRouteDeviceIds = GetCustomerDeviceIds(routeTicket.Ticket, true);
-            _oneSignalService.PushNotificationCustomer(messageRoute, sellerRouteDeviceIds);
-            //push noti to seller bought this route
+                (refund.Amount / 100).ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
+            List<string> buyerDeviceIds = GetCustomerDeviceIds(routeTicket.Ticket, false);
+            _oneSignalService.PushNotificationCustomer(messageRoute, buyerDeviceIds);
+
+            //Save notification for buyer
+            if(routeTicket.Ticket.BuyerId != null)
+            {
+                _notificationService.SaveNotification(
+                    customerId: routeTicket.Ticket.BuyerId.Value,
+                    type: NotificationType.RouteIsRefunded,
+                    message: $"Route {route.Code} has been refunded, {(refund.Amount / 100).ToString("N2")} will be refunded within next 5 to 7 working days.",
+                    data: new { routeId = route.Id });
+            }
 
             _sendGridService.SendEmailRefundForBuyerAllTicket(routeTicket.RouteId, remainRefund);
             return "";
@@ -229,17 +248,28 @@ namespace Service.Services
             _unitOfWork.CommitTransaction();
             //save log
 
-            //push noti to seller
+            //push noti to buyer
             var message = "Ticket " + failTicket.TicketCode + " has been refunded. " + 
-                (refund.Amount / 100) + "$ will be refunded within next 5 to 7 days.";
-            var sellerDevices = failTicket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
-            List<string> sellerDeviceIds = new List<string>();
-            foreach (var sellerDev in sellerDevices)
+                (refund.Amount / 100).ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
+            var buyerDevices = failTicket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
+            List<string> buyerDeviceIds = new List<string>();
+            foreach (var buyerDev in buyerDevices)
             {
-                sellerDeviceIds.Add(sellerDev.DeviceId);
+                buyerDeviceIds.Add(buyerDev.DeviceId);
             }
-            _oneSignalService.PushNotificationCustomer(message, sellerDeviceIds);
-            //push noti
+            _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
+
+            //Save Notification
+            if(failTicket.BuyerId != null)
+            {
+                _notificationService.SaveNotification(
+                    customerId: failTicket.BuyerId.Value,
+                    type: NotificationType.RouteIsRefundedFailTicket,
+                    message: $"You have a refund for ticket {failTicket.TicketCode} in route {failRouteTicket.Route.Code}. " +
+                        $"{(refund.Amount / 100).ToString("N2")} will be refunded within next 5 to 7 working days.",
+                    data: new { routeId = failRouteTicket.Route.Id }
+                );
+            }
 
             //send Email
             _sendGridService.SendEmailRefundForBuyerOneTicket(failTicketId);

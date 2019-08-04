@@ -66,6 +66,24 @@ namespace WebAPI.Admin.Controllers
             return Ok();
         }
 
+        [HttpPut]
+        [Route("delete")]
+        public ActionResult DeleteTransportation(int Id)
+        {
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest("Invalid Request");
+            //}
+
+            var updateResult = _transportationService.DeleteOneTransportation(Id);
+
+            if (!string.IsNullOrEmpty(updateResult))
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, updateResult);
+            }
+            return Ok();
+        }
+
     }
 
 }

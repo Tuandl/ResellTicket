@@ -16,6 +16,7 @@ namespace Service.Services
         List<StationRowViewModel> GetStationsByCityId(int cityId, string name, int ignoreStationId);
         StationRowViewModel FindStationById(int id);
         string UpdateStation(StationUpdateViewModel model);
+        string DeleteStation(int Id);
     }
     public class StationService : IStationService
     {
@@ -121,5 +122,24 @@ namespace Service.Services
 
             return string.Empty;
         }
+
+        public string DeleteStation(int Id)
+        {
+            var existedStation = _StationRepository.Get(x => x.Deleted == false && x.Id == Id);
+            if (existedStation == null)
+            {
+                return "Not found Station";
+            }
+            else
+            {
+                existedStation.Deleted = true;
+                _StationRepository.Update(existedStation);
+                _unitOfWork.CommitChanges();
+            }
+
+
+            return "";
+        }
+
     }
 }
