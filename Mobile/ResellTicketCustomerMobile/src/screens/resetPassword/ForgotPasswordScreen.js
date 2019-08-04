@@ -142,6 +142,11 @@ export default class ForgotPasswordScreen extends Component {
                                 onChange={value => { this.selectCountry(value) }}
                                 translation="eng"
                                 cca2={this.state.cca2}
+                                hideAlphabetFilter={true}
+                                filterable={true}
+                                filterPlaceholder="Search Country..."
+                                autoFocusFilter={true}
+                                showCallingCode={true}
                             >
                                 <View />
                             </CountryPicker>
