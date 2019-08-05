@@ -638,7 +638,8 @@ namespace Service.Services
 
             //Get Tickets base on fromDate and toDate
             var tickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.Deleted == false &&
+                .Where(x => x.Deleted == false 
+                    && x.SellerId != routeTicket.Ticket.BuyerId &&
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
                     (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&

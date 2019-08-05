@@ -14,7 +14,7 @@ import RouteStatus from './RouteStatus';
 import PaginationView from '../Pagination/PaginationComponent';
 
 function TicketRow(props) {
-    const { ticket } = props;
+    const { ticket, replaceTicketId } = props;
     // const getBadge = (status) => {
     //     if (status === TicketStatus.Valid) {
     //         return (
@@ -37,16 +37,20 @@ function TicketRow(props) {
             {/* <td>{ticket.sellerPhone}</td> */}
             <td>{ticket.vehicleName}</td>
             <td>{<NumberFormat value={ticket.sellingPrice} displayType={'text'} thousandSeparator={true} prefix={'$'} />}</td>
+            <td style={{ paddingLeft: 50 }}>
+                <Input type="radio" name="replace" value={ticket.id} onChange={() => replaceTicket()} />
+            </td>
             <td>
+                <Button color="primary" className="mr-1" disabled={replaceTicketId !== 0 ? false : true} onClick={props.openConfirmReplaceDialog}>
+                    <i className="fa fa-edit fa-lg mr-1"></i>Replace Ticket
+                </Button>
                 <Link to={ticketLink}>
                     <Button color="secondary">
                         <i className="fa fa-edit fa-lg mr-1"></i>Details
                     </Button>
                 </Link>
             </td>
-            <td style={{ paddingLeft: 50 }}>
-                <Input type="radio" name="replace" value={ticket.id} onChange={() => replaceTicket()} />
-            </td>
+
         </tr>
     )
 }
@@ -257,27 +261,30 @@ export default class ResolveRenamedFailTicket extends Component {
                                                 <th>Arrival</th>
                                                 <th>Vehicle</th>
                                                 <th>Price</th>
-                                                <th>Action</th>
                                                 <th>Select</th>
+                                                <th>Action</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {replaceTickets.map((ticket, index) => (
-                                                <TicketRow key={index} ticket={ticket} index={index} selectTicket={this.onSelectTicket} routeId={this.routeId} />
+                                                <TicketRow key={index} ticket={ticket} index={index} selectTicket={this.onSelectTicket} routeId={this.routeId}
+                                                    replaceTicketId={replaceTicketId} openConfirmReplaceDialog={this.openConfirmReplaceDialog}/>
                                             ))}
                                         </tbody>
                                     </Table>
+
                                     <div style={{ float: 'right' }}>
                                         <PaginationView currentPage={currentPage} pageCount={pageCount} goPage={this.goPage} />
                                     </div>
-                                    {replaceTicketId !== 0 ?
+                                    {/* {replaceTicketId !== 0 ?
                                         <Row className="float-right">
                                             <Col xs="12">
                                                 <Button type="button" color="success" onClick={this.openConfirmReplaceDialog}>Replace Ticket</Button>
                                             </Col>
                                         </Row>
                                         : null
-                                    }
+                                    } */}
 
                                 </CardBody> : null
                             }

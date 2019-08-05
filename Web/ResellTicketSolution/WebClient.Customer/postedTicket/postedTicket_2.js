@@ -68,7 +68,7 @@ function postedTicketController() {
         });
         model.total = response.length;
         if(model.total === 0){
-            document.getElementById(id.showEmptyList).style.display = 'block';
+            document.getElementById(id.showEmptyList).style.display = 'block';  
         } else {
             document.getElementById(id.showEmptyList).style.display = 'none';
         }
