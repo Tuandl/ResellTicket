@@ -840,21 +840,22 @@ namespace Service.Services
                      //ROUTETICKET.Ticket.Deleted == false &&
                      ROUTE.Status == RouteStatus.Completed &&
                      ROUTE.Code.ToLower().Contains(param.ToLower())
-                 orderby
-                    ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC descending
+                 //orderby
+                 //   ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC descending
 
                  select new RouteRowViewModel()
                  {
                      Id = ROUTE.Id,
                      Code = ROUTE.Code,
                      CreatedAt = ROUTE.CreatedAtUTC,
+                     UpdateAt = ROUTE.UpdatedAtUTC ?? ROUTE.CreatedAtUTC,
                      CustomerId = ROUTE.CustomerId,
                      Status = ROUTE.Status,
                      TotalAmount = ROUTE.TotalAmount,
                      TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                  }).Distinct();
 
-            var routeOrderedVMs = routeVMs.OrderBy(x => x.Status);
+            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.UpdateAt);
             var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
 
 

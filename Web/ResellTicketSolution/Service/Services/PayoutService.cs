@@ -140,7 +140,7 @@ namespace Service.Services
             payoutCreateIntoDatabase.StripePayoutId = Transfer.Id;
             payoutCreateIntoDatabase.TicketId = TicketId;
             payoutCreateIntoDatabase.PaymentId = paymentDetail.Id;
-            payoutCreateIntoDatabase.Amount = Transfer.Amount / 100;
+            payoutCreateIntoDatabase.Amount = amount;
             payoutCreateIntoDatabase.FeeAmount = ticket.SellingPrice * (ticket.CommissionPercent / 100);
             payoutCreateIntoDatabase.Description = "You receive money for ticket " + ticket.TicketCode + ". Thank you for using our service.";
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
@@ -157,7 +157,7 @@ namespace Service.Services
                 RouteId = route.Id,
                 TicketId = TicketId,
                 StaffId = staffId,
-                Amount = Transfer.Amount / 100
+                Amount = amount
             };
             _resolveOptionLogRepository.Add(log);
             _unitOfWork.CommitChanges();
@@ -172,7 +172,7 @@ namespace Service.Services
 
             //push noti to buyer
             var message = "Ticket " + ticket.TicketCode + " has been payout. $" +
-                (Transfer.Amount / 100).ToString("N2") + " has been tranfered to your Stripe account.";
+                (amount).ToString("N2") + " has been tranfered to your Stripe account.";
             var sellerDevices = ticket.Seller.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> sellerDeviceIds = new List<string>();
             foreach (var sellerDev in sellerDevices)
@@ -186,11 +186,11 @@ namespace Service.Services
             _notificationService.SaveNotification(
                 customerId: ticket.SellerId,
                 type: NotificationType.TicketIsPayouted,
-                message: $"Ticket {ticket.TicketCode} has been payout. ${(Transfer.Amount / 100).ToString("N2")} has been transfered to your Stripe account.",
+                message: $"Ticket {ticket.TicketCode} has been payout. ${(amount).ToString("N2")} has been transfered to your Stripe account.",
                 data: new { ticketId = ticket.Id, });
 
             //send Email
-            _sendGridService.SendEmailReceiptForSeller(TicketId, Transfer.Amount / 100);
+            _sendGridService.SendEmailReceiptForSeller(TicketId, amount);
 
             return "";
         }

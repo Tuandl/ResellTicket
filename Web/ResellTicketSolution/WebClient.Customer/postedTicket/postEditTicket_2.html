@@ -43,7 +43,7 @@
     <script src="../js/jquery-1.11.1.min.js"></script>
     <script src="../js/moment.js"></script>
     <script src="../js/bootstrap.js"></script>
-	<script src="/js/lib/pace.min.js"></script>
+    <script src="/js/lib/pace.min.js"></script>
     <script src="../helper/convertStatus.js"></script>
     <script src="../js/numeral.min.js"></script>
     <script src="../js/bootstrap-datetimepicker.min.js"></script>
@@ -68,7 +68,7 @@
     <!-- <script src="./postedTicket.js" type="text/babel"></script> -->
     <!-- <script src="../helper/Api.js"></script> -->
     <script src="./postEditTicket_2.js" type="module"></script>
-	<script type="module" src="/js/top-bar.js"></script>
+    <script type="module" src="/js/top-bar.js"></script>
     <!-- //js -->
 </head>
 
@@ -81,8 +81,8 @@
                             marketplace</span></a>
                 </h1>
             </div>
-			<div class="head-t" id="top-bar-container">
-			</div>
+            <div class="head-t" id="top-bar-container">
+            </div>
 
             <div class="header-ri">
                 <ul class="social-top">
@@ -97,8 +97,8 @@
                 </ul>
             </div>
 
-			<div class="nav-top" id="nav-bar-container">
-			</div>
+            <div class="nav-top" id="nav-bar-container">
+            </div>
 
         </div>
     </div>
@@ -139,10 +139,18 @@
                                 <div class="autocomplete" id="transportation">
                                     <!-- onkeyup="getTransportation()" -->
                                 </div>
+                                <div id="transportation-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 <label>Ticket Type</label>
                                 <div class="autocomplete" id="ticketType">
+                                </div>
+                                <div id="ticketType-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
                                 </div>
                             </div>
                         </div>
@@ -151,16 +159,28 @@
                                 <label>Departure City</label>
                                 <div class="autocomplete" id="departureCity">
                                 </div>
+                                <div id="departureCity-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 <label>Departure Station</label>
                                 <div class="autocomplete" id="departureStation">
+                                </div>
+                                <div id="departureStation-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
                                 </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 <label>Departure Date</label>
                                 <input type="text" placeholder="Departure Date" id="departureDate"
                                     class="form-control" />
+                                <div id="departureDate-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                                 <!-- onblur="setDepartureDate()" -->
                             </div>
                         </div>
@@ -169,35 +189,63 @@
                                 <label>Arrival City</label>
                                 <div class="autocomplete" id="arrivalCity">
                                 </div>
+                                <div id="arrivalCity-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-4 col-md-4">
                                 <label>Arrival Station</label>
                                 <div class="autocomplete" id="arrivalStation">
+                                </div>
+                                <div id="arrivalStation-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
                                 </div>
                             </div>
                             <div class="col-sm-4 col-md-4" id="arrivalDateContainer">
                                 <label>Arrival Date</label>
                                 <input type="text" placeholder="Arrival Date" id="arrivalDate" class="form-control"
                                     disabled>
+                                <div id="arrivalDate-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                         </div>
                         <div class="row" style="margin-top: 30px">
                             <div class="col-sm-6 col-md-3">
                                 <label>Ticket Code</label>
                                 <input type="text" placeholder="Ticket Code" id="ticketCode" class="form-control" />
+                                <div id="ticketCode-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-3">
                                 <label>Passenger Name</label>
                                 <input type="text" placeholder="Passenger Name" id="passengerName"
                                     class="form-control" />
+                                <div id="passName-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-3">
                                 <label>Email Booking</label>
                                 <input type="text" placeholder="Email Booking" id="emailBooking" class="form-control" />
+                                <div id="email-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
                             <div class="col-sm-6 col-md-3">
                                 <label>Selling Price</label>
                                 <input type="text" placeholder="Selling Price" id="sellingPrice" class="form-control" />
+                                <div id="price-alert"
+                                    style="font-size: 12px; display: none; font-style: italic; color: red; float: right;">
+                                    Required
+                                </div>
                             </div>
 
                         </div>
@@ -227,15 +275,15 @@
                         </div>
                     </div>
                 </div>
-					<div class="row margin-bottom-20">
-						<div class="col-sm-12 text-center">
-								<button type="button" class="btn text-center" data-dismiss="modal" id="btn-close">Close</button>
-						</div>
-					</div>	
+                <div class="row margin-bottom-20">
+                    <div class="col-sm-12 text-center">
+                        <button type="button" class="btn text-center" data-dismiss="modal" id="btn-close">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <!--footer-->
     <div class="footer">
         <div class="container">

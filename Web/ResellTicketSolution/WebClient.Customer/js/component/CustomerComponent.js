@@ -53,7 +53,7 @@ class CustomerComponent {
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">New Passenger Identify:</label>
+                                        <label class="control-label col-sm-3">New Passenger Identification:</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" placeholder="Passenger Identify" id="passengerIdentify"/>
                                         </div>	

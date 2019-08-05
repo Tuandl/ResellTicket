@@ -332,7 +332,7 @@ class PayoutRefundDetailRoute extends Component {
                                                     <i className="fa fa-dollar fa-lg mr-1"></i>Refund Total Amount
                                                 </Button> : ''
                                         }
-                                        <Button color="secondary" className="ml-1 float-right" onClick={() => this.goBack()}>Back</Button>
+                                        <Button color="secondary" className="mr-1 float-right" onClick={() => this.goBack()}>Back</Button>
                                     </Col>
                                 </Row>
                             </CardBody>

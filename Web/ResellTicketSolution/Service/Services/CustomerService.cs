@@ -451,10 +451,10 @@ namespace Service.Services
                     )
                 .Union(
                     from PO in _payoutRepository.GetAllQueryable()
-                    join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
-                    join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
-                    join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
-                    where Cus.Username == username
+                    //join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
+                    //join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+                    //join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+                    where PO.Ticket.Seller.Username == username
                     select new TransactionDataTable()
                     {
                         Amount = PO.Amount,
