@@ -322,7 +322,7 @@ class Dashboard extends Component {
                         </Card>
                     </Col>
                 </Row>
-                    <CompletedRoute />
+                <CompletedRoute isDashboard={true}/>
             </div>
         );
     }

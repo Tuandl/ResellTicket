@@ -80,7 +80,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                 var responeData = await respone.json();
                 document.getElementsByName("txtUsername")[0].value = usernameDefault;
                 document.getElementsByName("txtFullname")[0].value = responeData.fullName;
-                document.getElementsByName("txtPhoneNumber")[0].value = responeData.phoneNumber;
+                document.getElementsByName("txtPhoneNumber")[0].value = '+' + responeData.phoneNumber;
                 document.getElementsByName("txtEmail")[0].value = responeData.email;
                 document.getElementsByName("txtAddress")[0].value = responeData.address;
             }
@@ -180,7 +180,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     method: "PUT",
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('TOKEN')
                     },
                     body: JSON.stringify(data)
                 });
@@ -209,34 +210,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <input type="text" placeholder="Username" name="txtUsername" readonly>
                         <div class="clearfix"></div>
                     </div>
-                    <label>Full Name:</label>
-                    <div class="key">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                        <input type="text" placeholder="Full Name" name="txtFullname">
-                        <div class="clearfix"></div>
-                    </div>
-                    <div id="fullname-alert" style="display: none" class="alert alert-danger" role="alert">
-                        Full name must have 6 - 100 digits!!
-                    </div>
-
-                    <label>Email:</label>
-                    <div class="key">
-                        <i class="fa fa-envelope" aria-hidden="true"></i>
-                        <input type="text" placeholder="Email" name="txtEmail">
-                        <div class="clearfix"></div>
-                    </div>
-                    <div id="email-alert" style="display: none" class="alert alert-danger" role="alert">
-                        Please enter a valid email !!!
-                    </div>
-                    <label>Address:</label>
-                    <div class="key">
-                        <i class="fa fa-pinterest-p" aria-hidden="true"></i>
-                        <input type="text" placeholder="Address" name="txtAddress">
-                        <div class="clearfix"></div>
-                    </div>
-                    <div id="address-alert" style="display: none" class="alert alert-danger" role="alert">
-                        Address must be valid !!
-                    </div>
                     <label>Phone Number:</label>
                     <div class="key">
                         <i class="fa fa-phone" aria-hidden="true"></i>
@@ -246,6 +219,35 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     <div id="update-alert" style="display: none" class="alert alert-danger" role="alert">
                         Username is existed or OTP number is wrong!!
                     </div>
+                    <label>Full Name:</label>
+                    <div class="key">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        <input type="text" placeholder="Full Name" name="txtFullname" style="color: black">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="fullname-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Full name must have 6 - 100 digits!!
+                    </div>
+
+                    <label>Email:</label>
+                    <div class="key">
+                        <i class="fa fa-envelope" aria-hidden="true"></i>
+                        <input type="text" placeholder="Email" name="txtEmail" style="color: black">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="email-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Please enter a valid email !!!
+                    </div>
+                    <label>Address:</label>
+                    <div class="key">
+                        <i class="fa fa-book" aria-hidden="true"></i>
+                        <input type="text" placeholder="Address" name="txtAddress" style="color: black">
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="address-alert" style="display: none" class="alert alert-danger" role="alert">
+                        Address must be valid !!
+                    </div>
+                    
                     <div id="success-alert" style="display: none" class="alert alert-success" role="alert">
                         Update Profile success !!
                     </div>

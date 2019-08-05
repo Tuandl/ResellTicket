@@ -4182,3 +4182,7 @@ input[type=number]:disabled {
         float: left;
     }
 }
+
+.iti.iti--allow-dropdown {
+    width: 100%;
+}

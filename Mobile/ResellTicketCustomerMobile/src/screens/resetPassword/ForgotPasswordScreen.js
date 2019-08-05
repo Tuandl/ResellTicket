@@ -3,6 +3,8 @@ import { Dimensions, ImageBackground, StyleSheet, Text, View } from 'react-nativ
 import { Button, Icon, Input } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from '../../service/Api';
+import PhoneInput from 'react-native-phone-input';
+import CountryPicker from 'react-native-country-picker-modal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -17,16 +19,36 @@ export default class ForgotPasswordScreen extends Component {
             phoneNumber: '',
             phoneNumber_valid: true,
             showLoading: false,
+            cca2: 'US',
         };
 
         this.validatePhoneNumber = this.validatePhoneNumber.bind(this);
         this.submitForgotPassword = this.submitForgotPassword.bind(this);
+        this.onPressFlag = this.onPressFlag.bind(this);
+        this.selectCountry = this.selectCountry.bind(this);
     }
+
+    componentDidMount() {
+        this.setState({
+            pickerData: this.phone.getPickerData(),
+        });
+    }
+
+    onPressFlag() {
+        this.countryPicker.openModal();
+    }
+
+    selectCountry(country) {
+        this.phone.selectCountry(country.cca2.toLowerCase());
+        this.setState({ cca2: country.cca2 });
+    }
+
+
 
     validatePhoneNumber(phoneNumber) {
         let isValid = true;
 
-        if(!phoneNumber) {
+        if (!phoneNumber) {
             isValid = false;
         }
         else {
@@ -43,9 +65,8 @@ export default class ForgotPasswordScreen extends Component {
     }
 
     async submitForgotPassword() {
-        const { phoneNumber } = this.state;
-
-        if(!this.validatePhoneNumber(phoneNumber)) {
+        const phoneNumber = this.state.phoneNumber.replace('+', '');
+        if (!this.validatePhoneNumber(phoneNumber)) {
             RNToasty.Error({
                 title: "Phone number is invalid!"
             });
@@ -62,25 +83,25 @@ export default class ForgotPasswordScreen extends Component {
 
         try {
             const response = await Api.post('api/customer/forget-password', data);
-            
-            if(response.status === 200) {
+
+            if (response.status === 200) {
                 RNToasty.Success({
                     title: 'OTP Sent!',
                 });
                 this.props.navigation.navigate('ResetPassword', { phoneNumber: phoneNumber });
-            } 
-            else if(response.status === 406) {
+            }
+            else if (response.status === 406) {
                 RNToasty.Error({
                     title: 'There is no account with this phone number.',
                 });
-            } 
+            }
             else {
                 console.log(response);
                 RNToasty.Error({
                     title: 'Error!',
                 });
             }
-        } catch(err) {
+        } catch (err) {
             console.error('Error', err);
         } finally {
             this.setState({
@@ -102,37 +123,33 @@ export default class ForgotPasswordScreen extends Component {
                             </View>
                         </View>
                         <View style={styles.forgotPasswordInput}>
-                            <Input
-                                leftIcon={
-                                    <Icon
-                                        name="phone"
-                                        type="font-awesome"
-                                        color="rgba(171, 189, 219, 1)"
-                                        size={25}
-                                    />
-                                }
-                                containerStyle={{ marginVertical: 10 }}
-                                onChangeText={phoneNumber => {this.setState({ phoneNumber: phoneNumber })}}
-                                value={phoneNumber}
-                                inputStyle={{ marginLeft: 10, color: 'white' }}
-                                keyboardAppearance="light"
-                                placeholder="Phone Number"
-                                autoFocus={false}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                keyboardType="number-pad"
-                                returnKeyType="next"
-                                ref={input => (this.phoneNumberInput = input)}
-                                onSubmitEditing={() => {
-                                    this.validatePhoneNumber(phoneNumber);
-                                }}
-                                blurOnSubmit={false}
-                                placeholderTextColor="white"
-                                errorStyle={{ textAlign: 'center', fontSize: 12 }}
-                                errorMessage={
-                                    phoneNumber_valid ? null : 'Please enter a valid phone number'
-                                }
+                            <PhoneInput
+                                ref={(ref) => { this.phone = ref; }}
+                                onPressFlag={this.onPressFlag}
+                                initialCountry='vn'
+                                textStyle={{ fontSize: 20, color: 'white' }}
+                                autoFormat={true}
+                                onChangePhoneNumber={phoneNumber => { this.setState({ phoneNumber: phoneNumber }) }}
+                                allowZeroAfterCountryCode={false}
+                                textComponent={Input}
+                                textProps={{ inputStyle: { marginLeft: 10, color: 'white' } }}
                             />
+
+                            <CountryPicker
+                                ref={(ref) => {
+                                    this.countryPicker = ref;
+                                }}
+                                onChange={value => { this.selectCountry(value) }}
+                                translation="eng"
+                                cca2={this.state.cca2}
+                                hideAlphabetFilter={true}
+                                filterable={true}
+                                filterPlaceholder="Search Country..."
+                                autoFocusFilter={true}
+                                showCallingCode={true}
+                            >
+                                <View />
+                            </CountryPicker>
                         </View>
                         <Button
                             title="SEND OTP"
@@ -157,6 +174,7 @@ export default class ForgotPasswordScreen extends Component {
                             <Button
                                 title="Login"
                                 type="clear"
+                                disabled={!phoneNumber_valid && phoneNumber.length < 11}
                                 activeOpacity={0.5}
                                 titleStyle={{ color: 'white', fontSize: 15 }}
                                 containerStyle={{ marginTop: -5 }}

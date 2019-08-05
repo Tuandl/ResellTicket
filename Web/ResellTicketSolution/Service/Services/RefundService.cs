@@ -100,7 +100,7 @@ namespace Service.Services
             RefundCreateViewModel refundCreate = new RefundCreateViewModel();
             refundCreate.PaymentId = paymentDetail.Id;
             refundCreate.StripeRefundId = refund.Id;
-            refundCreate.Amount = refund.Amount / 100; //refund all 
+            refundCreate.Amount = remainRefund; //refund all 
             refundCreate.Description = "You have a refund for route " + routeTicket.Route.Code + ". We are sorry for the inconvenience.";
 
             refundCreate.Status = RefundStatus.Success;
@@ -160,7 +160,7 @@ namespace Service.Services
 
             //push notification for buyer to notify his payment is refunded
             var messageRoute = "Route " + route.Code + " has been refunded. " +
-                (refund.Amount / 100).ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
+                remainRefund.ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
             List<string> buyerDeviceIds = GetCustomerDeviceIds(routeTicket.Ticket, false);
             _oneSignalService.PushNotificationCustomer(messageRoute, buyerDeviceIds);
 
@@ -170,7 +170,7 @@ namespace Service.Services
                 _notificationService.SaveNotification(
                     customerId: routeTicket.Ticket.BuyerId.Value,
                     type: NotificationType.RouteIsRefunded,
-                    message: $"Route {route.Code} has been refunded, {(refund.Amount / 100).ToString("N2")} will be refunded within next 5 to 7 working days.",
+                    message: $"Route {route.Code} has been refunded, {remainRefund.ToString("N2")} will be refunded within next 5 to 7 working days.",
                     data: new { routeId = route.Id });
             }
 
@@ -235,7 +235,7 @@ namespace Service.Services
                 RouteId = route.Id,
                 TicketId = failTicket.Id,
                 StaffId = staffId,
-                Amount = refund.Amount / 100
+                Amount = failTicket.SellingPrice
             };
             _resolveOptionLogRepository.Add(log);
             _unitOfWork.CommitChanges();
@@ -249,8 +249,8 @@ namespace Service.Services
             //save log
 
             //push noti to buyer
-            var message = "Ticket " + failTicket.TicketCode + " has been refunded. " + 
-                (refund.Amount / 100).ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
+            var message = "Ticket " + failTicket.TicketCode + " has been refunded. " +
+                failTicket.SellingPrice.ToString("N2") + "$ will be refunded within next 5 to 7 working days.";
             var buyerDevices = failTicket.Buyer.CustomerDevices.Where(x => x.IsLogout == false);
             List<string> buyerDeviceIds = new List<string>();
             foreach (var buyerDev in buyerDevices)
@@ -266,7 +266,7 @@ namespace Service.Services
                     customerId: failTicket.BuyerId.Value,
                     type: NotificationType.RouteIsRefundedFailTicket,
                     message: $"You have a refund for ticket {failTicket.TicketCode} in route {failRouteTicket.Route.Code}. " +
-                        $"{(refund.Amount / 100).ToString("N2")} will be refunded within next 5 to 7 working days.",
+                        $"{failTicket.SellingPrice.ToString("N2")} will be refunded within next 5 to 7 working days.",
                     data: new { routeId = failRouteTicket.Route.Id }
                 );
             }

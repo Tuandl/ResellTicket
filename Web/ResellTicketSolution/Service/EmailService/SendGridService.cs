@@ -236,8 +236,8 @@ namespace Service.EmailService
                 body = body.Replace("{customerEmail}", customerEmail);
                 body = body.Replace("{customerPhone}", customerPhone);
                 body = body.Replace("{Date}", date.ToString());
-                body = body.Replace("{subTotal}", totalAmount.ToString());
-                body = body.Replace("{Total}", totalAmount.ToString());
+                body = body.Replace("{subTotal}", totalAmount.ToString("N2"));
+                body = body.Replace("{Total}", totalAmount.ToString("N2"));
 
                 body = body.Replace("{Term}", SETTING.Value.Term);
                 body = body.Replace("{Title}", SETTING.Value.Title);
@@ -262,7 +262,7 @@ namespace Service.EmailService
                     ticketRow = ticketRow.Replace("{arrivalCity}", ticketRowViewModel.ArrivalCity);
                     ticketRow = ticketRow.Replace("{arrivalStation}", arrivalStation);
                     ticketRow = ticketRow.Replace("{arrivalTime}", ticketRowViewModel.ArrivalDateTime.ToString());
-                    ticketRow = ticketRow.Replace("{Amount}", amount.ToString());
+                    ticketRow = ticketRow.Replace("{Amount}", amount.ToString("N2"));
 
 
                 }

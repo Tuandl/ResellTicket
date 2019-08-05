@@ -1,8 +1,17 @@
 import { appConfig } from './../../constant/appConfig.js';
 import toastService from './toastService.js';
 import commonService from './commonService.js';
+import toastEnum from '../enum/toastEnum.js';
 
 const token = localStorage.getItem('TOKEN');
+
+function _redirectToLoginWithToastMessage() {
+    const params = {};
+    params[toastEnum.queryParamKey.message] = 'Please Login to use this feature.';
+    params[toastEnum.queryParamKey.type] = toastEnum.type.error;
+    const paramsString = commonService.getQueryString(params);
+    window.location.replace(appConfig.url.login + '?' + paramsString);
+}
 
 function Get(url, params) {
     return new Promise((resolve, reject) => {
@@ -18,7 +27,7 @@ function Get(url, params) {
         }).then((response) => {
             if (response.status === 401) {
                 localStorage.clear();
-                window.location.replace(appConfig.url.login);
+                _redirectToLoginWithToastMessage();
                 reject(response);
             }
             if (response.status === 200) {
@@ -50,7 +59,7 @@ function Post(url, data) {
         }).then((response) => {
             if (response.status === 401) {
                 localStorage.clear();
-                window.location.replace(appConfig.url.login);
+                _redirectToLoginWithToastMessage();
                 reject(response);
             }
             if (response.status === 200) {
@@ -82,7 +91,7 @@ function Put(url, data) {
         }).then((response) => {
             if (response.status === 401) {
                 localStorage.clear();
-                window.location.replace(appConfig.url.login);
+                _redirectToLoginWithToastMessage();
                 reject(response);
             }
             if (response.status === 200) {
@@ -113,7 +122,7 @@ function PutParams(url, params) {
         }).then((response) => {
             if (response.status === 401) {
                 localStorage.clear();
-                window.location.replace(appConfig.url.login);
+                _redirectToLoginWithToastMessage();
                 reject(response);
             }
             if (response.status === 200) {
@@ -144,7 +153,7 @@ function Delete(url, params) {
         }).then((response) => {
             if (response.status === 401) {
                 localStorage.clear();
-                window.location.replace(appConfig.url.login);
+                _redirectToLoginWithToastMessage();
                 reject(response);
             }
             if (response.status === 200) {
