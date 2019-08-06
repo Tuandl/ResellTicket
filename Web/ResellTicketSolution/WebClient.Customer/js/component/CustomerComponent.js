@@ -29,33 +29,33 @@ class CustomerComponent {
                             <form class="form-horizontal">
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">New Passenger Name:</label>
-                                        <div class="col-sm-9">
+                                        <label class="control-label col-sm-4">New Passenger Name:</label>
+                                        <div class="col-sm-8">
                                             <input type="text" class="form-control" placeholder="Passenger Name" id="passengerName"/>
                                         </div>	
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">New Passenger Email:</label>
-                                        <div class="col-sm-9">
+                                        <label class="control-label col-sm-4">New Passenger Email:</label>
+                                        <div class="col-sm-8">
                                             <input type="text" class="form-control" placeholder="Passenger Email" id="passengerEmail"/>
                                         </div>	
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">New Passenger Phone:</label>
-                                        <div class="col-sm-9">
+                                        <label class="control-label col-sm-4">New Passenger Phone:</label>
+                                        <div class="col-sm-8">
                                             <input type="text" class="form-control" placeholder="Passenger Phone" id="passengerPhone"/>
                                         </div>	
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">New Passenger Identification:</label>
-                                        <div class="col-sm-9">
-                                            <input type="text" class="form-control" placeholder="Passenger Identify" id="passengerIdentify"/>
+                                        <label class="control-label col-sm-4">New Passenger Identification:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" placeholder="Passenger Identification" id="passengerIdentify"/>
                                         </div>	
                                     </div>
                                 </div>
