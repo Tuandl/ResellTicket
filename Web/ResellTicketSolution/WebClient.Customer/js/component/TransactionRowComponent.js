@@ -19,7 +19,7 @@ class TransactionRowComponent {
             case "Payout":
                 return `<span class="label label-success" style="font-size: 17px;" >${type}</span>`;
             case "Refund":
-                return `<span class="label label-success" style="font-size: 17px;" >${type}</span>`;
+                return `<span class="label label-warning" style="font-size: 17px;" >${type}</span>`;
         }
     }
 

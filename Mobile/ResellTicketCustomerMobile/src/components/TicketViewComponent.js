@@ -72,13 +72,13 @@ export default class TicketViewComponent extends Component {
 
 
 
-    editTicketOrViewTicketDetails = () => {
+    editTicketOrViewTicketDetails = (status) => {
         const { postedTicket, navigate, refreshPostedTicket } = this.props;
         var { statusTemp } = this.state;
-        if (statusTemp !== 1) {
-            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
-        } else {
+        if (status === convertTicketStatus.ticketStatus.PENDING) {
             navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
+        } else {
+            navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
         }
 
     }
@@ -97,7 +97,7 @@ export default class TicketViewComponent extends Component {
 
 
         return (
-            <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
+            <TouchableNativeFeedback onPress={() => this.editTicketOrViewTicketDetails(status)}>
                 <View style={styles.wrapper}>
                     <View style={styles.ticketHeader}>
                         <View style={{ flexDirection: 'row' }}>
