@@ -16,23 +16,12 @@ export default class TicketViewComponent extends Component {
         super(props);
         this.state = {
             statusColor: '',
-            statusTemp: 0
         }
     }
 
     componentDidMount() {
         var { postedTicket } = this.props
-        this.setStatusColor()
-        // if (moment(new Date()).isAfter(moment(postedTicket.expiredDateTime))) {
-        //     this.state.statusColor = 'lightgrey'
-        //     this.setState({
-        //         statusTemp: 0
-        //     }, () => this.setStatusColor())
-        // } else {
-        //     this.setState({
-        //         statusTemp: postedTicket.status
-        //     }, () => this.setStatusColor())
-        // }
+        this.setStatusColor();
     }
 
     componentWillReceiveProps(props) {
@@ -72,10 +61,9 @@ export default class TicketViewComponent extends Component {
 
 
 
-    editTicketOrViewTicketDetails = (status) => {
+    editTicketOrViewTicketDetails = () => {
         const { postedTicket, navigate, refreshPostedTicket } = this.props;
-        var { statusTemp } = this.state;
-        if (status === convertTicketStatus.ticketStatus.PENDING) {
+        if (postedTicket.status !== convertTicketStatus.ticketStatus.PENDING) {
             navigate('PostEditTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
         } else {
             navigate('DetailTicket', { refreshPostedTicket: refreshPostedTicket, ticketId: postedTicket.id })
@@ -93,11 +81,11 @@ export default class TicketViewComponent extends Component {
             vehicle,
             ticketCode,
             status } = this.props.postedTicket;
-        var { statusTemp, statusColor } = this.state;
+        var { statusColor } = this.state;
 
 
         return (
-            <TouchableNativeFeedback onPress={() => this.editTicketOrViewTicketDetails(status)}>
+            <TouchableNativeFeedback onPress={this.editTicketOrViewTicketDetails}>
                 <View style={styles.wrapper}>
                     <View style={styles.ticketHeader}>
                         <View style={{ flexDirection: 'row' }}>
@@ -137,7 +125,7 @@ export default class TicketViewComponent extends Component {
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        {statusTemp !== TicketStatus.COMPLETED && statusTemp !== TicketStatus.RENAMEDFAIL && statusTemp !== TicketStatus.RENAMEDSUCESS ?
+                        {status !== TicketStatus.COMPLETED && status !== TicketStatus.RENAMEDFAIL && status !== TicketStatus.RENAMEDSUCESS ?
                             <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format('ddd, MMM DD YYYY HH:mm')}</Text>
                             : null
                         }

@@ -20,7 +20,7 @@ function TicketRow(props) {
             )
         }
     }
-    const ticketLink = `/validTicket/${ticket.id}`
+    const ticketLink = `/boughtTicket/${ticket.id}`
     return (
         <tr>
             <th>{props.index + 1}</th>

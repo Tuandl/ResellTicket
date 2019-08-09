@@ -30,7 +30,7 @@ class DefaultHeader extends Component {
     return (
       <React.Fragment>
         <AppSidebarToggler className="d-lg-none" display="md" mobile />
-        <Link style={{width:155, height: 55}} className="navbar-brand">
+        <Link style={{width:155, height: 55}} className="navbar-brand" to="#">
           <img src={logo} width="170" height="50" className="navbar-brand-full" alt="RESELL TICKET"/>
         </Link>
         {/* <AppNavbarBrand
