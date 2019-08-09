@@ -945,7 +945,7 @@ namespace Service.Services
             //if (replaceTicketPrice <= failTicketPrice)
             //{
             var amount = failTicketPrice - replaceTicketPrice;
-            RefundAfterReplaceTicket(amount, paymentDetail);
+            RefundAfterReplaceTicket(amount, paymentDetail, failRouteTicket.Route.Code, failRouteTicket.Ticket.TicketCode, replaceTicket.TicketCode);
             //Update lại total Amount of route và payment
             var route = failRouteTicket.Route;
             //route.ResolveOption = ResolveOption.REPLACE;
@@ -1010,7 +1010,7 @@ namespace Service.Services
             _sendGridService.SendEmailReplacementForBuyer(failRouteTicket.TicketId, replaceTicketId);
         }
 
-        public void RefundAfterReplaceTicket(decimal amount, Payment payment)
+        public void RefundAfterReplaceTicket(decimal amount, Payment payment, string routeCode,string codeFaill, string codeReplace)
         {
             //refund lại tiền
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
@@ -1026,6 +1026,8 @@ namespace Service.Services
             refundAddIntoData.PaymentId = payment.Id;
             refundAddIntoData.StripeRefundId = refund.Id;
             refundAddIntoData.Amount = amount;
+            refundAddIntoData.Description = "Ticket " + codeFaill + " in Route " + routeCode + " is replaced by Ticket " + 
+                codeReplace + ". We sorry for the inconvenience.";
             refundAddIntoData.Status = RefundStatus.Success;
             _refundRepository.Add(refundAddIntoData);
             //

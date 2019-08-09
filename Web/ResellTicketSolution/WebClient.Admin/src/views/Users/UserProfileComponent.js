@@ -81,7 +81,8 @@ class UserProfileComponent extends Component {
     }
 
     onCancleUpdateProfile() {
-        this.props.history.goback();
+        //console.log(this.props)
+        this.props.history.goBack();
     }
 
     onCancleChangePass() {

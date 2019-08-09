@@ -77,7 +77,7 @@ function postEditTicketController() {
         initDepartureDateTimePicker();
         initArrivalCityAutoSuggest();
         initArrivalStationAutoSuggest();
-        ///initArrivalDateTimePicker();
+        initArrivalDateTimePicker();
         initTicketCodeInputField();
         initPassengerNameInputField();
         initEmailBookingInputField();

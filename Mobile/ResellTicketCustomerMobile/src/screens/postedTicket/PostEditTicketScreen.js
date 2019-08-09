@@ -524,10 +524,17 @@ export default class PostEditTicket extends Component {
                 })
                 navigation.state.params.refreshPostedTicket();
                 navigation.navigate('PostedTicket');
+            } else {
+                this.setState({
+                    isPostEditLoading: false
+                })
+                RNToasty.Error({
+                    title: 'Please input required fields and select what we suggest'
+                })
             }
         } else {
             RNToasty.Error({
-                title: 'Please input required fields'
+                title: 'Please input required fields and select what we suggest'
             })
         }
     }

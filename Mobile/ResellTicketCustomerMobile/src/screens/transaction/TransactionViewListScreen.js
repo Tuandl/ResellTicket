@@ -126,12 +126,20 @@ export default class TransactionViewListScreen extends Component {
                                     renderText={value => (
                                         <Text style={styles.text}>- ${value}</Text>
                                     )}
-                                /> : <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
+                                /> : null}
+
+                                {item.type == "Payout" ? <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
                                     decimalScale={2} decimalSeparator={'.'} allowNegative={false}
                                     renderText={value => (
                                         <Text style={styles.plus}>+ ${value}</Text>
                                     )}
-                                    />}
+                                /> : null}
+                                {item.type == "Refund" ? <NumberFormat value={item.amount} displayType={'text'} thousandSeparator={true}
+                                    decimalScale={2} decimalSeparator={'.'} allowNegative={false}
+                                    renderText={value => (
+                                        <Text style={styles.warm}>+ ${value}</Text>
+                                    )}
+                                /> : null}
 
 
                                 <Text style={styles.text2}>{moment(item.createdAtUTC).format(formatConstant.NOTIFICATION_TIME)}</Text>
@@ -206,6 +214,16 @@ const styles = StyleSheet.create({
         top: 12,
         width: 200,
         color: "#1faa00",
+        position: "absolute",
+        fontSize: 20,
+        right: 30,
+        fontWeight: "bold",
+        textAlign: "right"
+    },
+    warm: {
+        top: 12,
+        width: 200,
+        color: "#E6CF00",
         position: "absolute",
         fontSize: 20,
         right: 30,
