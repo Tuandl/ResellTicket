@@ -67,7 +67,7 @@ function indexController() {
             routeComponent.render();
             containerElement.appendChild(routeComponent.domElement);
         });
-        model.total = response.total;
+        model.total += response.total;
         if(model.total === 0) {
             document.getElementById(id.showEmptyList).style.display = 'block';
         }else{
