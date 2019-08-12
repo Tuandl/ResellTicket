@@ -29,7 +29,7 @@ class SellerTicketComponent {
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
                 // return `<span class="label label-success">Completed</span>`;
-                return `<span class="label label-success">Renamed Success</span>`;
+                return `<span class="label label-success">Payout</span>`;
             case ticketStatus.RenamedSuccess:
                 return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedFail:

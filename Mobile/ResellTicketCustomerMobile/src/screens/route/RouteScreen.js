@@ -73,7 +73,7 @@ class RouteScreen extends Component {
                     //isLoading: false
                 });
             }
-            this.total = response.data.data.length;
+            this.total += response.data.data.length;
             if (this.total === 0) {
                 this.setState({
                     isShowEmptyView: true,

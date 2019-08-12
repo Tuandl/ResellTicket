@@ -23,7 +23,7 @@ function toSeller(status) {
         case TicketStatus.RENAMED:
             return 'Renamed';
         case TicketStatus.COMPLETED:
-            return 'Renamed Success';
+            return 'Payout';
         case TicketStatus.RENAMEDSUCESS:
             return 'Renamed Success';
         case TicketStatus.RENAMEDFAIL:
@@ -46,7 +46,7 @@ function toBuyer(status, isRefunded) {
         case TicketStatus.RENAMED:
             return 'Renamed';
         case TicketStatus.COMPLETED:
-            return 'Payout';
+            return 'Renamed Success';
         case TicketStatus.RENAMEDSUCESS:
             return 'Renamed Success';
         case TicketStatus.RENAMEDFAIL:

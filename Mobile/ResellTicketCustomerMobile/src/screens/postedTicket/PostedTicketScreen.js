@@ -64,7 +64,7 @@ export default class PostedTicket extends Component {
                 postedTickets: [...this.state.postedTickets, ...res.data],
                 //isLoading: false,
             })
-            this.total = res.data.length;
+            this.total += res.data.length;
             if(this.total === 0){
                 this.setState({
                     isLoading: false,
