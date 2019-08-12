@@ -380,7 +380,7 @@ export default class PostEditTicket extends Component {
                                     onConfirm={this.handleArrivalDateTimePicked}
                                     onCancel={() => this.setState({ arrivalVisible: false })}
                                     mode={'datetime'}
-                                    minimumDate={departureDateTime === '' ? new Date() : new Date(moment(departureDateTime).format('YYYY-MM-DD'))}
+                                    minimumDate={departureDateTime === '' ? new Date() : new Date(moment(moment(departureDateTime).subtract(1, 'days')._d).format('YYYY-MM-DD'))}
                                 />
                                 <Right>
                                     <TouchableNativeFeedback onPress={() => this.setState({ arrivalVisible: true })}>

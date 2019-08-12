@@ -210,6 +210,7 @@ namespace Service.Services
                     //Check valid or not depen on ticket status
                     IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Deleted == false && 
                     (routeTicket.Ticket.Status != TicketStatus.Valid || routeTicket.Ticket.ArrivalDateTimeUTC < DateTime.UtcNow)),
+                    IsRefundAll = x.IsRefundAll
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -275,6 +276,11 @@ namespace Service.Services
                 if(routeTicket.Ticket.Status == TicketStatus.Valid && routeTicket.Ticket.DepartureDateTimeUTC < DateTime.UtcNow)
                 {
                     routeTicketViewModel.Status = 0;
+                }
+                var refundedTicket = _resolveOptionLogRepository.Get(x => x.RouteId == routeTicket.RouteId && x.TicketId == routeTicket.TicketId);
+                if (refundedTicket != null && refundedTicket.Option < ResolveOption.PAYOUT)
+                {
+                    routeTicketViewModel.IsRefunded = true;
                 }
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }

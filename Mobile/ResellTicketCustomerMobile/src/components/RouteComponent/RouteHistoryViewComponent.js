@@ -51,7 +51,7 @@ export default class RouteHistoryViewComponent extends Component {
         }
     }
 
-    renderStatus(status, isValid) {
+    renderStatus(status, isValid, isRefundAll) {
         switch (status) {
             case routeStatus.NEW:
                 if (isValid) {
@@ -62,7 +62,12 @@ export default class RouteHistoryViewComponent extends Component {
             case routeStatus.BOUGHT:
                 return <Text style={{ fontSize: 12, color: '#28a745' }}>Bought</Text>
             case routeStatus.COMPLETED:
-                return <Text style={{ fontSize: 12, color: '#28a745' }}>Completed</Text>
+                if(isRefundAll) {
+                    return <Text style={{ fontSize: 12, color: 'red' }}>Refunded All</Text>
+                } else {
+                    return <Text style={{ fontSize: 12, color: '#28a745' }}>Completed</Text>
+                }
+                
         }
     }
 
@@ -104,7 +109,7 @@ export default class RouteHistoryViewComponent extends Component {
                         </View>
                         <View style={styles.routeBodyContent}>
                             {/* {this.renderIsAvailable(route.isValid)} */}
-                            {this.renderStatus(route.status, route.isValid)}
+                            {this.renderStatus(route.status, route.isValid, route.isRefundAll)}
                             <Text style={{ fontSize: 12 }}>{route.departureTime}</Text>
                             <Text style={{ fontSize: 12 }}>{route.arrivalTime}</Text>
                         </View>

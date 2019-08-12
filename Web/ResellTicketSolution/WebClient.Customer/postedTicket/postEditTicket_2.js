@@ -507,10 +507,12 @@ function postEditTicketController() {
     }
 
     function initArrivalDateTimePicker() {
+        var minArrivalDate = moment(model.departureDateTime).subtract(1, 'days')._d;
+        //console.log(moment(temp).format('YYYY-MM-DD'));
         document.getElementById(id.arrivalDate).disabled = false;
         $(`#${id.arrivalDate}`).datetimepicker({
             format: appConfig.format.datetime,
-            minDate: new Date(moment(model.departureDateTime).format('YYYY-MM-DD')),
+            minDate: new Date(moment(minArrivalDate).format('YYYY-MM-DD')),
         });
         document.getElementById(id.arrivalDate).addEventListener('blur', function (e) {
             model.arrivalDateTime = moment(this.value).format(appConfig.format.datetimeISO)

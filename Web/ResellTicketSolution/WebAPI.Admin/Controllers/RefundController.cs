@@ -54,15 +54,23 @@ namespace WebAPI.Admin.Controllers
             {
                 return BadRequest("Invalid Request");
             }
-            var username = User.Identity.Name;
-            var refund = _refundService.RefundToTalMoneyToCustomer(ticketId, resolveOption, username);
-
-            if (refund == "Not found route ticket")
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, refund);
-            }
+                var username = User.Identity.Name;
+                var refund = _refundService.RefundToTalMoneyToCustomer(ticketId, resolveOption, username);
 
-            return Ok();
+                if (refund == "Not found route ticket")
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, refund);
+                }
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
         }
     }
 }

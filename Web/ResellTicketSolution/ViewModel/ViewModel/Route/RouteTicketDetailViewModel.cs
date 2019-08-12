@@ -28,6 +28,8 @@ namespace ViewModel.ViewModel.Route
         public int Order { get; set; }
         public string SellerPhone { get; set; }
         public DateTime? ExpiredDateTime { get; set; }
+        public bool IsRefunded { get; set; }
+        public bool IsPayout { get; set; }
 
         //public ResolveOption? ResolveOption { get; set; }
     }

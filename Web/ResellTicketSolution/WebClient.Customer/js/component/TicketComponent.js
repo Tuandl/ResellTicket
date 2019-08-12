@@ -15,7 +15,7 @@ class TicketComponent {
         this.id = this.html.id;
     }
 
-    renderStatus(status) {
+    renderStatus(status, isRefunded) {
         switch (status) {
             case ticketStatus.Pending:
                 return `<span class="label label-warning">Pending</span>`;
@@ -28,11 +28,15 @@ class TicketComponent {
             case ticketStatus.Renamed:
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
-                return `<span class="label label-success">Renamed Success</span>`;
+                return `<span class="label label-success">Payout</span>`;
             case ticketStatus.RenamedSuccess:
                 return `<span class="label label-success">Renamed Success</span>`;
-            case ticketStatus.RenamedFail:               
-                return `<span class="label label-danger">Renamed Fail</span>`;
+            case ticketStatus.RenamedFail:
+                if (isRefunded) {
+                    return `<span class="label label-danger">Refunded</span>`;
+                } else {
+                    return `<span class="label label-danger">Renamed Fail</span>`;
+                }
             default:
                 return `<span class="label label-default">Expired</span>`;
         }
@@ -102,16 +106,16 @@ class TicketComponent {
                                 <span>${moment(ticket.arrivalDateTime).format(appConfig.format.datetime)}</span>
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2"><span>${ticket.transportationName}</span></div>
-                            <div class="col-xs-2 col-sm-3 col-md-2 col-lg-2">${this.renderStatus(ticket.status)}</div>
+                            <div class="col-xs-2 col-sm-3 col-md-2 col-lg-2">${this.renderStatus(ticket.status, ticket.isRefunded)}</div>
 
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h3>${numeral(ticket.sellingPrice).format('$0,0.00')}</h3>
                             </div>
                         </div>
                         <div class="routeFooter">
-                            ${ticket.status != ticketStatus.Completed && ticket.status != ticketStatus.RenamedFail ? 
-                                `<span style="color: red">Expired Date: ${moment(ticket.expiredDateTime).format(appConfig.format.datetime)}</span>`
-                            : ''}
+                            ${ticket.status != ticketStatus.Completed && ticket.status != ticketStatus.RenamedFail ?
+                `<span style="color: red">Expired Date: ${moment(ticket.expiredDateTime).format(appConfig.format.datetime)}</span>`
+                : ''}
                         </div>
                     </div>
                 </div>

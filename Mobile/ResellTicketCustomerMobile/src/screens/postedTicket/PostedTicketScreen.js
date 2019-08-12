@@ -105,6 +105,7 @@ export default class PostedTicket extends Component {
         this.setState({
             selectedIndex: selectedIndex,
             postedTickets: [],
+            isShowEmptyView: false
         })
         this.total = 0;
         this.currentPage = 1;

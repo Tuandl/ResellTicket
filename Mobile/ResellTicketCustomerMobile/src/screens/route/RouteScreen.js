@@ -51,6 +51,7 @@ class RouteScreen extends Component {
 
     async getCustomerRoute(selectedIndex) {
         this.setState({
+            isShowEmptyView: false,
             isLoading: true
         })
         const params = {

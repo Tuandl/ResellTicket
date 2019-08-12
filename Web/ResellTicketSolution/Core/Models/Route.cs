@@ -1,6 +1,7 @@
 ﻿using Core.Enum;
 using Core.Infrastructure;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Models
 {
@@ -8,6 +9,8 @@ namespace Core.Models
     {
         public string Code { get; set; }
         public decimal TotalAmount { get; set; }
+
+        [ConcurrencyCheck]
         public RouteStatus Status { get; set; }
         //public ResolveOption? ResolveOption { get; set; }
         public int CustomerId { get; set; }

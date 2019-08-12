@@ -93,7 +93,7 @@ class StationCreateComponent extends Component {
                     </CardHeader>
                     <CardBody>
                         <Row>
-                            <Col md="3" xs="12">
+                            <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="stationName">Stationname&nbsp;<span style={{ color: 'red', float: 'right' }}>{this.state.stationNameError}</span></Label>
                                     <Input type="text" id="name"
@@ -101,13 +101,9 @@ class StationCreateComponent extends Component {
                                         value={station.name}
                                         onChange={this.handleOnChanged}
                                     />
-
                                 </FormGroup>
                             </Col>
-
-                        </Row>
-                        <Row>
-                            <Col md="2" xs="12">
+                            <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="cityId">Cityname</Label>
                                     <Input type="select" id="cityId"

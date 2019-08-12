@@ -200,6 +200,9 @@ class PayoutRefundDetailRoute extends Component {
             if (res.status === 200) {
                 toastr.success('Successfully', 'Tranfer money successfully.');
                 this.getRouteDetail();
+            } else {
+                toastr.error('Fail', 'This ticket has been tranfered by other staff.');
+                this.getRouteDetail();
             }
         })
     }
