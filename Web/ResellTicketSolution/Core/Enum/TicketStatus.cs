@@ -38,12 +38,13 @@ namespace Core.Enum
         Completed = 6,
 
         RenamedSuccess = 7,
-        RenamedFail = 8
+        RenamedFail = 8,
 
         /// <summary>
-        /// trạng thái khi người bán từ chối đổi tên
+        /// trạng thái đã hoàn tiền
         /// </summary>
-        ///Refused = 6
+        ///Refunded = 9
+        Refunded = 9
 
     }
 }

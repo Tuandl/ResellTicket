@@ -210,6 +210,7 @@ namespace Service.Services
                     //Check valid or not depen on ticket status
                     IsValid = !x.RouteTickets.Any(routeTicket => routeTicket.Deleted == false && 
                     (routeTicket.Ticket.Status != TicketStatus.Valid || routeTicket.Ticket.ArrivalDateTimeUTC < DateTime.UtcNow)),
+                    IsRefundAll = x.IsRefundAll
                 })
                 .OrderByDescending(x => x.CreatedAt);
 
@@ -275,6 +276,11 @@ namespace Service.Services
                 if(routeTicket.Ticket.Status == TicketStatus.Valid && routeTicket.Ticket.DepartureDateTimeUTC < DateTime.UtcNow)
                 {
                     routeTicketViewModel.Status = 0;
+                }
+                var refundedTicket = _resolveOptionLogRepository.Get(x => x.RouteId == routeTicket.RouteId && x.TicketId == routeTicket.TicketId);
+                if (refundedTicket != null && refundedTicket.Option < ResolveOption.PAYOUT)
+                {
+                    routeTicketViewModel.IsRefunded = true;
                 }
                 routeViewModel.RouteTickets.Add(routeTicketViewModel);
             }
@@ -775,17 +781,9 @@ namespace Service.Services
                      TotalAmount = ROUTE.TotalAmount,
                      TicketQuantity = ROUTE.RouteTickets.Count(x => x.Deleted == false),
                      IsLiability = false
-                 }).Distinct();
+                 }).Distinct().ToList();
 
-            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.IsLiability);
-            var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
-
-            var routeDataTable = new RouteDataTable()
-            {
-                Data = routePagedVMs.ToList(),
-                Total = routeVMs.Count()
-            };
-            foreach (var routeVM in routeDataTable.Data)
+            foreach (var routeVM in routeVMs)
             {
                 var resolveOptionLogs = _resolveOptionLogRepository.GetAllQueryable().Where(x => x.RouteId == routeVM.Id && x.Option == ResolveOption.REPLACE);
                 foreach (var log in resolveOptionLogs)
@@ -805,6 +803,15 @@ namespace Service.Services
                     }
                 }
             }
+
+            var routeOrderedVMs = routeVMs.OrderByDescending(x => x.IsLiability);
+            var routePagedVMs = routeOrderedVMs.Skip((page - 1) * pageSize).Take(pageSize);
+
+            var routeDataTable = new RouteDataTable()
+            {
+                Data = routePagedVMs.ToList(),
+                Total = routeVMs.Count()
+            };
 
             foreach (var route in routeDataTable.Data)
             {

@@ -32,6 +32,7 @@ export default class TicketDetail extends Component {
             this.setState({
                 ticketDetail: {
                     sellerPhone: res.data.sellerPhone,
+                    sellerName: res.data.sellerName,
                     ticketCode: res.data.ticketCode,
                     vehicle: res.data.vehicleName,
                     transportation: res.data.transportationName,
@@ -61,14 +62,20 @@ export default class TicketDetail extends Component {
                             </CardHeader>
                             <CardBody>
                                 <Row>
+                                <Col md="6" xs="12">
+                                        <FormGroup>
+                                            <Label htmlFor="sellerName">Seller's Fullname</Label>
+                                            <Input type="text" disabled value={ticketDetail.sellerName}
+                                            />
+                                        </FormGroup>
+                                    </Col>
                                     <Col md="6" xs="12">
                                         <FormGroup>
-                                            <Label htmlFor="sellerPhone">Seller Phone</Label>
+                                            <Label htmlFor="sellerPhone">Seller's Phone</Label>
                                             <Input type="text" disabled value={ticketDetail.sellerPhone}
                                             />
                                         </FormGroup>
                                     </Col>
-                                    <Col md="6" xs="12"></Col>
                                 </Row>
                                 <Row>
                                     <Col md="6" xs="12">

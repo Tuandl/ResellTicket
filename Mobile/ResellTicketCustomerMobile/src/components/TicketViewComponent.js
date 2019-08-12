@@ -119,7 +119,7 @@ export default class TicketViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('ddd, MMM DD YYYY')}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: statusColor }}>{convertTicketStatus.toString(status)}</Text>
+                            <Text style={{ fontSize: 12, color: statusColor }}>{convertTicketStatus.toSeller(status)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format('HH:mm')}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format('HH:mm')}</Text>
                         </View>

@@ -74,6 +74,7 @@ export default class RouteTicketViewComponent extends Component {
             vehicleName,
             ticketCode,
             expiredDateTime,
+            isRefunded,
         } = this.state.routeTicket;
 
         return (
@@ -111,7 +112,7 @@ export default class RouteTicketViewComponent extends Component {
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.DATE)}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toString(status)}</Text>
+                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.TIME)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.TIME)}</Text>
                         </View>

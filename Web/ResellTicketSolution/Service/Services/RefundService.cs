@@ -77,6 +77,18 @@ namespace Service.Services
                 x.Route.Status == RouteStatus.Bought
             );
 
+            _unitOfWork.StartTransaction();
+            var route = routeTicket.Route;
+            if(route.Status == RouteStatus.Completed)
+            {
+                throw new InvalidOperationException();
+            }
+            route.Status = RouteStatus.Completed;
+            route.IsRefundAll = true;
+            //route.ResolveOption = resolveOption;
+            _routeRepository.Update(route);
+            _unitOfWork.CommitChanges();
+
             //lấy Lịch sử chagre tiền
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == routeTicket.RouteId && x.Route.Deleted == false);
             var refundFromPayments = _refundRepository.GetAllQueryable().Where(x => x.PaymentId == paymentDetail.Id);
@@ -108,11 +120,6 @@ namespace Service.Services
             _refundRepository.Add(refundAddIntoData);
             //refund total amount
 
-            var route = routeTicket.Route;
-            route.Status = RouteStatus.Completed;
-            route.IsRefundAll = true;
-            //route.ResolveOption = resolveOption;
-            _routeRepository.Update(route);
 
             //save log
             var routeTickets = route.RouteTickets.Where(x => x.Deleted == false);
@@ -132,7 +139,7 @@ namespace Service.Services
                     _resolveOptionLogRepository.Add(newLog);
                 }
             }
-            _unitOfWork.CommitChanges();
+            _unitOfWork.CommitTransaction();
             //save log
 
             //push noti to seller bought ticket

@@ -17,6 +17,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<link href="./../css/font-awesome.css" rel="stylesheet">
 	<link rel="stylesheet" href="./../css/bootstrap-datetimepicker.css" />
 	<link rel="stylesheet" href="./../css/bootstrap-multiselect.css" type="text/css">
+	<link rel="manifest" href="/manifest.json">
 	<!-- <link href='//fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
 		<link href='//fonts.googleapis.com/css?family=Noto+Sans:400,700' rel='stylesheet' type='text/css'> -->
 	<!-- <link rel="stylesheet" href="css/jstarbox.css" type="text/css" media="screen" charset="utf-8" /> -->
@@ -32,6 +33,25 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<script type="module" src="./searchRouteForm.js"></script>
 	<script src="./../js/bootstrap-datetimepicker.min.js"></script>
 	<script type="text/javascript" src="./../js/bootstrap-multiselect.js"></script>
+	<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+
+    <script type="module">
+        import { appConfig } from './../constant/appConfig.js';
+        var OneSignal = window.OneSignal || [];
+        OneSignal.push(function () {
+            OneSignal.init({
+                appId: appConfig.OneSignalAppId,
+                subdomainName: appConfig.SubdomainName,
+                notifyButton: {
+                    enable: true,
+                }
+            });
+            OneSignal.on('notificationDisplay', function (event) {
+                alert(event.content);
+                //console.log(event);
+            });
+        });
+    </script>
 	<!-- //js -->
 </head>
 

@@ -33,6 +33,7 @@ function postedTicketController() {
     renderTickets();
 
     function onStatusChanged(newStatus) {
+        model.total = 0;
         model.page = 1;
         model.searchStatus = newStatus;
         model.isLoadAll = false;
@@ -66,7 +67,7 @@ function postedTicketController() {
             ticketComponent.render();
             containerElement.appendChild(ticketComponent.domElement);
         });
-        model.total = response.length;
+        model.total += response.length;
         if(model.total === 0){
             document.getElementById(id.showEmptyList).style.display = 'block';  
         } else {

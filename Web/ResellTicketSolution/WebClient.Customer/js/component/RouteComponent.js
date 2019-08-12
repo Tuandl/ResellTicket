@@ -25,7 +25,12 @@ class RouteComponent {
             case routeStatus.Bought:
                 return `<span class="label label-info">Bought</span>`;
             case routeStatus.Completed:
-                return `<span class="label label-success">Completed</span>`;
+                if (this.route.isRefundAll) {
+                    return `<span class="label label-danger">Refunded All</span>`;
+                } else {
+                    return `<span class="label label-success">Completed</span>`;
+                }
+                
         }
     }
 

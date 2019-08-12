@@ -32,16 +32,23 @@ namespace WebAPI.Admin.Controllers
             {
                 return BadRequest("Invalid Request");
             }
-            string username = User.Identity.Name;
-            //string username = "staff";
-            var payout = _payoutService.MakePayoutToCustomer(ticketId, username);
-
-            if (!string.IsNullOrEmpty(payout))
+            try
             {
-                return StatusCode((int)HttpStatusCode.NotAcceptable, payout);
+                string username = User.Identity.Name;
+                //string username = "staff";
+                var payout = _payoutService.MakePayoutToCustomer(ticketId, username);
+
+                if (!string.IsNullOrEmpty(payout))
+                {
+                    return StatusCode((int)HttpStatusCode.NotAcceptable, payout);
+                }
+                //_sendGridService.SendEmailReceiptForSeller(ticketId);
+                return Ok();
             }
-            //_sendGridService.SendEmailReceiptForSeller(ticketId);
-            return Ok();
+            catch (Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
         }
 
     }

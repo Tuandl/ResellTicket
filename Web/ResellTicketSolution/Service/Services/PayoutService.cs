@@ -93,33 +93,18 @@ namespace Service.Services
                  select ROUTE)
                 .FirstOrDefault();
             if (route == null) return "Not found Route";
-
-            /////  --> CÁCH 2 <---
-            //List<RouteTicket> routeTicketAll = _routeTicketRepository.GetAllQueryable()
-            //    .Where(x =>
-            //        x.TicketId == TicketId &&
-            //        x.Deleted == false
-            //    ).ToList();
-
-            //foreach(var routeTicket in routeTicketAll)
-            //{
-            //    //lấy ra cái route oke
-            //    List<RouteTicket> routeTicketTmp = _routeTicketRepository.GetAllQueryable().Where(x => x.RouteId == routeTicket.RouteId).ToList();
-            //    foreach(var route in routeTicketTmp)
-            //    {
-            //        if(route.Ticket.Status != TicketStatus.Completed)
-            //        {
-            //            isRouteValid = false;
-            //            routeId = -1;
-            //        }
-            //        routeId = route.Id;
-            //    }
-            //}
-
+            var ticket = _ticketRepository.Get(x => x.Id == TicketId && x.Deleted == false);
+            if(ticket.Status == TicketStatus.Completed)
+            {
+                throw new InvalidOperationException();
+            }
+            _unitOfWork.StartTransaction();
+            ticket.Status = TicketStatus.Completed;
+            _ticketRepository.Update(ticket);
+            _unitOfWork.CommitChanges();
 
             //make payout
             var paymentDetail = _paymentRepository.Get(x => x.RouteId == route.Id && x.Deleted == false);
-            var ticket = _ticketRepository.Get(x => x.Id == TicketId && x.Deleted == false);
             StripeConfiguration.SetApiKey(SETTING.Value.SecretStripe);
             var amount = ticket.SellingPrice * (100 - ticket.CommissionPercent) / 100;
 
@@ -145,12 +130,11 @@ namespace Service.Services
             payoutCreateIntoDatabase.Description = "You receive money for ticket " + ticket.TicketCode + ". Thank you for using our service.";
             payoutCreateIntoDatabase.Status = PayoutStatus.Success;
             _payoutRepository.Add(payoutCreateIntoDatabase);
-            ticket.Status = TicketStatus.Completed;
-            _ticketRepository.Update(ticket);
+
             //make payout
 
             //save log
-            _unitOfWork.StartTransaction();
+            //_unitOfWork.StartTransaction();
             ResolveOptionLog log = new ResolveOptionLog()
             {
                 Option = ResolveOption.PAYOUT,
@@ -196,3 +180,24 @@ namespace Service.Services
         }
     }
 }
+/////  --> CÁCH 2 <---
+//List<RouteTicket> routeTicketAll = _routeTicketRepository.GetAllQueryable()
+//    .Where(x =>
+//        x.TicketId == TicketId &&
+//        x.Deleted == false
+//    ).ToList();
+
+//foreach(var routeTicket in routeTicketAll)
+//{
+//    //lấy ra cái route oke
+//    List<RouteTicket> routeTicketTmp = _routeTicketRepository.GetAllQueryable().Where(x => x.RouteId == routeTicket.RouteId).ToList();
+//    foreach(var route in routeTicketTmp)
+//    {
+//        if(route.Ticket.Status != TicketStatus.Completed)
+//        {
+//            isRouteValid = false;
+//            routeId = -1;
+//        }
+//        routeId = route.Id;
+//    }
+//}

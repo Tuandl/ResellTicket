@@ -10,7 +10,30 @@ const TicketStatus = {
     EXPIRED: 0,
 };
 
-function toString(status) {
+function toSeller(status) {
+    switch (status) {
+        case TicketStatus.PENDING:
+            return 'Pending';
+        case TicketStatus.VALID:
+            return 'Valid';
+        case TicketStatus.INVALID:
+            return 'Invalid';
+        case TicketStatus.BOUGHT:
+            return 'Bought';
+        case TicketStatus.RENAMED:
+            return 'Renamed';
+        case TicketStatus.COMPLETED:
+            return 'Payout';
+        case TicketStatus.RENAMEDSUCESS:
+            return 'Renamed Success';
+        case TicketStatus.RENAMEDFAIL:
+            return 'Renamed Fail';
+        default:
+            return 'Expired';
+    }
+}
+
+function toBuyer(status, isRefunded) {
     switch (status) {
         case TicketStatus.PENDING:
             return 'Pending';
@@ -27,7 +50,7 @@ function toString(status) {
         case TicketStatus.RENAMEDSUCESS:
             return 'Renamed Success';
         case TicketStatus.RENAMEDFAIL:
-            return 'Renamed Fail';
+            return isRefunded ? 'Refunded' : 'Renamed Fail';
         default:
             return 'Expired';
     }
@@ -35,5 +58,6 @@ function toString(status) {
 
 export default {
     ticketStatus: TicketStatus,
-    toString: toString,
+    toBuyer: toBuyer,
+    toSeller: toSeller
 }
