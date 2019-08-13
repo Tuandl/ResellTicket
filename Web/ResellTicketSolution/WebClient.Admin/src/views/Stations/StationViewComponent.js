@@ -15,15 +15,16 @@ class StationViewComponent extends Component {
                 name: '',
                 cityId: '',
                 cityName: ''
-            }
+            }, 
+            citites: []
         }
         // debugger;
     }
 
     componentWillMount() {
-        var { match } = this.props;
+        
         //console.log(match.params.id);
-        this.getStationById(match.params.id);
+        
     }
 
     getStationById = (id) => {
@@ -44,11 +45,13 @@ class StationViewComponent extends Component {
             // console.log("123",cityResponse);
             this.setState({
                 cities: cityResponse.data.data,
-                station: {
-                    ...this.state.station,
-                    cityId: cityResponse.data.data[0].id,
-                }
+                // station: {
+                //     ...this.state.station,
+                //     cityId: cityResponse.data.data[0].id,
+                // }
             });
+            var { match } = this.props;
+            this.getStationById(match.params.id);
         } catch (error) {
             toastr.error('Error', 'Error on Load Cities Data');
         }
@@ -109,8 +112,6 @@ class StationViewComponent extends Component {
                                     onChange={this.handleOnChanged}
                                 />
                             </Col>
-                        </Row>
-                        <Row>
                             <Col md="6" xs="12">
                                 <FormGroup>
                                     <Label htmlFor="cityId">Cityname</Label>
