@@ -140,7 +140,7 @@ function postEditTicketController() {
         if (!data.isArrivalValid) {
             document.getElementById(id.arrivalCity).children[0].children[0].style.border = invalidBorderStyle;
             document.getElementById(id.arrivalStation).children[0].children[0].style.border = invalidBorderStyle;
-            document.getElementById(id.arrivalDate).border = invalidBorderStyle;
+            document.getElementById(id.arrivalDate).style.border = invalidBorderStyle;
         }
         if (!data.isTicketCodeValid) {
             document.getElementById(id.ticketCode).style.border = invalidBorderStyle;
