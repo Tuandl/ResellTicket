@@ -4186,3 +4186,23 @@ input[type=number]:disabled {
 .iti.iti--allow-dropdown {
     width: 100%;
 }
+
+.notification-empty-wrapper {
+    text-align: center;
+    background-image: url(/images/empty_list_noti.png);
+    background-size: 100% 100%;
+}
+
+.loader::after {
+    background-color: rgba(0,0,0,.7);
+    content: 'Loading...';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
