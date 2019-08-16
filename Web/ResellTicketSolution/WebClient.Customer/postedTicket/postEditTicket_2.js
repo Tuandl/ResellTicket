@@ -284,9 +284,13 @@ function postEditTicketController() {
         if (model.transportationId !== undefined && model.ticketTypeId !== undefined && model.departureStationId !== undefined && model.arrivalStationId !== undefined
             && model.departureDateTime !== undefined && model.arrivalDateTime != undefined && model.ticketCode !== undefined && model.passengerName != undefined
             && model.emailBooking !== undefined && model.sellingPrice !== undefined) {
-            const res = await apiService.post(appConfig.apiUrl.ticket, model);
-            if (res.status === 200) {
-                window.location.href = "postedTicket.html";
+            try {
+                const res = await apiService.post(appConfig.apiUrl.ticket, model);
+                if (res.status === 200) {
+                    window.location.href = "postedTicket.html";
+                }
+            } catch (error) {
+                toastService.error('This ticket is existed!')
             }
         } else {
             document.getElementById(alertId.transportation).style.display = model.transportationId == undefined ? 'inline' : 'none'
@@ -312,7 +316,7 @@ function postEditTicketController() {
                 window.location.href = "postedTicket.html";
             }
         } catch (error) {
-            toastService.error('Fail', 'This ticket has been verified, please refresh the page.');
+            toastService.error('This ticket has been verified, please refresh the page.');
         }
     }
 
