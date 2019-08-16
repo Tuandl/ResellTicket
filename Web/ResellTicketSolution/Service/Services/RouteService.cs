@@ -1046,7 +1046,7 @@ namespace Service.Services
             var availableTicketCount = _ticketRepository.GetAllQueryable()
                 .Where(x => x.Deleted == false && x.Status == TicketStatus.Valid).Count();
             var completedTicketCount = _ticketRepository.GetAllQueryable()
-                .Where(x => x.Status == TicketStatus.Completed || x.Status == TicketStatus.RenamedFail).Count();
+                .Where(x => x.Status == TicketStatus.Completed).Count();
             var completedRoutes = _routeRepository.GetAllQueryable()
                 .Where(x => x.Status == RouteStatus.Completed);
 

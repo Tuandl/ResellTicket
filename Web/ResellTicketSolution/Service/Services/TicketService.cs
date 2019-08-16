@@ -347,6 +347,10 @@ namespace Service.Services
         public void EditTicket(TicketEditViewModel model)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id && x.Deleted == false);
+            if(existedTicket.Status != TicketStatus.Pending)
+            {
+                throw new InvalidOperationException();
+            }
             EditInfoTicket(existedTicket, model);
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
@@ -366,6 +370,10 @@ namespace Service.Services
             if (existedTicket == null)
             {
                 return "Not found ticket";
+            }
+            if(existedTicket.Status != TicketStatus.Pending)
+            {
+                throw new InvalidOperationException();
             }
 
             existedTicket.Status = Core.Enum.TicketStatus.Valid;

@@ -306,9 +306,13 @@ function postEditTicketController() {
     }
 
     async function editTicket() {
-        const res = await apiService.put(appConfig.apiUrl.ticket, model);
-        if (res.status === 200) {
-            window.location.href = "postedTicket.html";
+        try {
+            const res = await apiService.put(appConfig.apiUrl.ticket, model);
+            if (res.status === 200) {
+                window.location.href = "postedTicket.html";
+            }
+        } catch (error) {
+            toastService.error('Fail', 'This ticket has been verified, please refresh the page.');
         }
     }
 

@@ -20,6 +20,7 @@ namespace ViewModel.ViewModel.Ticket
         public string TicketCode { get; set; }
         public string VehicleName { get; set; }
         public string TransportationName { get; set; }
+        public string TransportationPhone { get; set; }
         public string TicketTypeName { get; set; }
         public string DepartureCityName { get; set; }
         public string DepartureStationName { get; set; }

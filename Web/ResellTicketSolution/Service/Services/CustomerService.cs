@@ -107,7 +107,7 @@ namespace Service.Services
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Core.Models.Customer>(model); //map từ ViewModel qua Model
 
-            if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
+            if (!Char.IsDigit(model.Username[0]) && (_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
                     _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) &&
                     x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null)
             {
