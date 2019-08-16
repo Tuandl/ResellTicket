@@ -90,7 +90,7 @@ function createCreditCardController() {
         } else {
             validate.expiry_valid = false;
         }
-        var pattCVC = /^[0-9]{4}$/;
+        var pattCVC = /^[0-9]{3,4}$/;
         if (elements.txtCVC.value != null && pattCVC.test(elements.txtCVC.value)) {
             validate.cvc_valid = true;
             data.cvc = elements.txtCVC.value;
@@ -130,12 +130,12 @@ function createCreditCardController() {
                 var creditCardResponse = await apiService.post(appConfig.apiUrl.creditCard, dataCreditCard);
                 if (creditCardResponse.status === 200) {
                     //window.location.href = appConfig.url.creditCard.viewListCreditCard;
-                    window.history.back();
+                    window.location=document.referrer;
+                    //window.location.reload(history.back());
                     toastService.success("Create Credit Card successfully");
                 } else {
                     toastService.error("Create credit card Error");
                 }
-
             } catch (error) {
                 toastService.error("Error on Creating Credit Card Data");
             }

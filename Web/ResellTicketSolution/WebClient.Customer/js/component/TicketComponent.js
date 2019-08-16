@@ -75,7 +75,7 @@ class TicketComponent {
                         </div>
                     </h3>
 
-                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 route">
+                    <div style="margin-bottom: 30px;" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 route">
                         <input type="hidden" value=${ticket.ticketId} />
                         <div class="routeHeader">
                             <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
