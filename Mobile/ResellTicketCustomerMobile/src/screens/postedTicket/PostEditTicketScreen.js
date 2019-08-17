@@ -51,7 +51,8 @@ export default class PostEditTicket extends Component {
             passengerName: '',
             emailBooking: '',
             emailValid: true,
-            dialogVisibleDeletePostedTicket: false
+            dialogVisibleDeletePostedTicket: false,
+            isMissingFields: false,
         }
     }
 
@@ -140,17 +141,23 @@ export default class PostEditTicket extends Component {
             vehicleId,
             vehicles,
             transportations,
+            transportationId,
             transportationName,
             ticketTypes,
+            ticketTypeId,
             ticketTypeName,
             departureCities,
+            departureCityId,
             departureCityName,
             departureStations,
+            departureStationId,
             departureStationName,
             departureDateTime,
             arrivalCities,
+            arrivalCityId,
             arrivalCityName,
             arrivalStations,
+            arrivalStationId,
             arrivalStationName,
             arrivalDateTime,
             ticketCode,
@@ -161,6 +168,7 @@ export default class PostEditTicket extends Component {
             isPostEditLoading,
             isDeleteLoading,
             emailValid, //check regular
+            isMissingFields
         } = this.state
         const { navigate } = this.props.navigation;
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
@@ -218,7 +226,7 @@ export default class PostEditTicket extends Component {
                                             transportationName: item.name,
                                             transportationId: item.id
                                         })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -227,6 +235,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (transportationId === -1 || transportationName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Ticket Type */}
                             <Label style={styles.label}>Ticket Type:</Label>
                             <Autocomplete
@@ -240,7 +252,7 @@ export default class PostEditTicket extends Component {
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
                                         onPress={() => this.setState({ ticketTypes: [], ticketTypeName: item.name, ticketTypeId: item.id })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -249,6 +261,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (ticketTypeId === -1 || ticketTypeName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Departure City */}
                             <Label style={styles.label}>Departure City:</Label>
                             <Autocomplete
@@ -267,7 +283,7 @@ export default class PostEditTicket extends Component {
                                             departureStationId: item.id === this.state.departureCityId ? this.state.departureStationId : -1,
                                             departureStationName: item.id === this.state.departureCityId ? departureStationName : ''
                                         })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -276,6 +292,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (departureCityId === -1 || departureCityName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Departure Station */}
                             <Label style={styles.label}>Departure Station:</Label>
                             <Autocomplete
@@ -294,7 +314,7 @@ export default class PostEditTicket extends Component {
                                             departureCityId: item.cityId,
                                             departureCityName: item.cityName
                                         })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -303,6 +323,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (departureStationId === -1 || departureStationName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Arrival City */}
                             <Label style={styles.label}>Arrival City:</Label>
                             <Autocomplete
@@ -321,7 +345,7 @@ export default class PostEditTicket extends Component {
                                             arrivalStationId: item.id === this.state.arrivalCityId ? this.state.arrivalStationId : -1,
                                             arrivalStationName: item.id === this.state.arrivalCityId ? arrivalStationName : ''
                                         })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -330,6 +354,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (arrivalCityId === -1 || arrivalCityName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Arrival Station */}
                             <Label style={styles.label}>Arrival Station:</Label>
                             <Autocomplete
@@ -348,7 +376,7 @@ export default class PostEditTicket extends Component {
                                             arrivalCityId: item.cityId,
                                             arrivalCityName: item.cityName
                                         })}>
-                                        <Item style={{height: 35}}>
+                                        <Item style={{ height: 35 }}>
                                             <Text>
                                                 {item.name}
                                             </Text>
@@ -357,6 +385,10 @@ export default class PostEditTicket extends Component {
                                 )}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && (arrivalStationId === -1 || arrivalStationName === '')
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Departure Datetime */}
                             <Label style={styles.label}>Departure Date:</Label>
                             <Item>
@@ -380,6 +412,10 @@ export default class PostEditTicket extends Component {
                                     </TouchableNativeFeedback>
                                 </Right>
                             </Item>
+                            {isMissingFields && departureDateTime === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Select Arrival Datetime */}
                             <Label style={styles.label}>Arrival Date:</Label>
                             <Item>
@@ -403,6 +439,10 @@ export default class PostEditTicket extends Component {
                                     </TouchableNativeFeedback>
                                 </Right>
                             </Item>
+                            {isMissingFields && arrivalDateTime === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Enter Ticket Code */}
                             <Label style={styles.label}>Ticket Code:</Label>
                             <Input
@@ -413,6 +453,10 @@ export default class PostEditTicket extends Component {
                                 placeholderTextColor={colors.greyPlaceHolder}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && ticketCode === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Enter Passenger Name */}
                             <Label style={styles.label}>Passenger Name:</Label>
                             <Input
@@ -423,20 +467,28 @@ export default class PostEditTicket extends Component {
                                 placeholderTextColor={colors.greyPlaceHolder}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && passengerName === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Enter Email Booking */}
                             <Label style={styles.label}>Email Booking:</Label>
                             <Input
                                 onChangeText={emailBooking => this.setState({ emailBooking })}
                                 value={emailBooking}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
-                                errorStyle={{ textAlign: 'center', fontSize: 12, color: 'red' }}
-                                errorMessage={
-                                    emailValid ? null : 'Please enter a valid email'
-                                }
+                                // errorStyle={{ textAlign: 'center', fontSize: 12, color: 'red' }}
+                                // errorMessage={
+                                //     emailValid ? null : 'Please enter a valid email'
+                                // }
                                 placeholder="Please enter email booking..."
                                 placeholderTextColor={colors.greyPlaceHolder}
                                 inputContainerStyle={styles.inputContainer}
                             />
+                            {isMissingFields && emailBooking === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {/* Enter Selling Price */}
                             <Label style={styles.label}>Selling Price:</Label>
                             <NumberFormat value={sellingPrice} displayType={'text'} thousandSeparator={true}
@@ -453,6 +505,10 @@ export default class PostEditTicket extends Component {
                                     />
                                 )}
                             />
+                            {isMissingFields && sellingPrice === ''
+                                ? <Text style={styles.required}>Required</Text>
+                                : null
+                            }
                             {isEdit ?
                                 <Button block primary
                                     style={{ margin: 10, marginTop: 40 }}
@@ -461,7 +517,7 @@ export default class PostEditTicket extends Component {
                                         : <Text style={styles.buttonText}>Save</Text>}
                                 </Button> :
                                 <Button block primary
-                                    style={{ margin: 10, marginTop: 40}}
+                                    style={{ margin: 10, marginTop: 40 }}
                                     onPress={this.postTicket}>
                                     {isPostEditLoading ? <ActivityIndicator size="small" animating color="#fff" />
                                         : <Text style={styles.buttonText}>Post Now</Text>}
@@ -560,8 +616,11 @@ export default class PostEditTicket extends Component {
                 })
             }
         } else {
-            RNToasty.Error({
-                title: 'Please input required fields and select what we suggest'
+            // RNToasty.Error({
+            //     title: 'Please input required fields and select what we suggest'
+            // })
+            this.setState({
+                isMissingFields: true
             })
         }
     }
@@ -589,20 +648,29 @@ export default class PostEditTicket extends Component {
             this.setState({
                 isPostEditLoading: true
             })
-            const resPostTicket = await Api.post('api/ticket', ticket);
-            if (resPostTicket.status === 200) {
-                this.setState({
-                    isPostEditLoading: false
+            try {
+                const resPostTicket = await Api.post('api/ticket', ticket);
+                if (resPostTicket.status === 200) {
+                    this.setState({
+                        isPostEditLoading: false
+                    })
+                    RNToasty.Success({
+                        title: 'Post Ticket Successfully'
+                    })
+                    navigation.state.params.refreshPostedTicket();
+                    navigation.navigate('PostedTicket');
+                }
+            } catch (error) {
+                RNToasty.Error({
+                    title: 'This ticket is existed!'
                 })
-                RNToasty.Success({
-                    title: 'Post Ticket Successfully'
-                })
-                navigation.state.params.refreshPostedTicket();
-                navigation.navigate('PostedTicket');
             }
         } else {
-            RNToasty.Error({
-                title: 'Please input required fields'
+            // RNToasty.Error({
+            //     title: 'Please input required fields'
+            // })
+            this.setState({
+                isMissingFields: true
             })
         }
     }
@@ -707,7 +775,7 @@ const styles = StyleSheet.create({
     },
     label: {
         paddingTop: 10,
-        fontSize: 10,
+        fontSize: 12,
     },
     invalidLabel: {
         paddingTop: 10,
@@ -717,6 +785,11 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 20
+    },
+    required: {
+        color: 'red',
+        fontSize: 12,
+        textAlign: 'right'
     },
     inputContainer: {
         borderLeftWidth: 0,

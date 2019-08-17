@@ -119,20 +119,28 @@ export default class ValidTicketDetail extends Component {
             isShowConfirmDialog: false
         });
         if (validCount === 8) {
-            var res = await Axios.put('api/ticket/approve/' + ticketId + "?commissionFee=" + commissionFee + "&expiredDateTime=" + expiredDateTime);
-            if (res.status === 200) {
-                toastr.success('Update Success', 'Ticket is valid.');
-                this.props.history.push('/newPostedTicket');
-            } else {
-                toastr.error('Error', 'Error when valid Ticket');
+            try {
+                var res = await Axios.put('api/ticket/approve/' + ticketId + "?commissionFee=" + commissionFee + "&expiredDateTime=" + expiredDateTime);
+                if (res.status === 200) {
+                    toastr.success('Update Success', 'Ticket is valid.');
+                    this.props.history.push('/newPostedTicket');
+                } else {
+                    toastr.error('Fail', 'Error when valid Ticket');
+                }
+            } catch (error) {
+                toastr.error('Fail', 'Error when valid Ticket')
             }
         } else {
-            res = await Axios.put('api/ticket/reject/' + ticketId + "?invalidField=" + invalidField.substr(2))
+            try {
+                res = await Axios.put('api/ticket/reject/' + ticketId + "?invalidField=" + invalidField.substr(2))
             if (res.status === 200) {
                 toastr.success('Update Success', 'Ticket is invalid.');
                 this.props.history.push('/newPostedTicket');
             } else {
-                toastr.error('Error', 'Error when valid Ticket');
+                toastr.error('Fail', 'Error when valid Ticket');
+            }
+            } catch (error) {
+                toastr.error('Fail', 'Error when valid Ticket')
             }
         }
     }
@@ -248,7 +256,7 @@ export default class ValidTicketDetail extends Component {
                         </Card>
                     </Col>
                 </Row>
-                <Modal isOpen={this.state.isShowConfirmDialog} 
+                <Modal isOpen={this.state.isShowConfirmDialog}
                     className="modal-success">
                     <ModalHeader toggle={this.closeConfirmDialog}>Confirm Valid Ticket</ModalHeader>
                     <ModalBody>

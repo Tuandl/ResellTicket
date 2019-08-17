@@ -224,7 +224,7 @@ namespace Service.Services
             return ticketDataTable;
         }
 
-        public TicketDataTable GetCompletedTickets(string param, int page, int pageSize) 
+        public TicketDataTable GetCompletedTickets(string param, int page, int pageSize)
         {
             param = param ?? "";
             var completedTickets = _ticketRepository.GetAllQueryable()
@@ -279,7 +279,7 @@ namespace Service.Services
                 }
             }
             var customerTicketVMs = _mapper.Map<List<Ticket>, List<CustomerTicketViewModel>>(customerPagedTickets);
-            
+
             return customerTicketVMs;
         }
 
@@ -304,6 +304,14 @@ namespace Service.Services
         public int PostTicket(string username, TicketPostViewModel model)
         {
             var customerId = _customerRepository.Get(x => x.Username == username && x.Deleted == false).Id;
+            var existedTicket = _ticketRepository.Get(x => x.TicketCode.ToLower().Equals(model.TicketCode.ToLower())
+                                && x.TransportationId == model.TransportationId && x.TicketTypeId == model.TicketTypeId
+                                && x.DepartureStationId == model.DepartureStationId && x.ArrivalStationId == model.ArrivalStationId
+                                && DateTime.Equals(x.DepartureDateTime, model.DepartureDateTime) && DateTime.Equals(x.ArrivalDateTime, model.ArrivalDateTime));
+            if (existedTicket != null && existedTicket.Status != TicketStatus.Invalid)
+            {
+                throw new InvalidOperationException();
+            }
             var ticket = _mapper.Map<TicketPostViewModel, Ticket>(model);
             ticket.CommissionPercent = 10;
             ticket.Status = Core.Enum.TicketStatus.Pending;
@@ -347,6 +355,10 @@ namespace Service.Services
         public void EditTicket(TicketEditViewModel model)
         {
             var existedTicket = _ticketRepository.Get(x => x.Id == model.Id && x.Deleted == false);
+            if (existedTicket.Status != TicketStatus.Pending)
+            {
+                throw new InvalidOperationException();
+            }
             EditInfoTicket(existedTicket, model);
             _ticketRepository.Update(existedTicket);
             _unitOfWork.CommitChanges();
@@ -367,6 +379,10 @@ namespace Service.Services
             {
                 return "Not found ticket";
             }
+            if (existedTicket.Status != TicketStatus.Pending)
+            {
+                throw new InvalidOperationException();
+            }
 
             existedTicket.Status = Core.Enum.TicketStatus.Valid;
             existedTicket.CommissionPercent = commissionFee;
@@ -384,7 +400,7 @@ namespace Service.Services
             _unitOfWork.CommitChanges();
             //try
             //{
-                
+
             //}
             //catch (Exception ex)
             //{
@@ -516,8 +532,8 @@ namespace Service.Services
                 //noti to buyer
                 #region Notify Buyer
                 List<string> buyerDeviceIds = GetCustomerDeviceIds(existedTicket, false);
-                
-                var boughtRoute = existedTicket.RouteTickets.Where(x => 
+
+                var boughtRoute = existedTicket.RouteTickets.Where(x =>
                     x.Route.CustomerId == existedTicket.BuyerId &&
                     x.Route.Status == RouteStatus.Bought &&
                     x.Route.Deleted == false &&
@@ -586,7 +602,7 @@ namespace Service.Services
                 _oneSignalService.PushNotificationCustomer(message, buyerDeviceIds);
 
                 //save noti
-                if(existedTicket.BuyerId != null)
+                if (existedTicket.BuyerId != null)
                 {
                     _notificationService.SaveNotification(
                         customerId: existedTicket.BuyerId.Value,
@@ -594,7 +610,7 @@ namespace Service.Services
                         message: $"Ticket {existedTicket.TicketCode} in Route {boughtRoute?.Code ?? string.Empty} renamed fail.",
                         data: new { ticketId = boughtRoute?.Id }
                     );
-                } 
+                }
 
                 #endregion
             }
@@ -638,7 +654,7 @@ namespace Service.Services
 
             //Get Tickets base on fromDate and toDate
             var tickets = _ticketRepository.GetAllQueryable()
-                .Where(x => x.Deleted == false 
+                .Where(x => x.Deleted == false
                     && x.SellerId != routeTicket.Ticket.BuyerId &&
                     x.Status == Core.Enum.TicketStatus.Valid &&
                     (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
@@ -671,12 +687,12 @@ namespace Service.Services
                 .Where(x =>
                     x.Deleted == false &&
                     x.Route.Deleted == false &&
-                    x.Route.Status == RouteStatus.Bought && 
+                    x.Route.Status == RouteStatus.Bought &&
                     x.Route.CustomerId == existedTicket.BuyerId
                 ).FirstOrDefault()
                 ?.Route;
 
-            var message = "Ticket " + existedTicket.TicketCode + " in Route " + (boughtRoute?.Code ?? string.Empty) + " has been refused."; 
+            var message = "Ticket " + existedTicket.TicketCode + " in Route " + (boughtRoute?.Code ?? string.Empty) + " has been refused.";
             //if(_routeTicketRepository.Get(x => x.Deleted == false && x.TicketId == existedTicket.Id).Route.CustomerId == existedTicket.BuyerId)
             //{
             //    message += "Our staff will contact you in a few minutes.";
@@ -792,24 +808,25 @@ namespace Service.Services
         public TicketDataTable GetReplaceTickets(int routeTicketId)
         {
             var routeTickets = _routeTicketRepository.Get(
-                                x => x.Deleted == false && x.Id == routeTicketId 
+                                x => x.Deleted == false && x.Id == routeTicketId
                                 && x.Route.Status == RouteStatus.Bought)
                                 .Route.RouteTickets.OrderBy(x => x.Order);
 
             var ticketDataTable = new TicketDataTable();
-            if(routeTickets.Count() == 2)
+            if (routeTickets.Count() == 2)
             {
                 var firstTicket = routeTickets.FirstOrDefault().Ticket;
                 var lastTicket = routeTickets.LastOrDefault().Ticket;
                 var replaceTickets = new List<Ticket>();
-                if(firstTicket.Status == TicketStatus.RenamedFail)
+                if (firstTicket.Status == TicketStatus.RenamedFail)
                 {
                     var lastTicketDepartureDatetime = lastTicket.DepartureDateTimeUTC;
                     replaceTickets = _ticketRepository.GetAllQueryable()
                         .Where(x => x.Deleted == false && x.ExpiredDateTimeUTC > DateTime.UtcNow && x.Status == TicketStatus.Valid)
                         .Where(x => x.ArrivalDateTimeUTC <= lastTicketDepartureDatetime && x.SellingPrice <= firstTicket.SellingPrice).ToList();
 
-                } else
+                }
+                else
                 {
                     var firstArrivalDateTime = firstTicket.ArrivalDateTimeUTC;
                     replaceTickets = _ticketRepository.GetAllQueryable()
@@ -820,7 +837,8 @@ namespace Service.Services
                 var replaceTicketVms = _mapper.Map<List<Ticket>, List<TicketRowViewModel>>(replaceTickets);
                 ticketDataTable.Data = replaceTicketVms;
                 ticketDataTable.Total = replaceTickets.Count();
-            } else if(routeTickets.Count() == 3)
+            }
+            else if (routeTickets.Count() == 3)
             {
 
             }

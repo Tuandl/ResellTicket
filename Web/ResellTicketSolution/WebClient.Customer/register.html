@@ -145,7 +145,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 
 		function checkValidUsername() {
 			var txtUsername = document.getElementsByName("txtUsername")[0].value;
-			var patt = /^[a-zA-Z0-9]{6,30}$/;
+			var patt = /^[a-zA-Z][a-zA-Z0-9]{3,30}$/;
 			var usernameAlert = document.getElementById("username-alert");
 			if (patt.test(txtUsername)) {
 				usernameAlert.style.display = 'none';
@@ -262,7 +262,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 						<div class="clearfix"></div>
 					</div>
 					<div id="username-alert" style="display: none" class="alert alert-danger" role="alert">
-						Username must have 6 - 30 digits!!
+						Username must have 3 - 30 characters and first character is not a digit!!
 					</div>
 
 					<label>Full Name:</label>
@@ -272,7 +272,7 @@ function hideURLbar(){ window.scrollTo(0,1); } </script>
 						<div class="clearfix"></div>
 					</div>
 					<div id="fullname-alert" style="display: none" class="alert alert-danger" role="alert">
-						Full name must have 6 - 100 digits!!
+						Full name must have 6 - 100 characters!!
 					</div>
 
 					<label>Email:</label>

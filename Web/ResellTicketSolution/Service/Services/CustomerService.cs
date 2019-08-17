@@ -124,7 +124,7 @@ namespace Service.Services
                 _unitOfWork.CommitChanges();
 
                 return true;
-            } else if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
+            } else if (!Char.IsDigit(model.Username[0]) && (_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
                     (_oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null))
             {
                 byte[] salt = new byte[128 / 8];
