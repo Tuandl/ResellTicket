@@ -10,6 +10,7 @@ import SectionedMultiSelect from 'react-native-sectioned-multi-select';
 import NumericInput from 'react-native-numeric-input';
 import formatConstant from './../../constants/formatConstant';
 import { RNToasty } from 'react-native-toasty';
+import colors from '../../config/colors';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -338,8 +339,8 @@ export default class RouteSearchFormScreen extends Component {
                         onChangeText={value => this.getDepartureCityAutoSuggest(value)}
                         onFocus={() => { this.getDepartureCityAutoSuggest('') }}
                         onBlur={() => this.setState({ departureCitiesAutoSuggest: [] })}
-                        placeholder="Enter Departure City"
-                        placeholderTextColor={'grey'}
+                        placeholder="Please enter Departure City..."
+                        placeholderTextColor={colors.greyPlaceHolder}
                         keyExtractor={(item, index) => index.toString()}
                         // containerStyle={styles.autocompleteContainer}
                         renderItem={({ item }) => (
@@ -352,6 +353,7 @@ export default class RouteSearchFormScreen extends Component {
                                 </Item>
                             </TouchableOpacity>
                         )}
+                        inputContainerStyle={styles.inputContainer}
                     />
                     {/* </View> */}
 
@@ -364,8 +366,8 @@ export default class RouteSearchFormScreen extends Component {
                         onChangeText={value => this.getArrivalCityAutoSuggest(value)}
                         onFocus={() => { this.getArrivalCityAutoSuggest('') }}
                         onBlur={() => this.setState({ arrivalCitiesAutoSuggest: [] })}
-                        placeholder="Enter Arrival City"
-                        placeholderTextColor={'grey'}
+                        placeholder="Please enter Arrival City..."
+                        placeholderTextColor={colors.greyPlaceHolder}
                         keyExtractor={(item, index) => index.toString()}
                         // containerStyle={styles.autocompleteContainer}
                         renderItem={({ item }) => (
@@ -378,6 +380,7 @@ export default class RouteSearchFormScreen extends Component {
                                 </Item>
                             </TouchableOpacity>
                         )}
+                        inputContainerStyle={styles.inputContainer}
                     />
                     {/* </View> */}
 
@@ -397,6 +400,7 @@ export default class RouteSearchFormScreen extends Component {
                         onDateChange={this.onDepartureDateChanged}
                         disabled={false}
                         formatChosenDate={date => {return moment(date).format(formatConstant.DATE)}}
+                        textStyle={{...styles.inputContainer}}
                     />
 
                     {/* Select Arrival date */}
@@ -414,6 +418,7 @@ export default class RouteSearchFormScreen extends Component {
                         onDateChange={this.onArrivalDateChanged}
                         disabled={false}
                         formatChosenDate={date => {return moment(date).format(formatConstant.DATE)}}
+                        textStyle={{...styles.inputContainer}}
                     />
 
                     <Label style={styles.label}>Maximum Tickets:</Label>
@@ -426,6 +431,8 @@ export default class RouteSearchFormScreen extends Component {
                         placeholderIconColor="#007aff"
                         selectedValue={maxTicketCombination}
                         onValueChange={this.onMaxTicketCombinationChanged}
+                        style={{ borderColor: colors.greyUnderlineInput, borderBottomWidth: 0.666666 }}
+
                     >
                         <Picker.Item label="Only 1 Ticket" value={1} />
                         <Picker.Item label="Less or equal than 2 tickets" value={2} />
@@ -462,6 +469,7 @@ export default class RouteSearchFormScreen extends Component {
                         selectedItems={this.state.selectedVehicles}
                         searchPlaceholderText="Search Vehicles..."
                         modalAnimationType="slide"
+                        styles={{container: styles.inputContainer}}
                     />
 
                     {/* <Label style={styles.label}>Transportation:</Label> */}
@@ -539,5 +547,13 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
         zIndex: 1
+    },
+    inputContainer: {
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        borderTopWidth: 0,
+        borderBottomWidth: 0.66666666666,
+        borderColor: colors.greyUnderlineInput,
+        backgroundColor: 'transparent',
     },
 })

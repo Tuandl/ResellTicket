@@ -10,6 +10,7 @@ import { TouchableNativeFeedback, TouchableOpacity, ScrollView } from 'react-nat
 import { RNToasty } from 'react-native-toasty';
 import Autocomplete from 'react-native-autocomplete-input';
 import Dialog from "react-native-dialog";
+import colors from '../../config/colors';
 
 const { width } = Dimensions.get('window');
 
@@ -207,8 +208,8 @@ export default class PostEditTicket extends Component {
                                 data={transportations}
                                 // onChangeText={value => this.setState({ transportationName: value, temp: 'transportation' })}
                                 onChangeText={value => this.getTransportions(value)}
-                                placeholder="Enter Transportation"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Transportation..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -224,6 +225,7 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Ticket Type */}
                             <Label style={styles.label}>Ticket Type:</Label>
@@ -232,8 +234,8 @@ export default class PostEditTicket extends Component {
                                 data={ticketTypes}
                                 // onChangeText={value => this.setState({ ticketTypeName: value, temp: 'ticketType' })}
                                 onChangeText={value => this.getTicketTypes(value)}
-                                placeholder="Enter Ticket Type"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Ticket Type..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -245,6 +247,7 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Departure City */}
                             <Label style={styles.label}>Departure City:</Label>
@@ -252,8 +255,8 @@ export default class PostEditTicket extends Component {
                                 defaultValue={departureCityName}
                                 data={departureCities}
                                 onChangeText={value => this.getDepartureCities(value)}
-                                placeholder="Enter Departure City"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Departure City..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -271,6 +274,7 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Departure Station */}
                             <Label style={styles.label}>Departure Station:</Label>
@@ -278,8 +282,8 @@ export default class PostEditTicket extends Component {
                                 defaultValue={departureStationName}
                                 data={departureStations}
                                 onChangeText={value => this.getDepartureStations(value)}
-                                placeholder="Enter Departure Station"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Departure Station..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -297,6 +301,7 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Arrival City */}
                             <Label style={styles.label}>Arrival City:</Label>
@@ -304,8 +309,8 @@ export default class PostEditTicket extends Component {
                                 defaultValue={arrivalCityName}
                                 data={arrivalCities}
                                 onChangeText={value => this.getArrivalCities(value)}
-                                placeholder="Enter Arrival City"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Arrival City..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -323,6 +328,7 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Arrival Station */}
                             <Label style={styles.label}>Arrival Station:</Label>
@@ -330,8 +336,8 @@ export default class PostEditTicket extends Component {
                                 defaultValue={arrivalStationName}
                                 data={arrivalStations}
                                 onChangeText={value => this.getArrivalStations(value)}
-                                placeholder="Enter Arrival Station"
-                                placeholderTextColor={'grey'}
+                                placeholder="Please enter Arrival Station..."
+                                placeholderTextColor={colors.greyPlaceHolder}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => (
                                     <TouchableOpacity key={item.id}
@@ -349,12 +355,17 @@ export default class PostEditTicket extends Component {
                                         </Item>
                                     </TouchableOpacity>
                                 )}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Select Departure Datetime */}
                             <Label style={styles.label}>Departure Date:</Label>
                             <Item>
-                                <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
-                                    {departureDateTime === '' ? '' : moment(departureDateTime).format('MMM DD YYYY HH:mm')}
+                                <Text style={{ 
+                                    padding: 10, 
+                                    paddingTop: 5, 
+                                    color: departureDateTime === '' ? colors.greyPlaceHolder : 'black'
+                                }}>
+                                    {departureDateTime === '' ? 'Please enter Departure date...' : moment(departureDateTime).format('MMM DD YYYY HH:mm')}
                                 </Text>
                                 <DateTimePicker
                                     isVisible={this.state.departureVisible}
@@ -372,8 +383,12 @@ export default class PostEditTicket extends Component {
                             {/* Select Arrival Datetime */}
                             <Label style={styles.label}>Arrival Date:</Label>
                             <Item>
-                                <Text style={{ padding: 10, paddingTop: 5, color: 'black' }}>
-                                    {arrivalDateTime === '' ? '' : moment(arrivalDateTime).format('MMM DD YYYY HH:mm')}
+                                <Text style={{ 
+                                    padding: 10, 
+                                    paddingTop: 5, 
+                                    color: arrivalDateTime === '' ? colors.greyPlaceHolder : 'black' 
+                                }}>
+                                    {arrivalDateTime === '' ? 'Please enter Arrival date...' : moment(arrivalDateTime).format('MMM DD YYYY HH:mm')}
                                 </Text>
                                 <DateTimePicker
                                     isVisible={this.state.arrivalVisible}
@@ -394,6 +409,9 @@ export default class PostEditTicket extends Component {
                                 onChangeText={ticketCode => this.setState({ ticketCode })}
                                 value={ticketCode}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
+                                placeholder="Please enter ticket code..."
+                                placeholderTextColor={colors.greyPlaceHolder}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Enter Passenger Name */}
                             <Label style={styles.label}>Passenger Name:</Label>
@@ -401,6 +419,9 @@ export default class PostEditTicket extends Component {
                                 onChangeText={passengerName => this.setState({ passengerName })}
                                 value={passengerName}
                                 inputStyle={{ fontSize: 15, color: 'black' }}
+                                placeholder="Please enter passenger name..."
+                                placeholderTextColor={colors.greyPlaceHolder}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Enter Email Booking */}
                             <Label style={styles.label}>Email Booking:</Label>
@@ -412,6 +433,9 @@ export default class PostEditTicket extends Component {
                                 errorMessage={
                                     emailValid ? null : 'Please enter a valid email'
                                 }
+                                placeholder="Please enter email booking..."
+                                placeholderTextColor={colors.greyPlaceHolder}
+                                inputContainerStyle={styles.inputContainer}
                             />
                             {/* Enter Selling Price */}
                             <Label style={styles.label}>Selling Price:</Label>
@@ -423,6 +447,9 @@ export default class PostEditTicket extends Component {
                                         value={value}
                                         inputStyle={{ fontSize: 15, color: 'black' }}
                                         keyboardType="numeric"
+                                        placeholder="Please enter Selling price..."
+                                        placeholderTextColor={colors.greyPlaceHolder}
+                                        inputContainerStyle={styles.inputContainer}
                                     />
                                 )}
                             />
@@ -690,5 +717,16 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 20
+    },
+    inputContainer: {
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        borderTopWidth: 0,
+        borderBottomWidth: 0.66666666666,
+        borderColor: colors.greyUnderlineInput,
+        backgroundColor: 'transparent',
+    },
+    placeholderColor: {
+        color: '#cacad0',
     }
 })

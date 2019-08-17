@@ -12,4 +12,6 @@ export default {
   grey5: '#e1e8ee',
   dkGreyBg: '#232323',
   greyOutline: '#cbd2d9',
+  greyPlaceHolder: '#cacad0',
+  greyUnderlineInput: '#D9D5DC',
 };
