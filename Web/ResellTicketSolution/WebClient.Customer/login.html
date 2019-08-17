@@ -116,7 +116,10 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 			var txtUsename = document.getElementsByName("username")[0].value;
 			var txtPassword = document.getElementsByName("password")[0].value;
 			var alert = document.getElementById('form-messages');
-
+			var checkPhoneLogin = txtUsename.substring(0,1);
+			if(checkPhoneLogin === 0 ||checkPhoneLogin === "0"){
+				txtUsename = "84" + txtUsename.substring(1);
+			}
 			var deviceId = '';
 			var OneSignal = window.OneSignal || [];
 			await OneSignal.getUserId(function (userId) {

@@ -105,7 +105,7 @@ class StationViewComponent extends Component {
                     <CardBody>
                         <Row>
                             <Col md="6" xs="12">
-                                <Label htmlFor="stationame">Stationname</Label>
+                                <Label htmlFor="stationame">Station Name</Label>
                                 <Input type="text" id="name"
                                     placeholder="Enter Stationname..."
                                     value={station.name}
@@ -114,7 +114,7 @@ class StationViewComponent extends Component {
                             </Col>
                             <Col md="6" xs="12">
                                 <FormGroup>
-                                    <Label htmlFor="cityId">Cityname</Label>
+                                    <Label htmlFor="cityId">City Name</Label>
                                     <Input type="select" id="cityId"
                                         value={station.cityId}
                                         onChange={this.handleOnChanged}

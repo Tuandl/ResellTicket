@@ -43,7 +43,7 @@ function Transaction(){
             document.getElementById(id.tableTransasctionList).style.display = 'none';
             document.getElementById(id.showEmptyList).style.display = 'block';
         } else {
-            document.getElementById(id.tableTransasctionList).style.display = 'block';
+            document.getElementById(id.tableTransasctionList).style.display = 'inline-table';
             document.getElementById(id.showEmptyList).style.display = 'none';
         }
         if(transactions.length !== model.pageSize) {

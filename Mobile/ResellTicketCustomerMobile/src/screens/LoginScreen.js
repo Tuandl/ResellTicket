@@ -59,9 +59,14 @@ export default class LoginScreen extends Component {
         this.setState({
             showLoading: true,
         });
+        var txtUsername = username;
+        const checkPhoneLogin = txtUsername.substring(0,1);
+			if(checkPhoneLogin === 0 ||checkPhoneLogin === "0"){
+				txtUsername = "84" + txtUsername.substring(1);
+			}
 
         const data = {
-            username: username,
+            username: txtUsername,
             password: password,
             deviceId: deviceId
         };

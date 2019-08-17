@@ -128,5 +128,26 @@ namespace Algorithm.KShortestPaths.Models
 
             return maxWaitingHours;
         }
+
+        /// <summary>
+        /// Calculate min waiting hours between 2 tickets in this route
+        /// </summary>
+        /// <returns></returns>
+        public double GetMinimumWaitingHour()
+        {
+            double minWaitingHours = int.MaxValue;
+            
+            var trimed = this.Trim();
+            for(int index = 0; index < trimed.Count() - 1; index++)
+            {
+                var firstEdge = trimed[index];
+                var secondEdge = trimed[index + 1];
+
+                var waitingHours = secondEdge.Tail.ArrivalTimeUTC.Subtract(firstEdge.Head.ArrivalTimeUTC).TotalHours;
+                minWaitingHours = Math.Min(minWaitingHours, waitingHours);
+            }
+
+            return minWaitingHours;
+        }
     }
 }

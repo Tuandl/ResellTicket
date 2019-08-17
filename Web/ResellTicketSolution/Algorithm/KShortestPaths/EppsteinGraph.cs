@@ -52,6 +52,11 @@ namespace Algorithm.KShortestPaths
         private int MaxWaitingBetweenTwoTickets = 24;
 
         /// <summary>
+        /// Min Waiting hours between 2 tickets in a route
+        /// </summary>
+        private int MinWaitingBetweenTwoTickets = 1;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public EppsteinGraph()
@@ -207,7 +212,6 @@ namespace Algorithm.KShortestPaths
 
             do
             {
-                //TODO: Add filter max combination
                 if(v != null)
                 {
                     foreach (var edge in v.RelatedEdges) // Evaluate all incoming edges
@@ -284,7 +288,8 @@ namespace Algorithm.KShortestPaths
 
                 //Check max waiting hours before add into result
                 var currentFullPath = RebuildPath(currentSideTrack.SideTrack).Trim();
-                if(currentFullPath.GetMaximumWaitingHour() <= this.MaxWaitingBetweenTwoTickets)
+                if(currentFullPath.GetMaximumWaitingHour() <= this.MaxWaitingBetweenTwoTickets &&
+                    currentFullPath.GetMinimumWaitingHour() >= this.MinWaitingBetweenTwoTickets)
                 {
                     SideTrackPathsHeap.Enqueue(currentSideTrack);
                 }
