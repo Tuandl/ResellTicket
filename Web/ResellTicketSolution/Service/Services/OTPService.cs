@@ -41,7 +41,9 @@ namespace Service.Services
             var newOTP = _oTPRepository.Get(x => x.PhoneNo.Equals(phoneNumber));
 
             //TODO: This will be changed when go into production
-            string RandomNo = "123456";
+            Random generator = new Random();
+            int rdom = generator.Next(1, 999998);
+            string RandomNo = rdom.ToString("D6");
             if (newOTP == null)
             {
                 newOTP = new OTP();

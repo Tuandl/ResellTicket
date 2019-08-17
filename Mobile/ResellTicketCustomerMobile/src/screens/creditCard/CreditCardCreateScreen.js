@@ -33,8 +33,8 @@ export default class CreditCardCreateScreen extends Component {
             name_valid: true,
             nameOnCard: '',
             nameOnCard_valid: '',
-            postalCode: '',
-            postalCode_valid: '',
+            // postalCode: '',
+            // postalCode_valid: '',
             cvc: '',
             cvc_valid: '',
             last4DigitsHash: '',
@@ -85,15 +85,12 @@ export default class CreditCardCreateScreen extends Component {
                 nameOnCard_valid: formData.status.name,
             })
         }
-
-        if (formData.status.postalCode === "valid") {
-            this.setState({
-                postalCode: formData.values.postalCode,
-                postalCode_valid: formData.status.postalCode,
-            })
-        }
+        // this.setState({
+        //     postalCode: formData.values.postalCode,
+        //     postalCode_valid: formData.status.postalCode,
+        // })
         if (formData.status.cvc === "valid" && formData.status.number === "valid" && formData.status.expiry === "valid"
-            && formData.status.name === "valid" && formData.status.postalCode === "valid") {
+            && formData.status.name === "valid") {
             this.setState({
                 isCreate: true,
             })
@@ -102,7 +99,7 @@ export default class CreditCardCreateScreen extends Component {
     };
 
     async createCreditCard() {
-        const { isCreate, last4DigitsHash, last4DigitsHash_valid, nameOnCard, nameOnCard_valid, postalCode, postalCode_valid, expiredMonthHash,
+        const { isCreate, last4DigitsHash, last4DigitsHash_valid, nameOnCard, nameOnCard_valid, expiredMonthHash,
             expiredMonthHash_valid, expiredYearHash, brand, cvc, cvc_valid, customerId, cardId } = this.state;
 
         const { navigate } = this.props.navigation;
@@ -116,7 +113,7 @@ export default class CreditCardCreateScreen extends Component {
                 brand: brand,
                 nameOnCard: nameOnCard,
                 cvc: cvc,
-                postalCode: postalCode,
+                //postalCode: postalCode,
                 last4DigitsHash: last4DigitsHash,
                 expiredYearHash: expiredYearHash,
                 expiredMonthHash: expiredMonthHash,
@@ -129,7 +126,7 @@ export default class CreditCardCreateScreen extends Component {
                     exp_month: data.expiredMonthHash,
                     exp_year: data.expiredYearHash,
                     cvc: data.cvc,
-                    address_zip: data.postalCode
+                    //address_zip: data.postalCode
                 });
 
                 var numberBlind = data.last4DigitsHash.replace(/^.{14}/g, '**** **** ****');
@@ -170,11 +167,6 @@ export default class CreditCardCreateScreen extends Component {
             if (nameOnCard_valid !== "valid") {
                 RNToasty.Error({
                     title: 'Name on your card is invalid',
-                });
-            }
-            if (postalCode_valid !== "valid") {
-                RNToasty.Error({
-                    title: 'Postal Code is invalid'
                 });
             }
             if (expiredMonthHash_valid !== "valid") {
@@ -223,13 +215,12 @@ export default class CreditCardCreateScreen extends Component {
 
                             requiresName
                             requiresCVC
-                            requiresPostalCode
-
+                            allowScroll
                             labelStyle={styles.label}
                             inputStyle={styles.input}
                             validColor={"black"}
                             invalidColor={"red"}
-                            placeholderColor={"darkgray"}   
+                            placeholderColor={"darkgray"}
 
                             onFocus={this._onFocus}
                             onChange={this._onChange} />

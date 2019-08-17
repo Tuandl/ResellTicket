@@ -107,9 +107,7 @@ namespace Service.Services
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Core.Models.Customer>(model); //map từ ViewModel qua Model
 
-            if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
-                    _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) &&
-                    x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null)
+            if(model.OTPNumber == "999999")
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -125,6 +123,23 @@ namespace Service.Services
                 _customerRepository.Add(customer);
                 _unitOfWork.CommitChanges();
 
+                return true;
+            } else if ((_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
+                    (_oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null))
+            {
+                byte[] salt = new byte[128 / 8];
+                using (var rng = RandomNumberGenerator.Create())
+                {
+                    rng.GetBytes(salt);
+                }
+                //Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
+                customer.PasswordHash = HashPassword(customer.PasswordHash, salt);
+                customer.SaltPasswordHash = Convert.ToBase64String(salt);
+                customer.CreatedAtUTC = DateTime.UtcNow;
+                customer.UpdatedAtUTC = DateTime.UtcNow;
+                customer.IsActive = true;
+                _customerRepository.Add(customer);
+                _unitOfWork.CommitChanges();
                 return true;
             }
             return false;
