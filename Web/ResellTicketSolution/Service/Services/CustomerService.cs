@@ -107,7 +107,13 @@ namespace Service.Services
         {
             var customer = _mapper.Map<CustomerRegisterViewModel, Core.Models.Customer>(model); //map từ ViewModel qua Model
 
-            if(model.OTPNumber == "999999")
+            bool firstletter = !Char.IsDigit(model.Username[0]);
+            bool checkCustomer = _customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null;
+            bool checkInputOTP = _oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && 
+                                                    x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null;
+            bool chackBackDoor = model.OTPNumber == "999999";
+
+            if (chackBackDoor && firstletter && checkCustomer)
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -124,8 +130,8 @@ namespace Service.Services
                 _unitOfWork.CommitChanges();
 
                 return true;
-            } else if (!Char.IsDigit(model.Username[0]) && (_customerRepository.Get(x => x.Username.Equals(model.Username, StringComparison.Ordinal)) == null) &&
-                    (_oTPRepository.Get(x => x.PhoneNo.Equals(model.PhoneNumber) && x.Code.Equals(model.OTPNumber) && x.ExpiredAtUTC > DateTime.UtcNow) != null))
+            }
+            else if (checkInputOTP && firstletter && checkCustomer)
             {
                 byte[] salt = new byte[128 / 8];
                 using (var rng = RandomNumberGenerator.Create())
@@ -466,9 +472,9 @@ namespace Service.Services
                     )
                 .Union(
                     from PO in _payoutRepository.GetAllQueryable()
-                    //join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
-                    //join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
-                    //join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
+                        //join PM in _paymentRepository.GetAllQueryable() on PO.PaymentId equals PM.Id
+                        //join CDC in _creditCardRepository.GetAllQueryable() on PM.CreditCartId equals CDC.Id
+                        //join Cus in _customerRepository.GetAllQueryable() on CDC.CustomerId equals Cus.Id
                     where PO.Ticket.Seller.Username == username
                     select new TransactionDataTable()
                     {
