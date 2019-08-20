@@ -199,5 +199,19 @@ namespace WebAPI.Admin.Controllers
             var replaceTickets = _ticketService.GetReplaceTicketForOneFailTicket(failRouteTicketId, page, pageSize);
             return replaceTickets;
         }
+
+        [HttpPut]
+        [Route("expiredBoughtTicket/{id}")]
+        public ActionResult SetRenamedFailBoughtTicket(int id)
+        {
+            try
+            {
+                _ticketService.setRenamedFailBoughtTicket(id);
+                return Ok();
+            } catch(Exception e)
+            {
+                return StatusCode((int)HttpStatusCode.NotAcceptable, e.Message);
+            }
+        }
     }
 }

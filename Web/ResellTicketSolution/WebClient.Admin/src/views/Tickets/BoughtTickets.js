@@ -18,9 +18,18 @@ function TicketRow(props) {
             return (
                 <Badge color="success">Bought</Badge>
             )
+        } else if (status === TicketStatus.Expired) {
+            return (
+                <Badge color="secondary">Expired</Badge>
+            )
         }
     }
     const ticketLink = `/boughtTicket/${ticket.id}`
+
+    // setRenamedFailWhenBoughtTicketExpired() {
+    //     this.props.showDialogConfirmFail(ticket.id);
+    // }
+
     return (
         <tr>
             <th>{props.index + 1}</th>
@@ -37,14 +46,20 @@ function TicketRow(props) {
                         <i className="fa fa-edit fa-lg mr-1"></i>Details
                     </Button>
                 </Link>
+                {ticket.status === TicketStatus.Expired
+                    ? <Button color="danger" className="mr-2" onClick={() => props.showDialogConfirmFail(ticket.id)}>
+                        <i className="fa fa-edit fa-lg mr-1"></i>Renamed Fail
+                    </Button>
+                    : null
+                }
             </td>
         </tr>
-
 
     )
 }
 
 class BoughtTickets extends Component {
+    expiredTicketId = 0;
 
     constructor(props) {
         super(props);
@@ -59,8 +74,8 @@ class BoughtTickets extends Component {
             ticketIdDialog: null,
             isShowConfirmDiaLog: false
         }
-        this.showDialogConfirm = this.showDialogConfirm.bind(this);
-        this.closeDialogConfirm = this.closeDialogConfirm.bind(this);
+        this.showDialogConfirmFail = this.showDialogConfirmFail.bind(this);
+        this.closeDialogConfirmFail = this.closeDialogConfirmFail.bind(this);
     }
 
     componentWillMount() {
@@ -88,17 +103,18 @@ class BoughtTickets extends Component {
         }
     }
 
-    showDialogConfirm(id){
+    showDialogConfirmFail(id) {
+        this.expiredTicketId = id;
         this.setState({
             isShowConfirmDiaLog: true,
-            ticketIdDialog: id
+            //ticketIdDialog: id
         });
     }
 
-    closeDialogConfirm(){
+    closeDialogConfirmFail() {
         this.setState({
             isShowConfirmDiaLog: false,
-            ticketIdDialog: null
+            //ticketIdDialog: null
         });
     }
 
@@ -129,18 +145,18 @@ class BoughtTickets extends Component {
         })
     }
 
-    onInValidSaveChanges = (id) => {
-        Axios.put('api/ticket/reject/' + id).then(res => {
-            this.closeDialogConfirm();
-            if (res.status === 200) {
-                toastr.success('Reject Success', 'Ticket has been rejected.');
-                // this.props.history.push('/ticket');
-                this.getBoughtTickets();
-            } else {
-                toastr.error('Error', 'Error when reject Ticket');
-            }
-        })
-    }
+    // onInValidSaveChanges = (id) => {
+    //     Axios.put('api/ticket/reject/' + id).then(res => {
+    //         this.closeDialogConfirm();
+    //         if (res.status === 200) {
+    //             toastr.success('Reject Success', 'Ticket has been rejected.');
+    //             // this.props.history.push('/ticket');
+    //             this.getBoughtTickets();
+    //         } else {
+    //             toastr.error('Error', 'Error when reject Ticket');
+    //         }
+    //     })
+    // }
 
     goPage = (pageNumber) => {
         this.setState({
@@ -152,8 +168,22 @@ class BoughtTickets extends Component {
         })
     }
 
+    setRenamedFailWhenBoughtTicketExpired = (id) => {
+        try {
+            Axios.put('api/ticket/expiredBoughtTicket/' + id).then(res => {
+                this.closeDialogConfirmFail()
+                if(res.status === 200) {
+                    toastr.success('Update Success', 'Ticket is renamed fail.')
+                    this.getBoughtTickets();
+                } 
+            })
+        } catch (error) {
+            toastr.error('Update Fail', '');
+        }
+    }
+
     render() {
-        var { tickets, isLogin, userRole, currentPage, pageCount, ticketIdDialog } = this.state
+        var { tickets, isLogin, userRole, currentPage, pageCount } = this.state
         return (
             isLogin ? userRole === 'Staff' ?
                 <div className="animated fadeIn">
@@ -187,7 +217,8 @@ class BoughtTickets extends Component {
                                         </thead>
                                         <tbody>
                                             {tickets.map((ticket, index) =>
-                                                <TicketRow key={index} ticket={ticket} index={index} parent={this} />
+                                                <TicketRow key={index} ticket={ticket} index={index} parent={this} 
+                                                    showDialogConfirmFail={this.showDialogConfirmFail}/>
                                             )}
                                         </tbody>
                                     </Table>
@@ -198,14 +229,14 @@ class BoughtTickets extends Component {
                             </Card>
                         </Col>
                     </Row>
-                    <Modal isOpen={this.state.isShowConfirmDiaLog} 
+                    <Modal isOpen={this.state.isShowConfirmDiaLog}
                         className="modal-danger">
-                        <ModalHeader toggle={this.closeDialogConfirm}>Confirm Invalid Ticket</ModalHeader>
+                        <ModalHeader toggle={this.closeDialogConfirmFail}>Confirm Renamed Ticket Fail</ModalHeader>
                         <ModalBody>
-                            Do you want to invalid this ticket ?
-                </ModalBody>
+                            Do you want to set this ticket is renamed fail?
+                        </ModalBody>
                         <ModalFooter>
-                            <Button color="danger" onClick={() => this.onInValidSaveChanges(ticketIdDialog)}>Invalid</Button>
+                            <Button color="danger" onClick={() => this.setRenamedFailWhenBoughtTicketExpired(this.expiredTicketId)}>Confirm</Button>
                             <Button color="secondary" onClick={this.closeDialogConfirm}>Cancel</Button>
                         </ModalFooter>
                     </Modal>
