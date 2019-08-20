@@ -7,5 +7,6 @@ export default {
     Completed: 6,
     RenamedSuccess: 7,
     RenamedFail: 8,
-    All: 21
+    All: 21,
+    Expired: 0
 }

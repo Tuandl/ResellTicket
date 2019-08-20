@@ -30,7 +30,7 @@ function TicketRow(props) {
             <td>
                 <Link to={ticketLink}>
                     {/* onClick={() => { parent.onInValidSaveChanges(ticket.id) }} */}
-                    <Button color="success" className="mr-2">
+                    <Button color="secondary" className="mr-2">
                         <i className="fa fa-edit fa-lg mr-1"></i>Details
                     </Button>
                 </Link>

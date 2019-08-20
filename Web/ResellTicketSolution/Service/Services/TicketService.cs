@@ -41,6 +41,7 @@ namespace Service.Services
         string ConfirmRenameTicket(int id);
         string ValidateRenameTicket(int id, bool renameSuccess);
         string RefuseTicket(int id);
+        void setRenamedFailBoughtTicket(int id);
 
         /// <summary>
         /// Get Tickets available for editing a route ticket
@@ -114,7 +115,7 @@ namespace Service.Services
         {
             param = param ?? "";
             var pendingTickets = _ticketRepository.GetAllQueryable()
-                .Where(t => t.Deleted == false)
+                .Where(t => t.Deleted == false && t.DepartureDateTimeUTC >= DateTime.UtcNow)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Pending)
                 .Skip((page - 1) * pageSize).Take(pageSize)
@@ -138,7 +139,7 @@ namespace Service.Services
         {
             param = param ?? "";
             var validTickets = _ticketRepository.GetAllQueryable()
-                 .Where(t => t.Deleted == false)
+                 .Where(t => t.Deleted == false && t.ExpiredDateTimeUTC >= DateTime.UtcNow)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Valid)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
@@ -210,6 +211,13 @@ namespace Service.Services
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
                 .Where(t => t.Status == Core.Enum.TicketStatus.Bought)
                 .Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            foreach(var bt in boughtTickets)
+            {
+                if(bt.ExpiredDateTimeUTC <= DateTime.UtcNow)
+                {
+                    bt.Status = 0;
+                }
+            }
             var totalBoughtTickets = _ticketRepository.GetAllQueryable()
                 .Where(t => t.Deleted == false)
                 .Where(t => t.TicketCode.ToLower().Contains(param.ToLower()))
@@ -862,6 +870,18 @@ namespace Service.Services
                 Total = replaceTicketsTotal
             };
             return resultDataTable;
+        }
+
+        public void setRenamedFailBoughtTicket(int id)
+        {
+            var existedTicket = _ticketRepository.Get(x => x.Id == id);
+            if(existedTicket == null)
+            {
+                throw new Exception();
+            }
+            existedTicket.Status = TicketStatus.RenamedFail;
+            _ticketRepository.Update(existedTicket);
+            _unitOfWork.CommitChanges();
         }
     }
 }
