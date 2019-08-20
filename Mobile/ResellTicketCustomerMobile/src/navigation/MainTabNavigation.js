@@ -24,6 +24,7 @@ import RouteBuyerInfoScreen from '../screens/route/RouteBuyerInfoScreen';
 import PassengerInformationScreen from '../screens/postedTicket/PassengerInformationScreen';
 import TransactionViewListScreen from '../screens/transaction/TransactionViewListScreen';
 import LoginScreen from '../screens/LoginScreen';
+import colors from '../config/colors';
 
 const RouteStack = createStackNavigator(
   {
@@ -83,9 +84,9 @@ export default createBottomTabNavigator(
       screen: RouteStack,
       navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Route',
-        tabBarIcon: ({ }) => {
-          return <Icon name="map-o" type="font-awesome" />
-        },
+        // tabBarIcon: ({ }) => {
+        //   return <Icon name="map-o" type="font-awesome" />
+        // },
         tabBarVisible: navigation.state.index > 0 ? false: true
       }),
     },
@@ -93,9 +94,9 @@ export default createBottomTabNavigator(
       screen: TicketStack,
       navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Ticket',
-        tabBarIcon: ({ }) => {
-          return <Icon name="ticket" type="font-awesome" />
-        },
+        // tabBarIcon: ({ }) => {
+        //   return <Icon name="ticket" type="font-awesome" />
+        // },
         tabBarVisible: navigation.state.index > 0 ? false: true
       })
     },
@@ -103,23 +104,43 @@ export default createBottomTabNavigator(
       screen: NotificationScreen,
       navigationOptions: {
         tabBarLabel: 'Notification',
-        tabBarIcon: ({ }) => {
-          return <Icon name="bell-o" type="font-awesome"/>
-        }
+        // tabBarIcon: ({ }) => {
+        //   return <Icon name="bell-o" type="font-awesome"/>
+        // }
       }
     },
     Me: {
       screen: MeStack,
       navigationOptions: ({ navigation }) => ({
         tabBarLabel: 'Me',
-        tabBarIcon: ({ }) => {
-          return <Icon name="user-o" type="font-awesome"/>
-        },
+        // tabBarIcon: ({ }) => {
+        //   return <Icon name="user-o" type="font-awesome"/>
+        // },
         tabBarVisible: navigation.state.index > 0 ? false: true
       })
     }
   },
   {
     initialRouteName: 'Route',
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let iconName;
+        if (routeName === 'Route') {
+          iconName = `map-o`;
+        } else if (routeName === 'Ticket') {
+          iconName = `ticket`;
+        } else if (routeName === 'Notification') {
+          iconName = `bell-o`;
+        } else if (routeName === 'Me') {
+          iconName = `user-o`;
+        }
+        return <Icon name={iconName} size={25} color={tintColor} type="font-awesome" />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: colors.primary2,
+      inactiveTintColor: colors.grey4
+    }
   }
 );
