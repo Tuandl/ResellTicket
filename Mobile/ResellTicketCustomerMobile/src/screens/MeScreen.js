@@ -7,9 +7,12 @@ import keyConstant from '../constants/keyConstant';
 import Api from '../../src/service/Api';
 import OneSignal from 'react-native-onesignal'; 
 import NavigationService from '../service/NavigationService';
+import colors from '../config/colors';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
+
+const AVATAR_DEFAULT = require('../../assets/images/default_bio_600x600.jpg');
 
 export default class MeScreen extends Component {
     constructor(props) {
@@ -38,7 +41,7 @@ export default class MeScreen extends Component {
     }
 
     componentDidMount() {
-        this.getUsename();
+        this.getCustomerInformation();
         const { navigation } = this.props;
         this.focusListener = navigation.addListener("didFocus", () => {
             this.isExistedConnectAccount();
@@ -46,11 +49,13 @@ export default class MeScreen extends Component {
         this.isExistedConnectAccount();
     }
 
-    async getUsename() {
+    async getCustomerInformation() {
         var usernameDefault = await AsyncStorage.getItem(keyConstant.STORAGE.USERNAME);
+        var fullName = await AsyncStorage.getItem(keyConstant.STORAGE.FULLNAME);
         //var data = JSON.parse(usernameDefault);
         this.setState({
-            username: usernameDefault
+            username: usernameDefault,
+            fullName: fullName,
         })
     }
 
@@ -75,14 +80,18 @@ export default class MeScreen extends Component {
     }
 
     render() {
-        const { navigate } = this.props.navigation;
-        const { username, isExistConnectAccount } = this.state;
+        const { navigate } = this.props.navigation
+        const { username, isExistConnectAccount, fullName } = this.state;
         return (
             <Container style={{ flex: 1 }}>
                 <Content style={{ flex: 1, backgroundColor: '#fff' }}>
                     <View style={styles.avatar}>
-                        <Avatar />
-                        <Text>{username}</Text>
+                        <Avatar 
+                            rounded 
+                            source={AVATAR_DEFAULT} 
+                            size="large"
+                        />
+                        <Text style={{color: colors.secondaryText}}>{fullName}</Text>
                     </View>
                     <View style={styles.profile}>
                         <List>
@@ -172,7 +181,7 @@ export default class MeScreen extends Component {
 const styles = StyleSheet.create({
     avatar: {
         flex: 1,
-        backgroundColor: 'blue',
+        backgroundColor: colors.secondary,
         height: height / 5,
         alignItems: 'center',
         justifyContent: 'center'
