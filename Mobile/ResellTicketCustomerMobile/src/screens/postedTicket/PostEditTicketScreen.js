@@ -174,7 +174,7 @@ export default class PostEditTicket extends Component {
         const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigate('PostedTicket')}>

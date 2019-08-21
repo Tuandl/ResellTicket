@@ -22,6 +22,7 @@ import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import FlipCard from "react-native-flip-card";
 import { Input, } from 'react-native-elements';
+import colors from "../../config/colors";
 const BASE_SIZE = { width: 300, height: 190 };
 
 /* eslint react/prop-types: 0 */ // https://github.com/yannickcr/eslint-plugin-react/issues/106
@@ -79,7 +80,7 @@ export default class AccountConnectDetailScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button
                             transparent

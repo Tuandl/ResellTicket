@@ -11,6 +11,7 @@ import Dialog from "react-native-dialog";
 import RouteStatus from '../../constants/routeStatus';
 import keyConstant from '../../constants/keyConstant';
 import TicketStatus from '../../constants/TicketStatus';
+import colors from '../../config/colors';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -194,7 +195,7 @@ class RouteDetailScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent onPress={this.onBtnBackPressed}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />

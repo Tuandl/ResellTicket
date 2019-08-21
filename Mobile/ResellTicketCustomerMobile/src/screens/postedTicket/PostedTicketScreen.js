@@ -5,6 +5,7 @@ import { Icon, ButtonGroup } from 'react-native-elements';
 import TicketView from './../../components/TicketViewComponent';
 import Api from './../../service/Api';
 import TICKET_STATUS from '../../constants/TicketStatus';
+import colors from '../../config/colors';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const BG_IMAGE = require('../../../assets/images/empty-list.png');
@@ -163,7 +164,7 @@ export default class PostedTicket extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     {/* <Left>
                         <Button transparent
                             onPress={() => navigate('Me')}>

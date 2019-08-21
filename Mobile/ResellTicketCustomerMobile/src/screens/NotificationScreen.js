@@ -7,6 +7,7 @@ import { withNavigation } from 'react-navigation';
 import NotificationListComponent from '../components/NotificationListComponent';
 import convertDateTime from '../helper/convertDateTime';
 import api from '../service/Api';
+import colors from '../config/colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -151,7 +152,7 @@ class NotificationScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Body style={{ paddingLeft: 10 }}>
                         <Title>Notification</Title>
                     </Body>

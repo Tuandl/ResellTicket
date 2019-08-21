@@ -5,6 +5,7 @@ import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import RouteViewComponent from '../../components/RouteComponent/RouteSearchViewComponent';
 import api from '../../service/Api';
+import colors from '../../config/colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -105,7 +106,7 @@ export default class RouteSearchResultScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}

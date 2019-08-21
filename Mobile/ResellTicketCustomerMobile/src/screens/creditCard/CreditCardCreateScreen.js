@@ -15,6 +15,7 @@ import keyConstant from '../../constants/keyConstant';
 import StripeConstant from '../../constants/StripeConstant';
 import { CreditCardInput, LiteCreditCardInput } from "react-native-credit-card-input";
 import Stripe from 'react-native-stripe-api';
+import colors from "../../config/colors";
 
 //var StripeNative = require('react-native-stripe');
 
@@ -193,7 +194,7 @@ export default class CreditCardCreateScreen extends Component {
         return (
 
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => this.props.navigation.pop()}>

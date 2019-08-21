@@ -7,6 +7,7 @@ import { RNToasty } from 'react-native-toasty';
 import RouteTicketUpdateComponent from '../../components/RouteComponent/RouteTicketUpdateComponent';
 import formatConstant from '../../constants/formatConstant';
 import api from '../../service/Api';
+import colors from '../../config/colors';
 
 const {width} = Dimensions.get('window');
 const {height} = Dimensions.get('window');
@@ -133,7 +134,7 @@ export default class RouteTicketUpdateScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent onPress={this.onBtnBackPressed}>
                             <Icon name="arrow-left" type="material-community" color="#fff"/>
