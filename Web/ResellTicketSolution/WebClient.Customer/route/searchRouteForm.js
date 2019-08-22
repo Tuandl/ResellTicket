@@ -17,6 +17,7 @@ function searchRouteForm() {
         maxWaitingHours: 'maxWaitingHourInput',
         transportation: 'transportation-select',
         ticketType: 'ticket-type-select',
+        orderBy: 'orderBySelect',
     };
 
     const elements = {
@@ -28,6 +29,7 @@ function searchRouteForm() {
         maxWaitingHours: document.getElementById(id.maxWaitingHours),
         transportation: document.getElementById(id.transportation),
         ticketType: document.getElementById(id.ticketType),
+        orderBySelect: document.getElementById(id.orderBy),
     }
 
     const model = {};
@@ -102,6 +104,7 @@ function searchRouteForm() {
                 vehicleIds: model.vehicleSelectComponent.getSelected(),
                 transportationIds: model.TransportationSelectComponent.getSelected(),
                 ticketTypeIds: model.TicketTypeSelectComponent.getSelected(),
+                orderBy: elements.orderBySelect.value,
                 page: 1,
                 pageSize: 10,
             };
