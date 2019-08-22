@@ -75,9 +75,10 @@ export default class RouteTicketUpdateScreen extends Component {
     }
 
     renderTickets(tickets) {
+        var {route} = this.state;
         if(tickets === null || tickets === undefined) return;
         return tickets.map((ticket) => 
-            <RouteTicketUpdateComponent ticket={ticket} onPress={this.onTicketPressed} key={ticket.id}/>
+            <RouteTicketUpdateComponent ticket={ticket} onPress={this.onTicketPressed} key={ticket.id} routeStatus={route.status}/>
         );
     }
 

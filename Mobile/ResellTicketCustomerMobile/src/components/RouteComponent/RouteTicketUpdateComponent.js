@@ -7,6 +7,8 @@ import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import convertTicketStatus from './../../helper/convertTicketStatus';
 import formatConstant from '../../constants/formatConstant';
+import RouteStatus from '../../constants/routeStatus';
+import TicketStatus from '../../constants/TicketStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -18,9 +20,45 @@ export default class RouteTicketUpdateComponent extends Component {
         this.state = {
             statusColor: '',
             ticket: props.ticket,
+            routeStatus: props.routeStatus
         }
 
         this.onPress = this.onPress.bind(this);
+    }
+
+    componentDidMount() {
+        this.setStatusColor()
+    }
+
+    setStatusColor = () => {
+        var { status } = this.state.ticket;
+        switch (status) {
+            case TicketStatus.PENDING:
+                this.setState({
+                    statusColor: 'orange'
+                })
+                break;
+            case TicketStatus.INVALID:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case TicketStatus.RENAMEDFAIL:
+                this.setState({
+                    statusColor: 'red'
+                })
+                break;
+            case TicketStatus.EXPIRED:
+                this.setState({
+                    statusColor: 'lightgrey'
+                })
+                break;
+            default:
+                this.setState({
+                    statusColor: '#28a745'
+                })
+                break;
+        }
     }
 
     onPress() {
@@ -33,17 +71,18 @@ export default class RouteTicketUpdateComponent extends Component {
             sellingPrice,
             departureDateTime,
             arrivalDateTime,
-            status,
+            expiredDateTime,
             vehicle,
             ticketCode,
-            isSelected
+            isSelected,
+            status
         } = this.state.ticket;
-
-        {   //check hết hạn vé
-            status === 1 ? this.state.statusColor = 'orange' 
-            : status === 3 ? this.state.statusColor = 'red' 
-            : this.state.statusColor = '#28a745'
-        } 
+        const {routeStatus} = this.state;
+        // {   //check hết hạn vé
+        //     status === 1 ? this.state.statusColor = 'orange' 
+        //     : status === 3 ? this.state.statusColor = 'red' 
+        //     : this.state.statusColor = '#28a745'
+        // } 
 
         return (
             <TouchableNativeFeedback onPress={this.onPress}>
@@ -75,18 +114,25 @@ export default class RouteTicketUpdateComponent extends Component {
                             <Text style={{ fontSize: 12, color: 'grey' }}>Arrival</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text>{ticketCode}</Text>
+                            {routeStatus === RouteStatus.NEW ? 
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
+                                : <Text>{ticketCode}</Text>
+                            } 
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.DATE)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.DATE)}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toString(status)}</Text>
+                            {routeStatus === RouteStatus.NEW ? 
+                                <Text style={{ fontSize: 12, color: 'white' }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
+                                :  
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null)}</Text>
+                            }
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.TIME)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.TIME)}</Text>
                         </View>
                     </View>
                     <View style={styles.ticketFooter}>
-                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(departureDateTime).format(formatConstant.DATE_TIME)}</Text>
+                        <Text style={{ fontSize: 12, color: 'red' }}>Expired Date: {moment(expiredDateTime).format(formatConstant.DATE_TIME)}</Text>
                     </View>
                 </View>
             </TouchableNativeFeedback>
