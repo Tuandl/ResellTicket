@@ -123,7 +123,7 @@ export default class RouteTicketUpdateComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             {routeStatus === RouteStatus.NEW ? 
-                                <Text style={{ fontSize: 12, color: 'white' }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
+                                <Text style={{ fontSize: 12, opacity: 0 }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
                                 :  
                                 <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null)}</Text>
                             }
