@@ -15,6 +15,24 @@ class TicketComponent {
         this.id = this.html.id;
     }
 
+    renderHeaderTicketCodeOrTicketType(status){
+        switch (status) {
+            case ticketStatus.Valid:
+                return `<h4><b>Ticket Type</b></h4>`;
+            default:
+                return `<h4><b>Ticket</b></h4>`;
+        }
+    }
+
+    renderBodyTicketCodeOrTicketType(status, ticketCode, ticketType){
+        switch (status) {
+            case ticketStatus.Valid:
+                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticketType}</b></span></div>`;
+            default:
+                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticketCode}</b></span></div>`;
+        }
+    }
+
     renderStatus(status, isRefunded) {
         switch (status) {
             case ticketStatus.Pending:
@@ -79,7 +97,7 @@ class TicketComponent {
                         <input type="hidden" value=${ticket.ticketId} />
                         <div class="routeHeader">
                             <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
-                                <h4><b>Ticket</b></h4>
+                                ${this.renderHeaderTicketCodeOrTicketType(ticket.status)}
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Departure</b></h4>
@@ -98,7 +116,7 @@ class TicketComponent {
                             </div>
                         </div>
                         <div class="routeBody" style="color: '#b8891d'">
-                            <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticket.ticketCode}</b></span></div>
+                            ${this.renderBodyTicketCodeOrTicketType(ticket.status, ticket.ticketCode, ticket.ticketTypeName)}
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <span>${moment(ticket.departureDateTime).format(appConfig.format.datetime)}</span>
                             </div>
