@@ -22,6 +22,7 @@ import { RNToasty } from 'react-native-toasty';
 import FlipCard from "react-native-flip-card";
 import { Input, } from 'react-native-elements';
 import Dialog from "react-native-dialog";
+import colors from "../../config/colors";
 const BASE_SIZE = { width: 300, height: 190 };
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -154,7 +155,7 @@ export default class CreditCardViewListScreen extends Component {
         return (
             
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => this.props.navigation.navigate('Me')}>

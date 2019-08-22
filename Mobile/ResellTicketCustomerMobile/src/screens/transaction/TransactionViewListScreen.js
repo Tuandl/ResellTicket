@@ -8,6 +8,7 @@ import { RNToasty } from 'react-native-toasty';
 import moment from 'moment';
 import NumberFormat from 'react-number-format';
 import formatConstant from '../../constants/formatConstant';
+import colors from "../../config/colors";
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const BG_IMAGE = require('../../../assets/images/empty-list.png');
@@ -94,7 +95,7 @@ export default class TransactionViewListScreen extends Component {
         const { transaction, isLoading, isShowEmptyView } = this.state;
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => this.props.navigation.navigate('Me')}>

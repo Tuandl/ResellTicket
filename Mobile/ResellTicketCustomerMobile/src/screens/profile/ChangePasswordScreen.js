@@ -5,6 +5,7 @@ import { Input, Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import Api from '../../service/Api';
 import keyConstant from '../../constants/keyConstant';
+import colors from '../../config/colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -131,7 +132,7 @@ export default class ChangePasswordScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => this.props.navigation.navigate('ProfileDetail')}>

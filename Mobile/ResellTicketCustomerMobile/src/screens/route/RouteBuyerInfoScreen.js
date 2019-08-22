@@ -5,6 +5,7 @@ import { RNToasty } from 'react-native-toasty';
 import { Icon, Input } from 'react-native-elements';
 import api from '../../service/Api';
 import Dialog from "react-native-dialog";
+import colors from '../../config/colors';
 
 export default class RouteBuyerInfoScreen extends Component {
 
@@ -114,7 +115,7 @@ export default class RouteBuyerInfoScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}

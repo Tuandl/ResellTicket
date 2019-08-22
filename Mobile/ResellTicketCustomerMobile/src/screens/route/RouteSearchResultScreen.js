@@ -5,6 +5,8 @@ import { Icon } from 'react-native-elements';
 import { RNToasty } from 'react-native-toasty';
 import RouteViewComponent from '../../components/RouteComponent/RouteSearchViewComponent';
 import api from '../../service/Api';
+import colors from '../../config/colors';
+import routeStatus from '../../constants/routeStatus';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -73,9 +75,9 @@ export default class RouteSearchResultScreen extends Component {
         } else {
             const response = await api.post(this.URL_ROUTE_SAVE, params);
             if (response.status === 200) {
-                RNToasty.Success({ title: 'Save route successfullt' });
+                //RNToasty.Success({ title: 'Save route successfullt' });
                 params.id = response.data;
-                this.navigation.navigate('RouteDetail', { routeId: params.id });
+                this.navigation.navigate('RouteDetail', { routeId: params.id});
             } else {
                 RNToasty.Error({ title: 'Save Route Failed' });
             }
@@ -105,7 +107,7 @@ export default class RouteSearchResultScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}

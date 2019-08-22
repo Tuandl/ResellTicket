@@ -315,7 +315,7 @@ export default class RouteSearchFormScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}

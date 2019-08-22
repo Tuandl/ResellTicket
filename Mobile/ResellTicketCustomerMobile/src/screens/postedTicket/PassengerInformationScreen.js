@@ -4,6 +4,7 @@ import { Container, Header, Body, Title, Item, Content, Button, Left, Label, Rig
 import { Icon } from 'react-native-elements';
 import Api from '../../service/Api';
 import { ScrollView } from 'react-native-gesture-handler';
+import colors from '../../config/colors';
 
 export default class PassengerInformationScreen extends Component {
     navigation = null;
@@ -47,7 +48,7 @@ export default class PassengerInformationScreen extends Component {
         const { navigate } = this.props.navigation;
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button
                             onPress={() => navigate('DetailTicket')}>

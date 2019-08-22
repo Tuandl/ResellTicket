@@ -9,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { RNToasty } from 'react-native-toasty';
 import Dialog from "react-native-dialog";
 import TicketStatus from '../../constants/TicketStatus';
+import colors from '../../config/colors';
 
 export default class DetailTicketScreen extends Component {
     constructor(props) {
@@ -152,7 +153,7 @@ export default class DetailTicketScreen extends Component {
         const isBuyer = this.props.navigation.getParam('isBuyer')
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}>
