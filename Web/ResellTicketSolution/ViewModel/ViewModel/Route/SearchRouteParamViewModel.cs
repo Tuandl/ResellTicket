@@ -15,5 +15,6 @@ namespace ViewModel.ViewModel.Route
         public int[] TransportationIds { get; set; }
         public int[] TicketTypeIds { get; set; }
         public int MaxWaitingHours { get; set; }
+        public SearchRouteOrderByEnum OrderBy { get; set; } = SearchRouteOrderByEnum.Price;
     }
 }
