@@ -11,6 +11,7 @@ import NumericInput from 'react-native-numeric-input';
 import formatConstant from './../../constants/formatConstant';
 import { RNToasty } from 'react-native-toasty';
 import colors from '../../config/colors';
+import SearchRouteOrderByConstants from '../../constants/SearchRouteOrderByConstants';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -31,6 +32,7 @@ export default class RouteSearchFormScreen extends Component {
             maxTicketCombination: 3,
             departureCitiesAutoSuggest: [],
             arrivalCitiesAutoSuggest: [],
+            orderBy: SearchRouteOrderByConstants.TotalPrice,
             vehiclesSelectData: [
                 {
                     id: 0,
@@ -70,6 +72,7 @@ export default class RouteSearchFormScreen extends Component {
         this.onTicketTypesSelectedChanged = this.onTicketTypesSelectedChanged.bind(this);
         this.onMaxWaitingHoursChanged = this.onMaxWaitingHoursChanged.bind(this);
         this.validateBeforeSearch = this.validateBeforeSearch.bind(this);
+        this.onOrderByChanged = this.onOrderByChanged.bind(this);
     }
 
     componentDidMount() {
@@ -135,6 +138,7 @@ export default class RouteSearchFormScreen extends Component {
             transportationIds: this.state.selectedTransportations,
             ticketTypeIds: this.state.selectedTicketTypes,
             maxWaitingHours: this.state.maxWaitingHours,
+            orderBy: this.state.orderBy,
             page: 1,
             pageSize: 10,
         };
@@ -205,6 +209,10 @@ export default class RouteSearchFormScreen extends Component {
 
     onMaxWaitingHoursChanged(maxWaitingHours) {
         this.setState({maxWaitingHours: maxWaitingHours});
+    }
+
+    onOrderByChanged(orderBy) {
+        this.setState({ orderBy: orderBy });
     }
     
     async initData() {
@@ -308,6 +316,7 @@ export default class RouteSearchFormScreen extends Component {
             transportationSelectData,
             ticketTypeSelectData,
             maxWaitingHours,
+            orderBy
         } = this.state;
         const { navigation } = this.props;
 
@@ -315,7 +324,7 @@ export default class RouteSearchFormScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent
                             onPress={() => navigation.pop()}
@@ -500,7 +509,25 @@ export default class RouteSearchFormScreen extends Component {
                         modalAnimationType="slide"
                     />
 
-                    <View style={{ marginTop: 15 }}>
+                    <Label style={styles.label}>Sort By:</Label>
+                    <Picker
+                        mode="dropdown"
+                        iosIcon={<Icon name="arrow-down" />}
+                        // style={{ width: undefined }}
+                        placeholder="Choose sort by..."
+                        placeholderStyle={{ color: "#bfc6ea" }}
+                        placeholderIconColor="#007aff"
+                        selectedValue={orderBy}
+                        onValueChange={this.onOrderByChanged}
+                        style={{ borderColor: colors.greyUnderlineInput, borderBottomWidth: 0.666666 }}
+
+                    >
+                        <Picker.Item label="Total Price Low to High" value={SearchRouteOrderByConstants.TotalPrice} />
+                        <Picker.Item label="Total Traveling Time Low to High" value={SearchRouteOrderByConstants.TotalTravelingTime} />
+                        <Picker.Item label="Arrival Time early to late" value={SearchRouteOrderByConstants.ArrivalTime} />
+                    </Picker>
+
+                    <View style={{ marginTop: 15, marginBottom: 15 }}>
                         <Button iconLeft block primary
                             style={{ margin: 10 }}
                             onPress={this.onBtnSearchPress}

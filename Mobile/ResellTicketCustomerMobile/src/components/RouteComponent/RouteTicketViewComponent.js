@@ -8,6 +8,7 @@ import NumberFormat from 'react-number-format';
 import formatConstant from '../../constants/formatConstant';
 import convertTicketStatus from './../../helper/convertTicketStatus';
 import TicketStatus from '../../constants/TicketStatus';
+import RouteStatus from '../../constants/routeStatus';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -19,6 +20,7 @@ export default class RouteTicketViewComponent extends Component {
         this.state = {
             statusColor: '',
             routeTicket: props.routeTicket,
+            routeStatus: props.routeStatus
             //statusTemp: props.routeTicket.status
         };
 
@@ -76,6 +78,7 @@ export default class RouteTicketViewComponent extends Component {
             expiredDateTime,
             isRefunded,
         } = this.state.routeTicket;
+        const {routeStatus} = this.state;
 
         return (
             <TouchableNativeFeedback onPress={this.onPress}>
@@ -107,12 +110,19 @@ export default class RouteTicketViewComponent extends Component {
                             <Text style={{ fontSize: 12, color: 'grey' }}>Arrival</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text>{ticketCode}</Text>
+                            {routeStatus === RouteStatus.NEW ? 
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text> 
+                                : <Text>{ticketCode}</Text>
+                            } 
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.DATE)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.DATE)}</Text>
                         </View>
                         <View style={styles.ticketBodyContent}>
-                            <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text>
+                            {routeStatus === RouteStatus.NEW ? 
+                                <Text style={{ fontSize: 12, color: 'white' }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text> 
+                                :  
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text>
+                            }
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.TIME)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.TIME)}</Text>
                         </View>

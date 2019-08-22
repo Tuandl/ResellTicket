@@ -7,6 +7,7 @@ import api from '../../service/Api';
 import { RNToasty } from 'react-native-toasty';
 import ROUTE_STATUS from '../../constants/routeStatus';
 import { withNavigation } from 'react-navigation';
+import colors from '../../config/colors';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const BG_IMAGE = require('../../../assets/images/empty-list.png');
@@ -136,7 +137,7 @@ class RouteScreen extends Component {
         //  const BadgedIcon = withBadge(2)(Icon)
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     {/* <Left></Left> */}
                     <Body style={{paddingLeft: 10}}>
                         <Title>Route</Title>

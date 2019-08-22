@@ -11,6 +11,7 @@ import Dialog from "react-native-dialog";
 import RouteStatus from '../../constants/routeStatus';
 import keyConstant from '../../constants/keyConstant';
 import TicketStatus from '../../constants/TicketStatus';
+import colors from '../../config/colors';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -21,7 +22,6 @@ class RouteDetailScreen extends Component {
 
     navigation = null;
     routeId = null;
-
 
     constructor(props) {
         super(props);
@@ -133,7 +133,7 @@ class RouteDetailScreen extends Component {
 
     onRouteTicketPressed(routeTicket) {
         var { route } = this.state
-        if (route.status === RouteStatus.COMPLETED) {
+        if (route.status === RouteStatus.COMPLETED || route.status === RouteStatus.BOUGHT) {
             this.props.navigation.navigate('DetailTicket', { ticketId: routeTicket.ticketId, isBuyer: true })
         } else {
             const navigationData = {
@@ -146,10 +146,10 @@ class RouteDetailScreen extends Component {
 
     }
 
-    renderTickets(routeTickets) {
+    renderTickets(routeTickets, status) {
         if (routeTickets === null || routeTickets === undefined) return;
         return routeTickets.map((routeTicket) =>
-            <RouteTicketViewComponent onPress={this.onRouteTicketPressed} routeTicket={routeTicket} key={routeTicket.ticketId} />
+            <RouteTicketViewComponent onPress={this.onRouteTicketPressed} routeTicket={routeTicket} key={routeTicket.ticketId} routeStatus={status} />
         );
     }
 
@@ -194,7 +194,7 @@ class RouteDetailScreen extends Component {
 
         return (
             <Container style={{ flex: 1 }}>
-                <Header>
+                <Header color={colors.secondary}>
                     <Left>
                         <Button transparent onPress={this.onBtnBackPressed}>
                             <Icon name="arrow-left" type="material-community" color="#fff" />
@@ -224,7 +224,7 @@ class RouteDetailScreen extends Component {
                         </View>
 
                         <View styles={{ justifyContent: 'center', alignItems: 'center' }}>
-                            {this.renderTickets(route.routeTickets)}
+                            {this.renderTickets(route.routeTickets, route.status)}
                         </View>
 
                         <View>
