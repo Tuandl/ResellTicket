@@ -40,7 +40,7 @@ namespace Service.Services
         List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
             DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
             int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
-            int maxWaitingHours = 24, int[] ticketTypeIds = null);
+            int maxWaitingHours = 24, int[] ticketTypeIds = null, SearchRouteOrderByEnum orderBy = SearchRouteOrderByEnum.Price);
 
         /// <summary>
         /// Create new Route base on Search result
@@ -404,7 +404,7 @@ namespace Service.Services
         public List<RouteSearchViewModel> SearchRoute(int departureCityId, int arrivalCityId,
             DateTime departureDate, DateTime arrivalDate, int page, int pageSize, string searchedUsername = null, 
             int maxCombinationTickets = 3, int[] vehicleIds = null, int[] transportationIds = null, 
-            int maxWaitingHours = 24, int[] ticketTypeIds = null)
+            int maxWaitingHours = 24, int[] ticketTypeIds = null, SearchRouteOrderByEnum orderBy = SearchRouteOrderByEnum.Price)
         {
             //Convert fromDate, toDate into UTC
             var departureCity = _cityRepository.Get(x => x.Id == departureCityId && x.Deleted == false);
@@ -440,7 +440,21 @@ namespace Service.Services
             var graph = new EppsteinGraph();
             foreach (var ticket in tickets)
             {
-                graph.CreateEdgeFromTicketBaseOnPrice(ticket);
+                switch (orderBy)
+                {
+                    case SearchRouteOrderByEnum.Price:
+                        graph.CreateEdgeFromTicketBaseOnPrice(ticket);
+                        break;
+                    case SearchRouteOrderByEnum.TotalTravelingTime:
+                        graph.CreateEdgeFromTicketBaseOnTravelingTime(ticket);
+                        break;
+                    case SearchRouteOrderByEnum.ArrivalDate:
+                        graph.CreateEdgeFromTicketBaseOnArrivalDate(ticket);
+                        break;
+                    default:
+                        graph.CreateEdgeFromTicketBaseOnPrice(ticket);
+                        break;
+                }
             }
 
             //Calculate k shortest paths
@@ -449,7 +463,8 @@ namespace Service.Services
                 destinationId: arrivalCityId,
                 maxCombination: maxCombinationTickets,
                 kshortestPathQuantity: page * pageSize,
-                maxWaitingHours: maxWaitingHours
+                maxWaitingHours: maxWaitingHours, 
+                isBasedOnArrivalDate: orderBy == SearchRouteOrderByEnum.ArrivalDate
             );
 
             //Get k shortest path

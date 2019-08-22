@@ -57,6 +57,11 @@ namespace Algorithm.KShortestPaths
         private int MinWaitingBetweenTwoTickets = 1;
 
         /// <summary>
+        /// Is order by arrival Date
+        /// </summary>
+        private bool IsBasedOnArrivalDate = false;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public EppsteinGraph()
@@ -76,15 +81,13 @@ namespace Algorithm.KShortestPaths
             SourceVertex = this.vertices.Where(x => x.GroupId == departureId)
                 .OrderBy(x => x.ArrivalTimeUTC)
                 .FirstOrDefault();
-            if(SourceVertex == null) 
-                SourceVertex = new Vertex(departureId, DateTime.MinValue);
+            if(SourceVertex == null) throw new Exception("Not found Source Vertex.");
 
             //Destination vertex is the latest destination node
             DestinationVertex = this.vertices.Where(x => x.GroupId == destinationId) 
                 .OrderByDescending(x => x.ArrivalTimeUTC)
                 .FirstOrDefault();
-            if(DestinationVertex == null)
-                new Vertex(destinationId, DateTime.MaxValue);
+            if(DestinationVertex == null) throw new Exception("Not found Destination Vertex.");
 
             this.vertices = this.vertices.OrderBy(x => x.GroupId).ThenBy(x => x.ArrivalTimeUTC).ToList();
 
@@ -95,7 +98,16 @@ namespace Algorithm.KShortestPaths
                 var nextVertex = vertices[i+1];
                 if(currentVertex.GroupId == nextVertex.GroupId)
                 {
-                    var edge = new Edge(currentVertex, nextVertex, 0, EdgeType.Waiting, null);
+                    double weight = 0;
+
+                    // if order by arrival date 
+                    // we must add weight into waiting edges in cities, except destination city
+                    if(IsBasedOnArrivalDate && currentVertex.GroupId != destinationId)
+                    {
+                        weight = nextVertex.ArrivalTimeUTC.Subtract(currentVertex.ArrivalTimeUTC).TotalMilliseconds;
+                    }
+
+                    var edge = new Edge(currentVertex, nextVertex, weight, EdgeType.Waiting, null);
                     currentVertex.RelatedEdges.Add(edge);
                     nextVertex.RelatedEdges.Add(edge);
                 }
@@ -114,9 +126,10 @@ namespace Algorithm.KShortestPaths
         /// <param name="kshortestPathQuantity">Precalculate only k shotest paths</param>
         /// <param name="maxWaitingHours">Find Routes that has 2 near tickets' waiting time less than or equal this hour. Default is 1 day.</param>
         public void BuildKthShortestPaths(int departureId, int destinationId, int maxCombination = int.MaxValue, int kshortestPathQuantity = 10,
-            int maxWaitingHours = 24)
+            int maxWaitingHours = 24, bool isBasedOnArrivalDate = false)
         {
             isCaculated = false;
+            this.IsBasedOnArrivalDate = isBasedOnArrivalDate;
 
             //Parse start and end vertex
             InitSourceDestination(departureId, destinationId);
