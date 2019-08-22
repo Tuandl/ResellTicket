@@ -464,7 +464,8 @@ namespace Service.Services
                 maxCombination: maxCombinationTickets,
                 kshortestPathQuantity: page * pageSize,
                 maxWaitingHours: maxWaitingHours, 
-                isBasedOnArrivalDate: orderBy == SearchRouteOrderByEnum.ArrivalDate
+                isBasedOnArrivalDate: orderBy == SearchRouteOrderByEnum.ArrivalDate,
+                isBasedOnTravelingTime: orderBy == SearchRouteOrderByEnum.TotalTravelingTime
             );
 
             //Get k shortest path
