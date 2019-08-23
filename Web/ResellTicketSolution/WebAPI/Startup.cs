@@ -10,7 +10,7 @@ using WebAPI.Configuration.Authorization;
 
 namespace WebAPI
 {
-    //Test azure pipeline 1
+    //Test azure pipeline 2
     public class Startup
     {
         private const string CONFIG_AUTH_SETTING = "AuthSetting";
