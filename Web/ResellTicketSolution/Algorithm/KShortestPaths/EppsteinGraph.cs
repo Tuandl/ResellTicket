@@ -62,6 +62,11 @@ namespace Algorithm.KShortestPaths
         private bool IsBasedOnArrivalDate = false;
 
         /// <summary>
+        /// Is order by total traveling time
+        /// </summary>
+        private bool IsBasedOnTravelingTime = false;
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public EppsteinGraph()
@@ -107,6 +112,13 @@ namespace Algorithm.KShortestPaths
                         weight = nextVertex.ArrivalTimeUTC.Subtract(currentVertex.ArrivalTimeUTC).TotalMilliseconds;
                     }
 
+                    // If order by total traveling time
+                    // we must add weight into waiting edges in cities, except departure city and destination city
+                    if(IsBasedOnTravelingTime && currentVertex.GroupId != departureId && currentVertex.GroupId != destinationId)
+                    {
+                        weight = nextVertex.ArrivalTimeUTC.Subtract(currentVertex.ArrivalTimeUTC).TotalMilliseconds;
+                    }
+
                     var edge = new Edge(currentVertex, nextVertex, weight, EdgeType.Waiting, null);
                     currentVertex.RelatedEdges.Add(edge);
                     nextVertex.RelatedEdges.Add(edge);
@@ -126,10 +138,11 @@ namespace Algorithm.KShortestPaths
         /// <param name="kshortestPathQuantity">Precalculate only k shotest paths</param>
         /// <param name="maxWaitingHours">Find Routes that has 2 near tickets' waiting time less than or equal this hour. Default is 1 day.</param>
         public void BuildKthShortestPaths(int departureId, int destinationId, int maxCombination = int.MaxValue, int kshortestPathQuantity = 10,
-            int maxWaitingHours = 24, bool isBasedOnArrivalDate = false)
+            int maxWaitingHours = 24, bool isBasedOnArrivalDate = false, bool isBasedOnTravelingTime = false)
         {
             isCaculated = false;
             this.IsBasedOnArrivalDate = isBasedOnArrivalDate;
+            this.IsBasedOnTravelingTime = isBasedOnTravelingTime;
 
             //Parse start and end vertex
             InitSourceDestination(departureId, destinationId);

@@ -61,6 +61,7 @@ export default class ValidTicketDetail extends Component {
                 ],
                 sellerPhone: res.data.sellerPhone,
                 sellerName: res.data.sellerName,
+                transportationPhone: res.data.transportationPhone,
                 expiredBefore: res.data.expiredBefore,
                 expiredDateTime: moment(res.data.departureDateTime)
             })
@@ -154,7 +155,8 @@ export default class ValidTicketDetail extends Component {
             commissionFee,
             expiredBefore,
             sellerPhone,
-            sellerName
+            sellerName,
+            transportationPhone
         } = this.state;
         return (
 
@@ -197,7 +199,9 @@ export default class ValidTicketDetail extends Component {
                                     return (<Row key={index}>
                                         <Col md="6" xs="12">
                                             <FormGroup>
-                                                <Label htmlFor={detail.name}>{detail.name}</Label>
+                                                <Label htmlFor={detail.name}>
+                                                    {detail.name} {detail.name === 'Transportation' ? '(' + transportationPhone + ')' : null}
+                                                </Label>
                                                 <Input type="text" id={detail.name} disabled value={detail.value}
                                                 />
                                             </FormGroup>

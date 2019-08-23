@@ -1,3 +1,5 @@
+import RouteStatus from '../constants/routeStatus';
+
 const TicketStatus = {
     PENDING: 1,
     VALID: 2,
@@ -33,7 +35,7 @@ function toSeller(status) {
     }
 }
 
-function toBuyer(status, isRefunded) {
+function toBuyer(status, isRefunded, routeStatus) {
     switch (status) {
         case TicketStatus.PENDING:
             return 'Pending';
@@ -42,14 +44,19 @@ function toBuyer(status, isRefunded) {
         case TicketStatus.INVALID:
             return 'Invalid';
         case TicketStatus.BOUGHT:
+            if (routeStatus === RouteStatus.NEW) return 'Not Available'
             return 'Bought';
         case TicketStatus.RENAMED:
+            if (routeStatus === RouteStatus.NEW) return 'Not Available'
             return 'Renamed';
         case TicketStatus.COMPLETED:
+            if (routeStatus === RouteStatus.NEW) return 'Not Available'
             return 'Renamed Success';
         case TicketStatus.RENAMEDSUCESS:
+            if (routeStatus === RouteStatus.NEW) return 'Not Available'
             return 'Renamed Success';
         case TicketStatus.RENAMEDFAIL:
+            if (routeStatus === RouteStatus.NEW) return 'Not Available'
             return isRefunded ? 'Refunded' : 'Renamed Fail';
         default:
             return 'Expired';

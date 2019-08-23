@@ -115,7 +115,6 @@ function searchResult() {
         var route = model.routes.find(route => route.id == routeId);
         if(route.saved) {
             renderRouteDetail(route);
-
         } else {
             const routeId = await saveRoute(route);
             window.location.href = `${appConfig.url.route.detail}?routeId=${routeId}`;

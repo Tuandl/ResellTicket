@@ -1,35 +1,37 @@
 import { appConfig } from '../../constant/appConfig.js';
 import commonService from '../service/commonService.js';
 import ticketStatus from '../enum/ticketStatus.js';
+import RouteStatus from '../enum/routeStatus.js';
 import vehicleNameEnum from '../enum/vehicleNameEnum.js';
 
 class TicketComponent {
 
-    constructor(ticket, onClicked) {
+    constructor(ticket, onClicked, routeStatus) {
         this.ticket = ticket;
         this.events = {
             onClicked,
         }
+        this.routeStatus = routeStatus;
         this.html = document.createElement('div');
         this.html.id = ticket.id || commonService.generateRandomId();
         this.id = this.html.id;
     }
 
-    renderHeaderTicketCodeOrTicketType(status){
+    renderHeaderTicketCodeOrTicketType(status) {
         switch (status) {
-            case ticketStatus.Valid:
+            case RouteStatus.New:
                 return `<h4><b>Ticket Type</b></h4>`;
             default:
                 return `<h4><b>Ticket</b></h4>`;
         }
     }
 
-    renderBodyTicketCodeOrTicketType(status, ticketCode, ticketType){
-        switch (status) {
-            case ticketStatus.Valid:
-                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticketType}</b></span></div>`;
+    renderBodyTicketCodeOrTicketType(routeStatus, ticketCode, ticketType) {
+        switch (routeStatus) {
+            case RouteStatus.New:
+                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span>${ticketType}</span></div>`;
             default:
-                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticketCode}</b></span></div>`;
+                return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span><b>${ticketCode}</b><br/>${ticketType}</span></div>`;
         }
     }
 
@@ -42,14 +44,29 @@ class TicketComponent {
             case ticketStatus.Invalid:
                 return `<span class="label label-danger">Invalid</span>`;
             case ticketStatus.Bought:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Bought</span>`;
             case ticketStatus.Renamed:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedSuccess:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedFail:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 if (isRefunded) {
                     return `<span class="label label-danger">Refunded</span>`;
                 } else {
@@ -97,7 +114,7 @@ class TicketComponent {
                         <input type="hidden" value=${ticket.ticketId} />
                         <div class="routeHeader">
                             <div class="col-xs-2 col-sm-1 col-md-2 col-lg-2">
-                                ${this.renderHeaderTicketCodeOrTicketType(ticket.status)}
+                                <h4><b>Ticket</b></h4>
                             </div>
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <h4><b>Departure</b></h4>
@@ -116,7 +133,7 @@ class TicketComponent {
                             </div>
                         </div>
                         <div class="routeBody" style="color: '#b8891d'">
-                            ${this.renderBodyTicketCodeOrTicketType(ticket.status, ticket.ticketCode, ticket.ticketTypeName)}
+                            ${this.renderBodyTicketCodeOrTicketType(this.routeStatus, ticket.ticketCode, ticket.ticketTypeName)}
                             <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
                                 <span>${moment(ticket.departureDateTime).format(appConfig.format.datetime)}</span>
                             </div>
