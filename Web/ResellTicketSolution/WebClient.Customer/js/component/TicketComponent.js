@@ -17,7 +17,7 @@ class TicketComponent {
         this.id = this.html.id;
     }
 
-    renderHeaderTicketCodeOrTicketType(status){
+    renderHeaderTicketCodeOrTicketType(status) {
         switch (status) {
             case RouteStatus.New:
                 return `<h4><b>Ticket Type</b></h4>`;
@@ -26,7 +26,7 @@ class TicketComponent {
         }
     }
 
-    renderBodyTicketCodeOrTicketType(routeStatus, ticketCode, ticketType){
+    renderBodyTicketCodeOrTicketType(routeStatus, ticketCode, ticketType) {
         switch (routeStatus) {
             case RouteStatus.New:
                 return `<div class="col-xs-2 col-sm-1 col-md-2 col-lg-2"><span>${ticketType}</span></div>`;
@@ -44,14 +44,29 @@ class TicketComponent {
             case ticketStatus.Invalid:
                 return `<span class="label label-danger">Invalid</span>`;
             case ticketStatus.Bought:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Bought</span>`;
             case ticketStatus.Renamed:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed</span>`;
             case ticketStatus.Completed:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedSuccess:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 return `<span class="label label-success">Renamed Success</span>`;
             case ticketStatus.RenamedFail:
+                if (this.routeStatus === RouteStatus.New) {
+                    return `<span class="label label-danger">Not Available</span>`;
+                }
                 if (isRefunded) {
                     return `<span class="label label-danger">Refunded</span>`;
                 } else {

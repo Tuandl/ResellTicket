@@ -37,6 +37,7 @@ export default class RouteTicketViewComponent extends Component {
 
     setStatusColor = () => {
         var { status } = this.state.routeTicket;
+        var {routeStatus} = this.state;
         switch (status) {
             case TicketStatus.PENDING:
                 this.setState({
@@ -59,9 +60,22 @@ export default class RouteTicketViewComponent extends Component {
                 })
                 break;
             default:
-                this.setState({
-                    statusColor: '#28a745'
-                })
+                if(status === TicketStatus.VALID) {
+                    this.setState({
+                        statusColor: '#28a745'
+                    })
+                } else {
+                    if(routeStatus === RouteStatus.NEW) {
+                        this.setState({
+                            statusColor: 'red'
+                        })
+                    } else {
+                        this.setState({
+                            statusColor: '#28a745'
+                        })
+                    }
+                }
+                
                 break;
         }
     }
@@ -111,7 +125,7 @@ export default class RouteTicketViewComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             {routeStatus === RouteStatus.NEW ? 
-                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text> 
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded, routeStatus)}</Text> 
                                 : <Text>{ticketCode}</Text>
                             } 
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.DATE)}</Text>
@@ -119,9 +133,9 @@ export default class RouteTicketViewComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             {routeStatus === RouteStatus.NEW ? 
-                                <Text style={{ fontSize: 12, color: 'white' }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text> 
+                                <Text style={{ fontSize: 12, color: 'white' }}>{convertTicketStatus.toBuyer(status, isRefunded, routeStatus)}</Text> 
                                 :  
-                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded)}</Text>
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, isRefunded, routeStatus)}</Text>
                             }
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.TIME)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.TIME)}</Text>

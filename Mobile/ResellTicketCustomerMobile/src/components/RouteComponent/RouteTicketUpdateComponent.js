@@ -115,7 +115,7 @@ export default class RouteTicketUpdateComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             {routeStatus === RouteStatus.NEW ? 
-                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null, null)}</Text> 
                                 : <Text>{ticketCode}</Text>
                             } 
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.DATE)}</Text>
@@ -123,9 +123,9 @@ export default class RouteTicketUpdateComponent extends Component {
                         </View>
                         <View style={styles.ticketBodyContent}>
                             {routeStatus === RouteStatus.NEW ? 
-                                <Text style={{ fontSize: 12, opacity: 0 }}>{convertTicketStatus.toBuyer(status, null)}</Text> 
+                                <Text style={{ fontSize: 12, opacity: 0 }}>{convertTicketStatus.toBuyer(status, null, null)}</Text> 
                                 :  
-                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null)}</Text>
+                                <Text style={{ fontSize: 12, color: this.state.statusColor }}>{convertTicketStatus.toBuyer(status, null, null)}</Text>
                             }
                             <Text style={{ fontSize: 12 }}>{moment(departureDateTime).format(formatConstant.TIME)}</Text>
                             <Text style={{ fontSize: 12 }}>{moment(arrivalDateTime).format(formatConstant.TIME)}</Text>
