@@ -635,8 +635,8 @@ namespace Service.Services
 
             if (routeTicket == null) throw new NotFoundException();
 
-            DateTime? departureFromDate = null;
-            DateTime? arrivalToDate = null;
+            DateTime? departureFromDateUTC = null;
+            DateTime? arrivalToDateUTC = null;
             int departureCityId = routeTicket.DepartureStation.CityId;
             int arrivalCityId = routeTicket.ArrivalStation.CityId;
 
@@ -654,22 +654,23 @@ namespace Service.Services
 
             if (previousRouteTicket != null)
                 //TODO: Add waiting time amount
-                departureFromDate = previousRouteTicket.Ticket.ArrivalDateTime;
+                departureFromDateUTC = previousRouteTicket.Ticket.ArrivalDateTimeUTC;
 
             if (nextRouteTicket != null)
                 //TODO: Add waiting time amount
-                arrivalToDate = nextRouteTicket.Ticket.DepartureDateTime;
+                arrivalToDateUTC = nextRouteTicket.Ticket.DepartureDateTimeUTC;
 
             //Get Tickets base on fromDate and toDate
             var tickets = _ticketRepository.GetAllQueryable()
                 .Where(x => x.Deleted == false
                     && x.SellerId != routeTicket.Ticket.BuyerId &&
                     x.Status == Core.Enum.TicketStatus.Valid &&
-                    (departureFromDate == null || x.DepartureDateTime >= departureFromDate) &&
-                    (arrivalToDate == null || x.ArrivalDateTime <= arrivalToDate) &&
+                    ((departureFromDateUTC == null && departureFromDateUTC > DateTime.UtcNow) || x.DepartureDateTimeUTC >= departureFromDateUTC) &&
+                    (arrivalToDateUTC == null || x.ArrivalDateTimeUTC <= arrivalToDateUTC) &&
                     x.DepartureStation.CityId == departureCityId &&
                     x.ArrivalStation.CityId == arrivalCityId &&
-                    x.Id != routeTicket.TicketId
+                    x.Id != routeTicket.TicketId &&
+                    x.ExpiredDateTimeUTC > DateTime.UtcNow
                 );
 
             var result = _mapper.Map<List<Ticket>, List<AvailableTicketViewModel>>(tickets.ToList());
