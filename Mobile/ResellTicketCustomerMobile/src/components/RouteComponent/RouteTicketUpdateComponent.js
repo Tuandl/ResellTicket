@@ -72,7 +72,7 @@ export default class RouteTicketUpdateComponent extends Component {
             departureDateTime,
             arrivalDateTime,
             expiredDateTime,
-            vehicle,
+            vehicleName,
             ticketCode,
             isSelected,
             status
@@ -90,8 +90,8 @@ export default class RouteTicketUpdateComponent extends Component {
                     <View style={styles.ticketHeader}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text>{departureCityName}  </Text>
-                            {vehicle === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
-                                : vehicle === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
+                            {vehicleName === 'Plane' ? <Icon name="airplane" type="material-community" color="grey" />
+                                : vehicleName === 'Bus' ? <Icon name="bus-side" type="material-community" color="grey" />
                                     : <Icon name='train' type="material-community" color="grey" />
                             }
                             <Text>  {arrivalCityName}</Text>
