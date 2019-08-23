@@ -123,7 +123,7 @@ function routeDetail() {
             if(routeTicket.status !== ticketStatus.Valid) {
                 notValidTicketCount++;
             }
-            const ticketElement = new TicketComponent(routeTicket, onRouteTicketClicked);
+            const ticketElement = new TicketComponent(routeTicket, onRouteTicketClicked, model.route.status);
             elements.ticketContainer.appendChild(ticketElement.render());
         });
     }
@@ -214,7 +214,7 @@ function routeDetail() {
         commonService.removeAllChildren(elements.changeTicketContainer);
 
         availableTickets.forEach(ticket => {
-            const ticketElement = new TicketComponent(ticket, onAvailableTicketClicked);
+            const ticketElement = new TicketComponent(ticket, onAvailableTicketClicked, model.route.status);
             elements.changeTicketContainer.appendChild(ticketElement.render());
             elements.availableTicketElements.push(ticketElement.html);
         });
