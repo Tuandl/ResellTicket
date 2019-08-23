@@ -665,7 +665,7 @@ namespace Service.Services
                 .Where(x => x.Deleted == false
                     && x.SellerId != routeTicket.Ticket.BuyerId &&
                     x.Status == Core.Enum.TicketStatus.Valid &&
-                    ((departureFromDateUTC == null && departureFromDateUTC > DateTime.UtcNow) || x.DepartureDateTimeUTC >= departureFromDateUTC) &&
+                    ((departureFromDateUTC == null && x.DepartureDateTimeUTC > DateTime.UtcNow) || x.DepartureDateTimeUTC >= departureFromDateUTC) &&
                     (arrivalToDateUTC == null || x.ArrivalDateTimeUTC <= arrivalToDateUTC) &&
                     x.DepartureStation.CityId == departureCityId &&
                     x.ArrivalStation.CityId == arrivalCityId &&
