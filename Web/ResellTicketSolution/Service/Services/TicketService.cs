@@ -437,6 +437,10 @@ namespace Service.Services
             {
                 return "Not found ticket";
             }
+            if (existedTicket.Status != TicketStatus.Pending)
+            {
+                throw new InvalidOperationException();
+            }
 
             existedTicket.Status = Core.Enum.TicketStatus.Invalid;
             _ticketRepository.Update(existedTicket);
@@ -505,12 +509,15 @@ namespace Service.Services
             {
                 return "Not found ticket";
             }
+            if (existedTicket.Status != TicketStatus.Renamed)
+            {
+                throw new InvalidOperationException();
+            }
             if (renameSuccess == true)
             {
                 //existedTicket.Status = Core.Enum.TicketStatus.Completed;
                 existedTicket.Status = TicketStatus.RenamedSuccess;
                 _ticketRepository.Update(existedTicket);
-
 
                 try
                 {

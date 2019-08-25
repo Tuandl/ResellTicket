@@ -90,15 +90,20 @@ export default class VerifyRenamedTicket extends Component {
         var ticketId = this.props.match.params.id;
         var renamedSuccess = true;
         this.closeConfirmDialogSuccess();
-        Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
-            if (res.status === 200) {
-                toastr.success('Successfully', 'Ticket has been updated.');
-                //this.getRenamedTickets();
-                this.props.history.push('/renamedTicket');
-            } else {
-                toastr.error('Error', 'Error when valid Ticket');
-            }
-        })
+        
+        try {
+            Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
+                if (res.status === 200) {
+                    toastr.success('Successfully', 'Ticket has been updated.');
+                    //this.getRenamedTickets();
+                    this.props.history.push('/renamedTicket');
+                } else {
+                    toastr.error('Error', 'Error when verify Ticket');
+                }
+            })
+        } catch (error) {
+            toastr.error('Error', 'Error when verify Ticket');
+        }
     }
 
     onRenamedFail = () => {
@@ -106,15 +111,19 @@ export default class VerifyRenamedTicket extends Component {
         var ticketId = this.props.match.params.id;
         var renamedSuccess = false;
         this.closeConfirmDialogFail();
-        Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
-            if (res.status === 200) {
-                toastr.success('Successfully', 'Ticket has been updated.');
-                //this.getRenamedTickets();
-                this.props.history.push('/renamedTicket');
-            } else {
-                toastr.error('Error', 'Error when valid Ticket');
-            }
-        })
+        try {
+            Axios.post('api/ticket/validate-rename?id=' + ticketId + '&renameSuccess=' + renamedSuccess).then(res => {
+                if (res.status === 200) {
+                    toastr.success('Successfully', 'Ticket has been updated.');
+                    //this.getRenamedTickets();
+                    this.props.history.push('/renamedTicket');
+                } else {
+                    toastr.error('Error', 'Error when verify Ticket');
+                }
+            })
+        } catch (error) {
+            toastr.error('Error', 'Error when verify Ticket');
+        }
     }
 
     render() {
